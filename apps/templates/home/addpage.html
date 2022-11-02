@@ -1,0 +1,60 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Contact US {% endblock %}
+
+{% block body_class %} contact-us {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+  {% include 'includes/navigation-light.html' %}
+
+  <section>
+    <div class="page-header min-vh-100">
+      <div class="container">
+        <div class="row">
+          <div class="d-flex flex-column ms-auto me-auto">
+            <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+              <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                  <h3 class="text-white text-primary mb-0">新增資料</h3>
+                </div>
+              </div>
+              <div class="card-body">
+                <form id="contact-form" method="post" autocomplete="off">
+                  <div class="card-body p-0 my-3">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Full Name</label>
+                          <input type="email" class="form-control" placeholder="Full Name">
+                        </div>
+                      </div>
+                      <div class="col-md-6 ps-md-2">
+                        <div class="input-group input-group-static mb-4">
+                          <label>Email</label>
+                          <input type="email" class="form-control" placeholder="hello@creative-tim.com">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 text-center">
+                        <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">確認</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
