@@ -5,56 +5,110 @@
 {% block body_class %} contact-us {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+
+{% endblock stylesheets %}
 
 {% block content %}
 
-  {% include 'includes/navigation-light.html' %}
+    {% include 'includes/navigation-light.html' %}
 
-  <section>
-    <div class="page-header min-vh-100">
-      <div class="container">
-        <div class="row">
-          <div class="d-flex flex-column ms-auto me-auto">
-            <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
-              <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                  <h3 class="text-white text-primary mb-0">新增資料</h3>
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">新增資料</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="contact-form" method="post" autocomplete="off">
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>編號</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only"
+                                                           placeholder="只能輸入數字">
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="ms-0" for="start">燃油使用開始時間</label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        <input type="date" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="" for="start">燃油使用結束時間</label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        <input type="date" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>地點</label>
+                                                <input type="text" name="" class="form-control" id="number only" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>所屬單位</label>
+                                                <input type="text" class="form-control" id="number only" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳圖片</label>
+                                                <input type="text" class="form-control" id="number only" placeholder="">
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12 text-center">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">確認
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="card-body">
-                <form id="contact-form" method="post" autocomplete="off">
-                  <div class="card-body p-0 my-3">
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="input-group input-group-static mb-4">
-                          <label>Full Name</label>
-                          <input type="email" class="form-control" placeholder="Full Name">
-                        </div>
-                      </div>
-                      <div class="col-md-6 ps-md-2">
-                        <div class="input-group input-group-static mb-4">
-                          <label>Email</label>
-                          <input type="email" class="form-control" placeholder="hello@creative-tim.com">
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-12 text-center">
-                        <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">確認</button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script>
+        $('#date1').datetimepicker({
+            date: null,
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-tw'),
+            disabledDates: [
+                moment().add(1, 'days'),
+                moment().add(2, 'days'),
+                '2021-10-10',
+                '2021-12-25'
+            ]
+        });
+    </script>
+{% endblock javascripts %}
