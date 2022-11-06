@@ -32,14 +32,26 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>編號</label>
-                                                    <input type="text" name="number" class="form-control"
-                                                           id="number only"
-                                                           placeholder="只能輸入數字">
+                                                    <label>設備名稱</label>
+                                                    <input type="text" name="" class="form-control" id="number only" placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備編號</label>
+                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="只能輸入數字">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>燃料種類</label>
+                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
-                                                <label class="ms-0" for="start">燃油使用開始時間</label>
+                                                <label class="ms-0" for="start">燃料使用開始時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
                                                         <input type="date" class="form-control"/>
@@ -47,7 +59,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
-                                                <label class="" for="start">燃油使用結束時間</label>
+                                                <label class="" for="start">燃料使用結束時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
                                                         <input type="date" class="form-control"/>
@@ -55,27 +67,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="input-group input-group-static mb-4">
-                                                <label>地點</label>
-                                                <input type="text" name="" class="form-control" id="number only"
-                                                       placeholder="">
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="input-group input-group-static mb-4">
-                                                <label>所屬單位</label>
-                                                <input type="text" class="form-control" id="number only" placeholder="">
-                                            </div>
-                                        </div>
+                                        <br><hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40"><br>
                                         <div class="d-flex flex-nowrap">
-                                                <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                    加油量(單位：公升)
-                                                </h5>
-                                            </div>
                                             <table class="table">
                                                 <thead>
                                                 <tr>
+                                                    <th></th>
                                                     <th>一月</th>
                                                     <th>二月</th>
                                                     <th>三月</th>
@@ -93,6 +90,9 @@
                                                 </thead>
                                                 <tbody>
                                                 <tr>
+                                                    <th width="30">
+                                                        加油量
+                                                    </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
                                                             <input class="col-6" type="text">
@@ -159,22 +159,100 @@
                                                         </div>
                                                     </td>
                                                 </tr>
+                                                <tr>
+                                                    <th>
+                                                        熱值
+                                                    </th>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr></tr>
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                                        <div class="row">
+                                    </div>
+                                    <br><hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40"><br>
+                                    <div class="d-flex">
+                                        <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
-                                                <div class="col-12"><label for="image">上傳圖片</label></div>
+                                                <label>上傳引用單據</label>
+                                                <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                            </div>
+                                        </div>
+                                        <div class=" ps-md-2 align-self-center">
+                                            <div class="col-1 ">
                                                 <input type="file" class="" name="image" accept="image/*">
                                             </div>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12 text-center">
-                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">確認
-                                                </button>
-                                            </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 text-center">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
