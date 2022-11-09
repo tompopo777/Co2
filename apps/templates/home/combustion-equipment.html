@@ -12,9 +12,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
-
-    {% include 'includes/navigation-light.html' %}
-
+{% include 'includes/navigation-light.html' %}
     <section>
         <div class="page-header min-vh-100">
             <div class="container">
@@ -33,13 +31,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱</label>
-                                                    <input type="text" name="" class="form-control" id="number only" placeholder="">
+                                                    <input type="text" name="" class="form-control" id="number only" placeholder="" required>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="只能輸入數字">
+                                                    <input type="text" name="number" class="form-control" id="number only" oninput="value=value.replace(/[^\d.]/g,'')">
                                                 </div>
                                             </div>
                                         </div>
@@ -54,7 +52,7 @@
                                                 <label class="ms-0" for="start">燃料使用開始時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control"/>
+                                                        <input type="date" class="form-control" value=""/>
                                                     </div>
                                                 </div>
                                             </div>
