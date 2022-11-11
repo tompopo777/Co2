@@ -1,0 +1,181 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} official-car {% endblock %}
+
+{% block body_class %} official-car {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">原物料使用</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="contact-form" method="post" autocomplete="off">
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>原物料名稱</label>
+                                                    <input type="text" name="" class="form-control" id="number only" placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>原物料料號</label>
+                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>原物料種類</label>
+                                                <input type="text" name="number" class="form-control" id="number only" placeholder="ex. 原料/物料">
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="d-flex flex-nowrap">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>一月</th>
+                                                    <th>二月</th>
+                                                    <th>三月</th>
+                                                    <th>四月</th>
+                                                    <th>五月</th>
+                                                    <th>六月</th>
+                                                    <th>七月</th>
+                                                    <th>八月</th>
+                                                    <th>九月</th>
+                                                    <th>十月</th>
+                                                    <th>十一月</th>
+                                                    <th>十二月</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <th width="30">
+                                                        月用量(單位:公噸)
+                                                    </th>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <input class="col-6" type="text">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 text-center">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script>
+        $('#date1').datetimepicker({
+            date: null,
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-tw'),
+            disabledDates: [
+                moment().add(1, 'days'),
+                moment().add(2, 'days'),
+                '2021-10-10',
+                '2021-12-25'
+            ]
+        });
+    </script>
+{% endblock javascripts %}
