@@ -1,0 +1,190 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} employee-commute {% endblock %}
+
+{% block body_class %} employee-commute {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">員工通勤</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="contact-form" method="post" autocomplete="off">
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>員工編號</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only" placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>姓名</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only" placeholder="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>服務部門</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only" placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年工作天數</label>
+                                                    <input type="text" name="" class="form-control" id=""
+                                                           placeholder="有來就算一天">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-6 d-flex align-items-center">
+                                                <div class="btn-group dropend">
+                                                    <button class="btn bg-gradient-light btn-light dropdown-toggle mb-1"
+                                                            type="button" data-bs-toggle="dropdown"
+                                                            aria-expanded="false">
+                                                        交通方式
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                        <!-- Dropdown menu links -->
+                                                        <li><a class="dropdown-item" href="#">走路</a></li>
+                                                        <li><a class="dropdown-item" href="#">自行車</a></li>
+                                                        <li><a class="dropdown-item" href="#">機車</a></li>
+                                                        <li><a class="dropdown-item" href="#">電動機車</a></li>
+                                                        <li><a class="dropdown-item" href="#">汽車(汽油)</a></li>
+                                                        <li><a class="dropdown-item" href="#">汽車(柴油)</a></li>
+                                                        <li><a class="dropdown-item" href="#">汽車(油電)</a></li>
+                                                        <li><a class="dropdown-item" href="#">公車</a></li>
+                                                        <li><a class="dropdown-item" href="#">捷運</a></li>
+                                                        <li><a class="dropdown-item" href="#">高鐵</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>汽/機車排氣量(CC數)</label>
+                                                    <input type="text" name="number" class="form-control" id=""
+                                                           placeholder="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>居住縣市</label>
+                                                    <input type="text" name="" class="form-control" id=""
+                                                           placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>鄉鎮市區</label>
+                                                    <input type="text" name="" class="form-control" id=""
+                                                           placeholder="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>行政區公家機關地址</label>
+                                                    <input type="text" name="" class="form-control" id=""
+                                                           placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>至公司距離</label>
+                                                    <input type="text" name="" class="form-control" id=""
+                                                           placeholder="單位:公里">
+                                                </div>
+
+
+                                            </div>
+
+                                            <div class="d-flex">
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label>上傳引用單據</label>
+                                                        <input type="text" name="number" class="form-control"
+                                                               id="number only" placeholder="請輸入單據名稱">
+                                                    </div>
+                                                </div>
+                                                <div class=" ps-md-2 align-self-center">
+                                                    <div class="col-1 ">
+                                                        <input type="file" class="" name="image" accept="image/*">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12 text-center">
+                                                    <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                        確認
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+
+    <script>
+        $('#date1').datetimepicker({
+            date: null,
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-tw'),
+            disabledDates: [
+                moment().add(1, 'days'),
+                moment().add(2, 'days'),
+                '2021-10-10',
+                '2021-12-25'
+            ]
+        });
+
+        $("#datepicker").datepicker({
+            format: "mm-yyyy",
+            startView: "months",
+            minViewMode: "months"
+        });
+    </script>
+{% endblock javascripts %}
