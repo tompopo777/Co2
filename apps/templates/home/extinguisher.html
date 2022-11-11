@@ -1,5 +1,7 @@
 {% extends "layouts/base.html" %}
+
 {% block title %} extinguisher {% endblock %}
+
 {% block body_class %} extinguisher {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
@@ -7,6 +9,7 @@
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
     <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
     <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
 {% endblock stylesheets %}
 
 
@@ -20,7 +23,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">原物料使用</h3>
+                                    <h3 class="text-white text-primary mb-0">滅火器</h3>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -29,112 +32,104 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>原物料名稱</label>
+                                                    <label>滅火器名稱</label>
                                                     <input type="text" name="" class="form-control" id="number only" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>原物料料號</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                    <label>滅火器類型</label>
+                                                    <input type="text" name="number" class="form-control" id="" placeholder="">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="input-group input-group-static mb-4">
-                                                <label>原物料種類</label>
-                                                <input type="text" name="number" class="form-control" id="number only" placeholder="ex. 原料/物料">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>滅火器編號</label>
+                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>滅火器擺放位置</label>
+                                                    <input type="text" name="number" class="form-control" id="" placeholder="">
+                                                </div>
                                             </div>
                                         </div>
-                                        <br>
-                                        <div class="d-flex flex-nowrap">
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>一月</th>
-                                                    <th>二月</th>
-                                                    <th>三月</th>
-                                                    <th>四月</th>
-                                                    <th>五月</th>
-                                                    <th>六月</th>
-                                                    <th>七月</th>
-                                                    <th>八月</th>
-                                                    <th>九月</th>
-                                                    <th>十月</th>
-                                                    <th>十一月</th>
-                                                    <th>十二月</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <th width="30">
-                                                        月用量(單位:公噸)
-                                                    </th>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr></tr>
-                                                </tbody>
-                                            </table>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>廠商</label>
+                                                    <input type="text" class="form-control" id="" placeholder="選填">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>庫存量</label>
+                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>藥劑規格(單位:磅)</label>
+                                                    <input type="text" class="form-control" id="" placeholder="只能輸入數字">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>藥劑重量(單位:公斤)</label>
+                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>滅火器使用數量</label>
+                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="ms-0" for="start">使用日期</label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        <input type="date" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>滅火器更換/填充數量</label>
+                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="" for="start">更換/填充日期</label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        <input type="date" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                            </div>
+                                        </div>
+                                        <div class=" ps-md-2 align-self-center">
+                                            <div class="col-1 ">
+                                                <input type="file" class="" name="image" accept="image/*">
+                                            </div>
                                         </div>
                                     </div>
 
