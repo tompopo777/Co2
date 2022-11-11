@@ -1,15 +1,17 @@
 .body{
-    color: #7b809a;
 
 }
 .page-header{
 
 }
-.form-control:focus{
+
+/*Label_AfterClick*/
+.input-group.input-group-dynamic.is-focused label, .input-group.input-group-static.is-focused label {
     color: #495057;
-    background-color: transparent;
-    border-color: transparent;
-    outline: 0;
-    box-shadow: none;
-    background-image: linear-gradient(0deg, #adb5bd 2px, rgba(156, 39, 176, 0) 0);
+}
+
+/*BottomLine_AfterClick*/
+.input-group.input-group-dynamic .form-control, .input-group.input-group-dynamic .form-control:focus, .input-group.input-group-static .form-control, .input-group.input-group-static .form-control:focus {
+    background-image: linear-gradient(0deg, #495057 2px, rgba(156, 39, 176, 0) 0), linear-gradient(0deg, #d2d2d2 1px, rgba(209, 209, 209, 0) 0);
+    border-radius: 0 !important;
 }
