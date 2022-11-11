@@ -1,8 +1,8 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} personnel-inventory {% endblock %}
+{% block title %} employee-business-trip {% endblock %}
 
-{% block body_class %} personnel-inventory {% endblock %}
+{% block body_class %} employee-business-trip {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -23,89 +23,94 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">人員清冊</h3>
+                                    <h3 class="text-white text-primary mb-0">員工出差</h3>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <form id="contact-form" method="post" autocomplete="off">
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>西元年</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="ex. 2022">
+                                        <div class="row mb-4 d-flex align-items-center">
+                                            <div class="col-4 ">
+                                                <div class="input-group input-group-static">
+                                                    <label>出差地點</label>
+                                                    <input type="text" name="number" class="form-control" id=""
+                                                           placeholder="">
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4 ps-md-2">
+                                                <label class="ms-0" for="start">出差日期</label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        <input type="date" class="form-control" id="period_startime"
+                                                               name="period_startime"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
                                                 <div class="btn-group dropend">
-                                                    <button class="btn bg-gradient-light btn-light dropdown-toggle mb-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        月份
+                                                    <button class="btn bg-gradient-light btn-light dropdown-toggle mb-1"
+                                                            type="button" data-bs-toggle="dropdown"
+                                                            aria-expanded="false">
+                                                        交通方式
                                                     </button>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                                         <!-- Dropdown menu links -->
-                                                        <li><a class="dropdown-item" href="#">一月</a></li>
-                                                        <li><a class="dropdown-item" href="#">二月</a></li>
-                                                        <li><a class="dropdown-item" href="#">三月</a></li>
-                                                        <li><a class="dropdown-item" href="#">四月</a></li>
-                                                        <li><a class="dropdown-item" href="#">五月</a></li>
-                                                        <li><a class="dropdown-item" href="#">六月</a></li>
-                                                        <li><a class="dropdown-item" href="#">七月</a></li>
-                                                        <li><a class="dropdown-item" href="#">八月</a></li>
-                                                        <li><a class="dropdown-item" href="#">九月</a></li>
-                                                        <li><a class="dropdown-item" href="#">十月</a></li>
-                                                        <li><a class="dropdown-item" href="#">十一月</a></li>
-                                                        <li><a class="dropdown-item" href="#">十二月</a></li>
+                                                        <li><a class="dropdown-item" href="#">自駕汽車</a></li>
+                                                        <li><a class="dropdown-item" href="#">計程車</a></li>
+                                                        <li><a class="dropdown-item" href="#">火車</a></li>
+                                                        <li><a class="dropdown-item" href="#">高鐵</a></li>
+                                                        <li><a class="dropdown-item" href="#">捷運</a></li>
+                                                        <li><a class="dropdown-item" href="#">船舶</a></li>
+                                                        <li><a class="dropdown-item" href="#">飛機</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>員工人數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                    <label>員工編號</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only" placeholder="">
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>每日工作時數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
+                                                    <label>姓名</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only" placeholder="">
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>服務部門</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only" placeholder="">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>每月工作天數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
+                                                    <label>出發地</label>
+                                                    <input type="text" name="number" class="form-control" id="" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>加班+補修時數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>請假時數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>休假時數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
+                                                    <label>目的地</label>
+                                                    <input type="text" name="number" class="form-control" id=""
+                                                           placeholder="">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="d-flex">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>上傳引用單據</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                    <label>上傳員工出差引用單據</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only" placeholder="請輸入單據名稱">
                                                 </div>
                                             </div>
                                             <div class=" ps-md-2 align-self-center">
@@ -114,6 +119,30 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>距離(單位:pkm)</label>
+                                                    <input type="text" name="number" class="form-control" id=""
+                                                           placeholder="「來回」距離">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>上傳距離引用單據</label>
+                                                    <input type="text" name="number" class="form-control"
+                                                           id="number only" placeholder="請輸入單據名稱">
+                                                </div>
+                                            </div>
+                                            <div class=" ps-md-2 align-self-center">
+                                                <div class="col-1">
+                                                    <input type="file" class="" name="image" accept="image/*">
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="row">
                                             <div class="col-md-12 text-center">
                                                 <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
