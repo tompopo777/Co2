@@ -10,6 +10,8 @@ from django.shortcuts import redirect, render
 from django.template import loader
 from django.urls import reverse
 
+from .forms import EGform
+from .models import EmergencyGenerators
 
 
 @login_required(login_url="/login/")
@@ -47,53 +49,67 @@ def pages(request):
 
 
 @login_required(login_url="/login/")
-def emergency_generators(request):
+def emergency_generators_add(request):
     if request.method == "POST":
-        device_id = request.POST['device_id']
-        period_startime = request.POST['period_startime']
-        period_endtime = request.POST['period_endtime']
-        position = request.POST['position']
-        department = request.POST['department']
-        january = request.POST['january']
-        february = request.POST['february']
-        march = request.POST['march']
-        april = request.POST['april']
-        may = request.POST['may']
-        june = request.POST['june']
-        july = request.POST['july']
-        august = request.POST['august']
-        september = request.POST['september']
-        october = request.POST['october']
-        november = request.POST['november']
-        december = request.POST['december']
-        image_note = request.POST['image_note']
-        image_path = request.POST['image_path']
+        add = EGform(request.POST)
 
-        unit = emergency_generators.objects.creat(
-            device_id=device_id,
-            period_startime=period_startime,
-            period_endtime=period_endtime,
-            position=position,
-            department=department,
-            january=january,
-            february=february,
-            march=march,
-            april=april,
-            may=may,
-            june=june,
-            july=july,
-            august=august,
-            september=september,
-            october=october,
-            november=november,
-            december=december,
-            image_note=image_note,
-            image_path=image_path
-        )
+        if add.is_valid():
+            device_id = request.POST['device_id']
+            period_startime = request.POST['period_startime']
+            period_endtime = request.POST['period_endtime']
+            position = request.POST['position']
+            department = request.POST['department']
+            january = request.POST['january']
+            february = request.POST['february']
+            march = request.POST['march']
+            april = request.POST['april']
+            may = request.POST['may']
+            june = request.POST['june']
+            july = request.POST['july']
+            august = request.POST['august']
+            september = request.POST['september']
+            october = request.POST['october']
+            november = request.POST['november']
+            december = request.POST['december']
+            image_note = request.POST['image_note']
+            image_path = request.POST['image_path']
 
-        unit.save()
+            unit = EmergencyGenerators.objects.creat(
+                device_id=device_id,
+                period_startime=period_startime,
+                period_endtime=period_endtime,
+                position=position,
+                department=department,
+                january=january,
+                february=february,
+                march=march,
+                april=april,
+                may=may,
+                june=june,
+                july=july,
+                august=august,
+                september=september,
+                october=october,
+                november=november,
+                december=december,
+                image_note=image_note,
+                image_path=image_path
+            )
 
-        return redirect('/emergency-generator/')
+            unit.save()
+
+            return redirect('/emergency-generators/')
+
+        else:
+            message = '請完整填寫',
     else:
         message = '請輸入資料(資料不作驗證)'
-    return render(request, "emergency-generator.html", locals())
+        post = EGform()
+    return redirect('/carbon-system/')
+@login_required(login_url="/login/")
+def emergency_generators(request):
+    return render(request, "home/emergency-generator.html", locals())
+
+@login_required(login_url="/login/")
+def carbon_system(request):
+    return render(request, "home/carbon-system.html", locals())
