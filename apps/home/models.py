@@ -8,33 +8,39 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
-# class EmergencyGenerators(models.Model):
-#     id = models.IntegerField(max_length= 10, null=False)
-#     period_starttime = models.DateField(null=False)
-#     period_endttime = models.DateField(null=False)
-#     device_id = models.CharField(max_length=30, null=False)
-#     device_capacity = models.CharField(max_length=30, null=False)
-#     capacity_unit = models.CharField(max_length=10, null=False)
-#     position = models.CharField(max_length=30, null=False)
-#     department = models.CharField(max_length=100, null=True)
-#     total = models.FloatField(null=False)
-#     fuel_unit = models.CharField(max_length=10, null=False)
-#     image_path = models.CharField(max_length=100, null=False)
-#     january = models.FloatField(null=False)
-#     february = models.FloatField(null=False)
-#     march = models.FloatField(null=False)
-#     april = models.FloatField(null=False)
-#     may = models.FloatField(null=False)
-#     june = models.FloatField(null=False)
-#     july = models.FloatField(null=False)
-#     august = models.FloatField(null=False)
-#     september = models.FloatField(null=False)
-#     october = models.FloatField(null=False)
-#     november = models.FloatField(null=False)
-#     december = models.FloatField(null=False)
-#
-#     def _str_(self):
-#         return self.id
+class SectionOne(models.Model):
+    CP_id = models.IntegerField(primary_key=True)
+    C_name = models.CharField(max_length=30)
+    P_name = models.CharField(max_length=30)
 
+class SectionTwo(models.Model):
+    D_id = models.IntegerField(primary_key=True)
+    D_name = models.CharField(max_length=30)
+    CP_id = models.ForeignKey(SectionOne, on_delete=models.CASCADE)
 
-
+class EmergencyGenerators(models.Model):
+    id = models.IntegerField(primary_key=True)
+    D_id = models.ForeignKey(SectionTwo, on_delete=models.CASCADE)
+    period_starttime = models.DateField
+    period_endttime = models.DateField
+    device_id = models.CharField(max_length=30)
+    device_capacity = models.CharField(max_length=30)
+    position = models.CharField(max_length=30)
+    department = models.CharField(max_length=30)
+    total = models.FloatField
+    image_path = models.CharField
+    image_note = models.CharField
+    january = models.FloatField
+    february = models.FloatField
+    march = models.FloatField
+    april = models.FloatField
+    may = models.FloatField
+    june = models.FloatField
+    july = models.FloatField
+    august = models.FloatField
+    september = models.FloatField
+    october = models.FloatField
+    november = models.FloatField
+    december = models.FloatField
+    def _str_(self):
+        return self.id
