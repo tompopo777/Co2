@@ -27,19 +27,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="contact-form" method="post" autocomplete="off">
+                                    <form action="/emergency_generators_add/" name="EmergencyGenerators" method="POST">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>設備編號</label>
+                                                    <label>設備編號{{ post.device_id }}</label>
                                                     <input type="text" class="form-control"
                                                            id="device_id" name="device_id"
                                                            placeholder="只能輸入數字">
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
-                                                <label class="ms-0" for="start">燃料使用開始時間</label>
+                                                <label class="ms-0" for="start">燃料使用開始時間{{ post.period_startime }}</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
                                                         <input type="date" class="form-control" id="period_startime" name="period_startime"/>
@@ -47,7 +48,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
-                                                <label class="" for="start">燃料使用結束時間</label>
+                                                <label class="" for="start">燃料使用結束時間{{ post.period_endtime }}</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
                                                         <input type="date" class="form-control" id="period_endtime" name="period_endtime"/>
@@ -57,19 +58,19 @@
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
-                                                <label>發電機容量</label>
-                                                <input type="text" class="form-control" id="number only" placeholder="單位:公升">
+                                                <label>發電機容量{{ post.device_capacity }}</label>
+                                                <input type="text" class="form-control" id="device_capacity" name="device_capacity" placeholder="單位:公升">
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
-                                                <label>設置地點</label>
+                                                <label>設置地點{{ post.position }}</label>
                                                 <input type="text" id="position" name="position" class="form-control"/>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
-                                                <label>所屬單位</label>
+                                                <label>所屬單位{{ post.department }}</label>
                                                 <input type="text" id="department" name="department" class="form-control"/>
                                             </div>
                                         </div>
@@ -81,18 +82,18 @@
                                         <table class="table">
                                             <thead>
                                             <tr>
-                                                <th>一月</th>
-                                                <th>二月</th>
-                                                <th>三月</th>
-                                                <th>四月</th>
-                                                <th>五月</th>
-                                                <th>六月</th>
-                                                <th>七月</th>
-                                                <th>八月</th>
-                                                <th>九月</th>
-                                                <th>十月</th>
-                                                <th>十一月</th>
-                                                <th>十二月</th>
+                                                <th>一月{{ post.january }}</th>
+                                                <th>二月{{ post.february }}</th>
+                                                <th>三月{{ post.march }}</th>
+                                                <th>四月{{ post.april }}</th>
+                                                <th>五月{{ post.may }}</th>
+                                                <th>六月{{ post.june }}</th>
+                                                <th>七月{{ post.july }}</th>
+                                                <th>八月{{ post.august }}</th>
+                                                <th>九月{{ post.september }}</th>
+                                                <th>十月{{ post.october }}</th>
+                                                <th>十一月{{ post.november }}</th>
+                                                <th>十二月{{ post.december }}</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -165,12 +166,12 @@
                                     <div class="d-flex">
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
-                                                <label>上傳引用單據</label>
+                                                <label>上傳引用單據{{ post.image_note }}</label>
                                                 <input type="text" name="image_note" class="form-control" id="image_note" placeholder="請輸入單據名稱">
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
-                                            <div class="col-1 ">
+                                            <div class="col-1 "{{ post.image_path }}>
                                                 <input type="file" class="" name="image_path" id="image_path" accept="image/*">
                                             </div>
                                         </div>
