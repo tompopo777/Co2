@@ -11,7 +11,6 @@ from django.template import loader
 from django.urls import reverse
 
 
-
 @login_required(login_url="/login/")
 def index(request):
     context = {'segment': 'index'}
@@ -45,6 +44,20 @@ def pages(request):
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
 
+@login_required(login_url="/login/")
+def getClass(request):
+    # allClass = SectionOne.objects.all()
+    # context = {'allClass': allClass}
+    # return render(request, 'home/carbon-system.html', context)
+    return redirect('/home/official-car.html/')
+    # return render_to_response("home/carbon-system.html", locals())
+
+    # if request.method == "POST":
+    #     form = Inquire(request.POST)
+    #     if form.is_valid():
+    #         return render(request, "carbon-system.html", {'allClass': allClass})
+    # else:
+    #     form = Inquire()
 
 @login_required(login_url="/login/")
 def emergency_generators(request):
