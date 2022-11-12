@@ -21,18 +21,33 @@
                     <div class="container py-4">
                         <div class="row">
                             <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
-                                <form role="form" id="contact-form" method="post" autocomplete="off">
+                                <form action="/Inquire/" role="form" id="contact-form" method="post" autocomplete="off">
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="d-flex">
+                                                <h3>
+                                                    {% for a in allClass %}
+
+                                                        {{ a }}
+
+                                                    {% endfor %}
+                                                123
+                                                </h3>
                                                 <div class="col-3">
-                                                    <label class="lead form-label">請選擇: </label>
+                                                    <label class="lead form-label" for="ClassName">請選擇: </label>
                                                 </div>
                                                 <div class="btn-group dropend">
                                                     <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
                                                             data-bs-toggle="dropdown" aria-expanded="false">
                                                         類別
                                                     </button>
+                                                    <select class="dropdown-menu">
+                                                        {% for a in allClass %}
+                                                            <option class="dropdown-item" id="">
+                                                                {{ a.C_name }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
                                                     <ul class="dropdown-menu">
                                                         <!-- Dropdown menu links -->
                                                         <li><a class="dropdown-item" href="#">Action</a></li>
@@ -80,6 +95,11 @@
                                             </div>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                        <div class="mb-4">
+                                            <div class="d-flex">
+                                                <input type="submit" value="ok">
+                                            </div>
+                                        </div>
                                         <div class="mb-4">
                                             <div class="d-flex">
                                                 <a type="button" class="btn btn-outline-secondary me-1" href="emergency-generator.html">
