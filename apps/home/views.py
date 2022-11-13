@@ -65,7 +65,7 @@ def pages(request):
 @login_required(login_url="/login/")
 def getClass(request):
     allClass = section_one.objects.all()
-    a = allClass.filter(C_name="")
+    a = allClass.filter(c_name="")
     context = {'allClass': allClass}
     return render(request, "home/carbon-system.html", context)
     # return render(request, "home/official-car.html", locals())
@@ -151,10 +151,10 @@ def carbon_system(request):
         if currentClass == None:
             currentClass = 0
         print(">>>>>>>>>>>>>>>>>>>>>.", currentClass)
-        allProcess = section_one.objects.filter(currentClass='C_name')
-        # allProcess = section_one.objects.filter(C_name='1')
+        allProcess = section_one.objects.filter(c_name=currentClass)
+        # allProcess = section_one.objects.filter(c_name='1')
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1")
-        selectProcess = allProcess.P_name
+        selectProcess = allProcess.p_name
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
         context = {'allProcess': selectProcess}
     return render(request, "home/carbon-system.html", locals())
