@@ -15,6 +15,9 @@ urlpatterns = [
     path("carbon-system/", views.carbon_system),
     path("emergency_generators/", views.emergency_generators),
     path("emergency_generators_add/", views.emergency_generators_add),
+    path("getClass/", views.getClass),
+    # path(r'^ajax/load_cities/$', views.ajax_load_process),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
+
 ]

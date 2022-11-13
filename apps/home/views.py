@@ -5,13 +5,14 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django import template
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.template import loader
 from django.urls import reverse
 
 from .forms import EGform
-from .models import EmergencyGenerators
+from .models import EmergencyGenerators, SectionOne, SectionTwo
+
 
 @login_required(login_url="/login/")
 def index(request):
@@ -45,14 +46,27 @@ def pages(request):
     except:
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
+# ajax
+# @login_required(login_url="/login/")
+# class ClientDetailView(DetailView):
+#     model = Client
+# @login_required(login_url="/login/")
+# def ajax_load_process(request):
+#     if request.method == 'GET':
+#         current_class = request.GET.get('currentClass', None)
+#         if current_class:
+#             data = list(SectionOne.objects.filter(C_name=current_class).values("P_name", "CP_id"))
+#             return JsonResponse(data, safe=False)
+
+
 
 @login_required(login_url="/login/")
 def getClass(request):
-    # allClass = SectionOne.objects.all()
-    # context = {'allClass': allClass}
-    # return render(request, 'home/carbon-system.html', context)
-    return redirect('/home/official-car.html/')
-    # return render_to_response("home/carbon-system.html", locals())
+    allClass = SectionOne.objects.all()
+    a = allClass.filter(C_name="")
+    context = {'allClass': allClass}
+    return render(request, "home/carbon-system.html", context)
+    # return render(request, "home/official-car.html", locals())
 
     # if request.method == "POST":
     #     form = Inquire(request.POST)
@@ -125,4 +139,17 @@ def emergency_generators(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>0")
+
+    if request.method == 'GET':
+        currentClass = request.GET.get('cclass')
+        if currentClass == None:
+            currentClass = 0
+        print(">>>>>>>>>>>>>>>>>>>>>.", currentClass)
+        # allProcess = SectionOne.objects.filter(C_name=currentClass)
+        allProcess = SectionOne.objects.filter(C_name='1')
+        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1")
+        selectProcess = allProcess.P_name
+        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
+        context = {'allProcess': selectProcess}
     return render(request, "home/carbon-system.html", locals())

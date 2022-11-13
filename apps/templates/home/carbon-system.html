@@ -21,71 +21,85 @@
                     <div class="container py-4">
                         <div class="row">
                             <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
-                                <form action="/Inquire/" role="form" id="contact-form" method="post" autocomplete="off">
+                                <form action="" role="form" id="contact-form" method="GET" autocomplete="off">
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="d-flex">
+
+                                            <form method="get" action="/cclass/">
                                                 <div class="col-3">
-                                                    <label class="lead form-label" for="ClassName">請選擇: </label>
+                                                    <h2 class="lead form-label" for="ClassName">請選擇: </h2>
                                                 </div>
                                                 <div class="btn-group dropend">
                                                     <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
                                                             data-bs-toggle="dropdown" aria-expanded="false">
                                                         類別
                                                     </button>
-                                                    <select class="dropdown-menu" href="getClass/">
-                                                        {% for a in allClass %}
-                                                            <option class="dropdown-item" id="">
-                                                                {{ a.C_name }}
-                                                            </option>
-                                                        {% endfor %}
+                                                    <select class="dropdown-menu" id="dropdown-menu-1">
+                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="1">
+                                                            類別一
+                                                        </option>
+                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="2">
+                                                            類別二
+                                                        </option>
+                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="3">
+                                                            類別三
+                                                        </option>
+                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="4">
+                                                            類別四
+                                                        </option>
                                                     </select>
-                                                    <ul class="dropdown-menu">
-                                                        <!-- Dropdown menu links -->
-                                                        <li><a class="dropdown-item" href="#">Action</a></li>
-                                                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                        <li><a class="dropdown-item" href="#">Something else here</a>
-                                                        </li>
-                                                    </ul>
                                                 </div>
-                                            </div>
-                                            <div class="d-flex">
-                                                <div class="d-flex align-items-center col-3">
-                                                    <label class="lead form-label">請選擇: </label>
+                                                <div class="col-12"></div>
+                                                <input type="submit" value="ok" class="btn-sm btn-outline-secondary ms-1">
+                                            </form>
+                                        </div>
+                                        <div class="row">
+                                            <form method="get" action="/process/">
+                                                <div class="col-3">
+                                                    <h2 class="lead form-label" for="ProcessName">請選擇: </h2>
                                                 </div>
                                                 <div class="btn-group dropend">
                                                     <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
                                                             data-bs-toggle="dropdown" aria-expanded="false">
-                                                        過程或區域
+                                                        過程區域
                                                     </button>
-                                                    <ul class="dropdown-menu">
-                                                        <!-- Dropdown menu links -->
-                                                        <li><a class="dropdown-item" href="#">Action</a></li>
-                                                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                        <li><a class="dropdown-item" href="#">Something else here</a>
-                                                        </li>
-                                                    </ul>
+                                                    <select class="dropdown-menu" id="dropdown-menu-1">
+                                                        {% for p in allProcess %}
+                                                            <option class="dropdown-item" id="question-subject" name="cclass" value="1">
+                                                                {{ p.P_name }}
+                                                            </option>
+                                                        {% endfor %}
+                                                    </select>
                                                 </div>
-                                            </div>
-                                            <div class="d-flex">
-                                                <div class="d-flex align-items-center col-3">
-                                                    <label class="lead form-label">請選擇: </label>
+                                                <div class="col-12"></div>
+                                                <input type="submit" value="ok" class="btn-sm btn-outline-secondary ms-1">
+                                            </form>
+                                        </div>
+                                        <div class="row">
+                                            <form method="get" action="/cclass/">
+                                                <div class="col-3">
+                                                    <h2 class="lead form-label" for="ClassName">請選擇: </h2>
                                                 </div>
                                                 <div class="btn-group dropend">
                                                     <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
                                                             data-bs-toggle="dropdown" aria-expanded="false">
                                                         設備
                                                     </button>
-                                                    <ul class="dropdown-menu">
-                                                        <!-- Dropdown menu links -->
-                                                        <li><a class="dropdown-item" href="#">Action</a></li>
-                                                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                                                        <li><a class="dropdown-item" href="#">Something else here</a>
-                                                        </li>
-                                                    </ul>
+                                                    <select class="dropdown-menu" id="dropdown-menu-1">
+                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="1">
+
+                                                        </option>
+                                                    </select>
                                                 </div>
-                                            </div>
+                                                <div class="col-12"></div>
+                                                <input type="submit" value="ok" class="btn-sm btn-outline-secondary ms-1">
+                                            </form>
                                         </div>
+
+                                        <div class="mb-4">
+                                            <input type="submit" value="送出" class="btn btn-outline-secondary ms-1">
+                                        </div>
+
                                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                                         <div class="mb-4">
                                             <div class="d-flex">
@@ -115,6 +129,7 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 
     <script>
         // get the element to animate
@@ -204,5 +219,28 @@
             }, 6);
         }
     </script>
+
+    {#    <script>#}
+    {#    $("#dropdown-menu-1").val().change(function() {#}
+    {#      var currentClass = $(this).val();#}
+    {##}
+    {#      $.ajax({#}
+    {#        url: '/dropdown/ajax/load_cities/',#}
+    {#        data: {#}
+    {#          'currentClass': currentClass#}
+    {#        },#}
+    {#        type: 'GET',#}
+    {#        dataType: 'json',#}
+    {#        success: function (data) {#}
+    {#            var content='';#}
+    {#            $.each(data, function(i, item){#}
+    {#                  content+='<option value='+item.id+'>'+item.name+'</option>'#}
+    {#                });#}
+    {#            $('#dropdown-menu-2').html(content)#}
+    {#        },#}
+    {##}
+    {#      });#}
+    {#    });#}
+    {#  </script>#}
 
 {% endblock javascripts %}
