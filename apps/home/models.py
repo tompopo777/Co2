@@ -8,14 +8,14 @@ from django.contrib.auth.models import User, UserManager
 
 
 # Create your models here.
-class SectionOne(models.Model):
+class section_one(models.Model):
     CP_id = models.IntegerField(primary_key=True)
     C_name = models.IntegerField
     P_name = models.CharField(max_length=30)
-class SectionTwo(models.Model):
+class section_two(models.Model):
     D_id = models.IntegerField(primary_key=True)
     D_name = models.CharField(max_length=30)
-    CP_id = models.ForeignKey(SectionOne, on_delete=models.CASCADE)
+    CP_id = models.ForeignKey(section_one, on_delete=models.CASCADE)
 #
 # class GalaxyUser(models.Model):
 #     id = models.IntegerField(primary_key=True)
@@ -37,9 +37,9 @@ class SectionTwo(models.Model):
 
 
 class emergency_generators(models.Model):
-    # id = models.IntegerField(primary_key=True)
-    # D_id = models.ForeignKey(SectionTwo, on_delete=models.CASCADE)
-    device_id = models.CharField(primary_key=True, max_length=30)
+    id = models.IntegerField(primary_key=True,)
+    D_id = models.ForeignKey(section_two, on_delete=models.CASCADE)
+    device_id = models.CharField(max_length=30)
     period_starttime = models.DateField()
     period_endttime = models.DateField()
     device_capacity = models.CharField(max_length=30)

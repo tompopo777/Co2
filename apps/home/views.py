@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 
 from .forms import EGform
-from apps.home.models import emergency_generators
+from apps.home.models import emergency_generators, section_one
 
 
 @login_required(login_url="/login/")
@@ -64,7 +64,7 @@ def pages(request):
 
 @login_required(login_url="/login/")
 def getClass(request):
-    allClass = SectionOne.objects.all()
+    allClass = section_one.objects.all()
     a = allClass.filter(C_name="")
     context = {'allClass': allClass}
     return render(request, "home/carbon-system.html", context)
@@ -151,8 +151,8 @@ def carbon_system(request):
         if currentClass == None:
             currentClass = 0
         print(">>>>>>>>>>>>>>>>>>>>>.", currentClass)
-        # allProcess = SectionOne.objects.filter(C_name=currentClass)
-        allProcess = SectionOne.objects.filter(C_name='1')
+        allProcess = section_one.objects.filter(currentClass='C_name')
+        # allProcess = section_one.objects.filter(C_name='1')
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1")
         selectProcess = allProcess.P_name
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
