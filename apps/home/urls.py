@@ -13,7 +13,7 @@ urlpatterns = [
     # The home page
     path('', views.index, name='home'),
     path("carbon-system/", views.carbon_system),
-    path("emergency_generators/", views.emergency_generators),
+    path("emergency_generator/", views.emergency_generator),
     path("emergency_generators_add/", views.emergency_generators_add),
     path("getClass/", views.getClass),
     # path(r'^ajax/load_cities/$', views.ajax_load_process),
