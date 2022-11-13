@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 # Create your models here.
 class SectionOne(models.Model):
     CP_id = models.IntegerField(primary_key=True)
-    C_name = models.CharField(max_length=30)
+    C_name = models.IntegerField
     P_name = models.CharField(max_length=30)
 
 class SectionTwo(models.Model):
