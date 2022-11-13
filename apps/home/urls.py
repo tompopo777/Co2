@@ -13,7 +13,7 @@ urlpatterns = [
     # The home page
     path('', views.index, name='home'),
     path("carbon-system/", views.carbon_system),
-    path("emergency_generators/", views.emergency_generators),
+    path("emergency_generator/", views.emergency_generator),
     path("emergency_generators_add/", views.emergency_generators_add),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),

@@ -3,8 +3,8 @@ from django import forms
 
 class EGform(forms.Form):
     device_id = forms.CharField(label='設備編號', max_length=10)
-    period_startime = forms.DateField(label='燃料使用開始時間')
-    period_endtime = forms.DateField(label='燃料使用結束時間')
+    period_starttime = forms.DateField(label='燃料使用開始時間')
+    period_endttime = forms.DateField(label='燃料使用結束時間')
     device_capacity = forms.CharField(label='發電機容量', max_length=30)
     position = forms.CharField(label='設置地點', max_length=30)
     department = forms.CharField(label='所屬單位', max_length=100)
