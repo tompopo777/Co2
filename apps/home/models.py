@@ -22,7 +22,7 @@ class emergency_generators(models.Model):
     device_id = models.CharField(max_length=30)
     period_starttime = models.DateField()
     period_endttime = models.DateField()
-    device_capacity = models.CharField(max_length=30)
+    device_capacity = models.IntegerField(max_length=10)
     position = models.CharField(max_length=30)
     department = models.CharField(max_length=100)
     january = models.FloatField()
@@ -40,5 +40,4 @@ class emergency_generators(models.Model):
     image_note = models.CharField(max_length=30)
     image_path = models.CharField(max_length=100)
 
-    def _str_(self):
-        return self.device_id
+
