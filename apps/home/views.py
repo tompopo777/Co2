@@ -144,17 +144,18 @@ def emergency_generator(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>0")
-    #
-    # if request.method == 'GET':
-    #     currentClass = request.GET.get('cclass')
-    #     if currentClass == None:
-    #         currentClass = 0
-    #     print(">>>>>>>>>>>>>>>>>>>>>.", currentClass)
-    #     allProcess = section_one.objects.filter(c_name=currentClass).values()
-    #     # allProcess = section_one.objects.filter(c_name='1')
-    #     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1")
-    #     # selectProcess = allProcess.p_name
-    #     # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
-    #     context = {'allProcess': allProcess}
-    return render(request, "home/carbon-system.html", locals())
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>0")
+
+    if request.method == 'GET':
+        currentClass = request.GET.get('cclass')
+        if currentClass == None:
+            currentClass = 0
+        print(">>>>>>>>>>>>>>>>>>>>>.", currentClass)
+        aa = section_one.objects.all()
+        allProcess = section_one.objects.filter(c_name=currentClass).values()
+        # allProcess = section_one.objects.filter(c_name='1')
+        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1")
+        # selectProcess = allProcess.p_name
+        # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
+        context = {'allProcess': allProcess}
+    return render(request, "home/carbon-system.html", context)
