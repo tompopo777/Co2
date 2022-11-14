@@ -86,6 +86,7 @@ def emergency_generators_add(request):
             device_id = EG_add.cleaned_data['device_id']
             period_starttime = EG_add.cleaned_data['period_starttime']
             period_endttime = EG_add.cleaned_data['period_endttime']
+            device_capacity = EG_add.cleaned_data['device_capacity']
             position = EG_add.cleaned_data['position']
             department = EG_add.cleaned_data['department']
             january = EG_add.cleaned_data['january']
@@ -107,6 +108,7 @@ def emergency_generators_add(request):
                 device_id=device_id,
                 period_starttime=period_starttime,
                 period_endttime=period_endttime,
+                device_capacity=device_capacity,
                 position=position,
                 department=department,
                 january=january,
