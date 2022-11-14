@@ -7,7 +7,6 @@ from django.conf.urls import url
 from django.urls import path, re_path
 from apps.home import views
 
-
 urlpatterns = [
 
     # The home page
@@ -16,7 +15,8 @@ urlpatterns = [
     path("emergency_generator/", views.emergency_generator),
     path("emergency_generators_add/", views.emergency_generators_add),
     path("getClass/", views.getClass),
-    # path(r'^ajax/load_cities/$', views.ajax_load_process),
+    path("ajax/process", views.load_process, name='loadprocess'),
+    path("ajax/device", views.load_device, name='loaddevice'),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
 
