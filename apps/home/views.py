@@ -12,7 +12,7 @@ from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 
 from .forms import EGform
-from apps.home.models import emergency_generators, section_one
+from apps.home.models import emergency_generators, section_one, section_two
 
 
 @login_required(login_url="/login/")
@@ -47,18 +47,31 @@ def pages(request):
     except:
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
-# ajax
-# @login_required(login_url="/login/")
-# class ClientDetailView(DetailView):
-#     model = Client
-# @login_required(login_url="/login/")
-# def ajax_load_process(request):
-#     if request.method == 'GET':
-#         current_class = request.GET.get('currentClass', None)
-#         if current_class:
-#             data = list(SectionOne.objects.filter(C_name=current_class).values("P_name", "CP_id"))
-#             return JsonResponse(data, safe=False)
 
+# ajax
+@login_required(login_url="/login/")
+def load_process(request):
+    if request.method == 'GET':
+        current_class = request.GET.get('currentClass', None)
+        # print("000000000000000000000000000000000000000000000000000000")
+        if current_class:
+            all = list(section_one.objects.all())
+            print("777777777777777777777777777777777777777777777",all)
+            data = list(section_one.objects.filter(c_name=current_class).values("p_name", "cp_id"))
+            return JsonResponse(data, safe=False)
+@login_required(login_url="/login/")
+def load_device(request):
+    if request.method == 'GET':
+        current_process = request.GET.get('currentProcess', None)
+        if current_process:
+            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1321213", current_process)
+            # fk_cpId = section_one.objects.filter(cp_id=current_process)
+            all = list(section_two.objects.all())
+            print("00000000000000000000000000000000000000",all)
+            d_data = list(section_two.objects.filter(cp_id=current_process).values("d_name", "d_id"))
+            # d_data = list(section_two.objects.filter(cp_id__cp_id=current_process).values())
+            print("111111111111111111111111111111111111111111111111111111111", d_data)
+            return JsonResponse(d_data, safe=False)
 
 
 
@@ -146,18 +159,17 @@ def emergency_generator(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>0")
-
-    if request.method == 'GET':
-        currentClass = request.GET.get('cclass')
-        if currentClass == None:
-            currentClass = 0
-        print(">>>>>>>>>>>>>>>>>>>>>.", currentClass)
-        aa = section_one.objects.all()
-        allProcess = section_one.objects.filter(c_name=currentClass).values()
-        # allProcess = section_one.objects.filter(c_name='1')
-        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1")
-        # selectProcess = allProcess.p_name
-        # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
-        context = {'allProcess': allProcess}
-    return render(request, "home/carbon-system.html", context)
+    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>0")
+    #
+    # if request.method == 'GET':
+    #     currentClass = request.GET.get('cclass')
+    #     if currentClass == None:
+    #         currentClass = 0
+    #     allProcess = section_one.objects.all()
+    #         # filter(c_name=currentClass).values()
+    #     selectProcess = allProcess.filter(c_name=currentClass)
+    #     for a in selectProcess:
+    #         print(">>>>>>>>>>>>>>>>>...", a.p_name)
+    #     # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
+    #     context = {'allProcess': allProcess}
+    return render(request, "home/carbon-system.html", locals())

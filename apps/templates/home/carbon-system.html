@@ -23,85 +23,62 @@
                             <form action="" role="form" id="contact-form" method="GET" autocomplete="off">
                                 <div class="card-body">
                                     <div class="row">
-                                        <form method="get" action="/cclass/">
-                                            <div class="col-3">
-                                                <h2 class="lead form-label" for="ClassName">請選擇: </h2>
+                                        <div class="col-3">
+                                            <h2 class="lead form-label" for="ClassName">請選擇: </h2>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="btn-group dropend">
+                                                <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
+                                                        data-bs-toggle="dropdown" aria-expanded="false" id="dr1">
+                                                    類別
+                                                </button>
+                                                <select class="dropdown-menu" id="dropdownmenu1">
+                                                    <option class="dropdown-item" id="question-subject" value="0">
+                                                        <---請選擇類別--->
+                                                    </option>
+                                                    <option class="dropdown-item" id="question-subject" value="1">
+                                                        類別一
+                                                    </option>
+                                                    <option class="dropdown-item" id="question-subject" value="2">
+                                                        類別二
+                                                    </option>
+                                                    <option class="dropdown-item" id="question-subject" value="3">
+                                                        類別三
+                                                    </option>
+                                                    <option class="dropdown-item" id="question-subject" value="4">
+                                                        類別四
+                                                    </option>
+                                                </select>
                                             </div>
-                                            <div class="col-6">
-                                                <div class="btn-group dropend">
-                                                    <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                                        類別
-                                                    </button>
-                                                    <select class="dropdown-menu" id="dropdown-menu-1">
-                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="1">
-                                                            類別一
-                                                        </option>
-                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="2">
-                                                            類別二
-                                                        </option>
-                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="3">
-                                                            類別三
-                                                        </option>
-                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="4">
-                                                            類別四
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
-                                                <input type="submit" value="ok" class="btn-sm btn-outline-secondary ms-1">
-                                            </div>
-
-                                        </form>
+                                        </div>
                                     </div>
                                     <div class="row">
-                                        <form method="get" action="//">
-                                            <div class="col-3">
-                                                <h2 class="lead form-label" for="ProcessName">請選擇: </h2>
+                                        <div class="col-3">
+                                            <h2 class="lead form-label" for="ProcessName">請選擇: </h2>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="btn-group dropend">
+                                                <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
+                                                        data-bs-toggle="dropdown" aria-expanded="false" id="dr2">
+                                                    過程區域
+                                                </button>
+                                                <select class="dropdown-menu" id="dropdownmenu2" name="dropdown2name"></select>
                                             </div>
-                                            <div class="col-6">
-                                                <div class="btn-group dropend">
-                                                    <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                                        過程區域
-                                                    </button>
-                                                    <select class="dropdown-menu" id="dropdown-menu-1">
-                                                        {% for p in allProcess %}
-                                                            <option class="dropdown-item" id="question-subject" name="process" value="1">
-                                                                {{ p.P_name }}
-                                                            </option>
-                                                        {% endfor %}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
-                                                <input type="submit" value="ok" class="btn-sm btn-outline-secondary ms-1">
-                                            </div>
-                                        </form>
+                                        </div>
                                     </div>
                                     <div class="row">
-                                        <form method="get" action="//">
-                                            <div class="col-3">
-                                                <h2 class="lead form-label" for="ClassName">請選擇: </h2>
+                                        <div class="col-3">
+                                            <h2 class="lead form-label" for="ClassName">請選擇: </h2>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="btn-group dropend">
+                                                <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
+                                                        data-bs-toggle="dropdown" aria-expanded="false" id="dr3">
+                                                    設備
+                                                </button>
+                                                <select class="dropdown-menu" id="dropdownmenu3"></select>
                                             </div>
-                                            <div class="col-6">
-                                                <div class="btn-group dropend">
-                                                    <button type="button" class="btn btn-secondary dropdown-toggle mb-1"
-                                                            data-bs-toggle="dropdown" aria-expanded="false">
-                                                        設備
-                                                    </button>
-                                                    <select class="dropdown-menu" id="dropdown-menu-1">
-                                                        <option class="dropdown-item" id="question-subject" name="cclass" value="1">
-
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
-                                                <input type="submit" value="ok" class="btn-sm btn-outline-secondary ms-1">
-                                            </div>
-                                        </form>
+                                        </div>
                                     </div>
 
                                     <div class="mb-4">
@@ -111,7 +88,7 @@
                                     <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                                     <div class="mb-4">
                                         <div class="d-flex">
-                                            <a type="button" class="btn btn-outline-secondary me-1" href="/emergency_generators/">
+                                            <a type="button" class="btn btn-outline-secondary me-1" href="/emergency_generator/">
                                                 新增
                                             </a>
                                             <button type="button" class="btn btn-outline-secondary ms-1">
@@ -136,7 +113,7 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script>
         // get the element to animate
@@ -227,27 +204,60 @@
         }
     </script>
 
-    {#    <script>#}
-    {#    $("#dropdown-menu-1").val().change(function() {#}
-    {#      var currentClass = $(this).val();#}
-    {##}
-    {#      $.ajax({#}
-    {#        url: '/dropdown/ajax/load_cities/',#}
-    {#        data: {#}
-    {#          'currentClass': currentClass#}
-    {#        },#}
-    {#        type: 'GET',#}
-    {#        dataType: 'json',#}
-    {#        success: function (data) {#}
-    {#            var content='';#}
-    {#            $.each(data, function(i, item){#}
-    {#                  content+='<option value='+item.id+'>'+item.name+'</option>'#}
-    {#                });#}
-    {#            $('#dropdown-menu-2').html(content)#}
-    {#        },#}
-    {##}
-    {#      });#}
-    {#    });#}
-    {#  </script>#}
+    <!--/*類別>>>選擇過程區域*/-->
+    <script>
+        var dropdownmenu2 = document.getElementById("dropdownmenu2")
+        $("#dropdownmenu1").on('change', function () {
+            var currentClass = $(this).val();
+            $.ajax({
+                url: "{% url 'loadprocess' %}",
+                data: {
+                    'currentClass': currentClass
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    {#console.warn(data);#}
+                    dropdownmenu2.innerHTML = ""
+                    data.forEach((item, index) => {
+                        if (index == 0) {
+                            dropdownmenu2.options.add(new Option('<---請選擇過程區域--->', 0));
+                        }
+                        dropdownmenu2.options.add(new Option(item.p_name, item.cp_id));
+                        {#console.warn(item.p_name, index+1,)#}
+                    })
+                },
+            });
+        });
+    </script>
+
+    <!--/*選擇過程區域>>>設備*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        $("#dropdownmenu2").on('change', function () {
+            var currentProcess = $(this).val();
+            {#console.warn(currentProcess)#}
+            $.ajax({
+                url: "{% url 'loaddevice' %}",
+                data: {
+                    'currentProcess': currentProcess
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (d_data) {
+                    console.warn(d_data);
+                    dropdownmenu3.innerHTML = ""
+                    d_data.forEach((item, index) => {
+                        if (index == 0) {
+                            dropdownmenu3.options.add(new Option('<---請選擇設備名稱--->', 0));
+                        }
+                        dropdownmenu3.options.add(new Option(item.d_name, item.cp_id));
+                        {#console.warn(item.p_name, index+1,)#}
+                    })
+                },
+
+            });
+        });
+    </script>
 
 {% endblock javascripts %}
