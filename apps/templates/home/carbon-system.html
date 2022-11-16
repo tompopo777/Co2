@@ -76,7 +76,7 @@
                                                         data-bs-toggle="dropdown" aria-expanded="false" id="dr3">
                                                     設備
                                                 </button>
-                                                <select class="dropdown-menu" id="dropdownmenu3"></select>
+                                                <select class="dropdown-menu" id="dropdownmenu3" name="dropdownmenu3"></select>
                                             </div>
                                         </div>
                                     </div>
@@ -251,13 +251,14 @@
                         if (index == 0) {
                             dropdownmenu3.options.add(new Option('<---請選擇設備名稱--->', 0));
                         }
-                        dropdownmenu3.options.add(new Option(item.d_name, item.cpid_id));
+                        dropdownmenu3.options.add(new Option(item.d_name, item.did));
                         {#console.warn(item.p_name, index+1,)#}
                     })
                 },
 
             });
-        });
+        })
+        ;
     </script>
 
 {% endblock javascripts %}
