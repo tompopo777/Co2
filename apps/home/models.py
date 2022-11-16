@@ -22,7 +22,7 @@ class emergency_generators(models.Model):
     device_id = models.CharField(max_length=30)
     period_starttime = models.DateField()
     period_endttime = models.DateField()
-    device_capacity = models.IntegerField(max_length=10)
+    device_capacity = models.IntegerField()
     position = models.CharField(max_length=30)
     department = models.CharField(max_length=100)
     january = models.FloatField()

@@ -59,7 +59,7 @@
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>發電機容量{{ EG_add.device_capacity }}</label>
-                                                <input type='number' class="form-control" id="device_capacity" name="device_capacity" placeholder="單位:公升">
+                                                <input type='text' class="form-control" id="device_capacity" name="device_capacity" max="9999999999" placeholder="單位:公升">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -167,7 +167,7 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據{{ EG_add.image_note }}</label>
-                                                <input type="text" name="image_note" class="form-control" id="image_note" placeholder="請輸入單據名稱">
+                                                <input type="text" name="image_note" class="form-control" id="image_note" value="test" placeholder="請輸入單據名稱">
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
