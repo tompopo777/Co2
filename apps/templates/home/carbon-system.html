@@ -223,7 +223,7 @@
                         if (index == 0) {
                             dropdownmenu2.options.add(new Option('<---請選擇過程區域--->', 0));
                         }
-                        dropdownmenu2.options.add(new Option(item.p_name, item.cp_id));
+                        dropdownmenu2.options.add(new Option(item.p_name, item.cpid));
                         {#console.warn(item.p_name, index+1,)#}
                     })
                 },
@@ -251,7 +251,7 @@
                         if (index == 0) {
                             dropdownmenu3.options.add(new Option('<---請選擇設備名稱--->', 0));
                         }
-                        dropdownmenu3.options.add(new Option(item.d_name, item.cp_id));
+                        dropdownmenu3.options.add(new Option(item.d_name, item.cpid_id));
                         {#console.warn(item.p_name, index+1,)#}
                     })
                 },

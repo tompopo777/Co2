@@ -57,7 +57,7 @@ def load_process(request):
         if current_class:
             all = list(section_one.objects.all())
             print("777777777777777777777777777777777777777777777",all)
-            data = list(section_one.objects.filter(c_name=current_class).values("p_name", "cp_id"))
+            data = list(section_one.objects.filter(c_name=current_class).values("p_name", "cpid"))
             return JsonResponse(data, safe=False)
 @login_required(login_url="/login/")
 def load_device(request):
@@ -68,7 +68,7 @@ def load_device(request):
             # fk_cpId = section_one.objects.filter(cp_id=current_process)
             all = list(section_two.objects.all())
             print("00000000000000000000000000000000000000",all)
-            d_data = list(section_two.objects.filter(cp_id=current_process).values("d_name", "d_id"))
+            d_data = list(section_two.objects.filter(cpid=current_process).values("d_name", "did"))
             # d_data = list(section_two.objects.filter(cp_id__cp_id=current_process).values())
             print("111111111111111111111111111111111111111111111111111111111", d_data)
             return JsonResponse(d_data, safe=False)
@@ -98,7 +98,7 @@ def emergency_generators_add(request):
         if EG_add.is_valid():
             device_id = EG_add.cleaned_data['device_id']
             period_starttime = EG_add.cleaned_data['period_starttime']
-            period_endttime = EG_add.cleaned_data['period_endttime']
+            period_endtime = EG_add.cleaned_data['period_endtime']
             device_capacity = EG_add.cleaned_data['device_capacity']
             position = EG_add.cleaned_data['position']
             department = EG_add.cleaned_data['department']
@@ -120,7 +120,7 @@ def emergency_generators_add(request):
             unit = emergency_generators.objects.create(
                 device_id=device_id,
                 period_starttime=period_starttime,
-                period_endttime=period_endttime,
+                period_endtime=period_endtime,
                 device_capacity=device_capacity,
                 position=position,
                 department=department,
