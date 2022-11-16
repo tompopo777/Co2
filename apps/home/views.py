@@ -55,26 +55,26 @@ def load_process(request):
         current_class = request.GET.get('currentClass', None)
         # print("000000000000000000000000000000000000000000000000000000")
         if current_class:
-            all = list(section_one.objects.all())
-            print("777777777777777777777777777777777777777777777",all)
+            # all = list(section_one.objects.all())
+            # print("777777777777777777777777777777777777777777777",all)
             data = list(section_one.objects.filter(c_name=current_class).values("p_name", "cpid"))
             return JsonResponse(data, safe=False)
+
+
+#下拉選單第二層
 @login_required(login_url="/login/")
 def load_device(request):
     if request.method == 'GET':
         current_process = request.GET.get('currentProcess', None)
         if current_process:
-            print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1321213", current_process)
-            # fk_cpId = section_one.objects.filter(cp_id=current_process)
+            # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1321213", current_process)
             all = list(section_two.objects.all())
-            print("00000000000000000000000000000000000000",all)
+            # print("00000000000000000000000000000000000000",all)
             d_data = list(section_two.objects.filter(cpid=current_process).values("d_name", "did"))
-            # d_data = list(section_two.objects.filter(cp_id__cp_id=current_process).values())
-            print("111111111111111111111111111111111111111111111111111111111", d_data)
+            # print("111111111111111111111111111111111111111111111111111111111", d_data)
             return JsonResponse(d_data, safe=False)
 
-
-
+#下拉選單第三層
 @login_required(login_url="/login/")
 def getClass(request):
     allClass = section_one.objects.all()
