@@ -32,6 +32,10 @@ thead, .table {
 .form-control{
     font-size: 1.1rem;
 }
+
+.bg-gradient-primary {
+    background-image: linear-gradient(195deg, #fb8c00 0%, #49a3f1 100%);
+}
 /*.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {*/
 /*  background-color: #495057!important;*/
 /*}*/
