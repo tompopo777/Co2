@@ -48,6 +48,7 @@ def pages(request):
         html_template = loader.get_template('home/page-500.html')
         return HttpResponse(html_template.render(context, request))
 
+
 # ajax
 @login_required(login_url="/login/")
 def load_process(request):
@@ -61,7 +62,7 @@ def load_process(request):
             return JsonResponse(data, safe=False)
 
 
-#下拉選單第二層
+# 下拉選單第二層
 @login_required(login_url="/login/")
 def load_device(request):
     if request.method == 'GET':
@@ -74,7 +75,8 @@ def load_device(request):
             # print("111111111111111111111111111111111111111111111111111111111", d_data)
             return JsonResponse(d_data, safe=False)
 
-#下拉選單第三層
+
+# 下拉選單第三層
 @login_required(login_url="/login/")
 def getClass(request):
     allClass = section_one.objects.all()
@@ -150,6 +152,41 @@ def emergency_generators_add(request):
         message = '請輸入資料(資料不作驗證)'
         post = EGform()
     return redirect('/carbon-system/')
+
+
+@login_required(login_url="/login/")
+def emergency_generators_edit(request, id=None, mode=None):
+    if mode == "edit":
+        unit = emergency_generators.objects.get(id=1)
+        unit.device_id = request.GET['device_id']
+        unit.period_starttime = request.GET['period_starttime']
+        unit.period_endtime = request.GET['period_endtime']
+        unit.device_capacity = request.GET['device_id']
+        unit.position = request.GET['position']
+        unit.department = request.GET['department']
+        unit.january = request.GET['january']
+        unit.february = request.GET['february']
+        unit.march = request.GET['march']
+        unit.april = request.GET['april']
+        unit.may = request.GET['may']
+        unit.june = request.GET['june']
+        unit.july = request.GET['july']
+        unit.august = request.GET['august']
+        unit.september = request.GET['september']
+        unit.october = request.GET['october']
+        unit.november = request.GET['november']
+        unit.december = request.GET['december']
+        unit.image_note = request.GET['image_note']
+        unit.image_path = request.GET['image_path']
+
+        unit.save()
+
+        return render(request, "home/emergency-generator.html", locals())
+
+    else:
+        return render(request, "home/carbon-system.html", locals())
+
+
 
 
 @login_required(login_url="/login/")

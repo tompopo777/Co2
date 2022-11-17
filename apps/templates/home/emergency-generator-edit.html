@@ -1,0 +1,215 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} emergency-generator {% endblock %}
+
+{% block body_class %} emergency-generator {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css "/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+{% endblock stylesheets %}
+
+{% block content %}
+
+    {% include 'includes/navigation-light.html' %}
+
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">發電機</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                    <form action="/emergency_generators_edit/" name="form111" method="GET">
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備編號</label>
+                                                    <input type="text" class="form-control"
+                                                           id="device_id" name="device_id"
+                                                            value={{ unit.device_id }}>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="ms-0" for="start">燃料使用開始時間</label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        <input type="date" class="form-control" id="period_starttime" name="period_starttime" value={{ unit.period_starttime }}/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="" for="start">燃料使用結束時間</label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        <input type="date" class="form-control" id="period_endtime" name="period_endtime" value={{ unit.period_endtime }}/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>發電機容量</label>
+                                                <input type='text' class="form-control" id="device_capacity" name="device_capacity" max="9999999999" placeholder="單位:公升" value={{ unit.device_capacity }}>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>設置地點</label>
+                                                <input type="text" id="position" name="position" class="form-control" value={{ unit.position }}>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>所屬單位</label>
+                                                <input type="text" id="department" name="department" class="form-control" value={{ unit.department }}>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-nowrap">
+                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
+                                                加油量(單位：公升)
+                                            </h5>
+                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>一月</th>
+                                                <th>二月</th>
+                                                <th>三月</th>
+                                                <th>四月</th>
+                                                <th>五月</th>
+                                                <th>六月</th>
+                                                <th>七月</th>
+                                                <th>八月</th>
+                                                <th>九月</th>
+                                                <th>十月</th>
+                                                <th>十一月</th>
+                                                <th>十二月</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="january" name="january" value={{ unit.january }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="february" name="february" value={{ unit.february }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="march" name="march" value={{ unit.march }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="april" name="april" value={{ unit.april }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="may" name="may" value={{ unit.may }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="june" name="june" value={{ unit.june }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="july" name="july" value={{ unit.july }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="august" name="august" value={{ unit.august }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="september" name="september" value={{ unit.september }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="october" name="october" value={{ unit.october }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="november" name="november" value={{ unit.november }}>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <input class="col-6" type="text" id="december" name="december" value={{ unit.december }}>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                <input type="text" name="image_note" class="form-control" id="image_note" value={{ unit.image_note }}>
+                                            </div>
+                                        </div>
+                                        <div class=" ps-md-2 align-self-center">
+                                            <div class="col-1 ">
+                                                <input type="file" class="" name="image_path" id="image_path" accept="image/*" value={{ unit.image_path }}>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 text-center">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">確認
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script>
+        $('#date1').datetimepicker({
+            date: null,
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-tw'),
+            disabledDates: [
+                moment().add(1, 'days'),
+                moment().add(2, 'days'),
+                '2021-10-10',
+                '2021-12-25'
+            ]
+        });
+    </script>
+{% endblock javascripts %}
