@@ -19,6 +19,18 @@ label, .form-label {
     margin-left: 0.25rem;
 }
 
+thead, .table {
+    color: black;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.form-check {
+    color: black;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
 .form-control{
     font-size: 1.1rem;
 }
