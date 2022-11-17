@@ -1,6 +1,6 @@
 /*Label_AfterClick*/
 .input-group.input-group-dynamic.is-focused label, .input-group.input-group-static.is-focused label {
-    color: #495057;
+    color: black !important;
 }
 
 /*BottomLine_AfterClick*/
@@ -9,6 +9,19 @@
     border-radius: 0 !important;
 }
 
+label, .form-label {
+    color: black;
+    font-size: 1.3rem;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: black;
+    margin-left: 0.25rem;
+}
+
+.form-control{
+    font-size: 1.1rem;
+}
 /*.custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {*/
 /*  background-color: #495057!important;*/
 /*}*/
