@@ -22,3 +22,6 @@ class EGform(forms.Form):
     december = forms.FloatField()
     image_note = forms.CharField(label='上傳引用單據', max_length=30)
     image_path = forms.CharField(max_length=100)
+
+# class dropdownForm(forms.Form):
+#

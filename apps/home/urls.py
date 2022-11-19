@@ -14,9 +14,9 @@ urlpatterns = [
     path("carbon-system/", views.carbon_system),
     path("emergency_generator/", views.emergency_generator),
     path("emergency_generators_add/", views.emergency_generators_add),
-    path("getClass/", views.getClass),
     path("ajax/process", views.load_process, name='loadprocess'),
     path("ajax/device", views.load_device, name='loaddevice'),
+    path("ajax/table", views.load_table, name='loadtable'),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
 
