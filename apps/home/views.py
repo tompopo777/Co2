@@ -98,7 +98,8 @@ def load_table(request):
                                                                       "device_capacity", "position", "department",
                                                                       "january", "february", "march", "april",
                                                                       "may", "june", "july", "august",
-                                                                      "september", "october", "november", "december", ))
+                                                                      "september", "october", "november", "december"))
+                    # print("ttttttttttttttttttttttttt", t_data)
                     return JsonResponse(t_data, safe=False)
                 # elif a["d_name"] == "燃燒設備":
                 #     t_data = list(emergency_generators.objects.values("device_id", "period_starttime", "period_endtime",

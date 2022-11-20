@@ -117,7 +117,7 @@
 
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
 
-        <table class="table-secondary" id="table">
+        <table class="table table-secondary" id="table">
             <thead id="table_head">
 
             </thead>
@@ -305,15 +305,27 @@
                 success: function (t_data) {
                     console.warn(t_data);
                     table.innerHTML = ""
+                    var i = 0;
                     t_data.forEach((item, index) => {
-                        var br = table.insertRow(index)
-                        console.warn("1111111111111111111111111111111")
-                        var cell1 = br.insertCell(0)
-                        cell1.innerHTML = item.device_id
-
+                        if (index == 0) {
+                            var row0 = table.insertRow(0)//加入第一列
+                            var r0c0 = row0.insertCell(0)
+                            r0c0.innerHTML = ""
+                        }
+                        var next_row = table.insertRow(-1)//加入下一列
+                        var nr_c0 = next_row.insertCell(0)
+                        nr_c0.innerHTML = index + 1
+                        for (const [key, value] of Object.entries((item))) {
+                            if (index == 0) {
+                                var row_c1 = row0.insertCell(-1)//
+                                row_c1.innerHTML = key
+                            }
+                            var nr_c1 = next_row.insertCell(-1)
+                            nr_c1.innerHTML = value
+                            i++
+                        }
                     })
                 },
-
             });
         })
     </script>
