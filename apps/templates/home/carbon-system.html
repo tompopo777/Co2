@@ -232,6 +232,7 @@
     <script>
         var dr1 = document.getElementById("dr1");
         var dropdownmenu2 = document.getElementById("dropdownmenu2")
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
         $("#dropdownmenu1").on('change', function () {
             var currentClass = $(this).val();
             $.ajax({
@@ -244,6 +245,7 @@
                 success: function (data) {
                     {#console.warn(data);#}
                     dropdownmenu2.innerHTML = ""
+                    dropdownmenu3.innerHTML = ""
                     data.forEach((item, index) => {
                         if (index == 0) {
                             dropdownmenu2.options.add(new Option('<---請選擇過程區域--->', 0));
