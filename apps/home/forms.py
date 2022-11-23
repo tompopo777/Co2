@@ -2,12 +2,34 @@ from django import forms
 
 
 class EGform(forms.Form):
+    device_id = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}), label='設備編號', max_length=30,)
+    period_starttime = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}), label='燃料使用開始時間')
+    period_endtime = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}), label='燃料使用結束時間')
+    device_capacity = forms.IntegerField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '單位:公升'}), label='發電機容量', max_value=9999999999)
+    position = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'value': '資訊管理系'}), label='設置地點', max_length=30)
+    department = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'value': '管理學院'}), label='所屬單位', max_length=100)
+    january = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    february = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    march = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    april = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    may = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    june = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    july = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    august = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    september = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    october = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    november = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    december = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
+    image_note = forms.CharField(widget=forms.DateInput(attrs={'class': 'form-control', 'value': 'test'}), label='上傳引用單據', max_length=30)
+    # image_path = forms.CharField(widget=forms.FileInput(attrs={'class': 'form-control-file'}), max_length=100)
+
+
+class CEform(forms.Form):
+    device_name = forms.CharField(label='設備名稱', max_length=50)
     device_id = forms.CharField(label='設備編號', max_length=30)
+    fuel_type = forms.CharField(label='燃料種類', max_length=10)
     period_starttime = forms.DateField(label='燃料使用開始時間')
     period_endtime = forms.DateField(label='燃料使用結束時間')
-    device_capacity = forms.IntegerField(label='發電機容量', max_value=9999999999)
-    position = forms.CharField(label='設置地點', max_length=30)
-    department = forms.CharField(label='所屬單位', max_length=100)
     january = forms.FloatField()
     february = forms.FloatField()
     march = forms.FloatField()
@@ -22,6 +44,3 @@ class EGform(forms.Form):
     december = forms.FloatField()
     image_note = forms.CharField(label='上傳引用單據', max_length=30)
     image_path = forms.CharField(max_length=100)
-
-# class dropdownForm(forms.Form):
-#

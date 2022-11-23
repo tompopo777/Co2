@@ -23,19 +23,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="contact-form" method="post" autocomplete="off">
+                                <form action="/combustion_equipment_add/" name="CEform" method="POST">
+                                {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱</label>
-                                                    <input type="text" name="" class="form-control" id="number only" placeholder="" required>
+                                                    <input type="text" id="device_name" name="device_name" class="form-control"  placeholder="" required>
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" oninput="value=value.replace(/[^\d.]/g,'')">
+                                                    <input type="text" id="device_id" name="device_id" class="form-control"  oninput="value=value.replace(/[^\d.]/g,'')">
                                                 </div>
                                             </div>
                                         </div>
@@ -43,14 +44,14 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>燃料種類</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                    <input type="text" id="fuel_type" name="fuel_type" class="form-control" placeholder="">
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">燃料使用開始時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control" value=""/>
+                                                        <input type="date" class="form-control" id="period_starttime" name="period_starttime"/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -58,7 +59,7 @@
                                                 <label class="" for="start">燃料使用結束時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control"/>
+                                                        <input type="date" class="form-control" id="period_endtime" name="period_endtime"/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -90,62 +91,62 @@
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_january" name="fuel_january">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_february" name="fuel_february">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_march" name="fuel_march">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_april" name="fuel_april">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_may" name="fuel_may">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_june" name="fuel_june">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_july" name="fuel_july">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_august" name="fuel_august">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_september" name="fuel_september">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_october" name="fuel_october">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_november" name="fuel_november">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="fuel_december" name="fuel_december">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -155,62 +156,62 @@
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_january" name="heat_january">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_february" name="heat_february">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_march" name="heat_march">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_april" name="heat_april">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_may" name="heat_may">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_june" name="heat_june">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_july" name="heat_july">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_august" name="heat_august">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_september" name="heat_september">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_october" name="heat_october">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_november" name="heat_november">
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            <input class="col-6" type="text" id="heat_december" name="heat_december">
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -224,12 +225,12 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                <input type="text" id="image_note"  name="image_note" class="form-control" placeholder="請輸入單據名稱">
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                <input type="file" class="" name="image" accept="image/*">
+                                                <input type="file" class="" id="image_path" name="image_path" accept="image/*">
                                             </div>
                                         </div>
                                     </div>
