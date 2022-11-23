@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                    <form action="/emergency_generators_add/" name="form111" method="POST">
+                                <form action="/emergency_generators_add/" name="form111" method="POST">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
@@ -36,7 +36,7 @@
                                                     <label>設備編號{{ EG_add.device_id }}</label>
                                                     <input type="text" class="form-control"
                                                            id="device_id" name="device_id"
-                                                            value="123456789">
+                                                           value="123456789">
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
@@ -210,6 +210,16 @@
                 '2021-10-10',
                 '2021-12-25'
             ]
+        });
+    </script>
+
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
         });
     </script>
 {% endblock javascripts %}
