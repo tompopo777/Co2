@@ -187,4 +187,15 @@
             minViewMode: "months"
         });
     </script>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
 {% endblock javascripts %}
