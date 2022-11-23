@@ -2,7 +2,7 @@ from django import forms
 
 
 class EGform(forms.Form):
-    device_id = forms.CharField(label='設備編號', max_length=10)
+    device_id = forms.CharField(label='設備編號', max_length=30)
     period_starttime = forms.DateField(label='燃料使用開始時間')
     period_endtime = forms.DateField(label='燃料使用結束時間')
     device_capacity = forms.IntegerField(label='發電機容量', max_value=9999999999)
