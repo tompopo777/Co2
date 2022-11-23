@@ -2,15 +2,19 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
+from json import dumps
 
 from django import template
 from django.contrib.auth.decorators import login_required
+from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.template import loader
 from django.urls import reverse
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
+
+import apps
 from .forms import EGform
 from apps.home.models import emergency_generators, section_one, section_two
 
@@ -78,42 +82,58 @@ def load_device(request):
             print("111111111111111111111111111111111111111111111111111111111", d_data)
             return JsonResponse(d_data, safe=False)
 
-
-# 抓欄位
 @login_required(login_url="/login/")
 def load_table(request):
     if request.method == 'GET':
         device_id = request.GET.get('deviceId', None)
         if device_id:
-            # allTable = list(emergency_generators.objects.all())
-            # print("00000000000000000000000000000000000000", allTable)
-            # allTable[0].total = 100
-            # print("55555555555555555555555555555555555555", allTable[0].total)
+            t_name = list(section_two.objects.filter(did=device_id).values("t_name"))
+            print("888888888", t_name)
+            for model in t_name:
+                print("222222222222222222222222222222222222", model["t_name"])
 
-            t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
-            # print("888888888", t_name)
-            for a in t_name:
-                if a["d_name"] == "緊急發電機":
-                    t_data = list(emergency_generators.objects.values("device_id", "period_starttime", "period_endtime",
-                                                                      "device_capacity", "position", "department",
-                                                                      "january", "february", "march", "april",
-                                                                      "may", "june", "july", "august",
-                                                                      "september", "october", "november", "december"))
-                    # print("ttttttttttttttttttttttttt", t_data)
-                    return JsonResponse(t_data, safe=False)
-                # elif a["d_name"] == "燃燒設備":
-                #     t_data = list(emergency_generators.objects.values("device_id", "period_starttime", "period_endtime",
-                #                                                       "device_capacity", "position", "department",
-                #                                                       "january", "february", "march", "april",
-                #                                                       "may", "june", "july", "august",
-                #                                                       "september", "october", "november", "december", ))
-                #     return JsonResponse(t_data, safe=False)
+                test = model["t_name"][5:]
+                total_data = globals()[test].objects.filter().all().values()
+                # print("555555", total_data[0].__dict__)
+                t_data = list(total_data)
+                print(t_data)
+                return JsonResponse(t_data, safe=False)
 
-            # from apps.home.models import t_data[0].table_name
-            # t_data[0].table_name__
-            # print("111111111111111111111111111111111111111111111111111111111", t_data)
-            # return JsonResponse(t_data, safe=False)
-
+# # 抓欄位
+# @login_required(login_url="/login/")
+# def load_table(request):
+#     if request.method == 'GET':
+#         device_id = request.GET.get('deviceId', None)
+#         if device_id:
+#             # allTable = list(emergency_generators.objects.all())
+#             # print("00000000000000000000000000000000000000", allTable)
+#             # allTable[0].total = 100
+#             # print("55555555555555555555555555555555555555", allTable[0].total)
+#
+#             t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+#             # print("888888888", t_name)
+#             for a in t_name:
+#                 if a["d_name"] == "緊急發電機":
+#                     t_data = list(emergency_generators.objects.values("device_id", "period_starttime", "period_endtime",
+#                                                                       "device_capacity", "position", "department",
+#                                                                       "january", "february", "march", "april",
+#                                                                       "may", "june", "july", "august",
+#                                                                       "september", "october", "november", "december"))
+#                     # print("ttttttttttttttttttttttttt", t_data)
+#                     return JsonResponse(t_data, safe=False)
+#                 # elif a["d_name"] == "燃燒設備":
+#                 #     t_data = list(emergency_generators.objects.values("device_id", "period_starttime", "period_endtime",
+#                 #                                                       "device_capacity", "position", "department",
+#                 #                                                       "january", "february", "march", "april",
+#                 #                                                       "may", "june", "july", "august",
+#                 #                                                       "september", "october", "november", "december", ))
+#                 #     return JsonResponse(t_data, safe=False)
+#
+#             # from apps.home.models import t_data[0].table_name
+#             # t_data[0].table_name__
+#             # print("111111111111111111111111111111111111111111111111111111111", t_data)
+#             # return JsonResponse(t_data, safe=False)
+#
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
