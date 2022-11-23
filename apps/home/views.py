@@ -166,14 +166,15 @@ def emergency_generators_add(request):
 
             unit.save()
 
-            return redirect('/emergency_generator/')
+            return redirect('/carbon-system/')
+
 
         else:
             message = '請完整填寫',
     else:
         message = '請輸入資料(資料不作驗證)'
         post = EGform()
-    return redirect('/carbon-system/')
+    return redirect('/emergency_generator/')
 
 
 @login_required(login_url="/login/")
