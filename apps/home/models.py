@@ -16,6 +16,8 @@ class section_two(models.Model):
     did = models.AutoField(primary_key=True)
     d_name = models.CharField(max_length=30)
     cpid = models.ForeignKey(section_one, on_delete=models.CASCADE)
+    t_name = models.CharField(max_length=30)
+
 class emergency_generators(models.Model):
     id = models.AutoField(primary_key=True,)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=1)
