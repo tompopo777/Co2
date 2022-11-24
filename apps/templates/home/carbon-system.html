@@ -61,7 +61,7 @@
                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                         <div class="mb-4">
                             <div class="d-flex justify-content-center">
-                                <a type="button" class="btn btn-outline-secondary me-1"
+                                <a type="button" class="btn btn-outline-secondary me-1" id="addNewPage"
                                    href="/emergency_generator/">
                                     新增
                                 </a>
@@ -79,15 +79,16 @@
     </header>
 
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+        <div class="table-responsive">
+            <table class="table table-secondary" id="table">
+                <thead id="table_head">
 
-        <table class="table table-secondary" id="table">
-            <thead id="table_head">
+                </thead>
+                <tbody id="table_body">
 
-            </thead>
-            <tbody id="table_body">
-
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 {% endblock content %}
@@ -257,6 +258,8 @@
         var table = document.getElementById("table")
         var table_head = document.getElementById("table_head")
         var table_body = document.getElementById("table_body")
+        //add
+        var addNewPage = document.getElementById("addNewPage")
         $("#submit").on('click', function () {
             var deviceId = dropdownmenu3.value;
             console.error(">>>>>>>>>>>>>>>>>>>>>", deviceId)
@@ -267,7 +270,7 @@
                 },
                 type: 'GET',
                 dataType: 'json',
-                success: function (t_data) {
+                success: function (t_data,) {
                     console.warn(t_data);
                     table.innerHTML = ""
                     var i = 0;
