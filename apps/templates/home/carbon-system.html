@@ -17,13 +17,13 @@
 
     <header class="bg-gradient-dark">
         <div class="page-header min-vh-50"
-             style="background-image: url('{{ ASSETS_ROOT }}/img/carbon_packground.png');">
+             style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
                 <div class="card-body">
                     <div class="d-flex">
                         <div class="col-5">
-                            <label class="lead form-label ms-0" for="ClassName">類別</label>
+                            <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
                             <select class="" id="dropdownmenu1" name="dropdown1name">
                                 <option class="" id="question-subject" value="0">
                                     <---請選擇類別--->
@@ -43,16 +43,16 @@
                             </select>
                         </div>
                         <div class="col-3">
-                            <label class="lead form-label" for="ProcessName">過程區域</label>
+                            <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
                             <select class="" id="dropdownmenu2" name="dropdown2name"></select>
                         </div>
                         <div class="col-3">
-                            <label class="lead form-label" for="ClassName">設備</label>
+                            <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
                             <select class="" id="dropdownmenu3" name="dropdown3name"></select>
                         </div>
                         <div class="col-1">
                             <input id="submit" type="submit" value="送出"
-                                   class="btn btn-outline-dark ms-1" style="color: black">
+                                   class="btn btn-outline-light ms-1">
                         </div>
                     </div>
                 </div>
@@ -61,11 +61,11 @@
                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                         <div class="mb-4">
                             <div class="d-flex justify-content-center">
-                                <a type="button" class="btn btn-outline-secondary me-1" id="addNewPage"
+                                <a type="button" class="btn btn-outline-light me-1" id="addNewPage"
                                    href="/emergency_generator/">
                                     新增
                                 </a>
-                                <button type="button" class="btn btn-outline-secondary ms-1">
+                                <button type="button" class="btn btn-outline-light ms-1">
                                     匯出Excel
                                 </button>
                             </div>
@@ -81,18 +81,18 @@
         {% include 'home/material-table.html' %}
     </div>
 
-{#    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">#}
-{#        <div class="table-responsive">#}
-{#            <table class="table table-secondary" id="table">#}
-{#                <thead id="table_head">#}
-{##}
-{#                </thead>#}
-{#                <tbody id="table_body">#}
-{##}
-{#                </tbody>#}
-{#            </table>#}
-{#        </div>#}
-{#    </div>#}
+    {#    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">#}
+    {#        <div class="table-responsive">#}
+    {#            <table class="table table-secondary" id="table">#}
+    {#                <thead id="table_head">#}
+    {##}
+    {#                </thead>#}
+    {#                <tbody id="table_body">#}
+    {##}
+    {#                </tbody>#}
+    {#            </table>#}
+    {#        </div>#}
+    {#    </div>#}
 
 {% endblock content %}
 
