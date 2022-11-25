@@ -78,7 +78,11 @@
         </div>
     </header>
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
-        {% include 'home/material-table.html' %}
+{#        {% if  %}#}
+            {% include 'home/emergency-generator-table.html' %}
+{#        {% elif %}#}
+            {% include 'home/material-table.html' %}
+{#        {% endif %}#}
     </div>
 
     {#    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">#}
