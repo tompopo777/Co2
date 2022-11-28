@@ -11,7 +11,7 @@ urlpatterns = [
 
     # The home page
     path('', views.index, name='home'),
-    path("carbon-system/", views.carbon_system),
+    path("carbon-system/", views.carbon_system, name='carbon-system'),
     path("emergency_generator/", views.emergency_generator),
     path("emergency_generators_add/", views.emergency_generators_add),
     path("combustion_equipment_add/", views.combustion_equipment_add),

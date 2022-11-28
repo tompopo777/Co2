@@ -17,6 +17,7 @@ from django.db import models
 import apps
 from .forms import EGform
 from apps.home.models import emergency_generators, section_one, section_two
+from apps.home.models import *
 
 
 # from apps.home.models import *
@@ -82,58 +83,260 @@ def load_device(request):
             print("111111111111111111111111111111111111111111111111111111111", d_data)
             return JsonResponse(d_data, safe=False)
 
-@login_required(login_url="/login/")
-def load_table(request):
-    if request.method == 'GET':
-        device_id = request.GET.get('deviceId', None)
-        if device_id:
-            t_name = list(section_two.objects.filter(did=device_id).values("t_name"))
-            print("888888888", t_name)
-            for model in t_name:
-                print("222222222222222222222222222222222222", model["t_name"])
 
-                test = model["t_name"][5:]
-                total_data = globals()[test].objects.filter().all().values()
-                # print("555555", total_data[0].__dict__)
-                t_data = list(total_data)
-                print(t_data)
-                return JsonResponse(t_data, safe=False)
-
-# # 抓欄位
+# 抓欄位
 # @login_required(login_url="/login/")
 # def load_table(request):
 #     if request.method == 'GET':
 #         device_id = request.GET.get('deviceId', None)
 #         if device_id:
-#             # allTable = list(emergency_generators.objects.all())
-#             # print("00000000000000000000000000000000000000", allTable)
-#             # allTable[0].total = 100
-#             # print("55555555555555555555555555555555555555", allTable[0].total)
-#
-#             t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
-#             # print("888888888", t_name)
-#             for a in t_name:
-#                 if a["d_name"] == "緊急發電機":
-#                     t_data = list(emergency_generators.objects.values("device_id", "period_starttime", "period_endtime",
-#                                                                       "device_capacity", "position", "department",
-#                                                                       "january", "february", "march", "april",
-#                                                                       "may", "june", "july", "august",
-#                                                                       "september", "october", "november", "december"))
-#                     # print("ttttttttttttttttttttttttt", t_data)
-#                     return JsonResponse(t_data, safe=False)
-#                 # elif a["d_name"] == "燃燒設備":
-#                 #     t_data = list(emergency_generators.objects.values("device_id", "period_starttime", "period_endtime",
-#                 #                                                       "device_capacity", "position", "department",
-#                 #                                                       "january", "february", "march", "april",
-#                 #                                                       "may", "june", "july", "august",
-#                 #                                                       "september", "october", "november", "december", ))
-#                 #     return JsonResponse(t_data, safe=False)
-#
-#             # from apps.home.models import t_data[0].table_name
-#             # t_data[0].table_name__
-#             # print("111111111111111111111111111111111111111111111111111111111", t_data)
-#             # return JsonResponse(t_data, safe=False)
-#
+#             t_name = list(section_two.objects.filter(did=device_id).values("t_name"))
+#             print("888888888", t_name)
+#             for model in t_name:
+#                 print("222222222222222222222222222222222222", model["t_name"])
+#                 t_data = list(globals()[model["t_name"]].objects.filter().all().values())
+#                 print(t_data)
+#                 return JsonResponse(t_data, safe=False)
+
+# 抓欄位(if
+@login_required(login_url="/login/")
+def load_table(request):
+    if request.method == 'GET':
+        device_id = request.GET.get('deviceId', None)
+        if device_id:
+            # allTable = list(emergency_generators.objects.all())
+            # print("00000000000000000000000000000000000000", allTable)
+            # allTable[0].total = 100
+            # print("55555555555555555555555555555555555555", allTable[0].total)
+
+            t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+            # print("888888888", t_name)
+            for a in t_name:
+                if a["d_name"] == "緊急發電機":
+                    t_data = list(
+                        emergency_generators.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december"))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "燃燒設備":
+                    t_data = list(combustion_equipment.objects.values("id", "device_id", "device_name", "fuel_type",
+                                                                      "period_starttime", "period_endtime",
+                                                                      "fuel_january", "fuel_february", "fuel_march",
+                                                                      "fuel_april",
+                                                                      "fuel_may", "fuel_june", "fuel_july",
+                                                                      "fuel_august",
+                                                                      "fuel_september", "fuel_october", "fuel_november",
+                                                                      "fuel_december",
+                                                                      "heat_january", "heat_february", "heat_march",
+                                                                      "heat_april",
+                                                                      "heat_may", "heat_june", "heat_july",
+                                                                      "heat_august",
+                                                                      "heat_september", "heat_october", "heat_november",
+                                                                      "heat_december"))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "公務車":
+                    t_data = list(
+                        official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type", "department",
+                                                    "january", "february", "march", "april",
+                                                    "may", "june", "july", "august",
+                                                    "september", "october", "november", "december"))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "原物料使用":
+                    t_data = list(
+                        material.objects.values("id", "material_name", "material_id", "material_type",
+                                                "january", "february", "march", "april",
+                                                "may", "june", "july", "august",
+                                                "september", "october", "november", "december"))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "製程添加化學品":
+                    t_data = list(
+                        process.objects.values("id", "process_add_name", "chemical_name", "chemical_formula",
+                                               "process_stage", "material_id", "CAS_NO", "burn",
+                                               "january", "february", "march", "april",
+                                               "may", "june", "july", "august",
+                                               "september", "october", "november", "december"))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "冰箱清單":
+                    t_data = list(
+                        refrigerator.objects.values("id", "device_name", "brand_name", "model_type",
+                                                    "years", "position", "refrigerant_type",
+                                                    "filling_volume"))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "冷氣機清單":
+                    t_data = list(
+                        airconditioner.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                      "years", "position", "refrigerant_type",
+                                                      "filling_volume", "effusion_rate"))
+                    return JsonResponse(t_data, safe=False)
+                # 以下未改
+                elif a["d_name"] == "車輛清單":
+                    t_data = list(
+                        airconditioner.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                      "device_capacity", "position", "department",
+                                                      "january", "february", "march", "april",
+                                                      "may", "june", "july", "august",
+                                                      "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "飲水機清單":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "冰水機清單":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "製冰機清單":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "其他設備清單":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "冷媒總表":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "滅火器":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "人天清冊":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "保全清單":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "用電量":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "上游運輸":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "下游運輸":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "員工通勤":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "員工出差":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+                elif a["d_name"] == "廢棄物":
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                            "device_capacity", "position", "department",
+                                                            "january", "february", "march", "april",
+                                                            "may", "june", "july", "august",
+                                                            "september", "october", "november", "december", ))
+                    return JsonResponse(t_data, safe=False)
+
+
+# 抓欄位(字典
+# @login_required(login_url="/login/")
+# def load_table(request):
+#     dict = {
+#         "emergency_generators": ["id", "device_id", "period_starttime", 'period_endtime', 'device_capacity', "position", 'department', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
+#         "combustion_equipment": "",
+#         "official_car": "",
+#         "material": "",
+#         "process": "",
+#         "refrigerator": "",
+#         "airconditioner": "",
+#         "vehicle": "",
+#         "water_dispenser": "",
+#         "ice_water_dispenser": "",
+#         "ice_maker": "",
+#         "other_device": "",
+#         "refrigerant_total_table": "",
+#         "extinguisher": "",
+#         "personnel_inventory": "",
+#         "security": "",
+#         "electricity": "",
+#         "upstream_transportation": "",
+#         "downstream_transportation": "",
+#         "employee_commute": "",
+#         "employee_business": "",
+#         "waste": ""
+#     }
+#     if request.method == 'GET':
+#         device_id = request.GET.get('deviceId', None)
+#         if device_id:
+#             t_name = list(section_two.objects.filter(did=device_id).values("t_name"))
+#             print("888888888", t_name)
+#             for model in t_name:
+#                 print("222222222222222222222222222222222222", model["t_name"])
+#                 col = "id", "device_id"
+#                 # tt = col.split(",")
+#                 # print("test", tt)
+#                 # 怎麼丟到values
+#                 aa = emergency_generators.objects.filter().values(col)
+#                 print("9999999999999999999999999999999999999", aa)
+#                 t_data = list(globals()[model["t_name"]].objects.filter().all().values())
+#                 print(t_data)
+#                 return JsonResponse(t_data, safe=False)
+
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
@@ -226,8 +429,8 @@ def emergency_generators_edit(request, id=None, mode=None):
 
         return render(request, "home/emergency-generator.html", locals())
 
-    else:
-        return render(request, "home/carbon-system.html", locals())
+    # else:
+    #     return render(request, "home/carbon-system.html", locals())
 
 
 @login_required(login_url="/login/")
@@ -300,26 +503,42 @@ def combustion_equipment_add(request):
     return render(request, "home/combustion-equipment.html", locals())
 
 
-
 @login_required(login_url="/login/")
 def emergency_generator(request):
     EG_add = EGform(request.POST)
+
     return render(request, "home/emergency-generator.html", locals())
 
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>0")
-    #
-    # if request.method == 'GET':
-    #     currentClass = request.GET.get('cclass')
-    #     if currentClass == None:
-    #         currentClass = 0
-    #     allProcess = section_one.objects.all()
-    #         # filter(c_name=currentClass).values()
-    #     selectProcess = allProcess.filter(c_name=currentClass)
-    #     for a in selectProcess:
-    #         print(">>>>>>>>>>>>>>>>>...", a.p_name)
-    #     # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
-    #     context = {'allProcess': allProcess}
-    return render(request, "home/carbon-system.html", locals())
+    if request.method == 'GET':
+        htmlName = {
+            "1a": "home/emergency_generators-table.html",
+            "2": "home/combustion_equipment-table.html",
+            "3": "home/official_car-table.html",
+            "4": "home/material-table.html",
+            "5": "home/process-table.html",
+            "6": "home/refrigerator-table.html",
+            "7": "home/airconditioner-table.html",
+            "8": "home/vehicle-table.html",
+            "9": "home/vehicle-table.html",
+            "10": "home/ice_water_dispenser-table.html",
+            "11": "home/ice_maker-table.html",
+            "12": "home/other_device-table.html",
+            "13": "home/refrigerant_total_table-table.html",
+            "14": "home/extinguisher-table.html",
+            "15": "home/personnel_inventory-table.html",
+            "16": "home/security-table.html",
+            "17": "home/electricity-table.html",
+            "18": "home/upstream_transportation-table.html",
+            "19": "home/downstream_transportation-table.html",
+            "20": "home/employee_commute-table.html",
+            "21": "home/employee_business-table.html",
+            "22": "home/waste-table.html",
+            "data": "home/waste-table.html"
+        }
+        # a = request.GET.get('deviceId')
+        # context = {'html': a}
+        return render(request, "home/carbon-system.html", htmlName)
+        # return render(request, "home/carbon-system.html", locals())
