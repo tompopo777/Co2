@@ -78,10 +78,18 @@
         </div>
     </header>
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
-{#        {% if  %}#}
-{#            {% include 'home/emergency-generator-table.html' %}#}
+    {% if htmlName %}
+        123123123123: {{ data }}
+    {% endif %}
+
+{#    {% include 1a %}#}
+    123123123123: {{ 1a }}
+{#    {% include 'home/material-table.html' %}#}
+{#    {% include '{{ 1 }}' %}#}
+{#        {% if data%}#}
+{#            {% include {{ 1 }} %}#}
 {#        {% elif %}#}
-            {% include 'home/material-table.html' %}
+{#            {% include 'home/material-table.html' %}#}
 {#        {% endif %}#}
     </div>
 
@@ -265,8 +273,6 @@
         var tbody = document.getElementById("table").getElementsByTagName('tbody')[0]
         var table_head = document.getElementById("table_head")
         var table_body = document.getElementById("table_body")
-        //add
-        var addNewPage = document.getElementById("addNewPage")
         $("#submit").on('click', function () {
             var deviceId = dropdownmenu3.value;
             console.error(">>>>>>>>>>>>>>>>>>>>>", deviceId)
@@ -290,6 +296,25 @@
                         }
                     })
                 },
+            });
+        })
+    </script>
+
+    <!--/*顯示tableHTML*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        //add
+        var addNewPage = document.getElementById("addNewPage")
+        $("#submit").on('click', function () {
+            var deviceId = dropdownmenu3.value;
+            console.error(">>>>>>>>>>>>>>>>>>>>>", deviceId)
+            $.ajax({
+                url: "{% url 'carbon-system' %}",
+                data: {
+                    'deviceId': deviceId
+                },
+                type: 'GET',
+                dataType: 'json',
             });
         })
     </script>

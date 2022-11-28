@@ -161,23 +161,23 @@ def load_table(request):
                 elif a["d_name"] == "冰箱清單":
                     t_data = list(
                         refrigerator.objects.values("id", "device_name", "brand_name", "model_type",
-                                                            "years", "position", "refrigerant_type",
-                                                            "filling_volume"))
+                                                    "years", "position", "refrigerant_type",
+                                                    "filling_volume"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冷氣機清單":
                     t_data = list(
                         airconditioner.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                                            "years", "position", "refrigerant_type",
-                                                            "filling_volume", "effusion_rate"))
+                                                      "years", "position", "refrigerant_type",
+                                                      "filling_volume", "effusion_rate"))
                     return JsonResponse(t_data, safe=False)
-                #以下未改
+                # 以下未改
                 elif a["d_name"] == "車輛清單":
                     t_data = list(
                         airconditioner.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                                                      "device_capacity", "position", "department",
+                                                      "january", "february", "march", "april",
+                                                      "may", "june", "july", "august",
+                                                      "september", "october", "november", "december", ))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "飲水機清單":
                     t_data = list(
@@ -429,8 +429,8 @@ def emergency_generators_edit(request, id=None, mode=None):
 
         return render(request, "home/emergency-generator.html", locals())
 
-    else:
-        return render(request, "home/carbon-system.html", locals())
+    # else:
+    #     return render(request, "home/carbon-system.html", locals())
 
 
 @login_required(login_url="/login/")
@@ -512,17 +512,33 @@ def emergency_generator(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>0")
-    #
-    # if request.method == 'GET':
-    #     currentClass = request.GET.get('cclass')
-    #     if currentClass == None:
-    #         currentClass = 0
-    #     allProcess = section_one.objects.all()
-    #         # filter(c_name=currentClass).values()
-    #     selectProcess = allProcess.filter(c_name=currentClass)
-    #     for a in selectProcess:
-    #         print(">>>>>>>>>>>>>>>>>...", a.p_name)
-    #     # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>2",selectProcess)
-    #     context = {'allProcess': allProcess}
-    return render(request, "home/carbon-system.html", locals())
+    if request.method == 'GET':
+        htmlName = {
+            "1a": "home/emergency_generators-table.html",
+            "2": "home/combustion_equipment-table.html",
+            "3": "home/official_car-table.html",
+            "4": "home/material-table.html",
+            "5": "home/process-table.html",
+            "6": "home/refrigerator-table.html",
+            "7": "home/airconditioner-table.html",
+            "8": "home/vehicle-table.html",
+            "9": "home/vehicle-table.html",
+            "10": "home/ice_water_dispenser-table.html",
+            "11": "home/ice_maker-table.html",
+            "12": "home/other_device-table.html",
+            "13": "home/refrigerant_total_table-table.html",
+            "14": "home/extinguisher-table.html",
+            "15": "home/personnel_inventory-table.html",
+            "16": "home/security-table.html",
+            "17": "home/electricity-table.html",
+            "18": "home/upstream_transportation-table.html",
+            "19": "home/downstream_transportation-table.html",
+            "20": "home/employee_commute-table.html",
+            "21": "home/employee_business-table.html",
+            "22": "home/waste-table.html",
+            "data": "home/waste-table.html"
+        }
+        # a = request.GET.get('deviceId')
+        # context = {'html': a}
+        return render(request, "home/carbon-system.html", htmlName)
+        # return render(request, "home/carbon-system.html", locals())
