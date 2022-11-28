@@ -62,7 +62,7 @@
                         <div class="mb-4">
                             <div class="d-flex justify-content-center">
                                 <a type="button" class="btn btn-outline-light me-1" id="addNewPage"
-                                   href="/combustion_equipment/">
+                                   href="/new_device/">
                                     新增
                                 </a>
                                 <button type="button" class="btn btn-outline-light ms-1">
@@ -77,34 +77,35 @@
         </div>
         </div>
     </header>
-    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
-    {% if htmlName %}
-        123123123123: {{ data }}
-    {% endif %}
-
-{#    {% include 1a %}#}
-    123123123123: {{ 1a }}
-{#    {% include 'home/material-table.html' %}#}
-{#    {% include '{{ 1 }}' %}#}
-{#        {% if data%}#}
-{#            {% include {{ 1 }} %}#}
-{#        {% elif %}#}
-{#            {% include 'home/material-table.html' %}#}
-{#        {% endif %}#}
-    </div>
-
     {#    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">#}
-    {#        <div class="table-responsive">#}
-    {#            <table class="table table-secondary" id="table">#}
-    {#                <thead id="table_head">#}
+    {#            {% include 1a %}#}
+    {#            123123123123: {{ 1a }}#}
+    {#        {{ context }}123456#}
+    {#        {% include 'home/material-table.html' %}#}
     {##}
-    {#                </thead>#}
-    {#                <tbody id="table_body">#}
-    {##}
-    {#                </tbody>#}
-    {#            </table>#}
-    {#        </div>#}
+    {#            {% include '{{ 1 }}' %}#}
+    {#                {% if data%}#}
+    {#                    {% include {{ 1 }} %}#}
+    {#                {% elif %}#}
+    {#                    {% include 'home/material-table.html' %}#}
+    {#                {% endif %}#}
     {#    </div>#}
+
+    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+        <div class="table-responsive">
+            <table class="table table-sm" id="table">
+                <thead class="text-center" id="table_head">
+                {#                <tr class="table-secondary text-center">#}
+                {##}
+                {#                </tr>#}
+
+                </thead>
+                <tbody class="text-center" id="table_body">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 {% endblock content %}
 
@@ -267,6 +268,57 @@
         })
     </script>
 
+    <!--/*顯示tableTitle*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        //select thead
+        var thead = document.getElementById("table").getElementsByTagName('thead')[0]
+        var tr = document.getElementById("table").getElementsByTagName('tr')[0]
+        var style = document.createElement('style');
+        $("#submit").on('click', function () {
+            var deviceId = dropdownmenu3.value;
+            console.error(">>>>>>>>>>>>>>>>>>>>>", deviceId)
+            $.ajax({
+                url: "{% url 'loadtitle' %}",
+                data: {
+                    'deviceId': deviceId
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (title) {
+                    console.warn(title);
+                    thead.innerHTML = ""
+                    var thead_row_category = thead.insertRow(-1)//加入下一列
+                    title.forEach((item, index) => {
+                        var thead_row_name = thead.insertRow(-1)//加入下一列
+                        var i = 0;
+                        for (const [key, value] of Object.entries((item))) {
+                            var tr_c = thead_row_category.insertCell(-1)
+                            var a = thead_row_category.appendChild(tr_c)
+                            {#tr_c.append(class table-secondary)#}
+                            tr_c.innerHTML = key
+                            if (i == 0) {
+                                tr_c.setAttribute('class', 'table-secondary');
+                            } else {
+                                tr_c.setAttribute('class', 'table-light');
+                            }
+                            tr_c.setAttribute('style', 'border-color: black')
+                            tr_c.appendChild(style);
+                            value.forEach((item, index) => {
+                                var cr_n = thead_row_name.insertCell(-1)
+                                thead_row_name.appendChild(cr_n)
+                                cr_n.innerHTML = item
+                                a.colSpan = index + 1//加第一排空間
+                            })
+                            i++;
+                        }
+                    })
+
+                },
+            });
+        })
+    </script>
+
     <!--/*顯示table*/-->
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
@@ -287,7 +339,6 @@
                     console.warn(t_data);
                     tbody.innerHTML = ""
                     t_data.forEach((item, index) => {
-
                         var row = tbody.insertRow(-1)//加入下一列
                         console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
                         for (const [key, value] of Object.entries((item))) {
@@ -300,16 +351,16 @@
         })
     </script>
 
-    <!--/*顯示tableHTML*/-->
+    <!--/*新增跳轉*/-->
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
         //add
         var addNewPage = document.getElementById("addNewPage")
-        $("#submit").on('click', function () {
+        $("#addNewPage").on('click', function () {
             var deviceId = dropdownmenu3.value;
             console.error(">>>>>>>>>>>>>>>>>>>>>", deviceId)
             $.ajax({
-                url: "{% url 'carbon-system' %}",
+                url: "{% url 'loadadd' %}",
                 data: {
                     'deviceId': deviceId
                 },

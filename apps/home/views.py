@@ -4,6 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 from json import dumps
 
+import pandas as pd
 from django import template
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
@@ -119,6 +120,7 @@ def load_table(request):
                                                             "january", "february", "march", "april",
                                                             "may", "june", "july", "august",
                                                             "september", "october", "november", "december"))
+                    print("t_data::::::::::::::::::::::::::::::::::::::::::::::::", t_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "燃燒設備":
                     t_data = list(combustion_equipment.objects.values("id", "device_id", "device_name", "fuel_type",
@@ -417,13 +419,56 @@ def combustion_equipment(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    if request.method == 'GET':
+    return render(request, "home/carbon-system.html", locals())
+
+
+# 新增轉跳
+@login_required(login_url="/login/")
+def add_page(request):
+    global page
+    if request.method == "GET":
         htmlName = {
-            "1a": "home/emergency_generators-table.html",
-            "2": "home/combustion_equipment-table.html",
+            "1": "home/emergency-generator.html",
+            "2": "home/combustion-equipment.html",
+            "3": "home/official-car.html",
+            "4": "home/material.html",
+            "6": "home/refrigerator.html",
+            "7": "home/airconditioner.html",
+            "8": "home/vehicle.html",
+            "9": "home/vehicle.html",
+            "10": "home/ice-water_dispenser.html",
+            "11": "home/ice-maker.html",
+            "12": "home/other-device.html",
+            "13": "home/refrigerant-total_table.html",
+            "14": "home/extinguisher.html",
+            "15": "home/personnel-inventory.html",
+            "16": "home/security.html",
+            "17": "home/electricity.html",
+            "18": "home/upstream-transportation.html",
+            "19": "home/downstream-transportation.html",
+            "20": "home/employee-commute.html",
+            "21": "home/employee-business.html",
+            "22": "home/waste.html",
+            "data": "home/waste.html"
+        }
+        device_id = request.GET.get('deviceId', None)
+        for a in htmlName:
+            if device_id == a:
+                print("-------------------------------------------", htmlName.get(a))
+                page = htmlName.get(a)
+        return render(request, page, locals())
+
+# 新增title
+@login_required(login_url="/login/")
+def add_title(request):
+    if request.method == 'GET':
+        device_id = request.GET.get('deviceId', None)
+        print("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", device_id)
+        htmlName = {
+            "1": {"內容": ["序號", "燃料開始日期", "燃料結束日期", "編號", "容量(𝓁)", "地點", "所屬單位"], "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]},
+            "2": "home/combustion-equipment-table.html",
             "3": "home/official_car-table.html",
-            "4": "home/material-table.html",
-            "5": "home/process-table.html",
+            "4": {"內容": ["序號", "原物料號", "原/物料", "名稱"], "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]},
             "6": "home/refrigerator-table.html",
             "7": "home/airconditioner-table.html",
             "8": "home/vehicle-table.html",
@@ -443,7 +488,11 @@ def carbon_system(request):
             "22": "home/waste-table.html",
             "data": "home/waste-table.html"
         }
-        # a = request.GET.get('deviceId')
-        # context = {'html': a}
-        return render(request, "home/carbon-system.html", htmlName)
-        # return render(request, "home/carbon-system.html", locals())
+    # a = request.GET.get('deviceId')
+    # context = {'html': a}
+    context = htmlName.get(device_id)
+    # print('我好帥', context)
+    print("htmlName:::::::::::::::::::::::::::::::::::::::::::::::::::", context)
+    title = [context]
+    # print('我好帥2', title)
+    return JsonResponse(title, safe=False)
