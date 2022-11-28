@@ -23,20 +23,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/combustion_equipment_add/" name="CEform" method="POST">
+                                <form action="/combustion_equipment_add/" method="POST" enctype="multipart/form-data">
                                 {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱</label>
-                                                    <input type="text" id="device_name" name="device_name" class="form-control"  placeholder="" required>
+                                                    {{ CE_add.device_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號</label>
-                                                    <input type="text" id="device_id" name="device_id" class="form-control"  oninput="value=value.replace(/[^\d.]/g,'')">
+                                                    {{ CE_add.device_id }}
                                                 </div>
                                             </div>
                                         </div>
@@ -44,14 +44,14 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>燃料種類</label>
-                                                    <input type="text" id="fuel_type" name="fuel_type" class="form-control" placeholder="">
+                                                    {{ CE_add.fuel_type }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">燃料使用開始時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control" id="period_starttime" name="period_starttime"/>
+                                                        {{ CE_add.period_starttime }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -59,7 +59,7 @@
                                                 <label class="" for="start">燃料使用結束時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control" id="period_endtime" name="period_endtime"/>
+                                                        {{ CE_add.period_endtime }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -91,62 +91,62 @@
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_january" name="fuel_january">
+                                                            {{ CE_add.fuel_january }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_february" name="fuel_february">
+                                                            {{ CE_add.fuel_february }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_march" name="fuel_march">
+                                                            {{ CE_add.fuel_march }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_april" name="fuel_april">
+                                                            {{ CE_add.fuel_april }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_may" name="fuel_may">
+                                                            {{ CE_add.fuel_may }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_june" name="fuel_june">
+                                                            {{ CE_add.fuel_june }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_july" name="fuel_july">
+                                                            {{ CE_add.fuel_july }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_august" name="fuel_august">
+                                                            {{ CE_add.fuel_august }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_september" name="fuel_september">
+                                                            {{ CE_add.fuel_september }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_october" name="fuel_october">
+                                                            {{ CE_add.fuel_october }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_november" name="fuel_november">
+                                                            {{ CE_add.fuel_november }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="fuel_december" name="fuel_december">
+                                                            {{ CE_add.fuel_december }}
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -156,62 +156,62 @@
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_january" name="heat_january">
+                                                            {{ CE_add.heat_january }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_february" name="heat_february">
+                                                            {{ CE_add.heat_february }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_march" name="heat_march">
+                                                            {{ CE_add.heat_march }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_april" name="heat_april">
+                                                            {{ CE_add.heat_april }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_may" name="heat_may">
+                                                            {{ CE_add.heat_may }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_june" name="heat_june">
+                                                            {{ CE_add.heat_june }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_july" name="heat_july">
+                                                            {{ CE_add.heat_july }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_august" name="heat_august">
+                                                           {{ CE_add.heat_august }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_september" name="heat_september">
+                                                            {{ CE_add.heat_september }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_october" name="heat_october">
+                                                            {{ CE_add.heat_october }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_november" name="heat_november">
+                                                            {{ CE_add.heat_november }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text" id="heat_december" name="heat_december">
+                                                            {{ CE_add.heat_december }}
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -225,19 +225,24 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                <input type="text" id="image_note"  name="image_note" class="form-control" placeholder="請輸入單據名稱">
+                                                {{ CE_add.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                <input type="file" class="" id="image_path" name="image_path" accept="image/*">
+                                                {{ CE_add.image_path }}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-12 text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
                                             </button>
                                         </div>
                                     </div>
