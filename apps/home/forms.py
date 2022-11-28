@@ -1,46 +1,72 @@
 from django import forms
+from .models import emergency_generators, combustion_equipment
 
 
-class EGform(forms.Form):
-    device_id = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}), label='設備編號', max_length=30,)
-    period_starttime = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}), label='燃料使用開始時間')
-    period_endtime = forms.DateField(widget=forms.NumberInput(attrs={'type': 'date'}), label='燃料使用結束時間')
-    device_capacity = forms.IntegerField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '單位:公升'}), label='發電機容量', max_value=9999999999)
-    position = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'value': '資訊管理系'}), label='設置地點', max_length=30)
-    department = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'value': '管理學院'}), label='所屬單位', max_length=100)
-    january = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    february = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    march = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    april = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    may = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    june = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    july = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    august = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    september = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    october = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    november = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    december = forms.FloatField(widget=forms.TextInput(attrs={'class': 'col-6', 'value': '0'}))
-    image_note = forms.CharField(widget=forms.DateInput(attrs={'class': 'form-control', 'value': 'test'}), label='上傳引用單據', max_length=30)
-    # image_path = forms.CharField(widget=forms.FileInput(attrs={'class': 'form-control-file'}), max_length=100)
+class EGform(forms.ModelForm):
+
+    class Meta:
+        model = emergency_generators
+        fields = ('device_id', 'period_starttime', 'period_endtime', 'device_capacity', 'position', 'department', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'image_path')
+        widgets = {
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}),
+            'period_starttime': forms.DateInput(attrs={'type': 'date'}),
+            'period_endtime': forms.DateInput(attrs={'type': 'date'}),
+            'device_capacity': forms.NumberInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '單位:公升'}),
+            'position': forms.TextInput(attrs={'class': 'form-control', 'value': '資訊管理系'}),
+            'department': forms.TextInput(attrs={'class': 'form-control', 'value': '管理學院'}),
+            'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'value': 'test'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+        }
 
 
-class CEform(forms.Form):
-    device_name = forms.CharField(label='設備名稱', max_length=50)
-    device_id = forms.CharField(label='設備編號', max_length=30)
-    fuel_type = forms.CharField(label='燃料種類', max_length=10)
-    period_starttime = forms.DateField(label='燃料使用開始時間')
-    period_endtime = forms.DateField(label='燃料使用結束時間')
-    january = forms.FloatField()
-    february = forms.FloatField()
-    march = forms.FloatField()
-    april = forms.FloatField()
-    may = forms.FloatField()
-    june = forms.FloatField()
-    july = forms.FloatField()
-    august = forms.FloatField()
-    september = forms.FloatField()
-    october = forms.FloatField()
-    november = forms.FloatField()
-    december = forms.FloatField()
-    image_note = forms.CharField(label='上傳引用單據', max_length=30)
-    image_path = forms.CharField(max_length=100)
+class CEform(forms.ModelForm):
+
+    class Meta:
+        model = combustion_equipment
+        fields = ('device_name', 'device_id', 'fuel_type', 'period_starttime', 'period_endtime', 'fuel_january', 'fuel_february', 'fuel_march', 'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august', 'fuel_september', 'fuel_october', 'fuel_november', 'fuel_december', 'heat_january', 'heat_february', 'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september', 'heat_october', 'heat_november', 'heat_december', 'image_note', 'image_path')
+        widgets = {
+            'device_name': forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}),
+            'fuel_type': forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}),
+            'period_starttime': forms.DateInput(attrs={'type': 'date'}),
+            'period_endtime': forms.DateInput(attrs={'type': 'date'}),
+            'fuel_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'heat_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'value': 'test'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+        }
+

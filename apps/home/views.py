@@ -15,7 +15,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
 
 import apps
-from .forms import EGform
+from .forms import *
 from apps.home.models import emergency_generators, section_one, section_two
 from apps.home.models import *
 
@@ -341,63 +341,15 @@ def load_table(request):
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
     if request.method == "POST":
-        EG_add = EGform(request.POST)
+        EG_add = EGform(request.POST, request.FILES)
         if EG_add.is_valid():
-            device_id = EG_add.cleaned_data['device_id']
-            period_starttime = EG_add.cleaned_data['period_starttime']
-            period_endtime = EG_add.cleaned_data['period_endtime']
-            device_capacity = EG_add.cleaned_data['device_capacity']
-            position = EG_add.cleaned_data['position']
-            department = EG_add.cleaned_data['department']
-            january = EG_add.cleaned_data['january']
-            february = EG_add.cleaned_data['february']
-            march = EG_add.cleaned_data['march']
-            april = EG_add.cleaned_data['april']
-            may = EG_add.cleaned_data['may']
-            june = EG_add.cleaned_data['june']
-            july = EG_add.cleaned_data['july']
-            august = EG_add.cleaned_data['august']
-            september = EG_add.cleaned_data['september']
-            october = EG_add.cleaned_data['october']
-            november = EG_add.cleaned_data['november']
-            december = EG_add.cleaned_data['december']
-            image_note = EG_add.cleaned_data['image_note']
-            # image_path = EG_add.cleaned_data['image_path']
-
-            unit = emergency_generators.objects.create(
-                device_id=device_id,
-                period_starttime=period_starttime,
-                period_endtime=period_endtime,
-                device_capacity=device_capacity,
-                position=position,
-                department=department,
-                january=january,
-                february=february,
-                march=march,
-                april=april,
-                may=may,
-                june=june,
-                july=july,
-                august=august,
-                september=september,
-                october=october,
-                november=november,
-                december=december,
-                image_note=image_note,
-                # image_path=image_path
-            )
-
-            unit.save()
+            EG_add.save()
 
             return redirect('/carbon-system/')
 
-
-        else:
-            message = '請完整填寫',
     else:
-        message = '請輸入資料(資料不作驗證)'
 
-    return render(request, "home/emergency-generators.html", locals())
+        return redirect('/emergency_generator_add/')
 
 
 @login_required(login_url="/login/")
@@ -436,71 +388,15 @@ def emergency_generators_edit(request, id=None, mode=None):
 @login_required(login_url="/login/")
 def combustion_equipment_add(request):
     if request.method == "POST":
-        CE_add = CEform(request.POST)
+        CE_add = CEform(request.POST, request.FILES)
         if CE_add.is_valid():
-            device_name = CE_add.cleaned_data['device_name']
-            device_id = CE_add.cleaned_data['device_id']
-            fuel_type = CE_add.cleaned_data['fuel_type']
-            period_starttime = CE_add.cleaned_data['period_starttime']
-            period_endtime = CE_add.cleaned_data['period_endtime']
-            january = CE_add.cleaned_data['january']
-            february = CE_add.cleaned_data['february']
-            march = CE_add.cleaned_data['march']
-            april = CE_add.cleaned_data['april']
-            may = CE_add.cleaned_data['may']
-            june = CE_add.cleaned_data['june']
-            july = CE_add.cleaned_data['july']
-            august = CE_add.cleaned_data['august']
-            september = CE_add.cleaned_data['september']
-            october = CE_add.cleaned_data['october']
-            november = CE_add.cleaned_data['november']
-            december = CE_add.cleaned_data['december']
-            image_note = CE_add.cleaned_data['image_note']
-            image_path = CE_add.cleaned_data['image_path']
-
-            unit = combustion_equipment.objects.create(
-                device_name=device_name,
-                device_id=device_id,
-                fuel_type=fuel_type,
-                period_starttime=period_starttime,
-                period_endtime=period_endtime,
-                fuel_january=fuel_january,
-                fuel_february=fuel_february,
-                fuel_march=fuel_march,
-                fuel_april=fuel_april,
-                fuel_may=fuel_may,
-                fuel_june=fuel_june,
-                fuel_july=fuel_july,
-                fuel_august=fuel_august,
-                fuel_september=fuel_september,
-                fuel_october=fuel_october,
-                fuel_november=fuel_november,
-                fuel_december=fuel_december,
-                heat_january=heat_january,
-                heat_february=heat_february,
-                heat_march=heat_march,
-                heat_april=heat_april,
-                heat_may=heat_may,
-                heat_june=heat_june,
-                heat_july=heat_july,
-                heat_august=heat_august,
-                heat_september=heat_september,
-                heat_october=heat_october,
-                heat_november=heat_november,
-                heat_december=heat_december,
-                image_note=image_note,
-                image_path=image_path
-            )
-
-            unit.save()
+            CE_add.save()
 
             return redirect('/carbon-system/')
-        else:
-            message = '請完整填寫',
+
     else:
-        message = '請輸入資料(資料不作驗證)'
-        post = EGform()
-    return render(request, "home/combustion-equipment.html", locals())
+
+        return redirect('/combustion_equipment_add/')
 
 
 @login_required(login_url="/login/")
@@ -508,6 +404,15 @@ def emergency_generator(request):
     EG_add = EGform(request.POST)
 
     return render(request, "home/emergency-generator.html", locals())
+
+@login_required(login_url="/login/")
+def combustion_equipment(request):
+    CE_add = CEform(request.POST)
+
+    return render(request, "home/combustion-equipment.html", locals())
+
+
+
 
 
 @login_required(login_url="/login/")
