@@ -25,7 +25,7 @@
                         <div class="col-5">
                             <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
                             <select class="" id="dropdownmenu1" name="dropdown1name">
-                                <option class="" id="question-subject" value="0">
+                                <option class="" id="question-subject" value="0" selected>
                                     <---請選擇類別--->
                                 </option>
                                 <option class="" id="question-subject" value="1">
@@ -51,7 +51,7 @@
                             <select class="" id="dropdownmenu3" name="dropdown3name"></select>
                         </div>
                         <div class="col-1">
-                            <input id="submit" type="submit" value="送出"
+                            <input id="submit" type="submit" value="查詢"
                                    class="btn btn-outline-light ms-1">
                         </div>
                     </div>
@@ -202,12 +202,6 @@
         }
     </script>
 
-    {#    <script>#}
-    {#        var dr1 = document.getElementById("dr1");#}
-    {#        dr1.innerHTML = "";#}
-    {##}
-    {#    </script>#}
-
     <!--/*類別>>>選擇過程區域*/-->
     <script>
         var dr1 = document.getElementById("dr1");
@@ -231,7 +225,6 @@
                             dropdownmenu2.options.add(new Option('<---請選擇過程區域--->', 0));
                         }
                         dropdownmenu2.options.add(new Option(item.p_name, item.cpid));
-                        {#console.warn(item.p_name, index+1,)#}
                     })
                 },
             });
@@ -244,7 +237,6 @@
         var table = document.getElementById("table")
         $("#dropdownmenu2").on('change', function () {
             var currentProcess = $(this).val();
-            {#console.warn(currentProcess)#}
             $.ajax({
                 url: "{% url 'loaddevice' %}",
                 data: {
@@ -253,14 +245,12 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (d_data) {
-                    {#console.warn(d_data);#}
                     dropdownmenu3.innerHTML = ""
                     d_data.forEach((item, index) => {
                         if (index == 0) {
                             dropdownmenu3.options.add(new Option('<---請選擇設備名稱--->', 0));
                         }
                         dropdownmenu3.options.add(new Option(item.d_name, item.did));
-                        {#console.warn(item.p_name, index+1,)#}
                     })
                 },
 
@@ -277,7 +267,6 @@
         var style = document.createElement('style');
         $("#submit").on('click', function () {
             var deviceId = dropdownmenu3.value;
-            console.error(">>>>>>>>>>>>>>>>>>>>>", deviceId)
             $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
@@ -286,7 +275,6 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (title) {
-                    console.warn(title);
                     thead.innerHTML = ""
                     var thead_row_category = thead.insertRow(-1)//加入下一列
                     title.forEach((item, index) => {
@@ -295,9 +283,8 @@
                         for (const [key, value] of Object.entries((item))) {
                             var tr_c = thead_row_category.insertCell(-1)
                             var a = thead_row_category.appendChild(tr_c)
-                            {#tr_c.append(class table-secondary)#}
                             tr_c.innerHTML = key
-                            if (i == 0) {
+                            if (i %2 == 0) {
                                 tr_c.setAttribute('class', 'table-secondary');
                             } else {
                                 tr_c.setAttribute('class', 'table-light');
@@ -327,7 +314,6 @@
         var table_body = document.getElementById("table_body")
         $("#submit").on('click', function () {
             var deviceId = dropdownmenu3.value;
-            console.error(">>>>>>>>>>>>>>>>>>>>>", deviceId)
             $.ajax({
                 url: "{% url 'loadtable' %}",
                 data: {
@@ -340,7 +326,6 @@
                     tbody.innerHTML = ""
                     t_data.forEach((item, index) => {
                         var row = tbody.insertRow(-1)//加入下一列
-                        console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
                         for (const [key, value] of Object.entries((item))) {
                             var cr_c1 = row.insertCell(-1)
                             cr_c1.innerHTML = value
@@ -358,7 +343,6 @@
         var addNewPage = document.getElementById("addNewPage")
         $("#addNewPage").on('click', function () {
             var deviceId = dropdownmenu3.value;
-            console.error(">>>>>>>>>>>>>>>>>>>>>", deviceId)
             $.ajax({
                 url: "{% url 'loadadd' %}",
                 data: {

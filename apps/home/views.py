@@ -81,7 +81,7 @@ def load_device(request):
             all = list(section_two.objects.all())
             # print("00000000000000000000000000000000000000",all)
             d_data = list(section_two.objects.filter(cpid=current_process).values("d_name", "did"))
-            print("111111111111111111111111111111111111111111111111111111111", d_data)
+            # print("111111111111111111111111111111111111111111111111111111111", d_data)
             return JsonResponse(d_data, safe=False)
 
 
@@ -112,6 +112,7 @@ def load_table(request):
 
             t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
             # print("888888888", t_name)
+            # 從db撈每張表要顯示的值
             for a in t_name:
                 if a["d_name"] == "緊急發電機":
                     t_data = list(
@@ -120,10 +121,10 @@ def load_table(request):
                                                             "january", "february", "march", "april",
                                                             "may", "june", "july", "august",
                                                             "september", "october", "november", "december"))
-                    print("t_data::::::::::::::::::::::::::::::::::::::::::::::::", t_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "燃燒設備":
-                    t_data = list(combustion_equipment.objects.values("id", "device_id", "device_name", "fuel_type",
+                    t_data = list(
+                        combustion_equipment.objects.values("id", "device_id", "device_name", "fuel_type",
                                                                       "period_starttime", "period_endtime",
                                                                       "fuel_january", "fuel_february", "fuel_march",
                                                                       "fuel_april",
@@ -137,13 +138,14 @@ def load_table(request):
                                                                       "heat_august",
                                                                       "heat_september", "heat_october", "heat_november",
                                                                       "heat_december"))
+                    # print("t_data::::::::::::::::::::::::::::::::::::::::::::::::", t_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "公務車":
                     t_data = list(
                         official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type", "department",
                                                     "january", "february", "march", "april",
                                                     "may", "june", "july", "august",
-                                                    "september", "october", "november", "december"))
+                                                    "september", "october", "november", "december", "urea", "urea_add_date", "urea_add_quantity"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "原物料使用":
                     t_data = list(
@@ -441,6 +443,7 @@ def carbon_system(request):
 def add_page(request):
     global page
     if request.method == "GET":
+        #建立字典
         htmlName = {
             "1": "home/emergency-generator.html",
             "2": "home/combustion-equipment.html",
@@ -461,7 +464,7 @@ def add_page(request):
             "18": "home/upstream-transportation.html",
             "19": "home/downstream-transportation.html",
             "20": "home/employee-commute.html",
-            "21": "home/employee-business.html",
+            "21": "home/employee-business-trip.html",
             "22": "home/waste.html",
             "data": "home/waste.html"
         }
@@ -474,23 +477,34 @@ def add_page(request):
         device_id = request.GET.get('deviceId', None)
         for a in htmlName:
             if device_id == a:
-                print("-------------------------------------------", htmlName.get(a))
                 page = htmlName.get(a)
 
 
         return render(request, page, locals())
+
 
 # 新增title
 @login_required(login_url="/login/")
 def add_title(request):
     if request.method == 'GET':
         device_id = request.GET.get('deviceId', None)
-        print("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", device_id)
+        # print("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", device_id)
+        # 選擇title要顯示的欄位
         htmlName = {
-            "1": {"內容": ["序號", "燃料開始日期", "燃料結束日期", "編號", "容量(𝓁)", "地點", "所屬單位"], "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]},
+            "1": {"內容": ["序號", "燃料開始日期", "燃料結束日期", "編號", "容量(𝓁)", "地點", "部門"],
+                  "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
+                                        "十一月", "十二月"]},
+
             "2": "home/combustion-equipment-table.html",
-            "3": "home/official_car-table.html",
-            "4": {"內容": ["序號", "原物料號", "原/物料", "名稱"], "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]},
+
+            "3": {"內容": ["序號", "類別", "編號", "燃料", "部門"],
+                  "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
+                                        "十一月", "十二月"], "尿素": ["是否添加", "日期", "添加量(𝓁)"]},
+
+            "4": {"內容": ["序號", "原物料號", "原/物料", "名稱"],
+                  "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
+                                        "十一月", "十二月"]},
+
             "6": "home/refrigerator-table.html",
             "7": "home/airconditioner-table.html",
             "8": "home/vehicle-table.html",
@@ -512,9 +526,8 @@ def add_title(request):
         }
     # a = request.GET.get('deviceId')
     # context = {'html': a}
-    context = htmlName.get(device_id)
+    title = [htmlName.get(device_id)]
     # print('我好帥', context)
-    print("htmlName:::::::::::::::::::::::::::::::::::::::::::::::::::", context)
-    title = [context]
+    # print("htmlName:::::::::::::::::::::::::::::::::::::::::::::::::::", context)
     # print('我好帥2', title)
     return JsonResponse(title, safe=False)
