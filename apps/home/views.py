@@ -402,16 +402,30 @@ def combustion_equipment_add(request):
 
 
 @login_required(login_url="/login/")
-def emergency_generator(request):
-    EG_add = EGform(request.POST)
+def official_car_add(request):
+    if request.method == "POST":
+        OffCar_add = OFform(request.POST, request.FILES)
+        if OffCar_add.is_valid():
+            OffCar_add.save()
 
-    return render(request, "home/emergency-generator.html", locals())
+            return redirect('/carbon-system/')
 
-@login_required(login_url="/login/")
-def combustion_equipment(request):
-    CE_add = CEform(request.POST)
+    else:
 
-    return render(request, "home/combustion-equipment.html", locals())
+        return redirect('/official_car_add/')
+
+
+# @login_required(login_url="/login/")
+# def emergency_generator(request):
+#     EG_add = EGform(request.POST)
+#
+#     return render(request, "home/emergency-generator.html", locals())
+#
+# @login_required(login_url="/login/")
+# def combustion_equipment(request):
+#     CE_add = CEform(request.POST)
+#
+#     return render(request, "home/combustion-equipment.html", locals())
 
 
 
@@ -451,11 +465,19 @@ def add_page(request):
             "22": "home/waste.html",
             "data": "home/waste.html"
         }
+
+        EG_add = EGform(request.POST)
+        CE_add = CEform(request.POST)
+        OffCar_add = OFform(request.POST)
+
+
         device_id = request.GET.get('deviceId', None)
         for a in htmlName:
             if device_id == a:
                 print("-------------------------------------------", htmlName.get(a))
                 page = htmlName.get(a)
+
+
         return render(request, page, locals())
 
 # 新增title

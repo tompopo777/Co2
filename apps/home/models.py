@@ -83,6 +83,8 @@ class official_car(models.Model):
     vehicle_type = models.CharField(max_length=10)
     device_id = models.CharField(max_length=30)
     fuel_type = models.CharField(max_length=30)
+    period_starttime = models.DateField()
+    period_endtime = models.DateField()
     department = models.CharField(max_length=100)
     january = models.FloatField()
     february = models.FloatField()
