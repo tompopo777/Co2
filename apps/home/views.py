@@ -343,20 +343,6 @@ def load_table(request):
 
 
 @login_required(login_url="/login/")
-def emergency_generators_add(request):
-    if request.method == "POST":
-        EG_add = EGform(request.POST, request.FILES)
-        if EG_add.is_valid():
-            EG_add.save()
-
-            return redirect('/carbon-system/')
-
-    else:
-
-        return redirect('/emergency_generator_add/')
-
-
-@login_required(login_url="/login/")
 def emergency_generators_edit(request, id=None, mode=None):
     if mode == "edit":
         unit = emergency_generators.objects.get(id=1)
@@ -388,6 +374,19 @@ def emergency_generators_edit(request, id=None, mode=None):
     # else:
     #     return render(request, "home/carbon-system.html", locals())
 
+@login_required(login_url="/login/")
+def emergency_generators_add(request):
+    if request.method == "POST":
+        EG_add = EGform(request.POST, request.FILES)
+        if EG_add.is_valid():
+            EG_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/emergency_generator_add/')
+
 
 @login_required(login_url="/login/")
 def combustion_equipment_add(request):
@@ -417,20 +416,144 @@ def official_car_add(request):
         return redirect('/official_car_add/')
 
 
-# @login_required(login_url="/login/")
-# def emergency_generator(request):
-#     EG_add = EGform(request.POST)
-#
-#     return render(request, "home/emergency-generator.html", locals())
-#
-# @login_required(login_url="/login/")
-# def combustion_equipment(request):
-#     CE_add = CEform(request.POST)
-#
-#     return render(request, "home/combustion-equipment.html", locals())
+@login_required(login_url="/login/")
+def material_add(request):
+    if request.method == "POST":
+        MT_add = MTform(request.POST, request.FILES)
+        if MT_add.is_valid():
+            MT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/material_add/')
 
 
+@login_required(login_url="/login/")
+def process_add(request):
+    if request.method == "POST":
+        PC_add = PCform(request.POST, request.FILES)
+        if PC_add.is_valid():
+            PC_add.save()
 
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/material_add/')
+
+
+@login_required(login_url="/login/")
+def refrigerator_add(request):
+    if request.method == "POST":
+        RF_add = RFform(request.POST, request.FILES)
+        if RF_add.is_valid():
+            RF_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/refrigerator_add/')
+
+
+@login_required(login_url="/login/")
+def airconditioner_add(request):
+    if request.method == "POST":
+        AC_add = ACform(request.POST, request.FILES)
+        if AC_add.is_valid():
+            AC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/airconditioner_add/')
+
+
+@login_required(login_url="/login/")
+def vehicle_add(request):
+    if request.method == "POST":
+        VC_add = VCform(request.POST, request.FILES)
+        if VC_add.is_valid():
+            VC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/vehicle_add/')
+
+
+@login_required(login_url="/login/")
+def water_dispenser_add(request):
+    if request.method == "POST":
+        WD_add = WDform(request.POST, request.FILES)
+        if WD_add.is_valid():
+            WD_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/water_dispenser_add/')
+
+
+@login_required(login_url="/login/")
+def ice_water_dispenser_add(request):
+    if request.method == "POST":
+        IWD_add = IWDform(request.POST, request.FILES)
+        if IWD_add.is_valid():
+            IWD_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/ice_water_dispenser_add/')
+
+
+@login_required(login_url="/login/")
+def ice_maker_add(request):
+    if request.method == "POST":
+        IM_add = IMform(request.POST, request.FILES)
+        if IM_add.is_valid():
+            IM_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/ice_maker_add/')
+
+
+@login_required(login_url="/login/")
+def other_device_add(request):
+    if request.method == "POST":
+        OD_add = ODform(request.POST, request.FILES)
+        if OD_add.is_valid():
+            OD_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/other_device_add/')
+
+
+@login_required(login_url="/login/")
+def refrigerant_total_table_add(request):
+    if request.method == "POST":
+        RTT_add = RTTform(request.POST, request.FILES)
+        if RTT_add.is_valid():
+            RTT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/refrigerant_total_table_add/')
 
 
 @login_required(login_url="/login/")
@@ -449,11 +572,12 @@ def add_page(request):
             "2": "home/combustion-equipment.html",
             "3": "home/official-car.html",
             "4": "home/material.html",
+            "5": "home/process.html",
             "6": "home/refrigerator.html",
             "7": "home/airconditioner.html",
             "8": "home/vehicle.html",
-            "9": "home/vehicle.html",
-            "10": "home/ice-water_dispenser.html",
+            "9": "home/water-dispenser.html",
+            "10": "home/ice-water-dispenser.html",
             "11": "home/ice-maker.html",
             "12": "home/other-device.html",
             "13": "home/refrigerant-total_table.html",
@@ -472,6 +596,16 @@ def add_page(request):
         EG_add = EGform(request.POST)
         CE_add = CEform(request.POST)
         OffCar_add = OFform(request.POST)
+        MT_add = MTform(request.POST)
+        PC_add = PCform(request.POST)
+        RF_add = RFform(request.POST)
+        AC_add = ACform(request.POST)
+        VC_add = VCform(request.POST)
+        WD_add = WDform(request.POST)
+        IWD_add = IWDform(request.POST)
+        IM_add = IMform(request.POST)
+        OD_add = ODform(request.POST)
+        RTT_add = RTTform(request.POST)
 
 
         device_id = request.GET.get('deviceId', None)
@@ -504,7 +638,7 @@ def add_title(request):
             "4": {"內容": ["序號", "原物料號", "原/物料", "名稱"],
                   "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
                                         "十一月", "十二月"]},
-
+            "5": "home/process.html",
             "6": "home/refrigerator-table.html",
             "7": "home/airconditioner-table.html",
             "8": "home/vehicle-table.html",

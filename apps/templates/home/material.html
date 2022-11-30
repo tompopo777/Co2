@@ -27,26 +27,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="contact-form" method="post" autocomplete="off">
+                                <form action="/material_add/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料名稱</label>
-                                                    <input type="text" name="" class="form-control" id="number only" placeholder="">
+                                                    {{ MT_add.material_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料料號</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                    {{ MT_add.material_id }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>原物料種類</label>
-                                                <input type="text" name="number" class="form-control" id="number only" placeholder="ex. 原料/物料">
+                                                {{ MT_add.material_type }}
                                             </div>
                                         </div>
                                         <br>
@@ -76,62 +77,62 @@
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.january }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.february }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.march }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.april }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.may }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.june }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.july }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.august }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.september }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.october }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.november }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ MT_add.december }}
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -140,11 +141,15 @@
                                             </table>
                                         </div>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12 text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
                                             </button>
                                         </div>
                                     </div>
