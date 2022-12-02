@@ -27,35 +27,37 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="contact-form" method="post" autocomplete="off">
+                                <form action="/personnel_inventory_add/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>西元年</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="ex. 2022">
+                                                    {{ PI_add.years }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="btn-group dropend">
-                                                    <button class="btn bg-gradient-light btn-light dropdown-toggle mb-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        月份
-                                                    </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                        <!-- Dropdown menu links -->
-                                                        <li><a class="dropdown-item" href="#">一月</a></li>
-                                                        <li><a class="dropdown-item" href="#">二月</a></li>
-                                                        <li><a class="dropdown-item" href="#">三月</a></li>
-                                                        <li><a class="dropdown-item" href="#">四月</a></li>
-                                                        <li><a class="dropdown-item" href="#">五月</a></li>
-                                                        <li><a class="dropdown-item" href="#">六月</a></li>
-                                                        <li><a class="dropdown-item" href="#">七月</a></li>
-                                                        <li><a class="dropdown-item" href="#">八月</a></li>
-                                                        <li><a class="dropdown-item" href="#">九月</a></li>
-                                                        <li><a class="dropdown-item" href="#">十月</a></li>
-                                                        <li><a class="dropdown-item" href="#">十一月</a></li>
-                                                        <li><a class="dropdown-item" href="#">十二月</a></li>
-                                                    </ul>
+                                                    {#                                                    <button class="btn bg-gradient-light btn-light dropdown-toggle mb-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">#}
+                                                    {#                                                        月份#}
+                                                    {#                                                    </button>#}
+                                                    {#                                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">#}
+                                                    {#                                                        <!-- Dropdown menu links -->#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">一月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">二月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">三月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">四月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">五月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">六月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">七月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">八月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">九月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">十月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">十一月</a></li>#}
+                                                    {#                                                        <li><a class="dropdown-item" href="#">十二月</a></li>#}
+                                                    {#                                                    </ul>#}
+                                                    {{ PI_add.monthly }}
                                                 </div>
                                             </div>
                                         </div>
@@ -63,13 +65,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工人數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                    {{ PI_add.employee_number }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>每日工作時數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
+                                                    {{ PI_add.daily_hours }}
                                                 </div>
                                             </div>
                                         </div>
@@ -77,13 +79,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>每月工作天數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
+                                                    {{ PI_add.working_days }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>加班+補修時數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
+                                                    {{ PI_add.overtime }}
                                                 </div>
                                             </div>
                                         </div>
@@ -91,13 +93,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>請假時數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
+                                                    {{ PI_add.leave_hours }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>休假時數</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="非必填">
+                                                    {{ PI_add.day_off_hours }}
                                                 </div>
                                             </div>
                                         </div>
@@ -105,19 +107,25 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>上傳引用單據</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                    {{ PI_add.image_note }}
                                                 </div>
                                             </div>
                                             <div class=" ps-md-2 align-self-center">
                                                 <div class="col-1 ">
-                                                    <input type="file" class="" name="image" accept="image/*">
+                                                    {{ PI_add.image_path }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-12 text-center">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-1">
                                                 <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                     確認
+                                                </button>
+                                            </div>
+                                            <div class="col-1">
+                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                        onclick="history.back()">
+                                                    取消
                                                 </button>
                                             </div>
                                         </div>

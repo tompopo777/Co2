@@ -557,6 +557,133 @@ def refrigerant_total_table_add(request):
 
 
 @login_required(login_url="/login/")
+def extinguisher_add(request):
+    if request.method == "POST":
+        EX_add = EXform(request.POST, request.FILES)
+        if EX_add.is_valid():
+            EX_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/extinguisher_add/')
+
+
+@login_required(login_url="/login/")
+def personnel_inventory_add(request):
+    if request.method == "POST":
+        PI_add = PIform(request.POST, request.FILES)
+        if PI_add.is_valid():
+            PI_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/personnel_inventory_add/')
+
+
+@login_required(login_url="/login/")
+def security_add(request):
+    if request.method == "POST":
+        SC_add = SCform(request.POST, request.FILES)
+        if SC_add.is_valid():
+            SC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/security_add/')
+
+
+@login_required(login_url="/login/")
+def electricity_add(request):
+    if request.method == "POST":
+        ELEC_add = ELECform(request.POST, request.FILES)
+        if ELEC_add.is_valid():
+            ELEC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/electricity_add/')
+
+
+@login_required(login_url="/login/")
+def upstream_transportation_add(request):
+    if request.method == "POST":
+        UT_add = UTform(request.POST, request.FILES)
+        if UT_add.is_valid():
+            UT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/upstream_transportation_add/')
+
+
+@login_required(login_url="/login/")
+def downstream_transportation_add(request):
+    if request.method == "POST":
+        DT_add = DTform(request.POST, request.FILES)
+        if DT_add.is_valid():
+            DT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/downstream_transportation_add/')
+
+
+@login_required(login_url="/login/")
+def employee_commute_add(request):
+    if request.method == "POST":
+        EC_add = ECform(request.POST, request.FILES)
+        if EC_add.is_valid():
+            EC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/employee_commute_add/')
+
+
+@login_required(login_url="/login/")
+def employee_business_trip_add(request):
+    if request.method == "POST":
+        EBT_add = EBTform(request.POST, request.FILES)
+        if EBT_add.is_valid():
+            EBT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/employee_business_trip_add/')
+
+
+@login_required(login_url="/login/")
+def waste_add(request):
+    if request.method == "POST":
+        WASTE_add = WASTEform(request.POST, request.FILES)
+        if WASTE_add.is_valid():
+            WASTE_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/waste_add/')
+
+
+
+@login_required(login_url="/login/")
 def carbon_system(request):
     return render(request, "home/carbon-system.html", locals())
 
@@ -606,7 +733,15 @@ def add_page(request):
         IM_add = IMform(request.POST)
         OD_add = ODform(request.POST)
         RTT_add = RTTform(request.POST)
-
+        EX_add = EXform(request.POST)
+        PI_add = PIform(request.POST)
+        SC_add = SCform(request.POST)
+        ELEC_add = ELECform(request.POST)
+        UT_add = UTform(request.POST)
+        DT_add = DTform(request.POST)
+        EC_add = ECform(request.POST)
+        EBT_add = EBTform(request.POST)
+        WASTE_add = WASTEform(request.POST)
 
         device_id = request.GET.get('deviceId', None)
         for a in htmlName:
