@@ -27,19 +27,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="contact-form" method="post" autocomplete="off">
+                                <form action="/extinguisher_add/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器名稱</label>
-                                                    <input type="text" name="" class="form-control" id="number only" placeholder="">
+                                                    {{ EX_add.extinguisher_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器類型</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="">
+                                                    {{ EX_add.extinguisher_type }}
                                                 </div>
                                             </div>
                                         </div>
@@ -47,13 +48,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器編號</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                    {{ EX_add.device_id }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器擺放位置</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="">
+                                                    {{ EX_add.position }}
                                                 </div>
                                             </div>
                                         </div>
@@ -61,13 +62,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廠商</label>
-                                                    <input type="text" class="form-control" id="" placeholder="選填">
+                                                    {{ EX_add.extinguisher_vendor }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>庫存量</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                    {{ EX_add.inventory }}
                                                 </div>
                                             </div>
                                         </div>
@@ -75,13 +76,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑規格(單位:磅)</label>
-                                                    <input type="text" class="form-control" id="" placeholder="只能輸入數字">
+                                                    {{ EX_add.chemical_spec }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑重量(單位:公斤)</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                    {{ EX_add.chemical_weight }}
                                                 </div>
                                             </div>
                                         </div>
@@ -89,54 +90,56 @@
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器使用數量</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                    {{ EX_add.using_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">使用日期</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control"/>
+                                                        {{ EX_add.using_date }}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器更換/填充數量</label>
-                                                    <input type="text" name="number" class="form-control" id="" placeholder="只能輸入數字">
+                                                    {{ EX_add.replace_filling_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="" for="start">更換/填充日期</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control"/>
+                                                        {{ EX_add.replace_filling_date }}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <br>
-                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
-                                    <br>
                                     <div class="d-flex">
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                {{ EX_add.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                <input type="file" class="" name="image" accept="image/*">
+                                                {{ EX_add.image_path }}
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12 text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
                                             </button>
                                         </div>
                                     </div>

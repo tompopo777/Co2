@@ -27,19 +27,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="contact-form" method="post" autocomplete="off">
+                                <form action="/water_dispenser_add/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱</label>
-                                                    <input type="text" name="" class="form-control" id="number only" placeholder="">
+                                                    {{ WD_add.device_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                    {{ WD_add.device_id }}
                                                 </div>
                                             </div>
                                         </div>
@@ -47,26 +48,26 @@
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備品牌</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="非必填">
+                                                    {{ WD_add.brand_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>型號</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                    {{ WD_add.model_type }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>西元年</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="ex. 2022">
+                                                    {{ WD_add.years }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>放置位置</label>
-                                                <input type="text" class="form-control" id="number only" placeholder="非必填">
+                                                {{ WD_add.position }}
                                             </div>
                                         </div>
                                         <br>
@@ -74,26 +75,26 @@
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                    {{ WD_add.refrigerant_type }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤)</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                    {{ WD_add.filling_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>維修填充量(單位:公斤)</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="非必填">
+                                                    {{ WD_add.filling_fix_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">冷媒填充日</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control"/>
+                                                        {{ WD_add.filling_date }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -101,30 +102,33 @@
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>逸散率</label>
-                                                <input type="text" class="form-control" id="number only" placeholder="">
+                                                {{ WD_add.effusion_rate }}
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="d-flex">
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                {{ WD_add.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                <input type="file" class="" name="image" accept="image/*">
+                                                {{ WD_add.image_path }}
                                             </div>
                                         </div>
                                     </div>
                                     <br>
-
-                                    <div class="row">
-                                        <div class="col-md-12 text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
                                             </button>
                                         </div>
                                     </div>

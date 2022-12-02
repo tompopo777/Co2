@@ -27,19 +27,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="contact-form" method="post" autocomplete="off">
+                                <form action="/official_car_add/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>車輛類別</label>
-                                                    <input type="text" name="" class="form-control" id="number only" placeholder="如:汽車、堆高機...等">
+                                                    {{ OffCar_add.vehicle_type }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="只能輸入數字">
+                                                    {{ OffCar_add.device_id }}
                                                 </div>
                                             </div>
                                         </div>
@@ -47,14 +48,14 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>燃料種類</label>
-                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="">
+                                                    {{ OffCar_add.device_id }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">燃料使用開始時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control"/>
+                                                        {{ OffCar_add.period_starttime }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -62,7 +63,7 @@
                                                 <label class="" for="start">燃料使用結束時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control"/>
+                                                        {{ OffCar_add.period_endtime }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -70,7 +71,7 @@
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>所屬單位</label>
-                                                <input type="text" class="form-control" id="number only" placeholder="">
+                                                {{ OffCar_add.department }}
                                             </div>
                                         </div>
                                         <br>
@@ -100,62 +101,62 @@
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.january }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.february }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.march }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.april }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.may }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.june }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.july }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.august }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.september }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.october }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.november }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <input class="col-6" type="text">
+                                                            {{ OffCar_add.december }}
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -170,12 +171,12 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                {{ OffCar_add.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                <input type="file" class="" name="image" accept="image/*">
+                                                {{ OffCar_add.image_path }}
                                             </div>
                                         </div>
                                     </div>
@@ -184,9 +185,10 @@
                                     <br>
                                     <div class="row">
                                         <div class="form-check ps-3">
-                                            <input class="form-check-input" type="checkbox" data-bs-toggle="collapse" href="#collapsePee" aria-expanded="false" aria-controls="collapsePee">
-                                            是否添加尿素
-                                            </input>
+{#                                            <input class="form-check-input" type="checkbox" data-bs-toggle="collapse" href="#collapsePee" aria-expanded="false" aria-controls="collapsePee">#}
+{#                                            是否添加尿素#}
+{#                                            </input>#}
+                                            {{ OffCar_add.urea }}
                                         </div>
                                         <div class="collapse" id="collapsePee">
                                             <div class="accordion-body">
@@ -195,14 +197,14 @@
                                                         <div class="col-6">
                                                             <div class="input-group input-group-static mb-4">
                                                                 <label>尿素添加量</label>
-                                                                <input type="text" name="number" class="form-control" id="number only" placeholder="單位:公升">
+                                                                {{ OffCar_add.urea_add_quantity }}
                                                             </div>
                                                         </div>
                                                         <div class="col-3 ps-md-2">
                                                             <label class="ms-0" for="start">尿素添加日期</label>
                                                             <div class="col-6">
                                                                 <div class="ms-1 input-group date" id='date1'>
-                                                                    <input type="date" class="form-control"/>
+                                                                    {{ OffCar_add.urea_add_date }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -212,12 +214,12 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>尿素引用單據來源</label>
-                                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                                    {{ OffCar_add.urea_image_note }}
                                                                 </div>
                                                             </div>
                                                             <div class=" ps-md-2 align-self-center">
                                                                 <div class="col-1 ">
-                                                                    <input type="file" class="" name="image" accept="image/*">
+                                                                    {{ OffCar_add.urea_image_path }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -227,10 +229,15 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-12 text-center">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
                                             </button>
                                         </div>
                                     </div>

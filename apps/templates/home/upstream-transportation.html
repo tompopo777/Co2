@@ -27,25 +27,26 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form id="contact-form" method="post" autocomplete="off">
+                                <form action="/upstream_transportation_add/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>驗收單號</label>
-                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                    {{ UT_add.acceptance_receipt }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>商品名稱</label>
-                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                    {{ UT_add.commodity_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>商品淨總重量(單位:噸)</label>
-                                                    <input type="text" name="" class="form-control" id="number only" placeholder="只能輸入數字">
+                                                    {{ UT_add.commodity_NW }}
                                                 </div>
                                             </div>
                                         </div>
@@ -53,19 +54,19 @@
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>國內/國外客戶</label>
-                                                    <input type="text" name="" class="form-control" id="" placeholder="請輸入: 國內/國外">
+                                                    {{ UT_add.customer }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>供應商名稱</label>
-                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                    {{ UT_add.supplier }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>供應商地址</label>
-                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                    {{ UT_add.supplier_address }}
                                                 </div>
                                             </div>
                                         </div>
@@ -73,19 +74,19 @@
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>貿易條件</label>
-                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                    {{ UT_add.trade_term }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>接貨地點</label>
-                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                    {{ UT_add.receiving_address }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>送貨地點</label>
-                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                    {{ UT_add.delivery_address }}
                                                 </div>
                                             </div>
                                         </div>
@@ -102,13 +103,13 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>單趟運輸距離(單位:公里)</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="(供應商/機場/港口至公司)">
+                                                                    {{ UT_add.transport_distance }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸國家</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                                    {{ UT_add.transport_country }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -116,19 +117,19 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸方式</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                                    {{ UT_add.transport_type }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>交通工具燃料</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="ex. 柴油">
+                                                                    {{ UT_add.vehicle_fuel }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
-                                                                    <input type="text" name="" class="form-control" id="number only" placeholder="只能輸入數字">
+                                                                    {{ UT_add.trips }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -136,12 +137,12 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>上傳陸運單據</label>
-                                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                                    {{ UT_add.image_note }}
                                                                 </div>
                                                             </div>
                                                             <div class=" ps-md-2 align-self-center">
                                                                 <div class="col-1 ">
-                                                                    <input type="file" class="" name="image" accept="image/*">
+                                                                    {{ UT_add.image_path }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -160,34 +161,34 @@
                                                         <div class="row">
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>單趟運輸距離(單位:公里)</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="(供應商/機場/港口至公司)">
+                                                                    <label>海外運輸距離(單位:公里)</label>
+                                                                    {{ UT_add.overseas_transport_distance }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>運輸國家</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                                    <label>運輸方式</label>
+                                                                    {{ UT_add.overseas_transport_type }}
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="row">
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>運輸方式</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                                    <label>出貨機場/港口</label>
+                                                                    {{ UT_add.overseas_delivery }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>交通工具燃料</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="ex. 柴油">
+                                                                    <label>到達機場/港口</label>
+                                                                    {{ UT_add.overseas_arrive }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
-                                                                    <input type="text" name="" class="form-control" id="number only" placeholder="只能輸入數字">
+                                                                    {{ UT_add.overseas_trips }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -195,12 +196,12 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>上傳海運單據</label>
-                                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                                    {{ UT_add.overseas_image_note }}
                                                                 </div>
                                                             </div>
                                                             <div class=" ps-md-2 align-self-center">
                                                                 <div class="col-1 ">
-                                                                    <input type="file" class="" name="image" accept="image/*">
+                                                                    {{ UT_add.overseas_image_path }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -220,13 +221,13 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>單趟運輸距離(單位:公里)</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="(供應商/機場/港口至公司)">
+                                                                    {{ UT_add.special_transport_distance }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸國家</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                                    {{ UT_add.special_transport_country }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -234,19 +235,19 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸方式</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="">
+                                                                    {{ UT_add.special_transport_type }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>交通工具燃料</label>
-                                                                    <input type="text" name="" class="form-control" id="" placeholder="ex. 柴油">
+                                                                    {{ UT_add.special_vehicle_fuel }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
-                                                                    <input type="text" name="" class="form-control" id="number only" placeholder="只能輸入數字">
+                                                                    {{ UT_add.special_trips }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -254,12 +255,12 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>上傳陸運單據</label>
-                                                                    <input type="text" name="number" class="form-control" id="number only" placeholder="請輸入單據名稱">
+                                                                    {{ UT_add.special_image_note }}
                                                                 </div>
                                                             </div>
                                                             <div class=" ps-md-2 align-self-center">
                                                                 <div class="col-1 ">
-                                                                    <input type="file" class="" name="image" accept="image/*">
+                                                                    {{ UT_add.special_image_path }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -267,11 +268,16 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12 text-center">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-1">
                                                 <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                     確認
+                                                </button>
+                                            </div>
+                                            <div class="col-1">
+                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                        onclick="history.back()">
+                                                    取消
                                                 </button>
                                             </div>
                                         </div>

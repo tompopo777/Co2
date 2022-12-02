@@ -355,20 +355,6 @@ def load_table(request):
 
 
 @login_required(login_url="/login/")
-def emergency_generators_add(request):
-    if request.method == "POST":
-        EG_add = EGform(request.POST, request.FILES)
-        if EG_add.is_valid():
-            EG_add.save()
-
-            return redirect('/carbon-system/')
-
-    else:
-
-        return redirect('/emergency_generator_add/')
-
-
-@login_required(login_url="/login/")
 def emergency_generators_edit(request, id=None, mode=None):
     if mode == "edit":
         unit = emergency_generators.objects.get(id=1)
@@ -400,6 +386,19 @@ def emergency_generators_edit(request, id=None, mode=None):
     # else:
     #     return render(request, "home/carbon-system.html", locals())
 
+@login_required(login_url="/login/")
+def emergency_generators_add(request):
+    if request.method == "POST":
+        EG_add = EGform(request.POST, request.FILES)
+        if EG_add.is_valid():
+            EG_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/emergency_generator_add/')
+
 
 @login_required(login_url="/login/")
 def combustion_equipment_add(request):
@@ -413,6 +412,287 @@ def combustion_equipment_add(request):
     else:
 
         return redirect('/combustion_equipment_add/')
+
+
+@login_required(login_url="/login/")
+def official_car_add(request):
+    if request.method == "POST":
+        OffCar_add = OFform(request.POST, request.FILES)
+        if OffCar_add.is_valid():
+            OffCar_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/official_car_add/')
+
+
+@login_required(login_url="/login/")
+def material_add(request):
+    if request.method == "POST":
+        MT_add = MTform(request.POST, request.FILES)
+        if MT_add.is_valid():
+            MT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/material_add/')
+
+
+@login_required(login_url="/login/")
+def process_add(request):
+    if request.method == "POST":
+        PC_add = PCform(request.POST, request.FILES)
+        if PC_add.is_valid():
+            PC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/material_add/')
+
+
+@login_required(login_url="/login/")
+def refrigerator_add(request):
+    if request.method == "POST":
+        RF_add = RFform(request.POST, request.FILES)
+        if RF_add.is_valid():
+            RF_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/refrigerator_add/')
+
+
+@login_required(login_url="/login/")
+def airconditioner_add(request):
+    if request.method == "POST":
+        AC_add = ACform(request.POST, request.FILES)
+        if AC_add.is_valid():
+            AC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/airconditioner_add/')
+
+
+@login_required(login_url="/login/")
+def vehicle_add(request):
+    if request.method == "POST":
+        VC_add = VCform(request.POST, request.FILES)
+        if VC_add.is_valid():
+            VC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/vehicle_add/')
+
+
+@login_required(login_url="/login/")
+def water_dispenser_add(request):
+    if request.method == "POST":
+        WD_add = WDform(request.POST, request.FILES)
+        if WD_add.is_valid():
+            WD_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/water_dispenser_add/')
+
+
+@login_required(login_url="/login/")
+def ice_water_dispenser_add(request):
+    if request.method == "POST":
+        IWD_add = IWDform(request.POST, request.FILES)
+        if IWD_add.is_valid():
+            IWD_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/ice_water_dispenser_add/')
+
+
+@login_required(login_url="/login/")
+def ice_maker_add(request):
+    if request.method == "POST":
+        IM_add = IMform(request.POST, request.FILES)
+        if IM_add.is_valid():
+            IM_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/ice_maker_add/')
+
+
+@login_required(login_url="/login/")
+def other_device_add(request):
+    if request.method == "POST":
+        OD_add = ODform(request.POST, request.FILES)
+        if OD_add.is_valid():
+            OD_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/other_device_add/')
+
+
+@login_required(login_url="/login/")
+def refrigerant_total_table_add(request):
+    if request.method == "POST":
+        RTT_add = RTTform(request.POST, request.FILES)
+        if RTT_add.is_valid():
+            RTT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/refrigerant_total_table_add/')
+
+
+@login_required(login_url="/login/")
+def extinguisher_add(request):
+    if request.method == "POST":
+        EX_add = EXform(request.POST, request.FILES)
+        if EX_add.is_valid():
+            EX_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/extinguisher_add/')
+
+
+@login_required(login_url="/login/")
+def personnel_inventory_add(request):
+    if request.method == "POST":
+        PI_add = PIform(request.POST, request.FILES)
+        if PI_add.is_valid():
+            PI_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/personnel_inventory_add/')
+
+
+@login_required(login_url="/login/")
+def security_add(request):
+    if request.method == "POST":
+        SC_add = SCform(request.POST, request.FILES)
+        if SC_add.is_valid():
+            SC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/security_add/')
+
+
+@login_required(login_url="/login/")
+def electricity_add(request):
+    if request.method == "POST":
+        ELEC_add = ELECform(request.POST, request.FILES)
+        if ELEC_add.is_valid():
+            ELEC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/electricity_add/')
+
+
+@login_required(login_url="/login/")
+def upstream_transportation_add(request):
+    if request.method == "POST":
+        UT_add = UTform(request.POST, request.FILES)
+        if UT_add.is_valid():
+            UT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/upstream_transportation_add/')
+
+
+@login_required(login_url="/login/")
+def downstream_transportation_add(request):
+    if request.method == "POST":
+        DT_add = DTform(request.POST, request.FILES)
+        if DT_add.is_valid():
+            DT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/downstream_transportation_add/')
+
+
+@login_required(login_url="/login/")
+def employee_commute_add(request):
+    if request.method == "POST":
+        EC_add = ECform(request.POST, request.FILES)
+        if EC_add.is_valid():
+            EC_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/employee_commute_add/')
+
+
+@login_required(login_url="/login/")
+def employee_business_trip_add(request):
+    if request.method == "POST":
+        EBT_add = EBTform(request.POST, request.FILES)
+        if EBT_add.is_valid():
+            EBT_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/employee_business_trip_add/')
+
+
+@login_required(login_url="/login/")
+def waste_add(request):
+    if request.method == "POST":
+        WASTE_add = WASTEform(request.POST, request.FILES)
+        if WASTE_add.is_valid():
+            WASTE_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/waste_add/')
+
 
 
 @login_required(login_url="/login/")
@@ -450,13 +730,36 @@ def add_page(request):
             "21": "home/employee-business-trip.html",
             "22": "home/waste.html"
         }
+
         EG_add = EGform(request.POST)
         CE_add = CEform(request.POST)
+        OffCar_add = OFform(request.POST)
+        MT_add = MTform(request.POST)
+        PC_add = PCform(request.POST)
+        RF_add = RFform(request.POST)
+        AC_add = ACform(request.POST)
+        VC_add = VCform(request.POST)
+        WD_add = WDform(request.POST)
+        IWD_add = IWDform(request.POST)
+        IM_add = IMform(request.POST)
+        OD_add = ODform(request.POST)
+        RTT_add = RTTform(request.POST)
+        EX_add = EXform(request.POST)
+        PI_add = PIform(request.POST)
+        SC_add = SCform(request.POST)
+        ELEC_add = ELECform(request.POST)
+        UT_add = UTform(request.POST)
+        DT_add = DTform(request.POST)
+        EC_add = ECform(request.POST)
+        EBT_add = EBTform(request.POST)
+        WASTE_add = WASTEform(request.POST)
 
         device_id = request.GET.get('deviceId', None)
         for a in htmlName:
             if device_id == a:
                 page = htmlName.get(a)
+
+
         return render(request, page, locals())
 
 
@@ -484,71 +787,23 @@ def add_title(request):
                 "尿素": ["日期", "添加量(𝓁)"]
             },
 
-            "4": {
-                "內容": ["序號", "原物料號", "原/物料", "名稱"],
-                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
-            },
-
-            "5": {
-                "內容": ["序號", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒"],
-                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
-            },
-            # 冷媒(6~13)
-            "6": {
-                "冰箱清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "7": {
-                "冷氣機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "8": {
-                "車輛清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "9": {
-                "飲水機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "10": {
-                "冰水機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "11": {
-                "製冰機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "12": {
-                "其他設備": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "13": {
-                "冷媒總表": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "14": {
-                "滅火器清單": ["序號", "編號", "位置", "名稱", "類型", "廠商", "藥劑規格(單位:磅)", "藥劑重量(單位:kg)", "庫存量", "使用日期", "使用量", "更換/填充日期", "更換/填充量"]
-            },
-
-            "15": {
-                "人天清冊": ["序號", "年份", "月份", "員工數", "每日工時", "每月工作天數", "加班+補修時數", "請假時數", "休假時數", "當月總工時", "當月總工作人天"]
-            },
-
-            "16": {
-                "保全清冊": ["序號", "年份", "月份", "保全人數", "每日工時", "每月工作天數", "當月工時", "當月工作人天"]
-            },
-
-            "17": {
-                "用電量": ["序號", "年份", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
-            },
-
-            "18": {
-                "內容": ["序號", "驗收單號", "商品", "淨重量(單位:噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
-                "陸運": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"],
-                "海運": ["出貨港口", "到達港口", "海運距離", "趟次", "T*km"],
-                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"]
-            },
-
+            "4": {"內容": ["序號", "原物料號", "原/物料", "名稱"],
+                  "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
+                                        "十一月", "十二月"]},
+            "5": "home/process.html",
+            "6": "home/refrigerator-table.html",
+            "7": "home/airconditioner-table.html",
+            "8": "home/vehicle-table.html",
+            "9": "home/vehicle-table.html",
+            "10": "home/ice_water_dispenser-table.html",
+            "11": "home/ice_maker-table.html",
+            "12": "home/other_device-table.html",
+            "13": "home/refrigerant_total_table-table.html",
+            "14": "home/extinguisher-table.html",
+            "15": "home/personnel_inventory-table.html",
+            "16": "home/security-table.html",
+            "17": "home/electricity-table.html",
+            "18": "home/upstream_transportation-table.html",
             "19": "home/downstream_transportation-table.html",
 
             "20": {
