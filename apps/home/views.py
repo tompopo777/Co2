@@ -166,16 +166,17 @@ def load_table(request):
                         for i in a:
                             # print("a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]", a[i])
                             sum_fuel = sum_fuel + a[i]
-                            # t_data.insert(5, sum_fuel)
+                            # t_data.insert(13, sum_fuel)
                         print("sum_fuel>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", sum_fuel)
                         # c += 1
-
-                    t_data = list(
-                        official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type", "department",
-                                                    "january", "february", "march", "april",
-                                                    "may", "june", "july", "august",
-                                                    "september", "october", "november", "december",
-                                                    "urea_add_date", "urea_add_quantity"))
+                        t_data = []
+                        for a in official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type", "department",
+                                                             "january", "february", "march", "april",
+                                                             "may", "june", "july", "august",
+                                                             "september", "october", "november", "december",
+                                                             "urea_add_date", "urea_add_quantity"):
+                            print("a::::::::::::::::::::::::::::::::::::::::", a)
+                            # t_data.append(a)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "原物料使用":
                     t_data = list(
@@ -385,6 +386,7 @@ def emergency_generators_edit(request, id=None, mode=None):
 
     # else:
     #     return render(request, "home/carbon-system.html", locals())
+
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
@@ -694,7 +696,6 @@ def waste_add(request):
         return redirect('/waste_add/')
 
 
-
 @login_required(login_url="/login/")
 def carbon_system(request):
     return render(request, "home/carbon-system.html", locals())
@@ -759,7 +760,6 @@ def add_page(request):
             if device_id == a:
                 page = htmlName.get(a)
 
-
         return render(request, page, locals())
 
 
@@ -787,24 +787,77 @@ def add_title(request):
                 "尿素": ["日期", "添加量(𝓁)"]
             },
 
-            "4": {"內容": ["序號", "原物料號", "原/物料", "名稱"],
-                  "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
-                                        "十一月", "十二月"]},
-            "5": "home/process.html",
-            "6": "home/refrigerator-table.html",
-            "7": "home/airconditioner-table.html",
-            "8": "home/vehicle-table.html",
-            "9": "home/vehicle-table.html",
-            "10": "home/ice_water_dispenser-table.html",
-            "11": "home/ice_maker-table.html",
-            "12": "home/other_device-table.html",
-            "13": "home/refrigerant_total_table-table.html",
-            "14": "home/extinguisher-table.html",
-            "15": "home/personnel_inventory-table.html",
-            "16": "home/security-table.html",
-            "17": "home/electricity-table.html",
-            "18": "home/upstream_transportation-table.html",
-            "19": "home/downstream_transportation-table.html",
+            "4": {
+                "內容": ["序號", "原物料號", "原/物料", "名稱"],
+                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+            },
+
+            "5": {
+                "內容": ["序號", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒"],
+                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+            },
+            # 冷媒(6~13)
+            "6": {
+                "冰箱清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "7": {
+                "冷氣機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "8": {
+                "車輛清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "9": {
+                "飲水機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "10": {
+                "冰水機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "11": {
+                "製冰機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "12": {
+                "其他設備": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "13": {
+                "冷媒總表": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "14": {
+                "滅火器清單": ["序號", "編號", "位置", "名稱", "類型", "廠商", "藥劑規格(單位:磅)", "藥劑重量(單位:kg)", "庫存量", "使用日期", "使用量", "更換/填充日期", "更換/填充量"]
+            },
+
+            "15": {
+                "人天清冊": ["序號", "年份", "月份", "員工數", "每日工時", "每月工作天數", "加班+補修時數", "請假時數", "休假時數", "當月總工時", "當月總工作人天"]
+            },
+
+            "16": {
+                "保全清冊": ["序號", "年份", "月份", "保全人數", "每日工時", "每月工作天數", "當月工時", "當月工作人天"]
+            },
+
+            "17": {
+                "用電量": ["序號", "年份", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+            },
+
+            "18": {
+                "內容": ["序號", "驗收單號", "商品", "淨重量(單位:噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+                "陸運": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"],
+                "海運": ["出貨港口", "到達港口", "海運距離", "趟次", "T*km"],
+                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"]
+            },
+
+            "19": {
+                "內容": ["序號", "驗收單號", "商品", "淨重量(單位:噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+                "陸運": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"],
+                "海運": ["出貨港口", "到達港口", "海運距離", "趟次", "T*km"],
+                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"]
+            },
 
             "20": {
                 "員工通勤清冊": ["序號", "編號", "部門", "姓名", "交通方式", "排氣量(CC數)", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
