@@ -77,27 +77,10 @@
         </div>
         </div>
     </header>
-    {#    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">#}
-    {#            {% include 1a %}#}
-    {#            123123123123: {{ 1a }}#}
-    {#        {{ context }}123456#}
-    {#        {% include 'home/material-table.html' %}#}
-    {##}
-    {#            {% include '{{ 1 }}' %}#}
-    {#                {% if data%}#}
-    {#                    {% include {{ 1 }} %}#}
-    {#                {% elif %}#}
-    {#                    {% include 'home/material-table.html' %}#}
-    {#                {% endif %}#}
-    {#    </div>#}
-
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
         <div class="table-responsive">
             <table class="table table-sm" id="table">
                 <thead class="text-center" id="table_head">
-                {#                <tr class="table-secondary text-center">#}
-                {##}
-                {#                </tr>#}
 
                 </thead>
                 <tbody class="text-center" id="table_body">
@@ -294,7 +277,7 @@
                             value.forEach((item, index) => {
                                 var cr_n = thead_row_name.insertCell(-1)
                                 thead_row_name.appendChild(cr_n)
-                                cr_n.innerHTML = item
+                                cr_n.innerHTML = item;
                                 a.colSpan = index + 1//加第一排空間
                             })
                             i++;
@@ -306,7 +289,7 @@
         })
     </script>
 
-    <!--/*顯示table*/-->
+    <!--/*顯示table資料*/-->
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
         var tbody = document.getElementById("table").getElementsByTagName('tbody')[0]
@@ -328,7 +311,10 @@
                         var row = tbody.insertRow(-1)//加入下一列
                         for (const [key, value] of Object.entries((item))) {
                             var cr_c1 = row.insertCell(-1)
-                            cr_c1.innerHTML = value
+                            nuLL = value
+                            if ( value == null)
+                                nuLL = '-'
+                            cr_c1.innerHTML = nuLL
                         }
                     })
                 },

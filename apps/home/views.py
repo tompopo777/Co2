@@ -105,10 +105,10 @@ def load_table(request):
     if request.method == 'GET':
         device_id = request.GET.get('deviceId', None)
         if device_id:
-            # allTable = list(emergency_generators.objects.all())
+            allTable = list(emergency_generators.objects.all())
             # print("00000000000000000000000000000000000000", allTable)
-            # allTable[0].total = 100
-            # print("55555555555555555555555555555555555555", allTable[0].total)
+            # allTable.append({'total': 100})
+            # print("55555555555555555555555555555555555555", allTable)
 
             t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
             # print("888888888", t_name)
@@ -123,29 +123,59 @@ def load_table(request):
                                                             "september", "october", "november", "december"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "燃燒設備":
-                    t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "device_name", "fuel_type",
-                                                                      "period_starttime", "period_endtime",
-                                                                      "fuel_january", "fuel_february", "fuel_march",
-                                                                      "fuel_april",
-                                                                      "fuel_may", "fuel_june", "fuel_july",
-                                                                      "fuel_august",
-                                                                      "fuel_september", "fuel_october", "fuel_november",
-                                                                      "fuel_december",
-                                                                      "heat_january", "heat_february", "heat_march",
-                                                                      "heat_april",
-                                                                      "heat_may", "heat_june", "heat_july",
-                                                                      "heat_august",
-                                                                      "heat_september", "heat_october", "heat_november",
-                                                                      "heat_december"))
-                    # print("t_data::::::::::::::::::::::::::::::::::::::::::::::::", t_data)
-                    return JsonResponse(t_data, safe=False)
+                    fuel = combustion_equipment.objects.values("fuel_january", "fuel_february", "fuel_march",
+                                                               "fuel_april", "fuel_may", "fuel_june",
+                                                               "fuel_july", "fuel_august", "fuel_september",
+                                                               "fuel_october", "fuel_november", "fuel_december")
+                    heat = combustion_equipment.objects.values("heat_january", "heat_february", "heat_march",
+                                                               "heat_april", "heat_may", "heat_june",
+                                                               "heat_july", "heat_august", "heat_september",
+                                                               "heat_october", "heat_november", "heat_december")
+                    fuel_sum = 0
+                    heat_sum = 0
+                    c = 0
+                    for a in fuel[0]:
+                        fuel_sum = fuel_sum + fuel[0].get(a)
+                    for a in heat[1]:
+                        heat_sum = heat_sum + heat[1].get(a)
+                        c += 1
+                    heat_avg = heat_sum / c
+                    print("fuel_sum::::::::::::::::::::::::::::::::::::::::", fuel_sum)
+                    print("c::::::::::::::::::::::::::::::::::::::::", heat_avg)
+                    t_data = []
+                    for a in combustion_equipment.objects.values(
+                            "id", "device_name", "device_id", "fuel_type", "period_starttime", "period_endtime",
+                            "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
+                            "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december",
+                            "heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
+                            "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december"
+                    ):
+                        a["fuel_sum"] = fuel_sum
+                        t_data.append(a)
+                        return JsonResponse(t_data, safe=False)
+                        # print("t_data::::::::::::::::::::::::::::::::::::::::::::::::", t_data)
                 elif a["d_name"] == "公務車":
+                    fuel = official_car.objects.values("january", "february", "march", "april",
+                                                       "may", "june", "july", "august",
+                                                       "september", "october", "november", "december")
+                    print("fuel>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", fuel)
+                    c = 0
+                    for a in fuel:
+                        sum_fuel = 0
+                        # print("6666666666666666666666666666666666666666666666666666666666666", a)
+                        for i in a:
+                            # print("a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]", a[i])
+                            sum_fuel = sum_fuel + a[i]
+                            # t_data.insert(5, sum_fuel)
+                        print("sum_fuel>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", sum_fuel)
+                        # c += 1
+
                     t_data = list(
                         official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type", "department",
                                                     "january", "february", "march", "april",
                                                     "may", "june", "july", "august",
-                                                    "september", "october", "november", "december", "urea", "urea_add_date", "urea_add_quantity"))
+                                                    "september", "october", "november", "december",
+                                                    "urea_add_date", "urea_add_quantity"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "原物料使用":
                     t_data = list(
@@ -163,137 +193,119 @@ def load_table(request):
                                                "september", "october", "november", "december"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冰箱清單":
-                    t_data = list(
-                        refrigerator.objects.values("id", "device_name", "brand_name", "model_type",
-                                                    "years", "position", "refrigerant_type",
-                                                    "filling_volume"))
-                    return JsonResponse(t_data, safe=False)
+                    # 將要運算的值分別撈出(逸散率/填充量)
+                    effusion_rate = refrigerator.objects.values("effusion_rate")
+                    filling_volume = refrigerator.objects.values("filling_volume")
+                    effusion_volume = effusion_rate[0].get("effusion_rate") * 0.01 * filling_volume[0].get("filling_volume")
+                    # 運算後丟入字典，轉陣列
+                    t_data = []
+                    for a in refrigerator.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                         "years", "position", "refrigerant_type",
+                                                         "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"):
+                        a["effusion_volume"] = effusion_volume
+                        # print("raw_data::::::::::::::::::::::::::::::::::::::::::::", a)
+                        t_data.append(a)
+                        # print("t_data::::::::::::::::::::::::::::::::::::::::::::", t_data)
+                        return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冷氣機清單":
                     t_data = list(
                         airconditioner.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                       "years", "position", "refrigerant_type",
-                                                      "filling_volume", "effusion_rate"))
+                                                      "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
                     return JsonResponse(t_data, safe=False)
-                # 以下未改
                 elif a["d_name"] == "車輛清單":
                     t_data = list(
-                        airconditioner.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                      "device_capacity", "position", "department",
-                                                      "january", "february", "march", "april",
-                                                      "may", "june", "july", "august",
-                                                      "september", "october", "november", "december", ))
+                        vehicle.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                               "years", "position", "refrigerant_type",
+                                               "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "飲水機清單":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        water_dispenser.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                       "years", "position", "refrigerant_type",
+                                                       "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冰水機清單":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        ice_water_dispenser.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                           "years", "position", "refrigerant_type",
+                                                           "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "製冰機清單":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        ice_maker.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                 "years", "position", "refrigerant_type",
+                                                 "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "其他設備清單":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        other_device.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                    "years", "position", "refrigerant_type",
+                                                    "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冷媒總表":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        refrigerant_total_table.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                               "years", "position", "refrigerant_type",
+                                                               "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "滅火器":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        extinguisher.objects.values("id", "device_id", "position", "extinguisher_name",
+                                                    "extinguisher_type", "extinguisher_vendor", "chemical_spec", "chemical_weight", "inventory", "using_date", "using_amount", "replace_filling_date", "replace_filling_amount"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "人天清冊":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        personnel_inventory.objects.values("id", "years", "monthly", "employee_number", "daily_hours",
+                                                           "working_days", "overtime", "leave_hours",
+                                                           "day_off_hours"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "保全清單":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        security.objects.values("id", "years", "monthly", "security_number", "daily_hours",
+                                                "working_days", "total_working_hours", "total_working_day"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "用電量":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        electricity.objects.values("id", "years", "EMI_id", "address",
+                                                   "january", "february", "march", "april",
+                                                   "may", "june", "july", "august",
+                                                   "september", "october", "november", "december"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "上游運輸":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        upstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "commodity_NW",
+                                                               "customer", "supplier", "supplier_address",
+                                                               "trade_term", "receiving_address", "delivery_address", "transport_distance",
+                                                               "transport_country", "transport_type", "vehicle_fuel", "trips",
+                                                               "overseas_transport_type", "overseas_vehicle_fuel", "overseas_transport_distance", "overseas_trips",
+                                                               "special_transport_distance", "special_transport_country", "special_transport_type", "special_vehicle_fuel", "special_trips"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "下游運輸":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        downstream_transportation.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                                                                 "device_capacity", "position", "department",
+                                                                 "january", "february", "march", "april",
+                                                                 "may", "june", "july", "august",
+                                                                 "september", "october", "november", "december"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "員工通勤":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        employee_commute.objects.values("id", "employee_id", "department", "employee_name",
+                                                        "transportation", "displacement", "city",
+                                                        "township", "address", "commute_distance", "work_days"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "員工出差":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
+                                                              "business_trip_location", "business_trip_date", "transportation",
+                                                              "departure", "destination", "round_trip_distance"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "廢棄物":
                     t_data = list(
-                        combustion_equipment.objects.values("id", "device_id", "period_starttime", "period_endtime",
-                                                            "device_capacity", "position", "department",
-                                                            "january", "february", "march", "april",
-                                                            "may", "june", "july", "august",
-                                                            "september", "october", "november", "december", ))
+                        waste.objects.values("id", "waste_name", "waste_date", "waste_weigh",
+                                             "waste_disposal", "waste_location", "transport_responsibility",
+                                             "transport_type", "transport_type", "transport_fuel", "transport_distance"))
                     return JsonResponse(t_data, safe=False)
 
 
@@ -402,6 +414,7 @@ def combustion_equipment_add(request):
 
         return redirect('/combustion_equipment_add/')
 
+
 @login_required(login_url="/login/")
 def carbon_system(request):
     return render(request, "home/carbon-system.html", locals())
@@ -412,20 +425,21 @@ def carbon_system(request):
 def add_page(request):
     global page
     if request.method == "GET":
-        #建立字典
+        # 建立字典
         htmlName = {
             "1": "home/emergency-generator.html",
             "2": "home/combustion-equipment.html",
             "3": "home/official-car.html",
             "4": "home/material.html",
+            "5": "home/process.html",
             "6": "home/refrigerator.html",
             "7": "home/airconditioner.html",
             "8": "home/vehicle.html",
-            "9": "home/vehicle.html",
-            "10": "home/ice-water_dispenser.html",
+            "9": "home/water-dispenser.html",
+            "10": "home/ice-water-dispenser.html",
             "11": "home/ice-maker.html",
             "12": "home/other-device.html",
-            "13": "home/refrigerant-total_table.html",
+            "13": "home/refrigerant-total-table.html",
             "14": "home/extinguisher.html",
             "15": "home/personnel-inventory.html",
             "16": "home/security.html",
@@ -434,8 +448,7 @@ def add_page(request):
             "19": "home/downstream-transportation.html",
             "20": "home/employee-commute.html",
             "21": "home/employee-business-trip.html",
-            "22": "home/waste.html",
-            "data": "home/waste.html"
+            "22": "home/waste.html"
         }
         EG_add = EGform(request.POST)
         CE_add = CEform(request.POST)
@@ -452,41 +465,103 @@ def add_page(request):
 def add_title(request):
     if request.method == 'GET':
         device_id = request.GET.get('deviceId', None)
-        # print("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", device_id)
         # 選擇title要顯示的欄位
         htmlName = {
-            "1": {"內容": ["序號", "燃料開始日期", "燃料結束日期", "編號", "容量(𝓁)", "地點", "部門"],
-                  "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
-                                        "十一月", "十二月"]},
+            "1": {
+                "內容": ["序號", "燃料開始日期", "燃料結束日期", "編號", "容量(𝓁)", "地點", "部門"],
+                "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+            },
 
-            "2": "home/combustion-equipment-table.html",
+            "2": {
+                "內容": ["序號", "名稱", "編號", "燃料種類", "燃料開始日期", "燃料結束日期"],
+                "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
+            },
 
-            "3": {"內容": ["序號", "類別", "編號", "燃料", "部門"],
-                  "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
-                                        "十一月", "十二月"], "尿素": ["是否添加", "日期", "添加量(𝓁)"]},
+            "3": {
+                "內容": ["序號", "類別", "編號", "燃料", "部門"],
+                "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "尿素": ["日期", "添加量(𝓁)"]
+            },
 
-            "4": {"內容": ["序號", "原物料號", "原/物料", "名稱"],
-                  "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月",
-                                        "十一月", "十二月"]},
+            "4": {
+                "內容": ["序號", "原物料號", "原/物料", "名稱"],
+                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+            },
 
-            "6": "home/refrigerator-table.html",
-            "7": "home/airconditioner-table.html",
-            "8": "home/vehicle-table.html",
-            "9": "home/vehicle-table.html",
-            "10": "home/ice_water_dispenser-table.html",
-            "11": "home/ice_maker-table.html",
-            "12": "home/other_device-table.html",
-            "13": "home/refrigerant_total_table-table.html",
-            "14": "home/extinguisher-table.html",
-            "15": "home/personnel_inventory-table.html",
-            "16": "home/security-table.html",
-            "17": "home/electricity-table.html",
-            "18": "home/upstream_transportation-table.html",
+            "5": {
+                "內容": ["序號", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒"],
+                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+            },
+            # 冷媒(6~13)
+            "6": {
+                "冰箱清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "7": {
+                "冷氣機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "8": {
+                "車輛清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "9": {
+                "飲水機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "10": {
+                "冰水機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "11": {
+                "製冰機清單": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "12": {
+                "其他設備": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "13": {
+                "冷媒總表": ["序號", "名稱", "編號", "品牌", "型號", "年份", "位置", "冷媒類型", "規格填充量", "冷媒填充日", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+            },
+
+            "14": {
+                "滅火器清單": ["序號", "編號", "位置", "名稱", "類型", "廠商", "藥劑規格(單位:磅)", "藥劑重量(單位:kg)", "庫存量", "使用日期", "使用量", "更換/填充日期", "更換/填充量"]
+            },
+
+            "15": {
+                "人天清冊": ["序號", "年份", "月份", "員工數", "每日工時", "每月工作天數", "加班+補修時數", "請假時數", "休假時數", "當月總工時", "當月總工作人天"]
+            },
+
+            "16": {
+                "保全清冊": ["序號", "年份", "月份", "保全人數", "每日工時", "每月工作天數", "當月工時", "當月工作人天"]
+            },
+
+            "17": {
+                "用電量": ["序號", "年份", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+            },
+
+            "18": {
+                "內容": ["序號", "驗收單號", "商品", "淨重量(單位:噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+                "陸運": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"],
+                "海運": ["出貨港口", "到達港口", "海運距離", "趟次", "T*km"],
+                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"]
+            },
+
             "19": "home/downstream_transportation-table.html",
-            "20": "home/employee_commute-table.html",
-            "21": "home/employee_business-table.html",
-            "22": "home/waste-table.html",
-            "data": "home/waste-table.html"
+
+            "20": {
+                "員工通勤清冊": ["序號", "編號", "部門", "姓名", "交通方式", "排氣量(CC數)", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
+            },
+
+            "21": {
+                "員工出差清冊": ["序號", "編號", "部門", "姓名", "出差地點", "出差日期", "交通方式", "出發地", "目的地", "來回距離(pkm)"],
+            },
+
+            "22": {
+                "廢棄物處理": ["序號", "名稱", "運送時間", "重量(噸)", "處理方式", "處置地點", "運輸責任歸屬", "運輸方式", "燃料", "運輸距離(km)", "T*km"],
+            }
         }
     # a = request.GET.get('deviceId')
     # context = {'html': a}
