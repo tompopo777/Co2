@@ -66,8 +66,10 @@
                                     新增
                                 </a>
                                 <button type="button" class="btn btn-outline-light ms-1">
+{#                                    <i class="fa-solid fa-pencil"></i>#}
                                     匯出Excel
                                 </button>
+
                             </div>
                         </div>
                     </div>
@@ -95,6 +97,7 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
 
     <script>
         // get the element to animate
@@ -267,7 +270,7 @@
                             var tr_c = thead_row_category.insertCell(-1)
                             var a = thead_row_category.appendChild(tr_c)
                             tr_c.innerHTML = key
-                            if (i %2 == 0) {
+                            if (i % 2 == 0) {
                                 tr_c.setAttribute('class', 'table-secondary');
                             } else {
                                 tr_c.setAttribute('class', 'table-light');
@@ -312,7 +315,7 @@
                         for (const [key, value] of Object.entries((item))) {
                             var cr_c1 = row.insertCell(-1)
                             nuLL = value
-                            if ( value == null)
+                            if (value == null)
                                 nuLL = '-'
                             cr_c1.innerHTML = nuLL
                         }

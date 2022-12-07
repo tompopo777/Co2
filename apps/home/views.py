@@ -194,61 +194,131 @@ def load_table(request):
                                                "september", "october", "november", "december"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冰箱清單":
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_rate = refrigerator.objects.values("effusion_rate")
-                    filling_volume = refrigerator.objects.values("filling_volume")
-                    effusion_volume = effusion_rate[0].get("effusion_rate") * 0.01 * filling_volume[0].get("filling_volume")
-                    # 運算後丟入字典，轉陣列
                     t_data = []
-                    for a in refrigerator.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                                         "years", "position", "refrigerant_type",
-                                                         "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"):
-                        a["effusion_volume"] = effusion_volume
-                        # print("raw_data::::::::::::::::::::::::::::::::::::::::::::", a)
-                        t_data.append(a)
-                        # print("t_data::::::::::::::::::::::::::::::::::::::::::::", t_data)
-                        return JsonResponse(t_data, safe=False)
+                    raw_data = refrigerator.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                           "years", "position", "refrigerant_type",
+                                                           "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
+                    # 取單筆逸散量計算
+                    for i in range(raw_data.count()):
+                        # 將要運算的值分別撈出(逸散率/填充量)
+                        effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                        # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["effusion_volume"] = round(effusion_volume, 5)
+                        t_data.append(single_data)
+                    return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冷氣機清單":
-                    t_data = list(
-                        airconditioner.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                                      "years", "position", "refrigerant_type",
-                                                      "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
+                    t_data = []
+                    raw_data = airconditioner.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                             "years", "position", "refrigerant_type",
+                                                             "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
+                    # 取單筆逸散量計算
+                    for i in range(raw_data.count()):
+                        # 將要運算的值分別撈出(逸散率/填充量)
+                        effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                        # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["effusion_volume"] = round(effusion_volume, 5)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "車輛清單":
-                    t_data = list(
-                        vehicle.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                               "years", "position", "refrigerant_type",
-                                               "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
+                    t_data = []
+                    raw_data = vehicle.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                      "years", "position", "refrigerant_type",
+                                                      "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
+                    # 取單筆逸散量計算
+                    for i in range(raw_data.count()):
+                        # 將要運算的值分別撈出(逸散率/填充量)
+                        effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                        # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["effusion_volume"] = round(effusion_volume, 5)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "飲水機清單":
-                    t_data = list(
-                        water_dispenser.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                                       "years", "position", "refrigerant_type",
-                                                       "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
+                    t_data = []
+                    raw_data = water_dispenser.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                              "years", "position", "refrigerant_type",
+                                                              "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
+                    # 取單筆逸散量計算
+                    for i in range(raw_data.count()):
+                        # 將要運算的值分別撈出(逸散率/填充量)
+                        effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                        # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["effusion_volume"] = round(effusion_volume, 5)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冰水機清單":
-                    t_data = list(
-                        ice_water_dispenser.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                                           "years", "position", "refrigerant_type",
-                                                           "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
+                    t_data = []
+                    raw_data = ice_water_dispenser.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                                  "years", "position", "refrigerant_type",
+                                                                  "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
+                    # 取單筆逸散量計算
+                    for i in range(raw_data.count()):
+                        # 將要運算的值分別撈出(逸散率/填充量)
+                        effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                        # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["effusion_volume"] = round(effusion_volume, 5)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "製冰機清單":
-                    t_data = list(
-                        ice_maker.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                                 "years", "position", "refrigerant_type",
-                                                 "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
+                    t_data = []
+                    raw_data = ice_maker.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                        "years", "position", "refrigerant_type",
+                                                        "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
+                    # 取單筆逸散量計算
+                    for i in range(raw_data.count()):
+                        # 將要運算的值分別撈出(逸散率/填充量)
+                        effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                        # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["effusion_volume"] = round(effusion_volume, 5)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "其他設備清單":
-                    t_data = list(
-                        other_device.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                                    "years", "position", "refrigerant_type",
-                                                    "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
+                    t_data = []
+                    raw_data = other_device.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                           "years", "position", "refrigerant_type",
+                                                           "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
+                    # 取單筆逸散量計算
+                    for i in range(raw_data.count()):
+                        # 將要運算的值分別撈出(逸散率/填充量)
+                        effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                        # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["effusion_volume"] = round(effusion_volume, 5)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "冷媒總表":
-                    t_data = list(
-                        refrigerant_total_table.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
-                                                               "years", "position", "refrigerant_type",
-                                                               "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate"))
+                    t_data = []
+                    raw_data = refrigerant_total_table.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
+                                                                      "years", "position", "refrigerant_type",
+                                                                      "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
+                    for i in range(raw_data.count()):
+                        # 將要運算的值分別撈出(逸散率/填充量)
+                        effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                        # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["effusion_volume"] = round(effusion_volume, 5)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "滅火器":
                     t_data = list(
@@ -256,22 +326,68 @@ def load_table(request):
                                                     "extinguisher_type", "extinguisher_vendor", "chemical_spec", "chemical_weight", "inventory", "using_date", "using_amount", "replace_filling_date", "replace_filling_amount"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "人天清冊":
-                    t_data = list(
-                        personnel_inventory.objects.values("id", "years", "monthly", "employee_number", "daily_hours",
-                                                           "working_days", "overtime", "leave_hours",
-                                                           "day_off_hours"))
+                    t_data = []
+                    # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
+                    raw_data = personnel_inventory.objects.values("id", "years", "monthly", "employee_number", "daily_hours",
+                                                                  "working_days", "overtime", "leave_hours",
+                                                                  "day_off_hours")
+                    for i in range(raw_data.count()):
+                        # 計算單筆當月總工作時數
+                        TotalWorkingHour_M = raw_data[i].get("employee_number") * raw_data[i].get("daily_hours") * raw_data[i].get("working_days") \
+                                             + raw_data[i].get("overtime") - raw_data[i].get("leave_hours") - raw_data[i].get("day_off_hours")
+                        # print("TotalWorkingHour_M::::::::::::::::::::::::::::::::::::::::", TotalWorkingHour_M)
+                        # 計算單筆當月總工作人天
+                        TotalWorkingDay_M = TotalWorkingHour_M / raw_data[i].get("daily_hours")
+                        # print("TotalWorkingHour_M::::::::::::::::::::::::::::::::::::::::", TotalWorkingHour_M)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["TotalWorkingHour_M"] = TotalWorkingHour_M
+                        single_data["TotalWorkingDay_M"] = round(TotalWorkingDay_M, 2)
+                        # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "保全清單":
-                    t_data = list(
-                        security.objects.values("id", "years", "monthly", "security_number", "daily_hours",
-                                                "working_days", "total_working_hours", "total_working_day"))
+                    t_data = []
+                    # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
+                    raw_data = security.objects.values("id", "years", "monthly", "security_number", "daily_hours",
+                                                       "working_days", "total_working_hours", "total_working_day")
+                    for i in range(raw_data.count()):
+                        # 計算單筆當月總工作時數
+                        TotalWorkingHour_M = raw_data[i].get("security_number") * raw_data[i].get("daily_hours") * raw_data[i].get("working_days")
+                        # print("TotalWorkingHour_M::::::::::::::::::::::::::::::::::::::::", TotalWorkingHour_M)
+                        # 計算單筆當月總工作人天
+                        TotalWorkingDay_M = TotalWorkingHour_M / raw_data[i].get("daily_hours")
+                        # print("TotalWorkingHour_M::::::::::::::::::::::::::::::::::::::::", TotalWorkingHour_M)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["TotalWorkingHour_M"] = TotalWorkingHour_M
+                        single_data["TotalWorkingDay_M"] = round(TotalWorkingDay_M, 2)
+                        # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "用電量":
-                    t_data = list(
-                        electricity.objects.values("id", "years", "EMI_id", "address",
-                                                   "january", "february", "march", "april",
-                                                   "may", "june", "july", "august",
-                                                   "september", "october", "november", "december"))
+                    t_data = []
+                    # 將要運算的值分別撈出(逸散率/填充量)
+                    count = electricity.objects.values("january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december")
+                    raw_data = electricity.objects.values("id", "EMI_id", "address",
+                                                          "january", "february", "march", "april",
+                                                          "may", "june", "july", "august",
+                                                          "september", "october", "november", "december")
+                    # 計算當月用電量
+                    for i in range(raw_data.count()):
+                        kw_hr = count[i].get("january") + count[i].get("february") + count[i].get("march") + count[i].get("april") + \
+                                count[i].get("may") + count[i].get("june") + count[i].get("july") + count[i].get("august") + \
+                                count[i].get("september") + count[i].get("october") + count[i].get("november") + count[i].get("december")
+                        kkw_hr = kw_hr / 1000
+                        # print("kw_hr::::::::::::::::::::::::::::::::::::::::", kw_hr)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["kw_hr"] = kw_hr
+                        single_data["kkw_hr"] = kkw_hr
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "上游運輸":
                     t_data = list(
@@ -291,10 +407,21 @@ def load_table(request):
                                                                  "september", "october", "november", "december"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "員工通勤":
-                    t_data = list(
-                        employee_commute.objects.values("id", "employee_id", "department", "employee_name",
+                    t_data = []
+                    # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
+                    raw_data = employee_commute.objects.values("id", "employee_id", "department", "employee_name",
                                                         "transportation", "displacement", "city",
-                                                        "township", "address", "commute_distance", "work_days"))
+                                                        "township", "address", "commute_distance", "work_days")
+                    for i in range(raw_data.count()):
+                        # 計算單筆距離合計
+                        total_distance = raw_data[i].get("commute_distance") * raw_data[i].get("work_days") * 2
+                        # print("total_distance::::::::::::::::::::::::::::::::::::::::", total_distance)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["total_distance"] = total_distance
+                        # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
+                        t_data.append(single_data)
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "員工出差":
                     t_data = list(
@@ -303,12 +430,27 @@ def load_table(request):
                                                               "departure", "destination", "round_trip_distance"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "廢棄物":
-                    t_data = list(
-                        waste.objects.values("id", "waste_name", "waste_date", "waste_weigh",
-                                             "waste_disposal", "waste_location", "transport_responsibility",
-                                             "transport_type", "transport_type", "transport_fuel", "transport_distance"))
-                    return JsonResponse(t_data, safe=False)
 
+                    t_data = []
+                    # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
+                    raw_data = waste.objects.values("id", "waste_name", "waste_date", "waste_weigh",
+                                             "waste_disposal", "waste_location", "transport_responsibility",
+                                             "transport_type", "transport_type", "transport_fuel", "transport_distance")
+                    for i in range(raw_data.count()):
+                        # 計算單筆距離合計
+                        if(raw_data[i].get("transport_distance") == None):
+                           Tkm = "-"
+                        else:
+                            Tkm = raw_data[i].get("waste_weigh") * raw_data[i].get("transport_distance")
+                        # print("Tkm::::::::::::::::::::::::::::::::::::::::", Tkm)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的逸散量丟回字典
+                        single_data["total_distance"] = Tkm
+                        # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
+                        t_data.append(single_data)
+                    print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+                    return JsonResponse(t_data, safe=False)
 
 # 抓欄位(字典
 # @login_required(login_url="/login/")
@@ -842,7 +984,7 @@ def add_title(request):
             },
 
             "17": {
-                "用電量": ["序號", "年份", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+                "用電量": ["序號", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
             },
 
             "18": {
