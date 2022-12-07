@@ -410,8 +410,8 @@ def load_table(request):
                     t_data = []
                     # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
                     raw_data = employee_commute.objects.values("id", "employee_id", "department", "employee_name",
-                                                        "transportation", "displacement", "city",
-                                                        "township", "address", "commute_distance", "work_days")
+                                                               "transportation", "displacement", "city",
+                                                               "township", "address", "commute_distance", "work_days")
                     for i in range(raw_data.count()):
                         # 計算單筆距離合計
                         total_distance = raw_data[i].get("commute_distance") * raw_data[i].get("work_days") * 2
@@ -430,16 +430,15 @@ def load_table(request):
                                                               "departure", "destination", "round_trip_distance"))
                     return JsonResponse(t_data, safe=False)
                 elif a["d_name"] == "廢棄物":
-
                     t_data = []
                     # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
                     raw_data = waste.objects.values("id", "waste_name", "waste_date", "waste_weigh",
-                                             "waste_disposal", "waste_location", "transport_responsibility",
-                                             "transport_type", "transport_type", "transport_fuel", "transport_distance")
+                                                    "waste_disposal", "waste_location", "transport_responsibility",
+                                                    "transport_type", "transport_type", "transport_fuel", "transport_distance")
                     for i in range(raw_data.count()):
                         # 計算單筆距離合計
-                        if(raw_data[i].get("transport_distance") == None):
-                           Tkm = "-"
+                        if (raw_data[i].get("transport_distance") == None):
+                            Tkm = "-"
                         else:
                             Tkm = raw_data[i].get("waste_weigh") * raw_data[i].get("transport_distance")
                         # print("Tkm::::::::::::::::::::::::::::::::::::::::", Tkm)
@@ -451,6 +450,7 @@ def load_table(request):
                         t_data.append(single_data)
                     print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                     return JsonResponse(t_data, safe=False)
+
 
 # 抓欄位(字典
 # @login_required(login_url="/login/")
