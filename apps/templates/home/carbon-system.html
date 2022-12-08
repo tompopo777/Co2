@@ -61,15 +61,12 @@
                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                         <div class="mb-4">
                             <div class="d-flex justify-content-center">
-                                <a type="button" class="btn btn-outline-light me-1" id="addNewPage"
-                                   href="/new_device/">
+                                <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
                                     新增
                                 </a>
-                                <button type="button" class="btn btn-outline-light ms-1">
-{#                                    <i class="fa-solid fa-pencil"></i>#}
+                                <a type="button" class="btn btn-outline-light ms-1" href="/edit_device/">
                                     匯出Excel
-                                </button>
-
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -193,6 +190,7 @@
         var dr1 = document.getElementById("dr1");
         var dropdownmenu2 = document.getElementById("dropdownmenu2")
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var dropdownmenu1 = document.getElementById("dropdownmenu1")
         $("#dropdownmenu1").on('change', function () {
             var currentClass = $(this).val();
             $.ajax({
@@ -262,14 +260,15 @@
                 dataType: 'json',
                 success: function (title) {
                     thead.innerHTML = ""
-                    var thead_row_category = thead.insertRow(-1)//加入下一列
+                    var thead_row_category = thead.insertRow(-1)//加入"分類"列
+                    var thead_row_name = thead.insertRow(-1)//加入"標題"列
                     title.forEach((item, index) => {
-                        var thead_row_name = thead.insertRow(-1)//加入下一列
                         var i = 0;
+                        thead_row_name.insertCell(-1)//加入"編輯鈕"框框
                         for (const [key, value] of Object.entries((item))) {
-                            var tr_c = thead_row_category.insertCell(-1)
+                            var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
                             var a = thead_row_category.appendChild(tr_c)
-                            tr_c.innerHTML = key
+                            tr_c.innerHTML = key//"分類"框框填質
                             if (i % 2 == 0) {
                                 tr_c.setAttribute('class', 'table-secondary');
                             } else {
@@ -278,10 +277,10 @@
                             tr_c.setAttribute('style', 'border-color: black')
                             tr_c.appendChild(style);
                             value.forEach((item, index) => {
-                                var cr_n = thead_row_name.insertCell(-1)
+                                var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框
                                 thead_row_name.appendChild(cr_n)
-                                cr_n.innerHTML = item;
-                                a.colSpan = index + 1//加第一排空間
+                                cr_n.innerHTML = item;//"標題"框框填質
+                                a.colSpan = index + 2//"分類"列第一個框框空間+2
                             })
                             i++;
                         }
@@ -310,15 +309,27 @@
                 success: function (t_data,) {
                     console.warn(t_data);
                     tbody.innerHTML = ""
+                    var id = 1;
                     t_data.forEach((item, index) => {
-                        var row = tbody.insertRow(-1)//加入下一列
+                        var pencil = document.createElement('button')//加入"button"tag
+                        var i_tag = document.createElement('i')//加入"i"tag
+                        var row = tbody.insertRow(-1)//加入"第一筆資料"列
+                        var edit_squ = row.insertCell(-1)//加入編輯鈕框框
+                        edit_squ.appendChild(pencil)
+                        pencil.setAttribute('class', 'btn py-0 m-0 ')
+                        pencil.setAttribute('onclick', 'location.href="/edit_device/"')//加入"onclick"轉跳到edit_device頁
+                        pencil.appendChild(i_tag)
+                        i_tag.setAttribute('class', 'fa-solid fa-bars btn-size')
+                        var cr_id = row.insertCell(-1)//加入"序號"框框
+                        cr_id.innerHTML = id
                         for (const [key, value] of Object.entries((item))) {
-                            var cr_c1 = row.insertCell(-1)
+                            var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
                             nuLL = value
                             if (value == null)
                                 nuLL = '-'
-                            cr_c1.innerHTML = nuLL
+                            cr_c2.innerHTML = nuLL
                         }
+                        id++;
                     })
                 },
             });
@@ -334,6 +345,23 @@
             var deviceId = dropdownmenu3.value;
             $.ajax({
                 url: "{% url 'loadadd' %}",
+                data: {
+                    'deviceId': deviceId
+                },
+                type: 'GET',
+                dataType: 'json',
+            });
+        })
+    </script>
+
+    <!--/*跳轉編輯頁面*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var addNewPage = document.getElementById("addNewPage")
+        $("#submit").on('click', function () {
+            var deviceId = dropdownmenu3.value;
+            $.ajax({
+                url: "{% url 'loadedit' %}",
                 data: {
                     'deviceId': deviceId
                 },
