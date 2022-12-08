@@ -123,59 +123,65 @@ def load_table(request):
                     # print("total::::::::::::::::::::::::::::::::::::::::", total)
                     # 抓單筆資料
                     single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
+                    # 將計算後的加油量丟回字典
                     single_data["total"] = total
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
                 t_data = []
+                # 「合計」前後的資料分開抓
                 raw_data = combustion_equipment.objects.values("id", "device_name", "device_id", "fuel_type", "period_starttime", "period_endtime",
                                                                "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
-                                                               "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december",
-                                                               "heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
-                                                               "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december"
-                                                               )
-                # 計算使用量合計
+                                                               "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
+                heat_data = combustion_equipment.objects.values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
+                                                                "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
+                # 計算使用量合計/熱值平均
                 for i in range(raw_data.count()):
                     Total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
                                  raw_data[i].get("fuel_may") + raw_data[i].get("fuel_june") + raw_data[i].get("fuel_july") + raw_data[i].get("fuel_august") + \
                                  raw_data[i].get("fuel_september") + raw_data[i].get("fuel_october") + raw_data[i].get("fuel_november") + raw_data[i].get("fuel_december")
 
-                    Total_heat = raw_data[i].get("heat_january") + raw_data[i].get("heat_february") + raw_data[i].get("heat_march") + raw_data[i].get("heat_april") + \
-                                 raw_data[i].get("heat_may") + raw_data[i].get("heat_june") + raw_data[i].get("heat_july") + raw_data[i].get("heat_august") + \
-                                 raw_data[i].get("heat_september") + raw_data[i].get("heat_october") + raw_data[i].get("heat_november") + raw_data[i].get("heat_december")
+                    Total_heat = heat_data[i].get("heat_january") + heat_data[i].get("heat_february") + heat_data[i].get("heat_march") + heat_data[i].get("heat_april") + \
+                                 heat_data[i].get("heat_may") + heat_data[i].get("heat_june") + heat_data[i].get("heat_july") + heat_data[i].get("heat_august") + \
+                                 heat_data[i].get("heat_september") + heat_data[i].get("heat_october") + heat_data[i].get("heat_november") + heat_data[i].get("heat_december")
                     avg_heat = Total_heat / 12
-                    # print("fuel::::::::::::::::::::::::::::::::::::::::", fuel)
+                    # print("fuel::::::::::::::::::::::::::::::::::::::::", Total_fuel)
                     # 抓單筆資料
                     single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
+                    # 將計算後的「合計」丟回字典
                     single_data["Total_fuel"] = Total_fuel
+                    for j in heat_data[i]:
+                        # 「合計」後的資料(每月熱值)丟回字典
+                        single_data[j] = heat_data[i].get(j)
+                    # 將計算後的「平均熱值」丟回字典
                     single_data["avg_heat"] = round(avg_heat, 2)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "公務車":
-                fuel = official_car.objects.values("january", "february", "march", "april",
-                                                   "may", "june", "july", "august",
-                                                   "september", "october", "november", "december")
-                print("fuel>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", fuel)
-                c = 0
-                for a in fuel:
-                    sum_fuel = 0
-                    # print("6666666666666666666666666666666666666666666666666666666666666", a)
-                    for i in a:
-                        # print("a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]a[i]", a[i])
-                        sum_fuel = sum_fuel + a[i]
-                        # t_data.insert(13, sum_fuel)
-                    print("sum_fuel>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", sum_fuel)
-                    # c += 1
-                    t_data = []
-                    for a in official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type", "department",
-                                                         "january", "february", "march", "april",
-                                                         "may", "june", "july", "august",
-                                                         "september", "october", "november", "december",
-                                                         "urea_add_date", "urea_add_quantity"):
-                        print("a::::::::::::::::::::::::::::::::::::::::", a)
-                        # t_data.append(a)
+                t_data = []
+                # 「合計」前後的資料分開抓
+                raw_data = official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type",
+                                                       "period_starttime", "period_endtime", "department",
+                                                       "january", "february", "march", "april",
+                                                       "may", "june", "july", "august",
+                                                       "september", "october", "november", "december")
+                urea_data = official_car.objects.values("urea_add_quantity", "urea_add_date")
+                print("urea_data::::::::::::::::::::::::::::::::::::::::", urea_data)
+                # 計算耗用量合計
+                for i in range(raw_data.count()):
+                    total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                            raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                            raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的耗用量丟回字典
+                    single_data["total"] = total
+                    for j in urea_data[i]:
+                        # 「合計」後的資料(尿素)丟回字典
+                        single_data[j] = urea_data[i].get(j)
+                    # print("single_data::::::::::::::::::::::::::::::::", single_data)
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
@@ -913,7 +919,7 @@ def add_title(request):
         htmlName = {
             "1": {
                 "內容": ["序號", "燃料開始日期", "燃料結束日期", "編號", "容量(𝓁)", "地點", "部門"],
-                "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+                "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
 
             "2": {
@@ -923,9 +929,9 @@ def add_title(request):
             },
 
             "3": {
-                "內容": ["序號", "類別", "編號", "燃料", "部門"],
-                "加油量(單位:公升)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "尿素": ["日期", "添加量(𝓁)"]
+                "內容": ["序號", "類別", "編號", "燃料", "加油日", "燃料結束日", "所屬單位"],
+                "耗用量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "尿素": ["添加量(𝓁)", "添加日期"]
             },
 
             "4": {
