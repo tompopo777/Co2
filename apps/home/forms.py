@@ -62,6 +62,12 @@ class EGform(forms.ModelForm):
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
 
+    def __init__(self, *args, **kwargs):
+        super(EGform, self).__init__(*args, **kwargs)
+        self.fields['department'].required = False
+        self.fields['image_note'].required = False
+        self.fields['image_path'].required = False
+
 
 class CEform(forms.ModelForm):
     class Meta:
@@ -460,6 +466,59 @@ class ELECform(forms.ModelForm):
 
 
 class UTform(forms.ModelForm):
+    # acceptance_receipt: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # commodity_name: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # commodity_NW: forms.FloatField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}))
+    # customer: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入: 國內/國外'}))
+    # supplier: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # supplier_address: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # trade_term: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # receiving_address: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # delivery_address: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # transport_distance: forms.FloatField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}))
+    # transport_country: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # transport_type: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # vehicle_fuel: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 柴油'}))
+    # trips: forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}))
+    # image_note: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}))
+    # image_path: forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    # overseas_transport_distance: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海裡 = 1.852公里'}))
+    # overseas_transport_type: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # overseas_delivery: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # overseas_arrive: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # overseas_trips: forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}))
+    # overseas_image_note: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}))
+    # overseas_image_path: forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    # special_transport_distance: forms.FloatField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}))
+    # special_transport_country: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # special_transport_type: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    # special_vehicle_fuel: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 柴油'}))
+    # special_trips: forms.IntegerField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}))
+    # special_image_note: forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}))
+    # special_image_path: forms.ImageField(required=False, widget=forms.FileInput(attrs={'class': 'form-control-file'}))
+    transport_distance: forms.FloatField(required=False)
+    transport_country: forms.CharField(required=False)
+    transport_type: forms.CharField(required=False)
+    vehicle_fuel: forms.CharField(required=False)
+    trips: forms.IntegerField(required=False)
+    image_note: forms.CharField(required=False)
+    image_path: forms.ImageField(required=False)
+    overseas_transport_distance: forms.CharField(required=False)
+    overseas_transport_type: forms.CharField(required=False)
+    overseas_delivery: forms.CharField(required=False)
+    overseas_arrive: forms.CharField(required=False)
+    overseas_trips: forms.IntegerField(required=False)
+    overseas_image_note: forms.CharField(required=False)
+    overseas_image_path: forms.ImageField(required=False)
+    special_transport_distance: forms.FloatField(required=False)
+    special_transport_country: forms.CharField(required=False)
+    special_transport_type: forms.CharField(required=False)
+    special_vehicle_fuel: forms.CharField(required=False)
+    special_trips: forms.IntegerField(required=False)
+    special_image_note: forms.CharField(required=False)
+    special_image_path: forms.ImageField(required=False)
+
+
     class Meta:
         model = upstream_transportation
         fields = ('acceptance_receipt', 'commodity_name', 'commodity_NW', 'customer', 'supplier', 'supplier_address',
@@ -469,6 +528,7 @@ class UTform(forms.ModelForm):
                   'overseas_image_note', 'overseas_image_path', 'special_transport_distance',
                   'special_transport_country', 'special_transport_type', 'special_vehicle_fuel', 'special_trips',
                   'special_image_note', 'special_image_path')
+
         widgets = {
             'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control'}),
             'commodity_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -486,7 +546,7 @@ class UTform(forms.ModelForm):
             'trips': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海裡 = 1.852公里'}),
+            'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海裡 = 1.852公里', 'required': 'False'}),
             'overseas_transport_type': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
@@ -501,6 +561,15 @@ class UTform(forms.ModelForm):
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
+    # def __init__(self, *args, **kwargs):
+    #     super(UTform, self).__init__(*args, **kwargs)
+    #     self.fields['transport_distance', 'transport_country',
+    #                 'transport_type', 'vehicle_fuel', 'trips', 'image_note', 'image_path', 'overseas_transport_distance',
+    #                 'overseas_transport_type', 'overseas_delivery', 'overseas_arrive', 'overseas_trips',
+    #                 'overseas_image_note', 'overseas_image_path', 'special_transport_distance',
+    #                 'special_transport_country', 'special_transport_type', 'special_vehicle_fuel', 'special_trips',
+    #                 'special_image_note', 'special_image_path'].required = False
 
 
 class DTform(forms.ModelForm):

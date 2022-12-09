@@ -44,6 +44,7 @@ urlpatterns = [
     path("ajax/title", views.add_title, name='loadtitle'),
     path("new_device/", views.add_page),
     path("edit_device/", views.edit_page, name='loadedit'),
+    path("emergency_generators_edit/<int:pk>", views.emergency_generators_edit),
 
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
