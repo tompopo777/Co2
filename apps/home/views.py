@@ -17,7 +17,6 @@ from django.db import models
 
 import apps
 from .forms import *
-from apps.home.models import emergency_generators, section_one, section_two
 from apps.home.models import *
 
 
@@ -109,7 +108,7 @@ def load_table(request):
         for a in t_name:
             if a["d_name"] == "緊急發電機":
                 t_data = []
-                raw_data = emergency_generators.objects.values("device_id", "period_starttime", "period_endtime",
+                raw_data = emergency_generators.objects.values("id", "device_id", "period_starttime", "period_endtime",
                                                                "device_capacity", "position", "department",
                                                                "january", "february", "march", "april",
                                                                "may", "june", "july", "august",
@@ -129,7 +128,7 @@ def load_table(request):
             elif a["d_name"] == "燃燒設備":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = combustion_equipment.objects.values("device_name", "device_id", "fuel_type", "period_starttime", "period_endtime",
+                raw_data = combustion_equipment.objects.values("id", "device_name", "device_id", "fuel_type", "period_starttime", "period_endtime",
                                                                "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
                                                                "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
                 heat_data = combustion_equipment.objects.values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
@@ -159,7 +158,7 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.values("vehicle_type", "device_id", "fuel_type",
+                raw_data = official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type",
                                                        "period_starttime", "period_endtime", "department",
                                                        "january", "february", "march", "april",
                                                        "may", "june", "july", "august",
@@ -184,14 +183,14 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
-                    material.objects.values("material_name", "material_id", "material_type",
+                    material.objects.values("id", "material_name", "material_id", "material_type",
                                             "january", "february", "march", "april",
                                             "may", "june", "july", "august",
                                             "september", "october", "november", "december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製程添加化學品":
                 t_data = list(
-                    process.objects.values("process_add_name", "chemical_name", "chemical_formula",
+                    process.objects.values("id", "process_add_name", "chemical_name", "chemical_formula",
                                            "process_stage", "material_id", "CAS_NO", "burn",
                                            "january", "february", "march", "april",
                                            "may", "june", "july", "august",
@@ -199,7 +198,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
-                raw_data = refrigerator.objects.values("device_name", "device_id", "brand_name", "model_type",
+                raw_data = refrigerator.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                        "years", "position", "refrigerant_type",
                                                        "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
                 # 取單筆逸散量計算
@@ -215,7 +214,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
                 t_data = []
-                raw_data = airconditioner.objects.values("device_name", "device_id", "brand_name", "model_type",
+                raw_data = airconditioner.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                          "years", "position", "refrigerant_type",
                                                          "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
                 # 取單筆逸散量計算
@@ -231,7 +230,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
                 t_data = []
-                raw_data = vehicle.objects.values("device_name", "device_id", "brand_name", "model_type",
+                raw_data = vehicle.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                   "years", "position", "refrigerant_type",
                                                   "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
                 # 取單筆逸散量計算
@@ -247,7 +246,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
                 t_data = []
-                raw_data = water_dispenser.objects.values("device_name", "device_id", "brand_name", "model_type",
+                raw_data = water_dispenser.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                           "years", "position", "refrigerant_type",
                                                           "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
                 # 取單筆逸散量計算
@@ -263,7 +262,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
                 t_data = []
-                raw_data = ice_water_dispenser.objects.values("device_name", "device_id", "brand_name", "model_type",
+                raw_data = ice_water_dispenser.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                               "years", "position", "refrigerant_type",
                                                               "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
                 # 取單筆逸散量計算
@@ -279,7 +278,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
                 t_data = []
-                raw_data = ice_maker.objects.values("device_name", "device_id", "brand_name", "model_type",
+                raw_data = ice_maker.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                     "years", "position", "refrigerant_type",
                                                     "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
                 # 取單筆逸散量計算
@@ -295,7 +294,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "其他設備清單":
                 t_data = []
-                raw_data = other_device.objects.values("device_name", "device_id", "brand_name", "model_type",
+                raw_data = other_device.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                        "years", "position", "refrigerant_type",
                                                        "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
                 # 取單筆逸散量計算
@@ -311,7 +310,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷媒總表":
                 t_data = []
-                raw_data = refrigerant_total_table.objects.values("device_name", "device_id", "brand_name", "model_type",
+                raw_data = refrigerant_total_table.objects.values("id", "device_name", "device_id", "brand_name", "model_type",
                                                                   "years", "position", "refrigerant_type",
                                                                   "filling_volume", "filling_date", "filling_fix_volume", "effusion_rate")
                 for i in range(raw_data.count()):
@@ -332,7 +331,7 @@ def load_table(request):
             elif a["d_name"] == "人天清冊":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = personnel_inventory.objects.values("years", "monthly", "employee_number", "daily_hours",
+                raw_data = personnel_inventory.objects.values("id", "years", "monthly", "employee_number", "daily_hours",
                                                               "working_days", "overtime", "leave_hours",
                                                               "day_off_hours")
                 for i in range(raw_data.count()):
@@ -354,7 +353,7 @@ def load_table(request):
             elif a["d_name"] == "保全清單":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = security.objects.values("years", "monthly", "security_number", "daily_hours",
+                raw_data = security.objects.values("id", "years", "monthly", "security_number", "daily_hours",
                                                    "working_days", "total_working_hours", "total_working_day")
                 for i in range(raw_data.count()):
                     # 計算單筆當月總工作時數
@@ -374,16 +373,15 @@ def load_table(request):
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                count = electricity.objects.values("january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december")
-                raw_data = electricity.objects.values("EMI_id", "address",
+                raw_data = electricity.objects.values("id", "EMI_id", "address",
                                                       "january", "february", "march", "april",
                                                       "may", "june", "july", "august",
                                                       "september", "october", "november", "december")
                 # 計算當月用電量
                 for i in range(raw_data.count()):
-                    kw_hr = count[i].get("january") + count[i].get("february") + count[i].get("march") + count[i].get("april") + \
-                            count[i].get("may") + count[i].get("june") + count[i].get("july") + count[i].get("august") + \
-                            count[i].get("september") + count[i].get("october") + count[i].get("november") + count[i].get("december")
+                    kw_hr = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                            raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                            raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
                     kkw_hr = kw_hr / 1000
                     # print("kw_hr::::::::::::::::::::::::::::::::::::::::", kw_hr)
                     # 抓單筆資料
@@ -413,7 +411,7 @@ def load_table(request):
             elif a["d_name"] == "員工通勤":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = employee_commute.objects.values("employee_id", "department", "employee_name",
+                raw_data = employee_commute.objects.values("id", "employee_id", "department", "employee_name",
                                                            "transportation", "displacement", "city",
                                                            "township", "address", "commute_distance", "work_days")
                 for i in range(raw_data.count()):
@@ -436,7 +434,7 @@ def load_table(request):
             elif a["d_name"] == "廢棄物":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = waste.objects.values("waste_name", "waste_date", "waste_weigh",
+                raw_data = waste.objects.values("id", "waste_name", "waste_date", "waste_weigh",
                                                 "waste_disposal", "waste_location", "transport_responsibility",
                                                 "transport_type", "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
@@ -452,7 +450,7 @@ def load_table(request):
                     single_data["total_distance"] = Tkm
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
-                print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+                # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
 
 
@@ -865,9 +863,10 @@ def carbon_system(request):
 # 新增轉跳
 @login_required(login_url="/login/")
 def add_page(request):
-    global page
+    global NewDevice_page
     if request.method == "GET":
         device_id = request.GET.get('deviceId', None)
+        # print("新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增", device_id)
         # 建立字典
         htmlName = {
             "1": "home/emergency-generator.html",
@@ -918,16 +917,26 @@ def add_page(request):
 
         for a in htmlName:
             if device_id == a:
-                page = htmlName.get(a)
-
-        return render(request, page, locals())
+                NewDevice_page = htmlName.get(a)
+        print("NewDevice_page:", NewDevice_page)
+        return render(request, NewDevice_page, locals())
 
 # 編輯轉跳
 @login_required(login_url="/login/")
 def edit_page(request):
-    global page
+    global EditDevice_page
     if request.method == 'GET':
-        device_id = request.GET.get('deviceId')
+        device_id = request.GET.get('deviceId', None)
+        single_dataID = request.GET.get('single_dataID', None)
+        print("device_id:::::::::::", device_id)
+        print("single_dataID:::::::::", single_dataID)
+        dd = RTTform.Meta.model.objects.get(id=single_dataID)
+        # dd = RTTform.Meta.model.objects.filter(id=single_dataID)
+        # print("test::::::::::::::", dd)
+        form = RTTform(instance=dd)
+        context = {
+            'form': form
+        }
         # 建立字典
         htmlName = {
             "1": "home/emergency-generator-edit.html",
@@ -942,7 +951,7 @@ def edit_page(request):
             "10": "home/ice-water-dispenser.html",
             "11": "home/ice-maker.html",
             "12": "home/other-device.html",
-            "13": "home/refrigerant-total-table.html",
+            "13": "home/refrigerant-total-table-edit.html",
             "14": "home/extinguisher.html",
             "15": "home/personnel-inventory.html",
             "16": "home/security.html",
@@ -957,9 +966,9 @@ def edit_page(request):
 
         for a in htmlName:
             if device_id == a:
-                page = htmlName.get(a)
-
-        return render(request, page, locals())
+                EditDevice_page = htmlName.get(a)
+        print("EditDevice_page:", EditDevice_page)
+        return render(request, EditDevice_page, context)
 
 # 新增title
 @login_required(login_url="/login/")

@@ -25,7 +25,7 @@
                         <div class="col-5">
                             <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
                             <select class="" id="dropdownmenu1" name="dropdown1name">
-                                <option class="" id="question-subject" value="0" selected>
+                                <option class="" id="question-subject" value="0" name="" selected>
                                     <---請選擇類別--->
                                 </option>
                                 <option class="" id="question-subject" value="1">
@@ -51,8 +51,7 @@
                             <select class="" id="dropdownmenu3" name="dropdown3name"></select>
                         </div>
                         <div class="col-1">
-                            <input id="submit" type="submit" value="查詢"
-                                   class="btn btn-outline-light ms-1">
+                            <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1 fff">
                         </div>
                     </div>
                 </div>
@@ -71,9 +70,7 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-        </div>
         </div>
     </header>
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
@@ -316,17 +313,23 @@
                         var row = tbody.insertRow(-1)//加入"第一筆資料"列
                         var edit_squ = row.insertCell(-1)//加入編輯鈕框框
                         edit_squ.appendChild(pencil)
-                        pencil.setAttribute('class', 'btn py-0 m-0 ')
+                        pencil.setAttribute('class', 'btn py-0 m-0 edit_btn')
                         pencil.setAttribute('onclick', 'location.href="/edit_device/"')//加入"onclick"轉跳到edit_device頁
                         pencil.appendChild(i_tag)
                         i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
                         var cr_id = row.insertCell(-1)//加入"序號"框框
                         cr_id.innerHTML = id
                         for (const [key, value] of Object.entries((item))) {
+                            if (key == "id") {
+                                row.setAttribute('class', 'single_data')
+                                pencil.setAttribute('value', value)
+                                continue;
+                            }
                             var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
                             nuLL = value
-                            if (value == null)
+                            if (value == null) {
                                 nuLL = '-'
+                            }
                             cr_c2.innerHTML = nuLL
                         }
                         id++;
@@ -341,8 +344,9 @@
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
         //add
         var addNewPage = document.getElementById("addNewPage")
-        $("#addNewPage").on('click', function () {
+        $(".fff").on('click', function () {
             var deviceId = dropdownmenu3.value;
+            {#console.warn("新增跳轉", deviceId);#}
             $.ajax({
                 url: "{% url 'loadadd' %}",
                 data: {
@@ -357,13 +361,16 @@
     <!--/*跳轉編輯頁面*/-->
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
-        var addNewPage = document.getElementById("addNewPage")
-        $("#submit").on('click', function () {
+        $(document).on('click', ".edit_btn", function () {
+            var single_dataID = $(this).val();
             var deviceId = dropdownmenu3.value;
+            {#console.warn("跳轉編輯頁面", deviceId);#}
+            console.warn("single_dataID", single_dataID)//顯示現在選中的資料id
             $.ajax({
                 url: "{% url 'loadedit' %}",
                 data: {
-                    'deviceId': deviceId
+                    'deviceId': deviceId,
+                    'single_dataID': single_dataID
                 },
                 type: 'GET',
                 dataType: 'json',
