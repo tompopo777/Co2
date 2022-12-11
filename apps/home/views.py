@@ -11,15 +11,13 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.template import loader
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
 
 import apps
 from .forms import *
 from apps.home.models import *
-
-
 
 
 @login_required(login_url="/login/")
@@ -178,7 +176,7 @@ def load_table(request):
                     for j in urea_data[i]:
                         # 「合計」後的資料(尿素)丟回字典
                         single_data[j] = urea_data[i].get(j)
-                    # print("single_data::::::::::::::::::::::::::::::::", single_data)
+                    print("single_data::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
@@ -497,55 +495,6 @@ def load_table(request):
 #                 t_data = list(globals()[model["t_name"]].objects.filter().all().values())
 #                 print(t_data)
 #                 return JsonResponse(t_data, safe=False)
-
-
-@login_required(login_url="/login/")
-def emergency_generators_edit(request, pk):
-    EG_update = emergency_generators.objects.get(id=pk)
-    EG_update = EGform(instance=EG_update)
-
-    if request.method == "POST":
-        EG_edit = EGform(request.POST, instance=EG_update)
-        if EG_edit.is_valid():
-            EG_edit.save()
-
-            return redirect('/carbon-system/')
-
-    else:
-
-        return redirect('/emergency_generator_edit/')
-
-
-    # if mode == "edit":
-    #     unit = emergency_generators.objects.get(id=1)
-    #     unit.device_id = request.GET['device_id']
-    #     unit.period_starttime = request.GET['period_starttime']
-    #     unit.period_endtime = request.GET['period_endtime']
-    #     unit.device_capacity = request.GET['device_id']
-    #     unit.position = request.GET['position']
-    #     unit.department = request.GET['department']
-    #     unit.january = request.GET['january']
-    #     unit.february = request.GET['february']
-    #     unit.march = request.GET['march']
-    #     unit.april = request.GET['april']
-    #     unit.may = request.GET['may']
-    #     unit.june = request.GET['june']
-    #     unit.july = request.GET['july']
-    #     unit.august = request.GET['august']
-    #     unit.september = request.GET['september']
-    #     unit.october = request.GET['october']
-    #     unit.november = request.GET['november']
-    #     unit.december = request.GET['december']
-    #     unit.image_note = request.GET['image_note']
-    #     unit.image_path = request.GET['image_path']
-    #
-    #     unit.save()
-    #
-    #     return render(request, "home/emergency-generator.html", locals())
-
-    # else:
-    #     return render(request, "home/carbon-system.html", locals())
-
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
@@ -866,32 +815,32 @@ def add_page(request):
     global NewDevice_page
     if request.method == "GET":
         device_id = request.GET.get('deviceId', None)
-        # print("新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增", device_id)
-        # 建立字典
+    # print("新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增", device_id)
+    # 建立字典
         htmlName = {
-            "1": "home/emergency-generator.html",
-            "2": "home/combustion-equipment.html",
-            "3": "home/official-car.html",
-            "4": "home/material.html",
-            "5": "home/process.html",
-            "6": "home/refrigerator.html",
-            "7": "home/airconditioner.html",
-            "8": "home/vehicle.html",
-            "9": "home/water-dispenser.html",
-            "10": "home/ice-water-dispenser.html",
-            "11": "home/ice-maker.html",
-            "12": "home/other-device.html",
-            "13": "home/refrigerant-total-table.html",
-            "14": "home/extinguisher.html",
-            "15": "home/personnel-inventory.html",
-            "16": "home/security.html",
-            "17": "home/electricity.html",
-            "18": "home/upstream-transportation.html",
-            "19": "home/downstream-transportation.html",
-            "20": "home/employee-commute.html",
-            "21": "home/employee-business-trip.html",
-            "22": "home/waste.html"
-        }
+        "1": "home/emergency-generator.html",
+        "2": "home/combustion-equipment.html",
+        "3": "home/official-car.html",
+        "4": "home/material.html",
+        "5": "home/process.html",
+        "6": "home/refrigerator.html",
+        "7": "home/airconditioner.html",
+        "8": "home/vehicle.html",
+        "9": "home/water-dispenser.html",
+        "10": "home/ice-water-dispenser.html",
+        "11": "home/ice-maker.html",
+        "12": "home/other-device.html",
+        "13": "home/refrigerant-total-table.html",
+        "14": "home/extinguisher.html",
+        "15": "home/personnel-inventory.html",
+        "16": "home/security.html",
+        "17": "home/electricity.html",
+        "18": "home/upstream-transportation.html",
+        "19": "home/downstream-transportation.html",
+        "20": "home/employee-commute.html",
+        "21": "home/employee-business-trip.html",
+        "22": "home/waste.html"
+    }
         EG_add = EGform(request.POST)
         CE_add = CEform(request.POST)
         OffCar_add = OFform(request.POST)
@@ -921,21 +870,21 @@ def add_page(request):
         print("NewDevice_page:", NewDevice_page)
         return render(request, NewDevice_page, locals())
 
+
 # 編輯轉跳
 @login_required(login_url="/login/")
 def edit_page(request):
     global EditDevice_page
+    global single_dataID
     if request.method == 'GET':
-        device_id = request.GET.get('deviceId', None)
-        single_dataID = request.GET.get('single_dataID', None)
+        device_id = request.GET.get('deviceId')
+        single_dataID = request.GET.get('single_dataID')
         print("device_id:::::::::::", device_id)
         print("single_dataID:::::::::", single_dataID)
-        dd = RTTform.Meta.model.objects.get(id=single_dataID)
-        # dd = RTTform.Meta.model.objects.filter(id=single_dataID)
-        # print("test::::::::::::::", dd)
-        form = RTTform(instance=dd)
-        context = {
-            'form': form
+        dd = refrigerant_total_table.objects.get(id=1)
+        RTT_update = RTTform(instance=dd)
+        formUpdata_name = {
+            'form': RTT_update
         }
         # 建立字典
         htmlName = {
@@ -962,13 +911,23 @@ def edit_page(request):
             "21": "home/employee-business-trip.html",
             "22": "home/waste.html"
         }
-        EG_add = EGform(request.POST)
-
         for a in htmlName:
             if device_id == a:
                 EditDevice_page = htmlName.get(a)
         print("EditDevice_page:", EditDevice_page)
-        return render(request, EditDevice_page, context)
+        return render(request, EditDevice_page, locals())
+
+# 儲存更新後的資料
+@login_required(login_url="/login/")
+def refrigerant_total_table_update(request):
+    dd = refrigerant_total_table.objects.get(id=1)
+    RTT_update = RTTform(instance=dd)
+    if request.method == 'POST':
+        RTT_update = RTTform(request.POST, request.FILES, instance=dd)
+        if RTT_update.is_valid():
+            RTT_update.save()
+        return redirect('/carbon-system/')
+    return render(request, 'home/carbon-system.html', locals())
 
 # 新增title
 @login_required(login_url="/login/")

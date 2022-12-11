@@ -27,20 +27,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/edit_device/" method="POST" enctype="multipart/form-data">
+                                <form action="/refrigerant_total_table_update/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.device_name }}
+                                                    {{ RTT_update.device_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.device_id }}
+                                                    {{ RTT_update.device_id }}
                                                 </div>
                                             </div>
                                         </div>
@@ -48,26 +48,26 @@
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備品牌</label>
-                                                    {{ form.brand_name }}
+                                                    {{ RTT_update.brand_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>型號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.model_type }}
+                                                    {{ RTT_update.model_type }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>西元年 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
+                                                    {{ RTT_update.years }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>放置位置</label>
-                                                {{ form.position }}
+                                                {{ RTT_update.position }}
                                             </div>
                                         </div>
                                         <br>
@@ -75,26 +75,26 @@
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.refrigerant_type }}
+                                                    {{ RTT_update.refrigerant_type }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.filling_volume }}
+                                                    {{ RTT_update.filling_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>維修填充量(單位:公斤)</label>
-                                                    {{ form.filling_fix_volume }}
+                                                    {{ RTT_update.filling_fix_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">冷媒填充日</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ form.filling_date }}
+                                                        {{ RTT_update.filling_date }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -102,7 +102,7 @@
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>逸散率 <span style="color:red; font-size:16px;">* </span></label>
-                                                {{ form.effusion_rate }}
+                                                {{ RTT_update.effusion_rate }}
                                             </div>
                                         </div>
                                     </div>
@@ -110,12 +110,12 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                {{ form.image_note }}
+                                                {{ RTT_update.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                {{ form.image_path }}
+                                                {{ RTT_update.image_path }}
                                             </div>
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@
     <script>
         $('#date1').datetimepicker({
             date: null,
-            format: 'YYYY-MM-DD',
+            RTT_updateat: 'YYYY-MM-DD',
             locale: moment.locale('zh-tw'),
             disabledDates: [
                 moment().add(1, 'days'),
@@ -166,7 +166,7 @@
 
     {#    禁止enter鍵#}
     <script>
-        $(document).on("keypress", "form", function (e) {
+        $(document).on("keypress", "RTT_update", function (e) {
             var code = e.keyCode || e.which;
             if (code == 13) {
                 e.preventDefault();

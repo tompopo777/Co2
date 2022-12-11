@@ -15,6 +15,7 @@ urlpatterns = [
     # The home page
     path('', views.index, name='home'),
     path("carbon-system/", views.carbon_system, name='carbon-system'),
+    # 新增設備
     path("emergency_generators_add/", views.emergency_generators_add),
     path("combustion_equipment_add/", views.combustion_equipment_add),
     path("official_car_add/", views.official_car_add),
@@ -37,15 +38,17 @@ urlpatterns = [
     path("employee_commute_add/", views.employee_commute_add),
     path("employee_business_trip_add/", views.employee_business_trip_add),
     path("waste_add/", views.waste_add),
+    # ajax傳質
     path("ajax/process", views.load_process, name='loadprocess'),
     path("ajax/device", views.load_device, name='loaddevice'),
     path("ajax/table", views.load_table, name='loadtable'),
     path("ajax/title", views.add_title, name='loadtitle'),
     path("new_device/", views.add_page, name='loadadd'),
     path("edit_device/", views.edit_page, name='loadedit'),
+    # Excel
     path("csv_view/", csv.csv_view, name='csv_view'),
-    path("emergency_generators_edit/<int:pk>", views.emergency_generators_edit),
-    # path('edit_device/<str:pk>', views.edit_page, name='loadedit'),
+    # 編輯設備
+    path("refrigerant_total_table_update/", views.refrigerant_total_table_update),
 
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
