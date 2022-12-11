@@ -29,6 +29,15 @@ TRANSPORTATION_CHOICES = [
         ('捷運', '捷運'),
         ('高鐵', '高鐵'),
     ]
+EBT_TRANSPORTATION_CHOICES = [
+        ('自駕汽車', '自駕汽車'),
+        ('計程車', '計程車'),
+        ('火車', '火車'),
+        ('高鐵', '高鐵'),
+        ('捷運', '捷運'),
+        ('船舶', '船舶'),
+        ('飛機', '飛機'),
+    ]
 
 
 class EGform(forms.ModelForm):
@@ -78,9 +87,9 @@ class CEform(forms.ModelForm):
                   'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
                   'heat_october', 'heat_november', 'heat_december', 'image_note', 'image_path')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}),
-            'fuel_type': forms.TextInput(attrs={'class': 'form-control', 'value': '123456789'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'value': ''}),
+            'fuel_type': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
             'period_starttime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'period_endtime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'fuel_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -107,7 +116,7 @@ class CEform(forms.ModelForm):
             'heat_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'image_note': forms.TextInput(attrs={'class': 'form-control', 'value': 'test'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
 
@@ -138,7 +147,7 @@ class OFform(forms.ModelForm):
                   'urea_image_note', 'urea_image_path')
         widgets = {
             'vehicle_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如:汽車、堆高機...等'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control','autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'fuel_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'period_starttime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'period_endtime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -157,12 +166,13 @@ class OFform(forms.ModelForm):
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'urea': forms.TextInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
+            'urea': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
             'urea_add_quantity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '單位:公升'}),
             'urea_add_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'urea_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'urea_image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
@@ -173,6 +183,7 @@ class OFform(forms.ModelForm):
         self.fields['urea_add_date'].required = False
         self.fields['urea_image_note'].required = False
         self.fields['urea_image_path'].required = False
+
 
 class MTform(forms.ModelForm):
     class Meta:
@@ -211,7 +222,7 @@ class PCform(forms.ModelForm):
             'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control'}),
             'CAS_NO': forms.TextInput(attrs={'class': 'form-control'}),
-            'burn': forms.TextInput(attrs={'class': 'form-control'}),
+            'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'checked data-toggle': 'toggle'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -227,11 +238,13 @@ class PCform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(PCform, self).__init__(*args, **kwargs)
         self.fields['chemical_formula'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class RFform(forms.ModelForm):
     class Meta:
@@ -253,6 +266,7 @@ class RFform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(RFform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
@@ -261,6 +275,7 @@ class RFform(forms.ModelForm):
         self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class ACform(forms.ModelForm):
     class Meta:
@@ -282,6 +297,7 @@ class ACform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(ACform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
@@ -290,6 +306,7 @@ class ACform(forms.ModelForm):
         self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class VCform(forms.ModelForm):
     class Meta:
@@ -311,6 +328,7 @@ class VCform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(VCform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
@@ -319,6 +337,7 @@ class VCform(forms.ModelForm):
         self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class WDform(forms.ModelForm):
     class Meta:
@@ -340,6 +359,7 @@ class WDform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(WDform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
@@ -348,6 +368,7 @@ class WDform(forms.ModelForm):
         self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class IWDform(forms.ModelForm):
     class Meta:
@@ -369,6 +390,7 @@ class IWDform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(IWDform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
@@ -377,6 +399,7 @@ class IWDform(forms.ModelForm):
         self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class IMform(forms.ModelForm):
     class Meta:
@@ -398,6 +421,7 @@ class IMform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(IMform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
@@ -406,6 +430,7 @@ class IMform(forms.ModelForm):
         self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class ODform(forms.ModelForm):
     class Meta:
@@ -427,6 +452,7 @@ class ODform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(ODform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
@@ -435,6 +461,7 @@ class ODform(forms.ModelForm):
         self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class RTTform(forms.ModelForm):
     class Meta:
@@ -456,6 +483,7 @@ class RTTform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(RTTform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
@@ -464,6 +492,7 @@ class RTTform(forms.ModelForm):
         self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class EXform(forms.ModelForm):
     class Meta:
@@ -487,11 +516,13 @@ class EXform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(EXform, self).__init__(*args, **kwargs)
         self.fields['extinguisher_vendor'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class PIform(forms.ModelForm):
     class Meta:
@@ -510,6 +541,7 @@ class PIform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(PIform, self).__init__(*args, **kwargs)
         self.fields['daily_hours'].required = False
@@ -519,6 +551,7 @@ class PIform(forms.ModelForm):
         self.fields['day_off_hours'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class SCform(forms.ModelForm):
     class Meta:
@@ -533,10 +566,12 @@ class SCform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(SCform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class ELECform(forms.ModelForm):
     class Meta:
@@ -561,6 +596,7 @@ class ELECform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(ELECform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
@@ -635,6 +671,7 @@ class UTform(forms.ModelForm):
         self.fields['special_image_note'].required = False
         self.fields['special_image_path'].required = False
 
+
 class DTform(forms.ModelForm):
     class Meta:
         model = downstream_transportation
@@ -677,6 +714,7 @@ class DTform(forms.ModelForm):
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(DTform, self).__init__(*args, **kwargs)
         self.fields['transport_distance'].required = False
@@ -701,6 +739,7 @@ class DTform(forms.ModelForm):
         self.fields['special_image_note'].required = False
         self.fields['special_image_path'].required = False
 
+
 class ECform(forms.ModelForm):
     class Meta:
         model = employee_commute
@@ -720,10 +759,12 @@ class ECform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(ECform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+
 
 class EBTform(forms.ModelForm):
     class Meta:
@@ -734,7 +775,7 @@ class EBTform(forms.ModelForm):
         widgets = {
             'business_trip_location': forms.TextInput(attrs={'class': 'form-control'}),
             'business_trip_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'transportation': forms.Select(choices=TRANSPORTATION_CHOICES),
+            'transportation': forms.Select(choices=EBT_TRANSPORTATION_CHOICES),
             'employee_id': forms.TextInput(attrs={'class': 'form-control'}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
@@ -746,6 +787,7 @@ class EBTform(forms.ModelForm):
             'rtd_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'rtd_image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(EBTform, self).__init__(*args, **kwargs)
         self.fields['bt_image_note'].required = False
@@ -773,6 +815,7 @@ class WASTEform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
         }
+
     def __init__(self, *args, **kwargs):
         super(WASTEform, self).__init__(*args, **kwargs)
         self.fields['transport_type'].required = False
