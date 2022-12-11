@@ -63,9 +63,9 @@
                                 <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
                                     新增
                                 </a>
-                                <a type="button" class="btn btn-outline-light ms-1" href="/edit_device/">
+                                <button class="btn ms-1" onclick="location.href='/edit_device/'">
                                     匯出Excel
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -316,7 +316,7 @@
                         pencil.setAttribute('class', 'btn py-0 m-0 edit_btn')
                         pencil.setAttribute('onclick', 'location.href="/edit_device/"')//加入"onclick"轉跳到edit_device頁
                         pencil.appendChild(i_tag)
-                        i_tag.setAttribute('class', 'fa-solid fa-bars btn-size')
+                        i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
                         var cr_id = row.insertCell(-1)//加入"序號"框框
                         cr_id.innerHTML = id
                         for (const [key, value] of Object.entries((item))) {

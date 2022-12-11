@@ -21,8 +21,6 @@ from apps.home.models import *
 
 
 
-# from apps.home.models import *
-
 
 @login_required(login_url="/login/")
 def index(request):
@@ -502,33 +500,48 @@ def load_table(request):
 
 
 @login_required(login_url="/login/")
-def emergency_generators_edit(request, id=None, mode=None):
-    if mode == "edit":
-        unit = emergency_generators.objects.get(id=1)
-        unit.device_id = request.GET['device_id']
-        unit.period_starttime = request.GET['period_starttime']
-        unit.period_endtime = request.GET['period_endtime']
-        unit.device_capacity = request.GET['device_id']
-        unit.position = request.GET['position']
-        unit.department = request.GET['department']
-        unit.january = request.GET['january']
-        unit.february = request.GET['february']
-        unit.march = request.GET['march']
-        unit.april = request.GET['april']
-        unit.may = request.GET['may']
-        unit.june = request.GET['june']
-        unit.july = request.GET['july']
-        unit.august = request.GET['august']
-        unit.september = request.GET['september']
-        unit.october = request.GET['october']
-        unit.november = request.GET['november']
-        unit.december = request.GET['december']
-        unit.image_note = request.GET['image_note']
-        unit.image_path = request.GET['image_path']
+def emergency_generators_edit(request, pk):
+    EG_update = emergency_generators.objects.get(id=pk)
+    EG_update = EGform(instance=EG_update)
 
-        unit.save()
+    if request.method == "POST":
+        EG_edit = EGform(request.POST, instance=EG_update)
+        if EG_edit.is_valid():
+            EG_edit.save()
 
-        return render(request, "home/emergency-generator.html", locals())
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/emergency_generator_edit/')
+
+
+    # if mode == "edit":
+    #     unit = emergency_generators.objects.get(id=1)
+    #     unit.device_id = request.GET['device_id']
+    #     unit.period_starttime = request.GET['period_starttime']
+    #     unit.period_endtime = request.GET['period_endtime']
+    #     unit.device_capacity = request.GET['device_id']
+    #     unit.position = request.GET['position']
+    #     unit.department = request.GET['department']
+    #     unit.january = request.GET['january']
+    #     unit.february = request.GET['february']
+    #     unit.march = request.GET['march']
+    #     unit.april = request.GET['april']
+    #     unit.may = request.GET['may']
+    #     unit.june = request.GET['june']
+    #     unit.july = request.GET['july']
+    #     unit.august = request.GET['august']
+    #     unit.september = request.GET['september']
+    #     unit.october = request.GET['october']
+    #     unit.november = request.GET['november']
+    #     unit.december = request.GET['december']
+    #     unit.image_note = request.GET['image_note']
+    #     unit.image_path = request.GET['image_path']
+    #
+    #     unit.save()
+    #
+    #     return render(request, "home/emergency-generator.html", locals())
 
     # else:
     #     return render(request, "home/carbon-system.html", locals())
@@ -926,7 +939,7 @@ def edit_page(request):
         }
         # 建立字典
         htmlName = {
-            "1": "home/emergency-generator.html",
+            "1": "home/emergency-generator-edit.html",
             "2": "home/combustion-equipment.html",
             "3": "home/official-car.html",
             "4": "home/material.html",
@@ -949,6 +962,8 @@ def edit_page(request):
             "21": "home/employee-business-trip.html",
             "22": "home/waste.html"
         }
+        EG_add = EGform(request.POST)
+
         for a in htmlName:
             if device_id == a:
                 EditDevice_page = htmlName.get(a)
@@ -1070,3 +1085,24 @@ def add_title(request):
     # print("htmlName:::::::::::::::::::::::::::::::::::::::::::::::::::", context)
     # print('我好帥2', title)
     return JsonResponse(title, safe=False)
+
+def export_data(request):
+    if request.method == 'POST':
+        # Get selected option from form
+        file_format = request.POST['file-format']
+        emergency_generators_resource = EGResource()
+        dataset = emergency_generators_resource.export()
+        if file_format == 'CSV':
+            response = HttpResponse(dataset.csv, content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
+            return response
+        elif file_format == 'JSON':
+            response = HttpResponse(dataset.json, content_type='application/json')
+            response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
+            return response
+        elif file_format == 'XLS (Excel)':
+            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
+            return response
+
+    return redirect('/carbon-system/')

@@ -27,23 +27,21 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                    <form action="/emergency_generators_edit/" name="form111" method="GET">
+                                    <form action="/emergency_generators_edit/" name="form111" method="POST">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號</label>
-                                                    <input type="text" class="form-control"
-                                                           id="device_id" name="device_id"
-                                                            value={{ unit.device_id }}>
+                                                    {{ EG_add.device_id }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">燃料使用開始時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control" id="period_starttime" name="period_starttime" value={{ unit.period_starttime }}/>
+                                                        {{ EG_add.period_starttime }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -51,7 +49,7 @@
                                                 <label class="" for="start">燃料使用結束時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        <input type="date" class="form-control" id="period_endtime" name="period_endtime" value={{ unit.period_endtime }}/>
+                                                        {{ EG_add.period_endtime }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -59,19 +57,19 @@
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>發電機容量</label>
-                                                <input type='text' class="form-control" id="device_capacity" name="device_capacity" max="9999999999" placeholder="單位:公升" value={{ unit.device_capacity }}>
+                                                {{ EG_add.device_capacity }}
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>設置地點</label>
-                                                <input type="text" id="position" name="position" class="form-control" value={{ unit.position }}>
+                                                {{ EG_add.position }}
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>所屬單位</label>
-                                                <input type="text" id="department" name="department" class="form-control" value={{ unit.department }}>
+                                                {{ EG_add.department }}
                                             </div>
                                         </div>
                                         <div class="d-flex flex-nowrap">
@@ -100,62 +98,62 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="january" name="january" value={{ unit.january }}>
+                                                        {{ EG_add.january }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="february" name="february" value={{ unit.february }}>
+                                                        {{ EG_add.february }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="march" name="march" value={{ unit.march }}>
+                                                        {{ EG_add.march }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="april" name="april" value={{ unit.april }}>
+                                                        {{ EG_add.april }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="may" name="may" value={{ unit.may }}>
+                                                        {{ EG_add.may }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="june" name="june" value={{ unit.june }}>
+                                                        {{ EG_add.june }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="july" name="july" value={{ unit.july }}>
+                                                        {{ EG_add.july }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="august" name="august" value={{ unit.august }}>
+                                                        {{ EG_add.august }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="september" name="september" value={{ unit.september }}>
+                                                        {{ EG_add.september }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="october" name="october" value={{ unit.october }}>
+                                                        {{ EG_add.october }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="november" name="november" value={{ unit.november }}>
+                                                        {{ EG_add.november }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        <input class="col-6" type="text" id="december" name="december" value={{ unit.december }}>
+                                                        {{ EG_add.december }}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -167,19 +165,19 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                <input type="text" name="image_note" class="form-control" id="image_note" value={{ unit.image_note }}>
+                                                {{ EG_add.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                <input type="file" class="" name="image_path" id="image_path" accept="image/*" value={{ unit.image_path }}>
+                                                {{ EG_add.image_path }}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
                                         <div class="col-1">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
-                                                確認
+                                                更新
                                             </button>
                                         </div>
                                         <div class="col-1">
