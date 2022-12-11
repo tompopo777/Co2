@@ -1,0 +1,281 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} official-car {% endblock %}
+
+{% block body_class %} official-car {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">公務車</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/official_car_update/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>車輛類別 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ OffCar_update.vehicle_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ OffCar_update.device_id }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ OffCar_update.fuel_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="ms-0" for="start">燃料使用開始時間 <span style="color:red; font-size:16px;">* </span></label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        {{ OffCar_update.period_starttime }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="" for="start">燃料使用結束時間 <span style="color:red; font-size:16px;">* </span></label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        {{ OffCar_update.period_endtime }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>所屬單位</label>
+                                                {{ OffCar_update.department }}
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-nowrap">
+                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
+                                                加油量(單位：公升) <span style="color:red; font-size:16px;">* </span>
+                                            </h5>
+                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>一月</th>
+                                                <th>二月</th>
+                                                <th>三月</th>
+                                                <th>四月</th>
+                                                <th>五月</th>
+                                                <th>六月</th>
+                                                <th>七月</th>
+                                                <th>八月</th>
+                                                <th>九月</th>
+                                                <th>十月</th>
+                                                <th>十一月</th>
+                                                <th>十二月</th>
+                                            </tr>
+                                            </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.january }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.february }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.march }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.april }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.may }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.june }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.july }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.august }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.september }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.october }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.november }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ OffCar_update.december }}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                        </table>
+                                    </div>
+                                    <br>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                {{ OffCar_update.image_note }}
+                                            </div>
+                                        </div>
+                                        <div class=" ps-md-2 align-self-center">
+                                            <div class="col-1 ">
+                                                {{ OffCar_update.image_path }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
+                                    <div class="row">
+                                        <div class="form-check ps-3">
+                                            是否添加尿素
+                                            {{ OffCar_update.urea }}
+                                        </div>
+                                        <div class="collapse" id="collapsePee">
+                                            <div class="accordion-body">
+                                                <div class="accordion-body">
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <div class="input-group input-group-static mb-4">
+                                                                <label>尿素添加量</label>
+                                                                {{ OffCar_update.urea_add_quantity }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-3 ps-md-2">
+                                                            <label class="ms-0" for="start">尿素添加日期</label>
+                                                            <div class="col-6">
+                                                                <div class="ms-1 input-group date" id='date1'>
+                                                                    {{ OffCar_update.urea_add_date }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="d-flex">
+                                                            <div class="col-6">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>尿素引用單據來源</label>
+                                                                    {{ OffCar_update.urea_image_note }}
+                                                                </div>
+                                                            </div>
+                                                            <div class=" ps-md-2 align-self-center">
+                                                                <div class="col-1 ">
+                                                                    {{ OffCar_update.urea_image_path }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script>
+        $('#date1').datetimepicker({
+            date: null,
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-tw'),
+            disabledDates: [
+                moment().add(1, 'days'),
+                moment().add(2, 'days'),
+                '2021-10-10',
+                '2021-12-25'
+            ]
+        });
+    </script>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+{% endblock javascripts %}

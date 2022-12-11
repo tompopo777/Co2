@@ -48,7 +48,28 @@ urlpatterns = [
     # Excel
     path("csv_view/", csv.csv_view, name='csv_view'),
     # 編輯設備
+    path("emergency_generators_update/", views.emergency_generators_update),
+    path("combustion_equipment_update/", views.combustion_equipment_update),
+    path("official_car_update/", views.official_car_update),
+    path("material_update/", views.material_update),
+    path("process_update/", views.process_update),
+    path("refrigerator_update/", views.refrigerator_update),
+    path("airconditioner_update/", views.airconditioner_update),
+    path("vehicle_update/", views.vehicle_update),
+    path("water_dispenser_update/", views.water_dispenser_update),
+    path("ice_water_dispenser_update/", views.ice_water_dispenser_update),
+    path("ice_maker_update/", views.ice_maker_update),
+    path("other_device_update/", views.other_device_update),
     path("refrigerant_total_table_update/", views.refrigerant_total_table_update),
+    path("extinguisher_update/", views.extinguisher_update),
+    path("personnel_inventory_update/", views.personnel_inventory_update),
+    path("security_update/", views.security_update),
+    path("electricity_update/", views.electricity_update),
+    path("upstream_transportation_update/", views.upstream_transportation_update),
+    path("downstream_transportation_update/", views.downstream_transportation_update),
+    path("employee_commute_update/", views.employee_commute_update),
+    path("employee_business_trip_update/", views.employee_business_trip_update),
+    path("waste_update/", views.waste_update),
 
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
