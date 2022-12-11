@@ -64,9 +64,9 @@
                                 <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
                                     新增
                                 </a>
-                                <button class="btn ms-1" onclick="location.href='/edit_device/'">
+                                <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
                                     匯出Excel
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -369,6 +369,45 @@
                 dataType: 'json',
             });
         })
+    </script>
+
+    <script>
+        $('#exportExcel').on('click', e => {
+            // random data
+            alert('aaa');
+            data = {
+                type: 'view3-X',
+            }
+            $.ajax({
+                url: "{% url 'csv_view' %}",
+                type:"POST",
+                traditional: true,
+                data: data,
+                // xhrFields:{
+                //     responseType: 'blob'
+                // },
+                success:function (output, status, xhr){
+                    let filename = "";
+                    let blob = output;
+                    var disposition = xhr.getResponseHeader('Content-Disposition'); //抓取檔案描述
+                    //切割抓取檔案名稱
+                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                        let filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        let matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                    }
+
+                    let downloadLink = window.document.createElement('a'); //製作可點擊字串
+                    let contentTypeHeader = xhr.getResponseHeader("Content-Type"); //檔案型態
+                    downloadLink.href = window.URL.createObjectURL(new Blob([blob], {type: contentTypeHeader})); //製作下載連結
+                    filename = decodeURI(filename);//名稱解碼
+                    downloadLink.download = filename;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                },
+            })
+        });
     </script>
 
 {% endblock javascripts %}

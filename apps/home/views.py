@@ -1077,23 +1077,23 @@ def add_title(request):
     # print('我好帥2', title)
     return JsonResponse(title, safe=False)
 
-def export_data(request):
-    if request.method == 'POST':
-        # Get selected option from form
-        file_format = request.POST['file-format']
-        emergency_generators_resource = EGResource()
-        dataset = emergency_generators_resource.export()
-        if file_format == 'CSV':
-            response = HttpResponse(dataset.csv, content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
-            return response
-        elif file_format == 'JSON':
-            response = HttpResponse(dataset.json, content_type='application/json')
-            response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
-            return response
-        elif file_format == 'XLS (Excel)':
-            response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-            response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
-            return response
-
-    return redirect('/carbon-system/')
+# def export_data(request):
+#     if request.method == 'POST':
+#         # Get selected option from form
+#         file_format = request.POST['file-format']
+#         emergency_generators_resource = EGResource()
+#         dataset = emergency_generators_resource.export()
+#         if file_format == 'CSV':
+#             response = HttpResponse(dataset.csv, content_type='text/csv')
+#             response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
+#             return response
+#         elif file_format == 'JSON':
+#             response = HttpResponse(dataset.json, content_type='application/json')
+#             response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
+#             return response
+#         elif file_format == 'XLS (Excel)':
+#             response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
+#             response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
+#             return response
+#
+#     return redirect('/carbon-system/')

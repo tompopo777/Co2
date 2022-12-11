@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.conf.urls import url
 from django.urls import path, re_path
-from apps.home import views
+from apps.home import views,csv
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -44,6 +44,7 @@ urlpatterns = [
     path("ajax/title", views.add_title, name='loadtitle'),
     path("new_device/", views.add_page),
     path("edit_device/", views.edit_page, name='loadedit'),
+    path("csv_view/", csv.csv_view, name='csv_view'),
     path("emergency_generators_edit/<int:pk>", views.emergency_generators_edit),
 
     # Matches any html file
