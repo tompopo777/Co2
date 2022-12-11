@@ -631,7 +631,7 @@ class UTform(forms.ModelForm):
             'trips': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海裡 = 1.852公里', 'required': 'False'}),
+            'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海裡 = 1.852公里'}),
             'overseas_transport_type': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
