@@ -1,4 +1,4 @@
-import io
+﻿import io
 import zipfile
 
 import pandas as pd
@@ -49,14 +49,19 @@ def csv_view(request):
             #     if end:
             #         co2 = co2.filter(date__lte=end)
 
-        df = csv_statistics(emergency_generators.objects.all())
+        did = request.POST.get('did')
+        excel_did = section_two.objects.filter(did__exact=int(did))
 
-        csv_name = '123.csv'
+        df = csv_statistics(globals()[excel_did[0].t_name].objects.all())
+
+
+        csv_name = excel_did[0].d_name + '.csv'
 
         # csv型態
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; charset=utf-8; filename=' + parse.quote(csv_name, encoding="UTF-8")
-        df.to_csv(index=False, sep=',', encoding='utf_8_sig', path_or_buf=response)
+        response['Content-Disposition'] = 'attachment; charset=utf_8_sig; filename=' + parse.quote(csv_name, encoding="UTF-8")
+        df.to_csv(index=False, sep=',', encoding='utf_8_sig', path_or_buf=response, na_rep='NULL')
+
 
         return response
 

@@ -379,11 +379,11 @@
     </script>
 
     <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
         $('#exportExcel').on('click', e => {
             // random data
-            alert('aaa');
             data = {
-                type: 'view3-X',
+                did: dropdownmenu3.value,
             }
             $.ajax({
                 url: "{% url 'csv_view' %}",
