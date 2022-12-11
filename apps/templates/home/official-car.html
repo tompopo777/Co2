@@ -33,13 +33,13 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>車輛類別</label>
+                                                    <label>車輛類別 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OffCar_add.vehicle_type }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>設備編號</label>
+                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OffCar_add.device_id }}
                                                 </div>
                                             </div>
@@ -47,12 +47,12 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>燃料種類</label>
+                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OffCar_add.device_id }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
-                                                <label class="ms-0" for="start">燃料使用開始時間</label>
+                                                <label class="ms-0" for="start">燃料使用開始時間 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
                                                         {{ OffCar_add.period_starttime }}
@@ -60,7 +60,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
-                                                <label class="" for="start">燃料使用結束時間</label>
+                                                <label class="" for="start">燃料使用結束時間 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
                                                         {{ OffCar_add.period_endtime }}
@@ -74,31 +74,30 @@
                                                 {{ OffCar_add.department }}
                                             </div>
                                         </div>
-                                        <br>
                                         <div class="d-flex flex-nowrap">
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>一月</th>
-                                                    <th>二月</th>
-                                                    <th>三月</th>
-                                                    <th>四月</th>
-                                                    <th>五月</th>
-                                                    <th>六月</th>
-                                                    <th>七月</th>
-                                                    <th>八月</th>
-                                                    <th>九月</th>
-                                                    <th>十月</th>
-                                                    <th>十一月</th>
-                                                    <th>十二月</th>
-                                                </tr>
-                                                </thead>
+                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
+                                                加油量(單位：公升) <span style="color:red; font-size:16px;">* </span>
+                                            </h5>
+                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>一月</th>
+                                                <th>二月</th>
+                                                <th>三月</th>
+                                                <th>四月</th>
+                                                <th>五月</th>
+                                                <th>六月</th>
+                                                <th>七月</th>
+                                                <th>八月</th>
+                                                <th>九月</th>
+                                                <th>十月</th>
+                                                <th>十一月</th>
+                                                <th>十二月</th>
+                                            </tr>
+                                            </thead>
                                                 <tbody>
                                                 <tr>
-                                                    <th width="30">
-                                                        加油量(單位:公升)
-                                                    </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
                                                             {{ OffCar_add.january }}
@@ -161,8 +160,7 @@
                                                     </td>
                                                 </tr>
                                                 </tbody>
-                                            </table>
-                                        </div>
+                                        </table>
                                     </div>
                                     <br>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -185,9 +183,7 @@
                                     <br>
                                     <div class="row">
                                         <div class="form-check ps-3">
-{#                                            <input class="form-check-input" type="checkbox" data-bs-toggle="collapse" href="#collapsePee" aria-expanded="false" aria-controls="collapsePee">#}
-{#                                            是否添加尿素#}
-{#                                            </input>#}
+                                            是否添加尿素
                                             {{ OffCar_add.urea }}
                                         </div>
                                         <div class="collapse" id="collapsePee">

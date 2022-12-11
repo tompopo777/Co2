@@ -32,13 +32,13 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>製程添加化學名稱</label>
+                                                    <label>製程添加化學名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PC_add.process_add_name }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>化學品名</label>
+                                                    <label>化學品名 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PC_add.chemical_name }}
                                                 </div>
                                             </div>
@@ -52,13 +52,13 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>製程使用階段</label>
+                                                    <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PC_add.process_stage }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>料號</label>
+                                                    <label>料號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PC_add.material_id }}
                                                 </div>
                                             </div>
@@ -66,106 +66,105 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>CAS NO</label>
+                                                    <label>CAS NO <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PC_add.CAS_NO }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>是否燃燒</label>
+                                                    <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PC_add.burn }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="d-flex flex-nowrap">
-                                            <table class="table">
-                                                <thead>
-                                                <tr>
-                                                    <th></th>
-                                                    <th>一月</th>
-                                                    <th>二月</th>
-                                                    <th>三月</th>
-                                                    <th>四月</th>
-                                                    <th>五月</th>
-                                                    <th>六月</th>
-                                                    <th>七月</th>
-                                                    <th>八月</th>
-                                                    <th>九月</th>
-                                                    <th>十月</th>
-                                                    <th>十一月</th>
-                                                    <th>十二月</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                <tr>
-                                                    <th width="30">
-                                                        使用量(單位:公斤)
-                                                    </th>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.january }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.february }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.march }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.april }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.may }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.june }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.july }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.august }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.september }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.october }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.november }}
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center">
-                                                            {{ PC_add.december }}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr></tr>
-                                                </tbody>
-                                            </table>
+                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
+                                                使用量(單位:公斤) <span style="color:red; font-size:16px;">* </span>
+                                            </h5>
                                         </div>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>一月</th>
+                                                <th>二月</th>
+                                                <th>三月</th>
+                                                <th>四月</th>
+                                                <th>五月</th>
+                                                <th>六月</th>
+                                                <th>七月</th>
+                                                <th>八月</th>
+                                                <th>九月</th>
+                                                <th>十月</th>
+                                                <th>十一月</th>
+                                                <th>十二月</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.january }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.february }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.march }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.april }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.may }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.june }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.july }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.august }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.september }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.october }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.november }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ PC_add.december }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr></tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                     <br><hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40"><br>
                                     <div class="d-flex">
