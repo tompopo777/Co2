@@ -150,7 +150,7 @@ def load_table(request):
                         # 「合計」後的資料(每月熱值)丟回字典
                         single_data[j] = heat_data[i].get(j)
                     # 將計算後的「平均熱值」丟回字典
-                    single_data["avg_heat"] = round(avg_heat, 2)
+                    single_data["avg_heat"] = round(avg_heat, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "公務車":
@@ -207,7 +207,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 5)
+                    single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
@@ -223,7 +223,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 5)
+                    single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
@@ -239,7 +239,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 5)
+                    single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
@@ -255,7 +255,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 5)
+                    single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
@@ -271,7 +271,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 5)
+                    single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
@@ -287,7 +287,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 5)
+                    single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "其他設備清單":
@@ -303,7 +303,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 5)
+                    single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷媒總表":
@@ -318,7 +318,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 5)
+                    single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
@@ -344,7 +344,7 @@ def load_table(request):
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
                     single_data["TotalWorkingHour_M"] = TotalWorkingHour_M
-                    single_data["TotalWorkingDay_M"] = round(TotalWorkingDay_M, 2)
+                    single_data["TotalWorkingDay_M"] = round(TotalWorkingDay_M, 4)
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
@@ -364,7 +364,7 @@ def load_table(request):
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
                     single_data["TotalWorkingHour_M"] = TotalWorkingHour_M
-                    single_data["TotalWorkingDay_M"] = round(TotalWorkingDay_M, 2)
+                    single_data["TotalWorkingDay_M"] = round(TotalWorkingDay_M, 4)
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
@@ -874,15 +874,44 @@ def add_page(request):
 # 編輯轉跳
 @login_required(login_url="/login/")
 def edit_page(request):
-    global EditDevice_page
-    global single_dataID
+    global EditDevice_page, single_dataID, dbName
     if request.method == 'GET':
         device_id = request.GET.get('deviceId')
         single_dataID = request.GET.get('single_dataID')
         print("device_id:::::::::::", device_id)
         print("single_dataID:::::::::", single_dataID)
-        dd = refrigerant_total_table.objects.get(id=1)
-        RTT_update = RTTform(instance=dd)
+        modelName = {
+            "1": "emergency_generators",
+            "2": "combustion_equipment",
+            "3": "official_car",
+            "4": "material",
+            "5": "process",
+            "6": "refrigerator",
+            "7": "airconditioner",
+            "8": "vehicle",
+            "9": "water_dispenser",
+            "10": "ice_water_dispenser",
+            "11": "ice_maker",
+            "12": "other_device",
+            "13": "refrigerant_total_table",
+            "14": "extinguisher",
+            "15": "personnel_inventory",
+            "16": "security",
+            "17": "electricity",
+            "18": "upstream_transportation",
+            "19": "downstream_transportation",
+            "20": "employee_commute",
+            "21": "employee_business_trip",
+            "22": "waste"
+        }
+        for db in modelName:
+            if device_id == db:
+                dbName = modelName.get(db)
+        print("current:::::::::::::::::", dbName)
+        aaaa = refrigerant_total_table
+
+        current_Data = aaaa.objects.get(id=1)
+        RTT_update = RTTform(instance=current_Data)
         formUpdata_name = {
             'form': RTT_update
         }
