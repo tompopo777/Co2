@@ -272,12 +272,15 @@
                                 tr_c.setAttribute('class', 'table-light');
                             }
                             tr_c.setAttribute('style', 'border-color: black')
-                            tr_c.appendChild(style);
                             value.forEach((item, index) => {
                                 var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框
                                 thead_row_name.appendChild(cr_n)
                                 cr_n.innerHTML = item;//"標題"框框填質
-                                a.colSpan = index + 2//"分類"列第一個框框空間+2
+                                if (i == 0) {
+                                    a.colSpan = index + 2//"分類"列第一個框框空間+2
+                                } else {
+                                    a.colSpan = index + 1//"分類"列第一個框框空間+2
+                                }
                             })
                             i++;
                         }
@@ -387,13 +390,13 @@
             }
             $.ajax({
                 url: "{% url 'csv_view' %}",
-                type:"POST",
+                type: "POST",
                 traditional: true,
                 data: data,
                 // xhrFields:{
                 //     responseType: 'blob'
                 // },
-                success:function (output, status, xhr){
+                success: function (output, status, xhr) {
                     let filename = "";
                     let blob = output;
                     var disposition = xhr.getResponseHeader('Content-Disposition'); //抓取檔案描述
