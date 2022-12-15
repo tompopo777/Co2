@@ -433,7 +433,7 @@ def load_table(request):
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
                 raw_data = waste.objects.values("id", "waste_name", "waste_date", "waste_weigh",
-                                                "waste_disposal", "waste_location", "transport_responsibility",
+                                                "waste_disposal", "waste_location", "waste_removal_method",
                                                 "transport_type", "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計

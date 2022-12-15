@@ -5,7 +5,11 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 
+YEAR_CHOICES = []
+for r in range(1980, (datetime.datetime.now().year+1)):
+    YEAR_CHOICES.append((r, r))
 
 # Create your models here.
 class section_one(models.Model):
@@ -81,23 +85,25 @@ class official_car(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=3)
     vehicle_type = models.CharField(max_length=10)
-    device_id = models.CharField(max_length=30)
+    years = models.IntegerField
     fuel_type = models.CharField(max_length=30)
-    period_starttime = models.DateField()
-    period_endtime = models.DateField()
+    device_id = models.CharField(max_length=30)
     department = models.CharField(max_length=100, null=True)
-    january = models.FloatField()
-    february = models.FloatField()
-    march = models.FloatField()
-    april = models.FloatField()
-    may = models.FloatField()
-    june = models.FloatField()
-    july = models.FloatField()
-    august = models.FloatField()
-    september = models.FloatField()
-    october = models.FloatField()
-    november = models.FloatField()
-    december = models.FloatField()
+    oil_type = models.BooleanField(null=True, default=False)
+    electric_type = models.BooleanField(null=True, default=False)
+    km_type = models.BooleanField(null=True, default=False)
+    january = models.FloatField(null=True)
+    february = models.FloatField(null=True)
+    march = models.FloatField(null=True)
+    april = models.FloatField(null=True)
+    may = models.FloatField(null=True)
+    june = models.FloatField(null=True)
+    july = models.FloatField(null=True)
+    august = models.FloatField(null=True)
+    september = models.FloatField(null=True)
+    october = models.FloatField(null=True)
+    november = models.FloatField(null=True)
+    december = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='Images/', null=True, default=None)
     urea = models.BooleanField(null=True, default=False)
@@ -458,7 +464,7 @@ class waste(models.Model):
     waste_date = models.DateField()
     waste_disposal = models.CharField(max_length=20)
     waste_location = models.CharField(max_length=100)
-    transport_responsibility = models.CharField(max_length=20)
+    waste_removal_method = models.CharField(max_length=20)
     transport_type = models.CharField(max_length=20, null=True)
     transport_fuel = models.CharField(max_length=10, null=True)
     transport_distance = models.IntegerField(null=True)
