@@ -85,7 +85,7 @@ class official_car(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=3)
     vehicle_type = models.CharField(max_length=10)
-    years = models.IntegerField
+    years = models.IntegerField()
     fuel_type = models.CharField(max_length=30)
     device_id = models.CharField(max_length=30)
     department = models.CharField(max_length=100, null=True)
