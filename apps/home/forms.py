@@ -1,44 +1,54 @@
 from django import forms
 from .models import *
+import datetime
 
+# YEARS_CHOICES = [tuple([x, x]) for x in range(1980, 2023)]
+YEAR_CHOICES = []
+for r in range(2010, (datetime.datetime.now().year+5)):
+    YEAR_CHOICES.append((r, r))
 
-YEARS_CHOICES = [tuple([x, x]) for x in range(1980, 2023)]
 MONTH_CHOICES = [
-        ('1', '一月'),
-        ('2', '二月'),
-        ('3', '三月'),
-        ('4', '四月'),
-        ('5', '五月'),
-        ('6', '六月'),
-        ('7', '七月'),
-        ('8', '八月'),
-        ('9', '九月'),
-        ('10', '十月'),
-        ('11', '十一月'),
-        ('12', '十二月'),
-    ]
+    ('1', '一月'),
+    ('2', '二月'),
+    ('3', '三月'),
+    ('4', '四月'),
+    ('5', '五月'),
+    ('6', '六月'),
+    ('7', '七月'),
+    ('8', '八月'),
+    ('9', '九月'),
+    ('10', '十月'),
+    ('11', '十一月'),
+    ('12', '十二月'),
+]
 TRANSPORTATION_CHOICES = [
-        ('走路', '走路'),
-        ('自行車', '自行車'),
-        ('機車', '機車'),
-        ('電動機車', '電動機車'),
-        ('汽車(汽油)', '汽車(汽油)'),
-        ('汽車(柴油)', '汽車(柴油)'),
-        ('汽車(油電)', '汽車(油電)'),
-        ('公車', '公車'),
-        ('捷運', '捷運'),
-        ('高鐵', '高鐵'),
-    ]
+    ('走路', '走路'),
+    ('自行車', '自行車'),
+    ('機車', '機車'),
+    ('電動機車', '電動機車'),
+    ('汽車(汽油)', '汽車(汽油)'),
+    ('汽車(柴油)', '汽車(柴油)'),
+    ('汽車(油電)', '汽車(油電)'),
+    ('公車', '公車'),
+    ('捷運', '捷運'),
+    ('高鐵', '高鐵'),
+]
 EBT_TRANSPORTATION_CHOICES = [
-        ('自駕汽車', '自駕汽車'),
-        ('計程車', '計程車'),
-        ('火車', '火車'),
-        ('高鐵', '高鐵'),
-        ('捷運', '捷運'),
-        ('船舶', '船舶'),
-        ('飛機', '飛機'),
-    ]
-
+    ('自駕汽車', '自駕汽車'),
+    ('計程車', '計程車'),
+    ('火車', '火車'),
+    ('高鐵', '高鐵'),
+    ('捷運', '捷運'),
+    ('船舶', '船舶'),
+    ('飛機', '飛機'),
+]
+FUEL_TYPE_CHOICES = [
+    ('92汽油', '92汽油'),
+    ('95汽油', '95汽油'),
+    ('98汽油', '98汽油'),
+    ('柴油', '柴油'),
+    ('電動車', '電動車'),
+]
 
 class EGform(forms.ModelForm):
     class Meta:
@@ -141,17 +151,19 @@ class CEform(forms.ModelForm):
 class OFform(forms.ModelForm):
     class Meta:
         model = official_car
-        fields = ('vehicle_type', 'device_id', 'fuel_type', 'period_starttime', 'period_endtime', 'department',
+        fields = ('vehicle_type', 'years', 'fuel_type', 'device_id', 'department', 'oil_type', 'electric_type', 'km_type',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
                   'november', 'december', 'image_note', 'image_path', 'urea', 'urea_add_quantity', 'urea_add_date',
                   'urea_image_note', 'urea_image_path')
         widgets = {
             'vehicle_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如:汽車、堆高機...等'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control','autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'fuel_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
-            'period_starttime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'period_endtime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'years': forms.Select(choices=YEAR_CHOICES),
+            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'oil_type': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
+            'electric_type': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
+            'km_type': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -176,6 +188,18 @@ class OFform(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
+        self.fields['january'].required = False
+        self.fields['february'].required = False
+        self.fields['march'].required = False
+        self.fields['april'].required = False
+        self.fields['may'].required = False
+        self.fields['june'].required = False
+        self.fields['july'].required = False
+        self.fields['august'].required = False
+        self.fields['september'].required = False
+        self.fields['october'].required = False
+        self.fields['november'].required = False
+        self.fields['december'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['urea'].required = False
@@ -530,7 +554,7 @@ class PIform(forms.ModelForm):
         fields = ('years', 'monthly', 'employee_number', 'daily_hours', 'working_days', 'overtime', 'leave_hours',
                   'day_off_hours', 'image_note', 'image_path')
         widgets = {
-            'years': forms.Select(choices=YEARS_CHOICES),
+            'years': forms.Select(choices=YEAR_CHOICES),
             'monthly': forms.Select(choices=MONTH_CHOICES),
             'employee_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
             'daily_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
@@ -558,7 +582,7 @@ class SCform(forms.ModelForm):
         model = security
         fields = ('years', 'monthly', 'security_number', 'daily_hours', 'working_days', 'image_note', 'image_path')
         widgets = {
-            'years': forms.Select(choices=YEARS_CHOICES),
+            'years': forms.Select(choices=YEAR_CHOICES),
             'monthly': forms.Select(choices=MONTH_CHOICES),
             'security_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
             'daily_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
@@ -800,7 +824,7 @@ class WASTEform(forms.ModelForm):
     class Meta:
         model = waste
         fields = ('waste_name', 'waste_weigh', 'waste_date', 'waste_disposal', 'waste_location',
-                  'transport_responsibility', 'transport_type', 'transport_fuel', 'transport_distance', 'image_note',
+                  'waste_removal_method', 'transport_type', 'transport_fuel', 'transport_distance', 'image_note',
                   'image_path')
         widgets = {
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -808,7 +832,7 @@ class WASTEform(forms.ModelForm):
             'waste_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'waste_disposal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如: 燃燒、物理處理...等'}),
             'waste_location': forms.TextInput(attrs={'class': 'form-control'}),
-            'transport_responsibility': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如: 焚化、洗淨、熱處理、再利用'}),
+            'waste_removal_method': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如: 焚化、洗淨、熱處理、再利用'}),
             'transport_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'transport_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
