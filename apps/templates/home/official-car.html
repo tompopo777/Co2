@@ -68,7 +68,7 @@
                                         </div>
                                         <div class="accordion" id="accordionExample">
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" type="checkbox" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                <input class="form-check-input accordion-header collapsed" type="radio" name="radio" id="headingOne" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
                                                 油車
                                                 </input>
                                                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
@@ -164,7 +164,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" id="headingTwo" type="checkbox" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-checked="true" aria-expanded="false" aria-controls="collapseTwo">
+                                                <input class="form-check-input accordion-header collapsed" id="headingTwo" name="radio" type="radio" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-checked="true" aria-expanded="false" aria-controls="collapseTwo">
                                                 電動車
                                                 </input>
                                                 <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
@@ -260,7 +260,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" id="headingThree" type="checkbox" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                <input class="form-check-input accordion-header collapsed" name="radio" id="headingThree" type="radio" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                                 公里數
                                                 </input>
                                                 <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
@@ -419,6 +419,13 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    {#備註欄#}
+                                    <div class="form-floating">
+                                        <textarea class="form-control textarea" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 150px;"></textarea>
+                                        <label for="floatingTextarea2">備註欄</label>
+                                    </div>
+                                    <br>
                                     <div class="d-flex justify-content-center">
                                         <div class="col-1">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
