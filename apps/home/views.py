@@ -156,8 +156,8 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.values("id", "vehicle_type", "device_id", "fuel_type",
-                                                       "period_starttime", "period_endtime", "department",
+                raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id",
+                                                       "department", "metering method",
                                                        "january", "february", "march", "april",
                                                        "may", "june", "july", "august",
                                                        "september", "october", "november", "december")
@@ -815,32 +815,32 @@ def add_page(request):
     global NewDevice_page
     if request.method == "GET":
         device_id = request.GET.get('deviceId', None)
-    # print("新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增", device_id)
-    # 建立字典
+        # print("新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增", device_id)
+        # 建立字典
         htmlName = {
-        "1": "home/emergency-generator.html",
-        "2": "home/combustion-equipment.html",
-        "3": "home/official-car.html",
-        "4": "home/material.html",
-        "5": "home/process.html",
-        "6": "home/refrigerator.html",
-        "7": "home/airconditioner.html",
-        "8": "home/vehicle.html",
-        "9": "home/water-dispenser.html",
-        "10": "home/ice-water-dispenser.html",
-        "11": "home/ice-maker.html",
-        "12": "home/other-device.html",
-        "13": "home/refrigerant-total-table.html",
-        "14": "home/extinguisher.html",
-        "15": "home/personnel-inventory.html",
-        "16": "home/security.html",
-        "17": "home/electricity.html",
-        "18": "home/upstream-transportation.html",
-        "19": "home/downstream-transportation.html",
-        "20": "home/employee-commute.html",
-        "21": "home/employee-business-trip.html",
-        "22": "home/waste.html"
-    }
+            "1": "home/emergency-generator.html",
+            "2": "home/combustion-equipment.html",
+            "3": "home/official-car.html",
+            "4": "home/material.html",
+            "5": "home/process.html",
+            "6": "home/refrigerator.html",
+            "7": "home/airconditioner.html",
+            "8": "home/vehicle.html",
+            "9": "home/water-dispenser.html",
+            "10": "home/ice-water-dispenser.html",
+            "11": "home/ice-maker.html",
+            "12": "home/other-device.html",
+            "13": "home/refrigerant-total-table.html",
+            "14": "home/extinguisher.html",
+            "15": "home/personnel-inventory.html",
+            "16": "home/security.html",
+            "17": "home/electricity.html",
+            "18": "home/upstream-transportation.html",
+            "19": "home/downstream-transportation.html",
+            "20": "home/employee-commute.html",
+            "21": "home/employee-business-trip.html",
+            "22": "home/waste.html"
+        }
         EG_add = EGform(request.POST)
         CE_add = CEform(request.POST)
         OffCar_add = OFform(request.POST)
@@ -945,6 +945,7 @@ def edit_page(request):
                 EditDevice_page = htmlName.get(a)
         print("EditDevice_page:", EditDevice_page)
         return render(request, EditDevice_page, locals())
+
 
 # 儲存更新後的資料
 @login_required(login_url="/login/")
@@ -1241,6 +1242,7 @@ def waste_update(request):
             return redirect('/carbon-system/')
     else:
         return render(request, 'home/carbon-system.html', locals())
+
 
 # 新增title
 @login_required(login_url="/login/")
