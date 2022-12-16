@@ -109,6 +109,8 @@ class official_car(models.Model):
     urea_add_date = models.DateField(null=True)
     urea_image_note = models.CharField(max_length=30, null=True)
     urea_image_path = models.ImageField(upload_to='Images/', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
+
 
 class material(models.Model):
     id = models.AutoField(primary_key=True)

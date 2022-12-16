@@ -4,7 +4,9 @@ import datetime
 
 # YEARS_CHOICES = [tuple([x, x]) for x in range(1980, 2023)]
 YEAR_CHOICES = []
-for r in range(2010, (datetime.datetime.now().year+5)):
+now = datetime.datetime.now()
+year = int(now.strftime('%Y'))
+for r in range(year, year+5):
     YEAR_CHOICES.append((r, r))
 
 MONTH_CHOICES = [
