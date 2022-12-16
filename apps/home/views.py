@@ -157,7 +157,7 @@ def load_table(request):
                 t_data = []
                 # 「合計」前後的資料分開抓
                 raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id",
-                                                       "department", "metering method",
+                                                       "fuel_type", "department", "metering_method",
                                                        "january", "february", "march", "april",
                                                        "may", "june", "july", "august",
                                                        "september", "october", "november", "december")
@@ -1263,8 +1263,8 @@ def add_title(request):
             },
 
             "3": {
-                "內容": ["序號", "類別", "編號", "燃料", "加油日", "燃料結束日", "所屬單位"],
-                "耗用量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "內容": ["序號", "日期", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
+                "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "尿素": ["添加量(𝓁)", "添加日期"]
             },
 
