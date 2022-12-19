@@ -63,15 +63,15 @@
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>燃料種類 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {#                                                    {{ OffCar_add.fuel_type }}#}
-                                                    <select class="select-field">
-                                                        <option><---請選擇---></option>
-                                                        <option>電力</option>
-                                                        <option>92汽油</option>
-                                                        <option>95汽油</option>
-                                                        <option>98汽油</option>
-                                                        <option>高級柴油</option>
-                                                    </select>
+                                                    {{ OffCar_add.fuel_type }}
+                                                    {#                                                    <select class="select-field">#}
+                                                    {#                                                        <option><---請選擇---></option>#}
+                                                    {#                                                        <option>電力</option>#}
+                                                    {#                                                        <option>92汽油</option>#}
+                                                    {#                                                        <option>95汽油</option>#}
+                                                    {#                                                        <option>98汽油</option>#}
+                                                    {#                                                        <option>高級柴油</option>#}
+                                                    {#                                                    </select>#}
                                                 </div>
                                             </div>
                                         </div>
@@ -428,6 +428,18 @@
                                             </div>
                                         </div>
                                     </div>
+{#                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">#}
+{#                                    <div>#}
+{#                                        {% for pic in OffCar_add %}#}
+{#                                            <br /> #}
+{#                                            <div class="col-4">#}
+{#                                            <div class="card col-4 shadow">#}
+{#                                                <img src="{{ pic }}">#}
+{#                                            </div>#}
+{#                                            </div>#}
+{#                                        {% endfor %}#}
+{##}
+{#                                    </div>#}
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                     {#備註欄#}
                                     <div class="form-floating">
