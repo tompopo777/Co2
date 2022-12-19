@@ -73,29 +73,10 @@ def load_device(request):
     if request.method == 'GET':
         current_process = request.GET.get('currentProcess', None)
         if current_process:
-            # print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>1321213", current_process)
-            all = list(section_two.objects.all())
-            # print("00000000000000000000000000000000000000",all)
             d_data = list(section_two.objects.filter(cpid=current_process).values("d_name", "did"))
-            # print("111111111111111111111111111111111111111111111111111111111", d_data)
             return JsonResponse(d_data, safe=False)
 
-
-# 抓欄位
-# @login_required(login_url="/login/")
-# def load_table(request):
-#     if request.method == 'GET':
-#         device_id = request.GET.get('deviceId', None)
-#         if device_id:
-#             t_name = list(section_two.objects.filter(did=device_id).values("t_name"))
-#             print("888888888", t_name)
-#             for model in t_name:
-#                 print("222222222222222222222222222222222222", model["t_name"])
-#                 t_data = list(globals()[model["t_name"]].objects.filter().all().values())
-#                 print(t_data)
-#                 return JsonResponse(t_data, safe=False)
-
-# 抓欄位(if
+# 抓欄位(
 @login_required(login_url="/login/")
 def load_table(request):
     if request.method == 'GET':
@@ -425,7 +406,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工出差":
                 t_data = list(
-                    employee_business_trip.objects.values("employee_id", "department", "employee_name",
+                    employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
                                                           "business_trip_location", "business_trip_date", "transportation",
                                                           "departure", "destination", "round_trip_distance"))
                 return JsonResponse(t_data, safe=False)
@@ -452,61 +433,14 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
 
 
-# 抓欄位(字典
-# @login_required(login_url="/login/")
-# def load_table(request):
-#     dict = {
-#         "emergency_generators": ["id", "device_id", "period_starttime", 'period_endtime', 'device_capacity', "position", 'department', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
-#         "combustion_equipment": "",
-#         "official_car": "",
-#         "material": "",
-#         "process": "",
-#         "refrigerator": "",
-#         "airconditioner": "",
-#         "vehicle": "",
-#         "water_dispenser": "",
-#         "ice_water_dispenser": "",
-#         "ice_maker": "",
-#         "other_device": "",
-#         "refrigerant_total_table": "",
-#         "extinguisher": "",
-#         "personnel_inventory": "",
-#         "security": "",
-#         "electricity": "",
-#         "upstream_transportation": "",
-#         "downstream_transportation": "",
-#         "employee_commute": "",
-#         "employee_business": "",
-#         "waste": ""
-#     }
-#     if request.method == 'GET':
-#         device_id = request.GET.get('deviceId', None)
-#         if device_id:
-#             t_name = list(section_two.objects.filter(did=device_id).values("t_name"))
-#             print("888888888", t_name)
-#             for model in t_name:
-#                 print("222222222222222222222222222222222222", model["t_name"])
-#                 col = "id", "device_id"
-#                 # tt = col.split(",")
-#                 # print("test", tt)
-#                 # 怎麼丟到values
-#                 aa = emergency_generators.objects.filter().values(col)
-#                 print("9999999999999999999999999999999999999", aa)
-#                 t_data = list(globals()[model["t_name"]].objects.filter().all().values())
-#                 print(t_data)
-#                 return JsonResponse(t_data, safe=False)
-
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
     if request.method == "POST":
         EG_add = EGform(request.POST, request.FILES)
         if EG_add.is_valid():
             EG_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
         return redirect('/emergency_generator_add/')
 
 
@@ -814,7 +748,7 @@ def carbon_system(request):
 def add_page(request):
     global NewDevice_page
     if request.method == "GET":
-        device_id = request.GET.get('deviceId', None)
+        device_id = request.GET.get('deviceId')
         # print("新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增", device_id)
         # 建立字典
         htmlName = {
@@ -841,6 +775,7 @@ def add_page(request):
             "21": "home/employee-business-trip.html",
             "22": "home/waste.html"
         }
+
         EG_add = EGform(request.POST)
         CE_add = CEform(request.POST)
         OffCar_add = OFform(request.POST)
@@ -864,57 +799,61 @@ def add_page(request):
         EBT_add = EBTform(request.POST)
         WASTE_add = WASTEform(request.POST)
 
-        for a in htmlName:
-            if device_id == a:
-                NewDevice_page = htmlName.get(a)
+        if htmlName.get(device_id):
+            NewDevice_page = htmlName.get(device_id)
         print("NewDevice_page:", NewDevice_page)
+    if request.method == "GET":
         return render(request, NewDevice_page, locals())
-
 
 # 編輯轉跳
 @login_required(login_url="/login/")
-def edit_page(request):
-    global EditDevice_page, single_dataID, dbName
+# def edit_device(request, datasheet_id, single_dataID):
+def edit_device(request):
     if request.method == 'GET':
-        device_id = request.GET.get('deviceId')
+    # global datasheet_id, single_dataID, dbName
+        datasheet_id = request.GET.get('datasheet')
         single_dataID = request.GET.get('single_dataID')
-        print("device_id:::::::::::", device_id)
-        print("single_dataID:::::::::", single_dataID)
+        print("datasheet_id:::::::::::::::::::::::::::::::", datasheet_id)
         modelName = {
-            "1": "emergency_generators",
-            "2": "combustion_equipment",
-            "3": "official_car",
-            "4": "material",
-            "5": "process",
-            "6": "refrigerator",
-            "7": "airconditioner",
-            "8": "vehicle",
-            "9": "water_dispenser",
-            "10": "ice_water_dispenser",
-            "11": "ice_maker",
-            "12": "other_device",
-            "13": "refrigerant_total_table",
-            "14": "extinguisher",
-            "15": "personnel_inventory",
-            "16": "security",
-            "17": "electricity",
-            "18": "upstream_transportation",
-            "19": "downstream_transportation",
-            "20": "employee_commute",
-            "21": "employee_business_trip",
-            "22": "waste"
+            "1": emergency_generators,
+            "2": combustion_equipment,
+            "3": official_car,
+            "4": material,
+            "5": process,
+            "6": refrigerator,
+            "7": airconditioner,
+            "8": vehicle,
+            "9": water_dispenser,
+            "10": ice_water_dispenser,
+            "11": ice_maker,
+            "12": other_device,
+            "13": refrigerant_total_table,
+            "14": extinguisher,
+            "15": personnel_inventory,
+            "16": security,
+            "17": electricity,
+            "18": upstream_transportation,
+            "19": downstream_transportation,
+            "20": employee_commute,
+            "21": employee_business_trip,
+            "22": waste
         }
-        for db in modelName:
-            if device_id == db:
-                dbName = modelName.get(db)
-        print("current:::::::::::::::::", dbName)
-        aaaa = refrigerant_total_table
+        formlName = {
+            "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
+            "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
+            "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
+            "16": SCform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
+            "21": EBTform, "22": WASTEform
+        }
+        if modelName.get(datasheet_id) and formlName.get(datasheet_id):
+            dbName = modelName.get(datasheet_id)
+            form = formlName.get(datasheet_id)
 
-        current_Data = aaaa.objects.get(id=1)
-        RTT_update = RTTform(instance=current_Data)
-        formUpdata_name = {
-            'form': RTT_update
-        }
+            current_data = dbName.objects.get(id=single_dataID)
+            update_from = form(instance=current_data)
+            formUpdata_name = {
+                'form': update_from,
+            }
         # 建立字典
         htmlName = {
             "1": "home/emergency-generator-edit.html",
@@ -940,14 +879,25 @@ def edit_page(request):
             "21": "home/employee-business-trip-edit.html",
             "22": "home/waste-edit.html"
         }
-        for a in htmlName:
-            if device_id == a:
-                EditDevice_page = htmlName.get(a)
-        print("EditDevice_page:", EditDevice_page)
-        return render(request, EditDevice_page, locals())
-
+        if htmlName.get(datasheet_id):
+            EditDevice_page = htmlName.get(datasheet_id)
+        # print("EditDevice_page:", EditDevice_page)
+            return render(request, EditDevice_page, locals())
 
 # 儲存更新後的資料
+@login_required(login_url="/login/")
+def update_device(request, id):
+    aa = request.POST.get('id')
+    print("aa::::::::::::::::::::::::::", aa)
+    dd = refrigerant_total_table.objects.get(id=id)
+    if request.method == 'POST':
+        # current_data = dbName.objects.get(id=7)
+        update_from = RTTform(request.POST, request.FILES, instance=dd)
+        if update_from.is_valid():
+            update_from.save()
+        return redirect('/carbon-system/')
+
+
 @login_required(login_url="/login/")
 def emergency_generators_update(request):
     dd = emergency_generators.objects.get(id=1)
@@ -989,7 +939,7 @@ def official_car_update(request):
 
 @login_required(login_url="/login/")
 def material_update(request):
-    dd = material.objects.get(id=1)
+    dd = material.objects.get(id=2)
     MT_update = MTform(instance=dd)
     if request.method == "POST":
         MT_update = MTform(request.POST, request.FILES, instance=dd)
@@ -1115,16 +1065,7 @@ def other_device_update(request):
 #             return redirect('/carbon-system/')
 #     else:
 #         return redirect('/refrigerant_total_table_update/')
-@login_required(login_url="/login/")
-def refrigerant_total_table_update(request):
-    dd = refrigerant_total_table.objects.get(id=1)
-    RTT_update = RTTform(instance=dd)
-    if request.method == 'POST':
-        RTT_update = RTTform(request.POST, request.FILES, instance=dd)
-        if RTT_update.is_valid():
-            RTT_update.save()
-        return redirect('/carbon-system/')
-    return render(request, 'home/carbon-system.html', locals())
+
 
 
 @login_required(login_url="/login/")

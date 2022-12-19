@@ -34,13 +34,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.employee_id }}
+                                                    {{ update_from.employee_id }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.employee_name }}
+                                                    {{ update_from.employee_name }}
                                                 </div>
                                             </div>
                                         </div>
@@ -48,13 +48,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.department }}
+                                                    {{ update_from.department }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年工作天數 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.work_days }}
+                                                    {{ update_from.work_days }}
                                                 </div>
                                             </div>
                                         </div>
@@ -63,13 +63,13 @@
                                             <div class="col-6 d-flex align-items-center">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ EC_update.transportation }}
+                                                    {{ update_from.transportation }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>汽/機車排氣量(CC數) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.displacement }}
+                                                    {{ update_from.displacement }}
                                                 </div>
                                             </div>
                                         </div>
@@ -77,13 +77,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>居住縣市 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.city }}
+                                                    {{ update_from.city }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>鄉鎮市區 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.township }}
+                                                    {{ update_from.township }}
                                                 </div>
                                             </div>
                                         </div>
@@ -91,25 +91,25 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>行政區公家機關地址 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.address }}
+                                                    {{ update_from.address }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>至公司距離(單位:公里) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_update.commute_distance }}
+                                                    {{ update_from.commute_distance }}
                                                 </div>
                                             </div>
                                             <div class="d-flex">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-static mb-4">
                                                         <label>上傳引用單據</label>
-                                                        {{ EC_update.image_note }}
+                                                        {{ update_from.image_note }}
                                                     </div>
                                                 </div>
                                                 <div class=" ps-md-2 align-self-center">
                                                     <div class="col-1 ">
-                                                        {{ EC_update.image_path }}
+                                                        {{ update_from.image_path }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -143,28 +143,8 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-
-        $("#datepicker").datepicker({
-            format: "mm-yyyy",
-            startView: "months",
-            minViewMode: "months"
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -176,4 +156,16 @@
             }
         });
     </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
 {% endblock javascripts %}

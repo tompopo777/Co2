@@ -34,20 +34,20 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ MT_update.material_name }}
+                                                    {{ update_from.material_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料料號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ MT_update.material_id }}
+                                                    {{ update_from.material_id }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
-                                                {{ MT_update.material_type }}
+                                                {{ update_from.material_type }}
                                             </div>
                                         </div>
                                         <br>
@@ -77,62 +77,62 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.january }}
+                                                        {{ update_from.january }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.february }}
+                                                        {{ update_from.february }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.march }}
+                                                        {{ update_from.march }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.april }}
+                                                        {{ update_from.april }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.may }}
+                                                        {{ update_from.may }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.june }}
+                                                        {{ update_from.june }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.july }}
+                                                        {{ update_from.july }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.august }}
+                                                        {{ update_from.august }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.september }}
+                                                        {{ update_from.september }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.october }}
+                                                        {{ update_from.october }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.november }}
+                                                        {{ update_from.november }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ MT_update.december }}
+                                                        {{ update_from.december }}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -166,21 +166,8 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -192,4 +179,16 @@
             }
         });
     </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
 {% endblock javascripts %}
