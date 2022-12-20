@@ -34,20 +34,20 @@
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_update.waste_name }}
+                                                    {{ update_from.waste_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物重量(單位:噸) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_update.waste_weigh }}
+                                                    {{ update_from.waste_weigh }}
                                                 </div>
                                             </div>
                                             <div class="col-4 ps-md-2">
                                                 <label class="ms-0" for="start">廢棄物運送日期 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ WASTE_update.waste_date }}
+                                                        {{ update_from.waste_date }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -56,13 +56,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物處理方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_update.waste_disposal }}
+                                                    {{ update_from.waste_disposal }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物處置地點 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_update.waste_location }}
+                                                    {{ update_from.waste_location }}
                                                 </div>
                                             </div>
                                         </div>
@@ -70,13 +70,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物清運方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_update.waste_removal_method }}
+                                                    {{ update_from.waste_removal_method }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸方式</label>
-                                                    {{ WASTE_update.transport_type }}
+                                                    {{ update_from.transport_type }}
                                                 </div>
                                             </div>
                                         </div>
@@ -84,13 +84,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸燃料</label>
-                                                    {{ WASTE_update.transport_fuel }}
+                                                    {{ update_from.transport_fuel }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸距離(單位:公里)</label>
-                                                    {{ WASTE_update.transport_distance }}
+                                                    {{ update_from.transport_distance }}
                                                 </div>
                                             </div>
                                         </div>
@@ -99,12 +99,12 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>上傳引用單據</label>
-                                                    {{ WASTE_update.image_note }}
+                                                    {{ update_from.image_note }}
                                                 </div>
                                             </div>
                                             <div class=" ps-md-2 align-self-center">
                                                 <div class="col-1 ">
-                                                    {{ WASTE_update.image_path }}
+                                                    {{ update_from.image_path }}
                                                 </div>
                                             </div>
                                         </div>
@@ -137,21 +137,8 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -163,4 +150,16 @@
             }
         });
     </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
 {% endblock javascripts %}

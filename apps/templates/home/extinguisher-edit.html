@@ -34,13 +34,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.extinguisher_name }}
+                                                    {{ update_from.extinguisher_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器類型 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.extinguisher_type }}
+                                                    {{ update_from.extinguisher_type }}
                                                 </div>
                                             </div>
                                         </div>
@@ -48,13 +48,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.device_id }}
+                                                    {{ update_from.device_id }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器擺放位置 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.position }}
+                                                    {{ update_from.position }}
                                                 </div>
                                             </div>
                                         </div>
@@ -62,13 +62,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廠商</label>
-                                                    {{ EX_update.extinguisher_vendor }}
+                                                    {{ update_from.extinguisher_vendor }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>庫存量 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.inventory }}
+                                                    {{ update_from.inventory }}
                                                 </div>
                                             </div>
                                         </div>
@@ -76,13 +76,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑規格(單位:磅) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.chemical_spec }}
+                                                    {{ update_from.chemical_spec }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.chemical_weight }}
+                                                    {{ update_from.chemical_weight }}
                                                 </div>
                                             </div>
                                         </div>
@@ -90,28 +90,28 @@
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器使用數量 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.using_amount }}
+                                                    {{ update_from.using_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">使用日期 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ EX_update.using_date }}
+                                                        {{ update_from.using_date }}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器更換/填充數量 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_update.replace_filling_amount }}
+                                                    {{ update_from.replace_filling_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="" for="start">更換/填充日期 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ EX_update.replace_filling_date }}
+                                                        {{ update_from.replace_filling_date }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -122,12 +122,12 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                {{ EX_update.image_note }}
+                                                {{ update_from.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                {{ EX_update.image_path }}
+                                                {{ update_from.image_path }}
                                             </div>
                                         </div>
                                     </div>
@@ -158,21 +158,8 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -184,4 +171,16 @@
             }
         });
     </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
 {% endblock javascripts %}

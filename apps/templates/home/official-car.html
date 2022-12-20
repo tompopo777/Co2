@@ -32,8 +32,13 @@
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
-                                                <label class="" for="start">年份 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ OffCar_add.years }}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label for="start">年份 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <input type="text" class="form-control" id="datepicker">
+                                                </div>
+                                                {#                                                <div class="ms-1 input-group date" id='date1'>#}
+                                                {#                                                    {{ OffCar_add.years }}#}
+                                                {#                                                </div>#}
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
@@ -59,6 +64,14 @@
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ OffCar_add.fuel_type }}
+                                                    {#                                                    <select class="select-field">#}
+                                                    {#                                                        <option><---請選擇---></option>#}
+                                                    {#                                                        <option>電力</option>#}
+                                                    {#                                                        <option>92汽油</option>#}
+                                                    {#                                                        <option>95汽油</option>#}
+                                                    {#                                                        <option>98汽油</option>#}
+                                                    {#                                                        <option>高級柴油</option>#}
+                                                    {#                                                    </select>#}
                                                 </div>
                                             </div>
                                         </div>
@@ -393,7 +406,7 @@
                                                         <div class="col-3 ps-md-2">
                                                             <label class="ms-0" for="start">尿素添加日期</label>
                                                             <div class="col-6">
-                                                                <div class="ms-1 input-group date" id='date1'>
+                                                                <div class="ms-1 input-group date">
                                                                     {{ OffCar_add.urea_add_date }}
                                                                 </div>
                                                             </div>
@@ -418,6 +431,18 @@
                                             </div>
                                         </div>
                                     </div>
+{#                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">#}
+{#                                    <div>#}
+{#                                        {% for pic in OffCar_add %}#}
+{#                                            <br /> #}
+{#                                            <div class="col-4">#}
+{#                                            <div class="card col-4 shadow">#}
+{#                                                <img src="{{ pic }}">#}
+{#                                            </div>#}
+{#                                            </div>#}
+{#                                        {% endfor %}#}
+{##}
+{#                                    </div>#}
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                     {#備註欄#}
                                     <div class="form-floating">
@@ -452,21 +477,8 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -479,15 +491,15 @@
         });
     </script>
 
+    {#    日期篩選器#}
     <script>
-        $('.aa').on("click", function (e) {
-            e.stopPropagation();
-            // some action ...
-        });
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
     </script>
-    {#    <script>#}
-    {#        $('#typeSelected').click(function () {#}
-    {#            $("#txtAge").toggle(this.checked);#}
-    {#        });#}
-    {#    </script>#}
+
 {% endblock javascripts %}

@@ -34,13 +34,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>西元年 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ PI_update.years }}
+                                                    {{ update_from.years }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>月份 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ PI_update.monthly }}
+                                                    {{ update_from.monthly }}
                                                 </div>
                                             </div>
                                         </div>
@@ -48,13 +48,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工人數 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PI_update.employee_number }}
+                                                    {{ update_from.employee_number }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>每日工作時數</label>
-                                                    {{ PI_update.daily_hours }}
+                                                    {{ update_from.daily_hours }}
                                                 </div>
                                             </div>
                                         </div>
@@ -62,13 +62,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>每月工作天數</label>
-                                                    {{ PI_update.working_days }}
+                                                    {{ update_from.working_days }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>加班+補修時數</label>
-                                                    {{ PI_update.overtime }}
+                                                    {{ update_from.overtime }}
                                                 </div>
                                             </div>
                                         </div>
@@ -76,13 +76,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>請假時數</label>
-                                                    {{ PI_update.leave_hours }}
+                                                    {{ update_from.leave_hours }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>休假時數</label>
-                                                    {{ PI_update.day_off_hours }}
+                                                    {{ update_from.day_off_hours }}
                                                 </div>
                                             </div>
                                         </div>
@@ -90,12 +90,12 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>上傳引用單據</label>
-                                                    {{ PI_update.image_note }}
+                                                    {{ update_from.image_note }}
                                                 </div>
                                             </div>
                                             <div class=" ps-md-2 align-self-center">
                                                 <div class="col-1 ">
-                                                    {{ PI_update.image_path }}
+                                                    {{ update_from.image_path }}
                                                 </div>
                                             </div>
                                         </div>
@@ -128,28 +128,8 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-
-        $("#datepicker").datepicker({
-            format: "mm-yyyy",
-            startView: "months",
-            minViewMode: "months"
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -161,4 +141,16 @@
             }
         });
     </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
 {% endblock javascripts %}

@@ -57,7 +57,7 @@
                             <select class="" id="dropdownmenu3" name="dropdown3name"></select>
                         </div>
                         <div class="col-1">
-                            <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1 fff">
+                            <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
                         </div>
                     </div>
                 </div>
@@ -291,7 +291,6 @@
                             i++;
                         }
                     })
-
                 },
             });
         })
@@ -317,21 +316,22 @@
                     tbody.innerHTML = ""
                     var id = 1;
                     t_data.forEach((item, index) => {
-                        var pencil = document.createElement('button')//加入"button"tag
+                        var pencil = document.createElement('a')//加入"button"tag
                         var i_tag = document.createElement('i')//加入"i"tag
                         var row = tbody.insertRow(-1)//加入"第一筆資料"列
                         var edit_squ = row.insertCell(-1)//加入編輯鈕框框
                         edit_squ.appendChild(pencil)
                         pencil.setAttribute('class', 'btn py-0 m-0 edit_btn')
-                        pencil.setAttribute('onclick', 'location.href="/edit_device/"')//加入"onclick"轉跳到edit_device頁
                         pencil.appendChild(i_tag)
                         i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
                         var cr_id = row.insertCell(-1)//加入"序號"框框
                         cr_id.innerHTML = id
+                        var datasheet_id = dropdownmenu3.value;
                         for (const [key, value] of Object.entries((item))) {
                             if (key == "id") {
-                                row.setAttribute('class', 'single_data')
-                                pencil.setAttribute('value', value)
+                                pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端
+                                {#pencil.setAttribute('href', {% url 'loadedit'%})//將資料表id、選種資料id加到href裡，一起丟到後端#}
+                                pencil.setAttribute('id', value)//設定編輯按鈕的id為設備id
                                 continue;
                             }
                             var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
@@ -353,7 +353,7 @@
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
         //add
         var addNewPage = document.getElementById("addNewPage")
-        $(".fff").on('click', function () {
+        $("#submit").on('click', function () {
             var deviceId = dropdownmenu3.value;
             {#console.warn("新增跳轉", deviceId);#}
             $.ajax({
@@ -362,30 +362,32 @@
                     'deviceId': deviceId
                 },
                 type: 'GET',
+                {#type: 'POST',#}
                 dataType: 'json',
             });
         })
     </script>
 
     <!--/*跳轉編輯頁面*/-->
-    <script>
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
-        $(document).on('click', ".edit_btn", function () {
-            var single_dataID = $(this).val();
-            var deviceId = dropdownmenu3.value;
-            {#console.warn("跳轉編輯頁面", deviceId);#}
-            console.warn("single_dataID", single_dataID)//顯示現在選中的資料id
-            $.ajax({
-                url: "{% url 'loadedit' %}",
-                data: {
-                    'deviceId': deviceId,
-                    'single_dataID': single_dataID
-                },
-                type: 'GET',
-                dataType: 'json',
-            });
-        })
-    </script>
+    {#    <script>#}
+    {#        var dropdownmenu3 = document.getElementById("dropdownmenu3")#}
+    {#        var single_data = document.getElementsByClassName("edit_btn")#}
+    {#        $(document).on('click', ".edit_btn", function () {#}
+    {#            var single_dataID = this.id;#}
+    {#            var deviceId = dropdownmenu3.value;#}
+    {#            console.warn("跳轉編輯頁面", deviceId);#}
+    {#            console.warn("single_dataID", single_dataID)//顯示現在選中的資料id#}
+    {#            $.ajax({#}
+    {#                url: "{% url 'loadedit' %}",#}
+    {#                data: {#}
+    {#                    'deviceID': deviceId,#}
+    {#'single_dataID': single_dataID#}
+    {#                },#}
+    {#                type: 'GET',#}
+    {#                dataType: 'json',#}
+    {#            });#}
+    {#        })#}
+    {#    </script>#}
 
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
