@@ -27,20 +27,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/employee_commute_update/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.employee_id }}
+                                                    {{ form.employee_id }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.employee_name }}
+                                                    {{ form.employee_name }}
                                                 </div>
                                             </div>
                                         </div>
@@ -48,13 +48,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.department }}
+                                                    {{ form.department }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年工作天數 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.work_days }}
+                                                    {{ form.work_days }}
                                                 </div>
                                             </div>
                                         </div>
@@ -63,13 +63,13 @@
                                             <div class="col-6 d-flex align-items-center">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ update_from.transportation }}
+                                                    {{ form.transportation }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>汽/機車排氣量(CC數) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.displacement }}
+                                                    {{ form.displacement }}
                                                 </div>
                                             </div>
                                         </div>
@@ -77,13 +77,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>居住縣市 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.city }}
+                                                    {{ form.city }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>鄉鎮市區 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.township }}
+                                                    {{ form.township }}
                                                 </div>
                                             </div>
                                         </div>
@@ -91,25 +91,25 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>行政區公家機關地址 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.address }}
+                                                    {{ form.address }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>至公司距離(單位:公里) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.commute_distance }}
+                                                    {{ form.commute_distance }}
                                                 </div>
                                             </div>
                                             <div class="d-flex">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-static mb-4">
                                                         <label>上傳引用單據</label>
-                                                        {{ update_from.image_note }}
+                                                        {{ form.image_note }}
                                                     </div>
                                                 </div>
                                                 <div class=" ps-md-2 align-self-center">
                                                     <div class="col-1 ">
-                                                        {{ update_from.image_path }}
+                                                        {{ form.image_path }}
                                                     </div>
                                                 </div>
                                             </div>

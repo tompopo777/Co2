@@ -13,7 +13,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
-{% include 'includes/navigation-light.html' %}
+    {% include 'includes/navigation-light.html' %}
     <section>
         <div class="page-header min-vh-100">
             <div class="container">
@@ -26,26 +26,26 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/process_update/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>製程添加化學名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.process_add_name }}
+                                                    {{ form.process_add_name }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>化學品名 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.chemical_name }}
+                                                    {{ form.chemical_name }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>化學式</label>
-                                                    {{ update_from.chemical_formula }}
+                                                    {{ form.chemical_formula }}
                                                 </div>
                                             </div>
                                         </div>
@@ -53,13 +53,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.process_stage }}
+                                                    {{ form.process_stage }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>料號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.material_id }}
+                                                    {{ form.material_id }}
                                                 </div>
                                             </div>
                                         </div>
@@ -67,13 +67,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>CAS NO <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.CAS_NO }}
+                                                    {{ form.CAS_NO }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class=" form-check form-switch mb-6">
                                                     <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.burn }}
+                                                    {{ form.burn }}
                                                 </div>
                                             </div>
                                         </div>
@@ -103,62 +103,62 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.january }}
+                                                        {{ form.january }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.february }}
+                                                        {{ form.february }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.march }}
+                                                        {{ form.march }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.april }}
+                                                        {{ form.april }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.may }}
+                                                        {{ form.may }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.june }}
+                                                        {{ form.june }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.july }}
+                                                        {{ form.july }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.august }}
+                                                        {{ form.august }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.september }}
+                                                        {{ form.september }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.october }}
+                                                        {{ form.october }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.november }}
+                                                        {{ form.november }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.december }}
+                                                        {{ form.december }}
                                                     </div>
                                                 </td>
                                             </tr>
@@ -166,17 +166,19 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <br><hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40"><br>
+                                    <br>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
                                     <div class="d-flex">
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                {{ update_from.image_note }}
+                                                {{ form.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                {{ update_from.image_path }}
+                                                {{ form.image_path }}
                                             </div>
                                         </div>
                                     </div>

@@ -305,7 +305,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
-                    extinguisher.objects.values("device_id", "position", "extinguisher_name",
+                    extinguisher.objects.values("id", "device_id", "position", "extinguisher_name",
                                                 "extinguisher_type", "extinguisher_vendor", "chemical_spec", "chemical_weight", "inventory", "using_date", "using_amount", "replace_filling_date", "replace_filling_amount"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
@@ -333,8 +333,8 @@ def load_table(request):
             elif a["d_name"] == "保全清單":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = security.objects.values("id", "years", "monthly", "security_number", "daily_hours",
-                                                   "working_days", "total_working_hours", "total_working_day")
+                raw_data = security.objects.values("id", "years", "monthly", "security_number", "daily_hours", "working_days")
+                                                   # "working_days", "total_working_hours", "total_working_day")
                 for i in range(raw_data.count()):
                     # 計算單筆當月總工作時數
                     TotalWorkingHour_M = raw_data[i].get("security_number") * raw_data[i].get("daily_hours") * raw_data[i].get("working_days")
@@ -432,7 +432,6 @@ def load_table(request):
                     t_data.append(single_data)
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
-
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
@@ -743,14 +742,12 @@ def waste_add(request):
 def carbon_system(request):
     return render(request, "home/carbon-system.html", locals())
 
-
 # 新增轉跳
 @login_required(login_url="/login/")
 def add_page(request):
     global NewDevice_page
     if request.method == "GET":
         device_id = request.GET.get('deviceId')
-        # print("新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增新增", device_id)
         # 建立字典
         htmlName = {
             "1": "home/emergency-generator.html",
@@ -805,7 +802,6 @@ def add_page(request):
         print("NewDevice_page:", NewDevice_page)
     if request.method == "GET":
         return render(request, NewDevice_page, locals())
-
 
 # 編輯轉跳
 @login_required(login_url="/login/")
@@ -904,354 +900,51 @@ def edit_device(request):
                 # print("EditDevice_page:", EditDevice_page)
                 return render(request, EditDevice_page, formUpdata_name)
 
-
 # 儲存更新後的資料
 @login_required(login_url="/login/")
 def update_device(request, datasheet_id, single_dataID):
-    # def update_device(request, datasheet_id):
-    print("request::::::::::::::", request)
-    print("datasheet_id::::::::::::::::", datasheet_id)
-    print("single_dataID::::::::::::::", single_dataID)
-    if request.method == 'POST':
-        modelName = {
-            "1": emergency_generators,
-            "2": combustion_equipment,
-            "3": official_car,
-            "4": material,
-            "5": process,
-            "6": refrigerator,
-            "7": airconditioner,
-            "8": vehicle,
-            "9": water_dispenser,
-            "10": ice_water_dispenser,
-            "11": ice_maker,
-            "12": other_device,
-            "13": refrigerant_total_table,
-            "14": extinguisher,
-            "15": personnel_inventory,
-            "16": security,
-            "17": electricity,
-            "18": upstream_transportation,
-            "19": downstream_transportation,
-            "20": employee_commute,
-            "21": employee_business_trip,
-            "22": waste
-        }
-        formlName = {
-            "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
-            "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
-            "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
-            "16": SCform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
-            "21": EBTform, "22": WASTEform
-        }
-        print("77777777777777777777777777777777777777777777777777777777")
-        update_from = RTTform(request.POST, request.FILES, instance=8)
-        if update_from.is_valid():
-            update_from.save()
-            return redirect('/carbon-system/', locals())
-        # if modelName.get(datasheet_id) and formlName.get(datasheet_id):
-        #     print("dbName:::::::::::::::::::::::::::::;::::::dbName")
-        #     print("form::::::::::::::::::::::::::::::::::::::::form")
-        #     dbName = modelName.get(datasheet_id)
-        #     form = formlName.get(datasheet_id)
-        #     current_data = dbName.objects.get(id=single_dataID)
-        #
-        #     # print("datasheet_id6666666666666666::::::::::::::::::::", datasheet_id)
-        #     # print("single_dataID66666666666666::::::::::::::::::::", single_dataID)
-        #     print("666666666666666666666666666666666666666666666666666666666")
-        #     update_from = form(request.POST, request.FILES, instance=current_data)
-        #     if update_from.is_valid():
-        #         update_from.save()
-        #         return redirect('/carbon-system/', locals())
-        # else:
-        #     return render(request, 'home/index.html', locals())
-
-
-@login_required(login_url="/login/")
-def emergency_generators_update(request):
-    dd = emergency_generators.objects.get(id=1)
-    EG_update = EGform(instance=dd)
-    if request.method == "POST":
-        EG_update = EGform(request.POST, request.FILES, instance=dd)
-        if EG_update.is_valid():
-            EG_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def combustion_equipment_update(request):
-    dd = combustion_equipment.objects.get(id=1)
-    CE_update = CEform(instance=dd)
-    if request.method == "POST":
-        CE_update = CEform(request.POST, request.FILES, instance=dd)
-        if CE_update.is_valid():
-            CE_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def official_car_update(request):
-    dd = official_car.objects.get(id=1)
-    OffCar_update = OFform(instance=dd)
-    if request.method == "POST":
-        OffCar_update = OFform(request.POST, request.FILES, instance=dd)
-        if OffCar_update.is_valid():
-            OffCar_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def material_update(request):
-    dd = material.objects.get(id=2)
-    MT_update = MTform(instance=dd)
-    if request.method == "POST":
-        MT_update = MTform(request.POST, request.FILES, instance=dd)
-        if MT_update.is_valid():
-            MT_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def process_update(request):
-    dd = process.objects.get(id=1)
-    PC_update = PCform(instance=dd)
-    if request.method == "POST":
-        PC_update = PCform(request.POST, request.FILES, instance=dd)
-        if PC_update.is_valid():
-            PC_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def refrigerator_update(request):
-    dd = refrigerator.objects.get(id=1)
-    RF_update = RFform(instance=dd)
-    if request.method == "POST":
-        RF_update = RFform(request.POST, request.FILES, instance=dd)
-        if RF_update.is_valid():
-            RF_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def airconditioner_update(request):
-    dd = airconditioner.objects.get(id=1)
-    AC_update = ACform(instance=dd)
-    if request.method == "POST":
-        AC_update = ACform(request.POST, request.FILES, instance=dd)
-        if AC_update.is_valid():
-            AC_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def vehicle_update(request):
-    dd = vehicle.objects.get(id=1)
-    VC_update = VCform(instance=dd)
-    if request.method == "POST":
-        VC_update = VCform(request.POST, request.FILES, instance=dd)
-        if VC_update.is_valid():
-            VC_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def water_dispenser_update(request):
-    dd = water_dispenser.objects.get(id=1)
-    WD_update = WDform(instance=dd)
-    if request.method == "POST":
-        WD_update = WDform(request.POST, request.FILES, instance=dd)
-        if WD_update.is_valid():
-            WD_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def ice_water_dispenser_update(request):
-    dd = ice_water_dispenser.objects.get(id=1)
-    IWD_update = IWDform(instance=dd)
-    if request.method == "POST":
-        IWD_update = IWDform(request.POST, request.FILES, instance=dd)
-        if IWD_update.is_valid():
-            IWD_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def ice_maker_update(request):
-    dd = ice_maker.objects.get(id=1)
-    IM_update = IMform(instance=dd)
-    if request.method == "POST":
-        IM_update = IMform(request.POST, request.FILES, instance=dd)
-        if IM_update.is_valid():
-            IM_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def other_device_update(request):
-    dd = other_device.objects.get(id=1)
-    OD_update = ODform(instance=dd)
-    if request.method == "POST":
-        OD_update = ODform(request.POST, request.FILES, instance=dd)
-        if OD_update.is_valid():
-            OD_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-# @login_required(login_url="/login/")
-# def refrigerant_total_table_update(request):
-#     dd = refrigerant_total_table.objects.get(id=1)
-#     EG_update = EGform(instance=dd)
-#     if request.method == "POST":
-#         RTT_update = RTTform(request.POST, request.FILES, instance=dd)
-#         if RTT_update.is_valid():
-#             RTT_update.save()
-#             return redirect('/carbon-system/')
-#     else:
-#         return redirect('/refrigerant_total_table_update/')
-
-
-@login_required(login_url="/login/")
-def extinguisher_update(request):
-    dd = extinguisher.objects.get(id=1)
-    EX_update = EXform(instance=dd)
-    if request.method == "POST":
-        EX_update = EXform(request.POST, request.FILES, instance=dd)
-        if EX_update.is_valid():
-            EX_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def personnel_inventory_update(request):
-    dd = personnel_inventory.objects.get(id=1)
-    PI_update = PIform(instance=dd)
-    if request.method == "POST":
-        PI_update = PIform(request.POST, request.FILES, instance=dd)
-        if PI_update.is_valid():
-            PI_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def security_update(request):
-    dd = security.objects.get(id=1)
-    SC_update = SCform(instance=dd)
-    if request.method == "POST":
-        SC_update = SCform(request.POST, request.FILES, instance=dd)
-        if SC_update.is_valid():
-            SC_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def electricity_update(request):
-    dd = electricity.objects.get(id=1)
-    ELEC_update = ELECform(instance=dd)
-    if request.method == "POST":
-        ELEC_update = ELECform(request.POST, request.FILES, instance=dd)
-        if ELEC_update.is_valid():
-            ELEC_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def upstream_transportation_update(request):
-    dd = upstream_transportation.objects.get(id=1)
-    UT_update = UTform(instance=dd)
-    if request.method == "POST":
-        UT_update = UTform(request.POST, request.FILES, instance=dd)
-        if UT_update.is_valid():
-            UT_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def downstream_transportation_update(request):
-    dd = downstream_transportation.objects.get(id=1)
-    DT_update = DTform(instance=dd)
-    if request.method == "POST":
-        DT_update = DTform(request.POST, request.FILES, instance=dd)
-        if DT_update.is_valid():
-            DT_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def employee_commute_update(request):
-    dd = employee_commute.objects.get(id=1)
-    EC_update = ECform(instance=dd)
-    if request.method == "POST":
-        EC_update = ECform(request.POST, request.FILES, instance=dd)
-        if EC_update.is_valid():
-            EC_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def employee_business_trip_update(request):
-    dd = employee_business_trip.objects.get(id=1)
-    EBT_update = EBTform(instance=dd)
-    if request.method == "POST":
-        EBT_update = EBTform(request.POST, request.FILES, instance=dd)
-        if EBT_update.is_valid():
-            EBT_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
-
-@login_required(login_url="/login/")
-def waste_update(request):
-    dd = waste.objects.get(id=1)
-    WASTE_update = WASTEform(instance=dd)
-    if request.method == "POST":
-        WASTE_update = WASTEform(request.POST, request.FILES, instance=dd)
-        if WASTE_update.is_valid():
-            WASTE_update.save()
-            return redirect('/carbon-system/')
-    else:
-        return render(request, 'home/carbon-system.html', locals())
-
+    modelName = {
+        "1": emergency_generators,
+        "2": combustion_equipment,
+        "3": official_car,
+        "4": material,
+        "5": process,
+        "6": refrigerator,
+        "7": airconditioner,
+        "8": vehicle,
+        "9": water_dispenser,
+        "10": ice_water_dispenser,
+        "11": ice_maker,
+        "12": other_device,
+        "13": refrigerant_total_table,
+        "14": extinguisher,
+        "15": personnel_inventory,
+        "16": security,
+        "17": electricity,
+        "18": upstream_transportation,
+        "19": downstream_transportation,
+        "20": employee_commute,
+        "21": employee_business_trip,
+        "22": waste
+    }
+    formName = {
+        "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
+        "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
+        "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
+        "16": SCform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
+        "21": EBTform, "22": WASTEform
+    }
+    if modelName.get(datasheet_id) and formName.get(datasheet_id):
+        dbName = modelName.get(datasheet_id)
+        form = formName.get(datasheet_id)
+        if request.method == 'POST':
+            current_data = dbName.objects.get(id=single_dataID)
+            update_from = form(request.POST, request.FILES, instance=current_data)
+            if update_from.is_valid():
+                update_from.save()
+                return redirect('/carbon-system/', locals())
+        else:
+            return render(request, 'home/index.html', locals())
 
 # 新增title
 @login_required(login_url="/login/")
@@ -1361,12 +1054,7 @@ def add_title(request):
                 "廢棄物處理": ["序號", "名稱", "運送時間", "重量(噸)", "處理方式", "處置地點", "運輸責任歸屬", "運輸方式", "燃料", "運輸距離(km)", "T*km"],
             }
         }
-    # a = request.GET.get('deviceId')
-    # context = {'html': a}
     title = [htmlName.get(device_id)]
-    # print('我好帥', context)
-    # print("htmlName:::::::::::::::::::::::::::::::::::::::::::::::::::", context)
-    # print('我好帥2', title)
     return JsonResponse(title, safe=False)
 
 # def export_data(request):
