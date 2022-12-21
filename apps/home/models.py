@@ -44,7 +44,7 @@ class emergency_generators(models.Model):
     november = models.FloatField()
     december = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.ImageField(upload_to='emergency_generators/', null=True, default=None)
+    image_path = models.ImageField(upload_to='emergency_generators/%Y/%m', null=True, default=None)
 
 class combustion_equipment(models.Model):
     id = models.AutoField(primary_key=True)
