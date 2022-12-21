@@ -49,11 +49,12 @@ urlpatterns = [
     # Excel
     path("csv_view/", csv.csv_view, name='csv_view'),
     # 編輯設備
-    path('update_device/<str:id>', views.update_device, name='update_device'),
+    # path('update_device/<int:datasheet_id>', views.update_device, name='update_device'),
+    path('update_device/<int:datasheet_id>&<int:single_dataID>', views.update_device, name='update_device'),
     # path("update_device/", views.emergency_generators_update),
     # path("combustion_equipment_update/", views.combustion_equipment_update),
     # path("official_car_update/", views.official_car_update),
-    path("material_update/", views.material_update),
+    path("material_update/", views.material_update, name='material_update'),
     # path("process_update/", views.process_update),
     # path("refrigerator_update/", views.refrigerator_update),
     # path("airconditioner_update/", views.airconditioner_update),

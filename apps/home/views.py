@@ -76,6 +76,7 @@ def load_device(request):
             d_data = list(section_two.objects.filter(cpid=current_process).values("d_name", "did"))
             return JsonResponse(d_data, safe=False)
 
+
 # 抓欄位(
 @login_required(login_url="/login/")
 def load_table(request):
@@ -805,15 +806,113 @@ def add_page(request):
     if request.method == "GET":
         return render(request, NewDevice_page, locals())
 
+
 # 編輯轉跳
 @login_required(login_url="/login/")
 # def edit_device(request, datasheet_id, single_dataID):
 def edit_device(request):
-    if request.method == 'GET':
-    # global datasheet_id, single_dataID, dbName
-        datasheet_id = request.GET.get('datasheet')
-        single_dataID = request.GET.get('single_dataID')
-        print("datasheet_id:::::::::::::::::::::::::::::::", datasheet_id)
+    # global current_data, update_from
+    datasheet_id = request.GET.get('datasheet')
+    single_dataID = request.GET.get('single_dataID')
+    # print("datasheet_id:::::::::::::::::::::::::::::::", datasheet_id)
+    modelName = {
+        "1": emergency_generators,
+        "2": combustion_equipment,
+        "3": official_car,
+        "4": material,
+        "5": process,
+        "6": refrigerator,
+        "7": airconditioner,
+        "8": vehicle,
+        "9": water_dispenser,
+        "10": ice_water_dispenser,
+        "11": ice_maker,
+        "12": other_device,
+        "13": refrigerant_total_table,
+        "14": extinguisher,
+        "15": personnel_inventory,
+        "16": security,
+        "17": electricity,
+        "18": upstream_transportation,
+        "19": downstream_transportation,
+        "20": employee_commute,
+        "21": employee_business_trip,
+        "22": waste
+    }
+    formlName = {
+        "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
+        "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
+        "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
+        "16": SCform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
+        "21": EBTform, "22": WASTEform
+    }
+    if modelName.get(datasheet_id) and formlName.get(datasheet_id):
+        dbName = modelName.get(datasheet_id)
+        form = formlName.get(datasheet_id)
+        # print("1111111111111111111111111111111111111111111111111111")
+
+        # if request.method == 'POST':
+        #     current_data = dbName.objects.get(id=single_dataID)
+        #     update_from = form(instance=current_data)
+        #     update_from = form(request.POST, request.FILES, instance=current_data)
+        #     if update_from.is_valid():
+        #         update_from.save()
+        #         return redirect('/carbon-system/')
+        #     else:
+        #         return redirect('/waste_add/')
+
+        if request.method == 'GET':
+            # print("22222222222222222222222222222222222222222222222222222")
+            current_data = dbName.objects.get(id=single_dataID)
+            update_from = form(instance=current_data)
+            # print("current_data:::::::::::::::::::::::::", current_data)
+            # print("update_from:::::::::::::::::::::::::::", update_from)
+
+            formUpdata_name = {
+                'form': update_from,
+                'datasheet_id': datasheet_id,
+                'single_dataID': single_dataID
+            }
+            # print("formUpdata_name:::::::::::::::::::::::::::::", formUpdata_name)
+            # 建立字典
+            htmlName = {
+                "1": "home/emergency-generator-edit.html",
+                "2": "home/combustion-equipment-edit.html",
+                "3": "home/official-car-edit.html",
+                "4": "home/material-edit.html",
+                "5": "home/process-edit.html",
+                "6": "home/refrigerator-edit.html",
+                "7": "home/airconditioner-edit.html",
+                "8": "home/vehicle-edit.html",
+                "9": "home/water-dispenser-edit.html",
+                "10": "home/ice-water-dispenser-edit.html",
+                "11": "home/ice-maker-edit.html",
+                "12": "home/other-device-edit.html",
+                "13": "home/refrigerant-total-table-edit.html",
+                "14": "home/extinguisher-edit.html",
+                "15": "home/personnel-inventory-edit.html",
+                "16": "home/security-edit.html",
+                "17": "home/electricity-edit.html",
+                "18": "home/upstream-transportation-edit.html",
+                "19": "home/downstream-transportation-edit.html",
+                "20": "home/employee-commute-edit.html",
+                "21": "home/employee-business-trip-edit.html",
+                "22": "home/waste-edit.html"
+            }
+            if htmlName.get(datasheet_id):
+                EditDevice_page = htmlName.get(datasheet_id)
+                # print("EditDevice_page:", EditDevice_page)
+                return render(request, EditDevice_page, formUpdata_name)
+
+
+# 儲存更新後的資料
+@login_required(login_url="/login/")
+def update_device(request, datasheet_id, single_dataID):
+    # def update_device(request, datasheet_id):
+    print("request::::::::::::::", request)
+    print("datasheet_id::::::::::::::::", datasheet_id)
+    print("single_dataID::::::::::::::", single_dataID)
+    if request.method == 'POST':
         modelName = {
             "1": emergency_generators,
             "2": combustion_equipment,
@@ -845,57 +944,27 @@ def edit_device(request):
             "16": SCform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
             "21": EBTform, "22": WASTEform
         }
-        if modelName.get(datasheet_id) and formlName.get(datasheet_id):
-            dbName = modelName.get(datasheet_id)
-            form = formlName.get(datasheet_id)
-
-            current_data = dbName.objects.get(id=single_dataID)
-            update_from = form(instance=current_data)
-            formUpdata_name = {
-                'form': update_from,
-            }
-        # 建立字典
-        htmlName = {
-            "1": "home/emergency-generator-edit.html",
-            "2": "home/combustion-equipment-edit.html",
-            "3": "home/official-car-edit.html",
-            "4": "home/material-edit.html",
-            "5": "home/process-edit.html",
-            "6": "home/refrigerator-edit.html",
-            "7": "home/airconditioner-edit.html",
-            "8": "home/vehicle-edit.html",
-            "9": "home/water-dispenser-edit.html",
-            "10": "home/ice-water-dispenser-edit.html",
-            "11": "home/ice-maker-edit.html",
-            "12": "home/other-device-edit.html",
-            "13": "home/refrigerant-total-table-edit.html",
-            "14": "home/extinguisher-edit.html",
-            "15": "home/personnel-inventory-edit.html",
-            "16": "home/security-edit.html",
-            "17": "home/electricity-edit.html",
-            "18": "home/upstream-transportation-edit.html",
-            "19": "home/downstream-transportation-edit.html",
-            "20": "home/employee-commute-edit.html",
-            "21": "home/employee-business-trip-edit.html",
-            "22": "home/waste-edit.html"
-        }
-        if htmlName.get(datasheet_id):
-            EditDevice_page = htmlName.get(datasheet_id)
-        # print("EditDevice_page:", EditDevice_page)
-            return render(request, EditDevice_page, locals())
-
-# 儲存更新後的資料
-@login_required(login_url="/login/")
-def update_device(request, id):
-    aa = request.POST.get('id')
-    print("aa::::::::::::::::::::::::::", aa)
-    dd = refrigerant_total_table.objects.get(id=id)
-    if request.method == 'POST':
-        # current_data = dbName.objects.get(id=7)
-        update_from = RTTform(request.POST, request.FILES, instance=dd)
+        print("77777777777777777777777777777777777777777777777777777777")
+        update_from = RTTform(request.POST, request.FILES, instance=8)
         if update_from.is_valid():
             update_from.save()
-        return redirect('/carbon-system/')
+            return redirect('/carbon-system/', locals())
+        # if modelName.get(datasheet_id) and formlName.get(datasheet_id):
+        #     print("dbName:::::::::::::::::::::::::::::;::::::dbName")
+        #     print("form::::::::::::::::::::::::::::::::::::::::form")
+        #     dbName = modelName.get(datasheet_id)
+        #     form = formlName.get(datasheet_id)
+        #     current_data = dbName.objects.get(id=single_dataID)
+        #
+        #     # print("datasheet_id6666666666666666::::::::::::::::::::", datasheet_id)
+        #     # print("single_dataID66666666666666::::::::::::::::::::", single_dataID)
+        #     print("666666666666666666666666666666666666666666666666666666666")
+        #     update_from = form(request.POST, request.FILES, instance=current_data)
+        #     if update_from.is_valid():
+        #         update_from.save()
+        #         return redirect('/carbon-system/', locals())
+        # else:
+        #     return render(request, 'home/index.html', locals())
 
 
 @login_required(login_url="/login/")
@@ -1065,7 +1134,6 @@ def other_device_update(request):
 #             return redirect('/carbon-system/')
 #     else:
 #         return redirect('/refrigerant_total_table_update/')
-
 
 
 @login_required(login_url="/login/")

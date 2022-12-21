@@ -369,25 +369,25 @@
     </script>
 
     <!--/*跳轉編輯頁面*/-->
-    {#    <script>#}
-    {#        var dropdownmenu3 = document.getElementById("dropdownmenu3")#}
-    {#        var single_data = document.getElementsByClassName("edit_btn")#}
-    {#        $(document).on('click', ".edit_btn", function () {#}
-    {#            var single_dataID = this.id;#}
-    {#            var deviceId = dropdownmenu3.value;#}
-    {#            console.warn("跳轉編輯頁面", deviceId);#}
-    {#            console.warn("single_dataID", single_dataID)//顯示現在選中的資料id#}
-    {#            $.ajax({#}
-    {#                url: "{% url 'loadedit' %}",#}
-    {#                data: {#}
-    {#                    'deviceID': deviceId,#}
-    {#'single_dataID': single_dataID#}
-    {#                },#}
-    {#                type: 'GET',#}
-    {#                dataType: 'json',#}
-    {#            });#}
-    {#        })#}
-    {#    </script>#}
+{#    <script>#}
+{#        var dropdownmenu3 = document.getElementById("dropdownmenu3")#}
+{#        var single_data = document.getElementsByClassName("edit_btn")#}
+{#        $(document).on('click', ".edit_btn", function () {#}
+{#            var single_dataID = this.id;#}
+{#            var deviceId = dropdownmenu3.value;#}
+{#            console.warn("跳轉編輯頁面", deviceId);#}
+{#            console.warn("single_dataID", single_dataID)//顯示現在選中的資料id#}
+{#            $.ajax({#}
+{#                url: "{% url 'loadedit' %}",#}
+{#                data: {#}
+{#                    'deviceID': deviceId,#}
+{#                    'single_dataID': single_dataID#}
+{#                },#}
+{#                type: 'POST',#}
+{#                dataType: 'json',#}
+{#            });#}
+{#        })#}
+{#    </script>#}
 
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
