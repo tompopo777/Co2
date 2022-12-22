@@ -27,20 +27,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/ice_water_dispenser_update/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.device_name }}
+                                                    {{ form.device_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.device_id }}
+                                                    {{ form.device_id }}
                                                 </div>
                                             </div>
                                         </div>
@@ -48,26 +48,26 @@
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備品牌</label>
-                                                    {{ update_from.brand_name }}
+                                                    {{ form.brand_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>型號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.model_type }}
+                                                    {{ form.model_type }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>西元年 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.years }}
+                                                    {{ form.years }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>放置位置</label>
-                                                {{ update_from.position }}
+                                                {{ form.position }}
                                             </div>
                                         </div>
                                         <br>
@@ -75,26 +75,26 @@
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.refrigerant_type }}
+                                                    {{ form.refrigerant_type }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.filling_volume }}
+                                                    {{ form.filling_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>維修填充量(單位:公斤)</label>
-                                                    {{ update_from.filling_fix_volume }}
+                                                    {{ form.filling_fix_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">冷媒填充日</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ update_from.filling_date }}
+                                                        {{ form.filling_date }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -102,7 +102,7 @@
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>逸散率 <span style="color:red; font-size:16px;">* </span></label>
-                                                {{ update_from.effusion_rate }}
+                                                {{ form.effusion_rate }}
                                             </div>
                                         </div>
                                     </div>
@@ -110,12 +110,12 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                {{ update_from.image_note }}
+                                                {{ form.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                {{ update_from.image_path }}
+                                                {{ form.image_path }}
                                             </div>
                                         </div>
                                     </div>

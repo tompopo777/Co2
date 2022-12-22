@@ -23,20 +23,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/combustion_equipment_update/" method="POST" enctype="multipart/form-data">
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱</label>
-                                                    {{ update_from.device_name }}
+                                                    {{ form.device_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號</label>
-                                                    {{ update_from.device_id }}
+                                                    {{ form.device_id }}
                                                 </div>
                                             </div>
                                         </div>
@@ -44,14 +44,14 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>燃料種類</label>
-                                                    {{ update_from.fuel_type }}
+                                                    {{ form.fuel_type }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">燃料使用開始時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ update_from.period_starttime }}
+                                                        {{ form.period_starttime }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -59,7 +59,7 @@
                                                 <label class="" for="start">燃料使用結束時間</label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ update_from.period_endtime }}
+                                                        {{ form.period_endtime }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -93,62 +93,62 @@
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_january }}
+                                                            {{ form.fuel_january }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_february }}
+                                                            {{ form.fuel_february }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_march }}
+                                                            {{ form.fuel_march }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_april }}
+                                                            {{ form.fuel_april }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_may }}
+                                                            {{ form.fuel_may }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_june }}
+                                                            {{ form.fuel_june }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_july }}
+                                                            {{ form.fuel_july }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_august }}
+                                                            {{ form.fuel_august }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_september }}
+                                                            {{ form.fuel_september }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_october }}
+                                                            {{ form.fuel_october }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_november }}
+                                                            {{ form.fuel_november }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.fuel_december }}
+                                                            {{ form.fuel_december }}
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -158,62 +158,62 @@
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_january }}
+                                                            {{ form.heat_january }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_february }}
+                                                            {{ form.heat_february }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_march }}
+                                                            {{ form.heat_march }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_april }}
+                                                            {{ form.heat_april }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_may }}
+                                                            {{ form.heat_may }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_june }}
+                                                            {{ form.heat_june }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_july }}
+                                                            {{ form.heat_july }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_august }}
+                                                            {{ form.heat_august }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_september }}
+                                                            {{ form.heat_september }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_october }}
+                                                            {{ form.heat_october }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_november }}
+                                                            {{ form.heat_november }}
                                                         </div>
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            {{ update_from.heat_december }}
+                                                            {{ form.heat_december }}
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -229,12 +229,12 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                {{ update_from.image_note }}
+                                                {{ form.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                {{ update_from.image_path }}
+                                                {{ form.image_path }}
                                             </div>
                                         </div>
                                     </div>

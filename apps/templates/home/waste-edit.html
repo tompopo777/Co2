@@ -27,27 +27,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/waste_update/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.waste_name }}
+                                                    {{ form.waste_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物重量(單位:噸) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.waste_weigh }}
+                                                    {{ form.waste_weigh }}
                                                 </div>
                                             </div>
                                             <div class="col-4 ps-md-2">
                                                 <label class="ms-0" for="start">廢棄物運送日期 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ update_from.waste_date }}
+                                                        {{ form.waste_date }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -56,13 +56,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物處理方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.waste_disposal }}
+                                                    {{ form.waste_disposal }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物處置地點 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.waste_location }}
+                                                    {{ form.waste_location }}
                                                 </div>
                                             </div>
                                         </div>
@@ -70,13 +70,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物清運方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.waste_removal_method }}
+                                                    {{ form.waste_removal_method }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸方式</label>
-                                                    {{ update_from.transport_type }}
+                                                    {{ form.transport_type }}
                                                 </div>
                                             </div>
                                         </div>
@@ -84,13 +84,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸燃料</label>
-                                                    {{ update_from.transport_fuel }}
+                                                    {{ form.transport_fuel }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸距離(單位:公里)</label>
-                                                    {{ update_from.transport_distance }}
+                                                    {{ form.transport_distance }}
                                                 </div>
                                             </div>
                                         </div>
@@ -99,12 +99,12 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>上傳引用單據</label>
-                                                    {{ update_from.image_note }}
+                                                    {{ form.image_note }}
                                                 </div>
                                             </div>
                                             <div class=" ps-md-2 align-self-center">
                                                 <div class="col-1 ">
-                                                    {{ update_from.image_path }}
+                                                    {{ form.image_path }}
                                                 </div>
                                             </div>
                                         </div>

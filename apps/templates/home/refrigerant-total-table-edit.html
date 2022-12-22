@@ -27,113 +27,112 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/edit_device/" method="POST" enctype="multipart/form-data">
-{#                                    <form action="{% url 'update_device' update_from.device %}" method="POST" enctype="multipart/form-data">#}
-                                        {% csrf_token %}
-                                        <div class="card-body p-0 my-3">
-                                            <div class="row">
-                                                <div class="col-6">
-                                                    <div class="input-group input-group-static mb-4">
-                                                        <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                        {{ update_from.device_name }}
-                                                    </div>
-                                                </div>
-                                                <div class="col-6">
-                                                    <div class="input-group input-group-static mb-4">
-                                                        <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                        {{ update_from.device_id }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-4">
-                                                    <div class="input-group input-group-static mb-4">
-                                                        <label>設備品牌</label>
-                                                        {{ update_from.brand_name }}
-                                                    </div>
-                                                </div>
-                                                <div class="col-4">
-                                                    <div class="input-group input-group-static mb-4">
-                                                        <label>型號 <span style="color:red; font-size:16px;">* </span></label>
-                                                        {{ update_from.model_type }}
-                                                    </div>
-                                                </div>
-                                                <div class="col-4">
-                                                    <div class="input-group input-group-static mb-4">
-                                                        <label>西元年 <span style="color:red; font-size:16px;">* </span></label>
-                                                        {{ update_from.years }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>放置位置</label>
-                                                    {{ update_from.position }}
+                                                    <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.device_name }}
                                                 </div>
                                             </div>
-                                            <br>
-                                            <div class="row">
-                                                <div class="col-3">
-                                                    <div class="input-group input-group-static mb-4">
-                                                        <label>冷媒類型 <span style="color:red; font-size:16px;">* </span></label>
-                                                        {{ update_from.refrigerant_type }}
-                                                    </div>
-                                                </div>
-                                                <div class="col-3">
-                                                    <div class="input-group input-group-static mb-4">
-                                                        <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
-                                                        {{ update_from.filling_volume }}
-                                                    </div>
-                                                </div>
-                                                <div class="col-3">
-                                                    <div class="input-group input-group-static mb-4">
-                                                        <label>維修填充量(單位:公斤)</label>
-                                                        {{ update_from.filling_fix_volume }}
-                                                    </div>
-                                                </div>
-                                                <div class="col-3 ps-md-2">
-                                                    <label class="ms-0" for="start">冷媒填充日</label>
-                                                    <div class="col-6">
-                                                        <div class="ms-1 input-group date" id='date1'>
-                                                            {{ update_from.filling_date }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>逸散率 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.effusion_rate }}
+                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.device_id }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="d-flex">
-                                            <div class="col-6">
+                                        <div class="row">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>上傳引用單據</label>
-                                                    {{ update_from.image_note }}
+                                                    <label>設備品牌</label>
+                                                    {{ form.brand_name }}
                                                 </div>
                                             </div>
-                                            <div class=" ps-md-2 align-self-center">
-                                                <div class="col-1 ">
-                                                    {{ update_from.image_path }}
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>型號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.model_type }}
                                                 </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>西元年 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.years }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>放置位置</label>
+                                                {{ form.position }}
                                             </div>
                                         </div>
                                         <br>
-                                        <div class="d-flex justify-content-center">
-                                            <div class="col-1">
-                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
-                                                    確認
-                                                </button>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>冷媒類型 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.refrigerant_type }}
+                                                </div>
                                             </div>
-                                            <div class="col-1">
-                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
-                                                    取消
-                                                </button>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.filling_volume }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>維修填充量(單位:公斤)</label>
+                                                    {{ form.filling_fix_volume }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3 ps-md-2">
+                                                <label class="ms-0" for="start">冷媒填充日</label>
+                                                <div class="col-6">
+                                                    <div class="ms-1 input-group date" id='date1'>
+                                                        {{ form.filling_date }}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </form>
+                                        <div class="row">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>逸散率 <span style="color:red; font-size:16px;">* </span></label>
+                                                {{ form.effusion_rate }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                {{ form.image_note }}
+                                            </div>
+                                        </div>
+                                        <div class=" ps-md-2 align-self-center">
+                                            <div class="col-1 ">
+                                                {{ form.image_path }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>

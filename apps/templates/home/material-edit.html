@@ -27,27 +27,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/material_update/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.material_name }}
+                                                    {{ form.material_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料料號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.material_id }}
+                                                    {{ form.material_id }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
-                                                {{ update_from.material_type }}
+                                                {{ form.material_type }}
                                             </div>
                                         </div>
                                         <br>
@@ -77,62 +77,62 @@
                                             <tr>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.january }}
+                                                        {{ form.january }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.february }}
+                                                        {{ form.february }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.march }}
+                                                        {{ form.march }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.april }}
+                                                        {{ form.april }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.may }}
+                                                        {{ form.may }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.june }}
+                                                        {{ form.june }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.july }}
+                                                        {{ form.july }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.august }}
+                                                        {{ form.august }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.september }}
+                                                        {{ form.september }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.october }}
+                                                        {{ form.october }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.november }}
+                                                        {{ form.november }}
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">
-                                                        {{ update_from.december }}
+                                                        {{ form.december }}
                                                     </div>
                                                 </td>
                                             </tr>

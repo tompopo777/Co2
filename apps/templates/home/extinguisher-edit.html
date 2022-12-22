@@ -27,20 +27,20 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/extinguisher_update/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.extinguisher_name }}
+                                                    {{ form.extinguisher_name }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器類型 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.extinguisher_type }}
+                                                    {{ form.extinguisher_type }}
                                                 </div>
                                             </div>
                                         </div>
@@ -48,13 +48,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.device_id }}
+                                                    {{ form.device_id }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器擺放位置 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.position }}
+                                                    {{ form.position }}
                                                 </div>
                                             </div>
                                         </div>
@@ -62,13 +62,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廠商</label>
-                                                    {{ update_from.extinguisher_vendor }}
+                                                    {{ form.extinguisher_vendor }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>庫存量 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.inventory }}
+                                                    {{ form.inventory }}
                                                 </div>
                                             </div>
                                         </div>
@@ -76,13 +76,13 @@
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑規格(單位:磅) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.chemical_spec }}
+                                                    {{ form.chemical_spec }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.chemical_weight }}
+                                                    {{ form.chemical_weight }}
                                                 </div>
                                             </div>
                                         </div>
@@ -90,28 +90,28 @@
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器使用數量 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.using_amount }}
+                                                    {{ form.using_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="ms-0" for="start">使用日期 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ update_from.using_date }}
+                                                        {{ form.using_date }}
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器更換/填充數量 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ update_from.replace_filling_amount }}
+                                                    {{ form.replace_filling_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3 ps-md-2">
                                                 <label class="" for="start">更換/填充日期 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
-                                                        {{ update_from.replace_filling_date }}
+                                                        {{ form.replace_filling_date }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -122,12 +122,12 @@
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                {{ update_from.image_note }}
+                                                {{ form.image_note }}
                                             </div>
                                         </div>
                                         <div class=" ps-md-2 align-self-center">
                                             <div class="col-1 ">
-                                                {{ update_from.image_path }}
+                                                {{ form.image_path }}
                                             </div>
                                         </div>
                                     </div>

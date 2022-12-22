@@ -268,6 +268,7 @@
                     title.forEach((item, index) => {
                         var i = 0;
                         thead_row_name.insertCell(-1)//加入"編輯鈕"框框
+                        thead_row_name.insertCell(-1)//加入"刪除紐"框框
                         for (const [key, value] of Object.entries((item))) {
                             var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
                             var a = thead_row_category.appendChild(tr_c)
@@ -283,7 +284,7 @@
                                 thead_row_name.appendChild(cr_n)
                                 cr_n.innerHTML = item;//"標題"框框填質
                                 if (i == 0) {
-                                    a.colSpan = index + 2//"分類"列第一個框框空間+2
+                                    a.colSpan = index + 3//"分類"列第一個框框空間+2
                                 } else {
                                     a.colSpan = index + 1//"分類"列第一個框框空間+2
                                 }
@@ -316,22 +317,30 @@
                     tbody.innerHTML = ""
                     var id = 1;
                     t_data.forEach((item, index) => {
-                        var pencil = document.createElement('a')//加入"button"tag
-                        var i_tag = document.createElement('i')//加入"i"tag
+                        var trash = document.createElement('a')//加入"trash button"tag
+                        var trash_i_tag = document.createElement('i')//加入"i"tag
+                        var pencil = document.createElement('a')//加入"pencil button"tag
+                        var pencil_i_tag = document.createElement('i')//加入"i"tag
                         var row = tbody.insertRow(-1)//加入"第一筆資料"列
+                        var delete_squ = row.insertCell(-1)//加入刪除鈕框框
                         var edit_squ = row.insertCell(-1)//加入編輯鈕框框
+                        delete_squ.appendChild(trash)
                         edit_squ.appendChild(pencil)
+                        trash.setAttribute('class', 'btn py-0 m-0 delete_btn')
+                        trash.appendChild(trash_i_tag)
                         pencil.setAttribute('class', 'btn py-0 m-0 edit_btn')
-                        pencil.appendChild(i_tag)
-                        i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
+                        pencil.appendChild(pencil_i_tag)
+                        trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
+                        pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
                         var cr_id = row.insertCell(-1)//加入"序號"框框
                         cr_id.innerHTML = id
                         var datasheet_id = dropdownmenu3.value;
                         for (const [key, value] of Object.entries((item))) {
                             if (key == "id") {
                                 pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端
-                                {#pencil.setAttribute('href', {% url 'loadedit'%})//將資料表id、選種資料id加到href裡，一起丟到後端#}
                                 pencil.setAttribute('id', value)//設定編輯按鈕的id為設備id
+                                {#trash.setAttribute('href', '/update_device/?datasheet=' + datasheet_id + '&single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端#}
+                                trash.setAttribute('id', value)//設定編輯按鈕的id為設備id
                                 continue;
                             }
                             var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
@@ -362,32 +371,35 @@
                     'deviceId': deviceId
                 },
                 type: 'GET',
-                {#type: 'POST',#}
                 dataType: 'json',
             });
         })
     </script>
 
-    <!--/*跳轉編輯頁面*/-->
-    {#    <script>#}
-    {#        var dropdownmenu3 = document.getElementById("dropdownmenu3")#}
-    {#        var single_data = document.getElementsByClassName("edit_btn")#}
-    {#        $(document).on('click', ".edit_btn", function () {#}
-    {#            var single_dataID = this.id;#}
-    {#            var deviceId = dropdownmenu3.value;#}
-    {#            console.warn("跳轉編輯頁面", deviceId);#}
-    {#            console.warn("single_dataID", single_dataID)//顯示現在選中的資料id#}
-    {#            $.ajax({#}
-    {#                url: "{% url 'loadedit' %}",#}
-    {#                data: {#}
-    {#                    'deviceID': deviceId,#}
-    {#'single_dataID': single_dataID#}
-    {#                },#}
-    {#                type: 'GET',#}
-    {#                dataType: 'json',#}
-    {#            });#}
-    {#        })#}
-    {#    </script>#}
+    <!--/*刪除該筆設備*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var single_data = document.getElementsByClassName("edit_btn")
+        $(document).on('click', ".delete_btn", function () {
+            var single_dataID = this.id;
+            var deviceId = dropdownmenu3.value;
+            $.ajax({
+                url: "{% url 'delete_device' %}",
+                data: {
+                    'deviceID': deviceId,
+                    'single_dataID': single_dataID
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (single_dataID) {
+                    console.warn("111", single_dataID)
+                    var single_data = document.getElementById(single_dataID)
+                    var tr = single_data.closest("tr")
+                    tr.remove();
+                }
+            });
+        })
+    </script>
 
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")

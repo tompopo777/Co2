@@ -44,35 +44,13 @@ urlpatterns = [
     path("ajax/table", views.load_table, name='loadtable'),
     path("ajax/title", views.add_title, name='loadtitle'),
     path("new_device/", views.add_page, name='loadadd'),
-    # path("edit_device/<int:datasheet_id>/<int:single_dataID>", views.edit_device, name='loadedit'),
     path("edit_device/", views.edit_device, name='loadedit'),
     # Excel
     path("csv_view/", csv.csv_view, name='csv_view'),
     # 編輯設備
-    path('update_device/<str:id>', views.update_device, name='update_device'),
-    # path("update_device/", views.emergency_generators_update),
-    # path("combustion_equipment_update/", views.combustion_equipment_update),
-    # path("official_car_update/", views.official_car_update),
-    path("material_update/", views.material_update),
-    # path("process_update/", views.process_update),
-    # path("refrigerator_update/", views.refrigerator_update),
-    # path("airconditioner_update/", views.airconditioner_update),
-    # path("vehicle_update/", views.vehicle_update),
-    # path("water_dispenser_update/", views.water_dispenser_update),
-    # path("ice_water_dispenser_update/", views.ice_water_dispenser_update),
-    # path("ice_maker_update/", views.ice_maker_update),
-    # path("other_device_update/", views.other_device_update),
-    # path("refrigerant_total_table_update/", views.refrigerant_total_table_update),
-    # path("extinguisher_update/", views.extinguisher_update),
-    # path("personnel_inventory_update/", views.personnel_inventory_update),
-    # path("security_update/", views.security_update),
-    # path("electricity_update/", views.electricity_update),
-    # path("upstream_transportation_update/", views.upstream_transportation_update),
-    # path("downstream_transportation_update/", views.downstream_transportation_update),
-    # path("employee_commute_update/", views.employee_commute_update),
-    # path("employee_business_trip_update/", views.employee_business_trip_update),
-    # path("waste_update/", views.waste_update),
-
+    path('update_device/<str:datasheet_id>&<int:single_dataID>', views.update_device, name='update_device'),
+    # 刪除設備
+    path('delete_device/', views.delete_device, name='delete_device'),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
 
