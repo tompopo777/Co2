@@ -49,6 +49,8 @@ urlpatterns = [
     path("csv_view/", csv.csv_view, name='csv_view'),
     # 編輯設備
     path('update_device/<str:datasheet_id>&<int:single_dataID>', views.update_device, name='update_device'),
+    # 刪除設備
+    path('delete_device/', views.delete_device, name='delete_device'),
     # Matches any html file
     re_path(r'^.*\.*', views.pages, name='pages'),
 

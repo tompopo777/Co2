@@ -334,7 +334,7 @@ def load_table(request):
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
                 raw_data = security.objects.values("id", "years", "monthly", "security_number", "daily_hours", "working_days")
-                                                   # "working_days", "total_working_hours", "total_working_day")
+                # "working_days", "total_working_hours", "total_working_day")
                 for i in range(raw_data.count()):
                     # 計算單筆當月總工作時數
                     TotalWorkingHour_M = raw_data[i].get("security_number") * raw_data[i].get("daily_hours") * raw_data[i].get("working_days")
@@ -432,6 +432,7 @@ def load_table(request):
                     t_data.append(single_data)
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
+
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
@@ -742,6 +743,7 @@ def waste_add(request):
 def carbon_system(request):
     return render(request, "home/carbon-system.html", locals())
 
+
 # 新增轉跳
 @login_required(login_url="/login/")
 def add_page(request):
@@ -803,14 +805,12 @@ def add_page(request):
     if request.method == "GET":
         return render(request, NewDevice_page, locals())
 
+
 # 編輯轉跳
 @login_required(login_url="/login/")
-# def edit_device(request, datasheet_id, single_dataID):
 def edit_device(request):
-    # global current_data, update_from
     datasheet_id = request.GET.get('datasheet')
     single_dataID = request.GET.get('single_dataID')
-    # print("datasheet_id:::::::::::::::::::::::::::::::", datasheet_id)
     modelName = {
         "1": emergency_generators,
         "2": combustion_equipment,
@@ -845,31 +845,15 @@ def edit_device(request):
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
         form = formlName.get(datasheet_id)
-        # print("1111111111111111111111111111111111111111111111111111")
-
-        # if request.method == 'POST':
-        #     current_data = dbName.objects.get(id=single_dataID)
-        #     update_from = form(instance=current_data)
-        #     update_from = form(request.POST, request.FILES, instance=current_data)
-        #     if update_from.is_valid():
-        #         update_from.save()
-        #         return redirect('/carbon-system/')
-        #     else:
-        #         return redirect('/waste_add/')
-
         if request.method == 'GET':
-            # print("22222222222222222222222222222222222222222222222222222")
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(instance=current_data)
-            # print("current_data:::::::::::::::::::::::::", current_data)
-            # print("update_from:::::::::::::::::::::::::::", update_from)
 
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
                 'single_dataID': single_dataID
             }
-            # print("formUpdata_name:::::::::::::::::::::::::::::", formUpdata_name)
             # 建立字典
             htmlName = {
                 "1": "home/emergency-generator-edit.html",
@@ -899,6 +883,7 @@ def edit_device(request):
                 EditDevice_page = htmlName.get(datasheet_id)
                 # print("EditDevice_page:", EditDevice_page)
                 return render(request, EditDevice_page, formUpdata_name)
+
 
 # 儲存更新後的資料
 @login_required(login_url="/login/")
@@ -945,6 +930,46 @@ def update_device(request, datasheet_id, single_dataID):
                 return redirect('/carbon-system/', locals())
         else:
             return render(request, 'home/index.html', locals())
+
+
+@login_required(login_url="/login/")
+def delete_device(request):
+    if request.method == 'GET':
+        datasheet_id = request.GET.get('deviceID')
+        single_dataID = request.GET.get('single_dataID')
+        print("datasheet_id::::::::::::::::::::::::::::::::", datasheet_id)
+        print("single_dataID::::::::::::::::::::::::::::::", single_dataID)
+        modelName = {
+            "1": emergency_generators,
+            "2": combustion_equipment,
+            "3": official_car,
+            "4": material,
+            "5": process,
+            "6": refrigerator,
+            "7": airconditioner,
+            "8": vehicle,
+            "9": water_dispenser,
+            "10": ice_water_dispenser,
+            "11": ice_maker,
+            "12": other_device,
+            "13": refrigerant_total_table,
+            "14": extinguisher,
+            "15": personnel_inventory,
+            "16": security,
+            "17": electricity,
+            "18": upstream_transportation,
+            "19": downstream_transportation,
+            "20": employee_commute,
+            "21": employee_business_trip,
+            "22": waste
+        }
+        if modelName.get(datasheet_id):
+            dbName = modelName.get(datasheet_id)
+            current_data = dbName.objects.get(id=single_dataID)
+            current_data.delete()  # 刪除該筆資料
+            # print("current_data::::::::::::::::::::::::", current_data)
+            return JsonResponse(single_dataID, safe=False)
+
 
 # 新增title
 @login_required(login_url="/login/")
