@@ -66,7 +66,7 @@ LOGOUT_REDIRECT_URL = "home"  # Route defined in home/urls.py
 TEMPLATE_DIR = os.path.join(CORE_DIR, "apps/templates")  # ROOT dir for templates
 #設定欲上傳的資料要放在哪裡
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "core/media/")
+MEDIA_ROOT = os.path.join(BASE_DIR, "apps/static/assets/img/media/")
 CSRF_COOKIE_HTTPONLY = True
 
 TEMPLATES = [
