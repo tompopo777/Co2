@@ -51,6 +51,11 @@ FUEL_TYPE_CHOICES = [
     ('柴油', '柴油'),
     ('電動車', '電動車'),
 ]
+METERING_METHOD_CHOICES = [
+    ('油車', '油車'),
+    ('電動車', '電動車'),
+    ('公里數', '公里數'),
+]
 
 class EGform(forms.ModelForm):
     class Meta:
@@ -156,14 +161,15 @@ class OFform(forms.ModelForm):
         fields = ('vehicle_type', 'years', 'fuel_type', 'device_id', 'department', 'metering_method',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
                   'november', 'december', 'image_note', 'image_path', 'urea', 'urea_add_quantity', 'urea_add_date',
-                  'urea_image_note', 'urea_image_path')
+                  'urea_image_note', 'urea_image_path', 'message_board')
         widgets = {
             'vehicle_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如:汽車、堆高機...等'}),
-            'years': forms.Select(choices=YEAR_CHOICES),
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
-            'metering_method': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
+            # 'metering_method': forms.CheckboxInput(attrs={'class': 'form-check-input accordion-header collapsed', 'type': 'radio', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
+            'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES, attrs={'class': 'form-check-input accordion-header collapsed', 'id': 'headingTwo', 'type': 'radio', 'name': 'radio', 'data-bs-toggle': 'collapse', 'data-bs-target': '#collapseTwo', 'aria-checked': 'true', 'aria-expanded': 'false', 'aria-controls': 'collapseTwo'}),
             'january': forms.TextInput(attrs={'class': 'col-6'}),
             'february': forms.TextInput(attrs={'class': 'col-6'}),
             'march': forms.TextInput(attrs={'class': 'col-6'}),
@@ -182,12 +188,14 @@ class OFform(forms.ModelForm):
             'urea_add_quantity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '單位:公升'}),
             'urea_add_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'urea_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'urea_image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'urea_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
+        self.fields['metering_method'].required = False
         self.fields['january'].required = False
         self.fields['february'].required = False
         self.fields['march'].required = False
@@ -207,6 +215,8 @@ class OFform(forms.ModelForm):
         self.fields['urea_add_date'].required = False
         self.fields['urea_image_note'].required = False
         self.fields['urea_image_path'].required = False
+        self.fields['message_board'].required = False
+
 
 
 class MTform(forms.ModelForm):
