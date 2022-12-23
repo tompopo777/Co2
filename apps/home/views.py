@@ -741,11 +741,12 @@ def waste_add(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    data = emergency_generators.objects.filter(id=5).values("image_path", "image_note")
-    context ={
-        'data': data,
-    }
-    return render(request, "home/carbon-system.html", context)
+    # data = emergency_generators.objects.filter(id=5).values("image_path", "image_note")
+    # context ={
+    #     'data': data,
+    # }
+    # return render(request, "home/carbon-system.html", context)
+    return render(request, "home/carbon-system.html", locals())
 
 
 # 新增轉跳
