@@ -144,7 +144,7 @@ def load_table(request):
                                                        "may", "june", "july", "august",
                                                        "september", "october", "november", "december")
                 urea_data = official_car.objects.values("urea_add_quantity", "urea_add_date")
-                print("urea_data::::::::::::::::::::::::::::::::::::::::", urea_data)
+                # print("urea_data::::::::::::::::::::::::::::::::::::::::", urea_data)
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
                     total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -158,7 +158,7 @@ def load_table(request):
                     for j in urea_data[i]:
                         # 「合計」後的資料(尿素)丟回字典
                         single_data[j] = urea_data[i].get(j)
-                    print("single_data::::::::::::::::::::::::::::::::", single_data)
+                    # print("single_data::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
@@ -741,7 +741,11 @@ def waste_add(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    return render(request, "home/carbon-system.html", locals())
+    data = emergency_generators.objects.filter(id=5).values("image_path", "image_note")
+    context ={
+        'data': data,
+    }
+    return render(request, "home/carbon-system.html", context)
 
 
 # 新增轉跳
@@ -881,7 +885,6 @@ def edit_device(request):
             }
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
-                # print("EditDevice_page:", EditDevice_page)
                 return render(request, EditDevice_page, formUpdata_name)
 
 
@@ -932,13 +935,12 @@ def update_device(request, datasheet_id, single_dataID):
             return render(request, 'home/index.html', locals())
 
 
+# 刪除資料
 @login_required(login_url="/login/")
 def delete_device(request):
     if request.method == 'GET':
         datasheet_id = request.GET.get('deviceID')
         single_dataID = request.GET.get('single_dataID')
-        print("datasheet_id::::::::::::::::::::::::::::::::", datasheet_id)
-        print("single_dataID::::::::::::::::::::::::::::::", single_dataID)
         modelName = {
             "1": emergency_generators,
             "2": combustion_equipment,
