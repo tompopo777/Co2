@@ -91,24 +91,24 @@
             </table>
         </div>
     </div>
-{#    <div>#}
-{#                <img src="static/assets/img/bg9.jpg" alt="errro">#}
-{#                <img src="{% static 'static/assets/img/bg9.jpg' %}" alt="errro">#}
-{##}
-        {#        {% load static %}#}
-{#        {% for a in data %}#}
-{#            <h2>{{ a.image_note }}</h2>#}
-{#            <img src="url('{{ MEDIA_ROOT }}{{ a.image_path }}')" alt="errro">#}
-            {#            url('{{ ASSETS_ROOT }}0008020206520995_b.jpng')#}
-{#            <h2>{{ a.image_path }}"</h2>#}
-            {#            <img src="{% static 'image/ivana-squares.jpg' %}" alt="errro">#}
-{#            <img src="{% core '12/{{ a.image_path }}' %}" alt="errro">#}
-{#            <a href="{{ a.image_path }}">#}
-{#                <img src="/12/{{ a.image_path.url }}">#}
-{#            </a>#}
-{#        {% endfor %}#}
-{##}
-{#    </div>#}
+    {#    <div>#}
+    {#                <img src="static/assets/img/bg9.jpg" alt="errro">#}
+    {#                <img src="{% static 'static/assets/img/bg9.jpg' %}" alt="errro">#}
+    {##}
+    {#        {% load static %}#}
+    {#        {% for a in data %}#}
+    {#            <h2>{{ a.image_note }}</h2>#}
+    {#            <img src="url('{{ MEDIA_ROOT }}{{ a.image_path }}')" alt="errro">#}
+    {#            url('{{ ASSETS_ROOT }}0008020206520995_b.jpng')#}
+    {#            <h2>{{ a.image_path }}"</h2>#}
+    {#            <img src="{% static 'image/ivana-squares.jpg' %}" alt="errro">#}
+    {#            <img src="{% core '12/{{ a.image_path }}' %}" alt="errro">#}
+    {#            <a href="{{ a.image_path }}">#}
+    {#                <img src="/12/{{ a.image_path.url }}">#}
+    {#            </a>#}
+    {#        {% endfor %}#}
+    {##}
+    {#    </div>#}
 
 {% endblock content %}
 
@@ -285,17 +285,20 @@
                     var thead_row_name = thead.insertRow(-1)//加入"標題"列
                     title.forEach((item, index) => {
                         var i = 0;
-                        thead_row_name.insertCell(-1)//加入"編輯鈕"框框
-                        thead_row_name.insertCell(-1)//加入"刪除紐"框框
+                        {#thead_row_name.insertCell(-1)//加入"編輯鈕"框框#}
+                        {#thead_row_name.insertCell(-1)//加入"刪除紐"框框#}
                         {#thead_row_name.insertCell(-1)//加入"照片紐"框框#}
                         for (const [key, value] of Object.entries((item))) {
                             var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
                             var a = thead_row_category.appendChild(tr_c)
                             tr_c.innerHTML = key//"分類"框框填質
-                            if (i % 2 == 0) {
-                                tr_c.setAttribute('class', 'table-secondary');
-                            } else {
+                            if (i === 0) {
+                                tr_c.setAttribute('class', 'table-dark');
+                            }
+                            else if (i % 2 === 0) {
                                 tr_c.setAttribute('class', 'table-light');
+                            } else {
+                                tr_c.setAttribute('class', 'table-secondary');
                             }
                             tr_c.setAttribute('style', 'border-color: black')
                             value.forEach((item, index) => {
@@ -303,7 +306,8 @@
                                 thead_row_name.appendChild(cr_n)
                                 cr_n.innerHTML = item;//"標題"框框填質
                                 if (i == 0) {
-                                    a.colSpan = index + 3//"分類"列第一個框框空間+4
+                                    a.colSpan = index + 1//"分類"列第一個框框空間+4
+                                    {#a.colSpan = index + 3//"分類"列第一個框框空間+4#}
                                     {#a.colSpan = index + 4//"分類"列第一個框框空間+4#}
                                 } else {
                                     a.colSpan = index + 1//"分類"列第一個框框空間+2
