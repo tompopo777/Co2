@@ -940,7 +940,7 @@ def update_device(request, datasheet_id, single_dataID):
 @login_required(login_url="/login/")
 def delete_device(request):
     if request.method == 'GET':
-        datasheet_id = request.GET.get('deviceID')
+        datasheet_id = request.GET.get('datasheet_id')
         single_dataID = request.GET.get('single_dataID')
         modelName = {
             "1": emergency_generators,

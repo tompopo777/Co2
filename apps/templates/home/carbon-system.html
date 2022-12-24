@@ -13,7 +13,7 @@
 
 {% block content %}
 
-{#    {% include 'includes/navigation-transparent.html' %}#}
+    {#    {% include 'includes/navigation-transparent.html' %}#}
 
     <header class="bg-gradient-dark">
         <div class="page-header min-vh-50"
@@ -109,6 +109,24 @@
     {#        {% endfor %}#}
     {##}
     {#    </div>#}
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="staticBackdropLabel">注意!!!</h5></div>
+                </div>
+                <div class="modal-body d-flex justify-content-center">
+                    <h6>是否刪除此筆資料</h6>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger delete_btn" data-bs-dismiss="modal">確認刪除</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock content %}
 
@@ -350,7 +368,9 @@
                         delete_squ.appendChild(trash)
                         edit_squ.appendChild(pencil)
                         {#pic_squ.appendChild(pic)#}
-                        trash.setAttribute('class', 'btn py-0 px-2 m-0 delete_btn')
+                        trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
+                        trash.setAttribute('data-bs-toggle', 'modal')
+                        trash.setAttribute('data-bs-target', '#staticBackdrop')
                         trash.appendChild(trash_i_tag)
                         pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
                         pencil.appendChild(pencil_i_tag)
@@ -406,25 +426,34 @@
     <!--/*刪除該筆設備*/-->
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
-        var single_data = document.getElementsByClassName("edit_btn")
-        $(document).on('click', ".delete_btn", function () {
+        $(document).on('click', ".trash_btn", function () {
             var single_dataID = this.id;
-            var deviceId = dropdownmenu3.value;
-            $.ajax({
-                url: "{% url 'delete_device' %}",
-                data: {
-                    'deviceID': deviceId,
-                    'single_dataID': single_dataID
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function (single_dataID) {
-                    var single_data = document.getElementById(single_dataID)
-                    var tr = single_data.closest("tr")
-                    tr.remove();
-                }
-            });
+            var deviceID = dropdownmenu3.value
+            delete_device(single_dataID, deviceID)
         })
+    </script>
+
+    <!--/*刪除function*/-->
+    <script>
+        function delete_device(id, datasheet_id) {
+            $(document).on('click', ".delete_btn", function () {
+                console.warn("single_dataID", id)
+                $.ajax({
+                    url: "{% url 'delete_device' %}",
+                    data: {
+                        'datasheet_id': datasheet_id,
+                        'single_dataID': id
+                    },
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (single_dataID) {
+                        var single_data = document.getElementById(single_dataID)
+                        {#console.warn(">>>>>>>>>>>", single_data)#}
+                        single_data.closest("tr").remove()
+                    }
+                });
+            })
+        }
     </script>
 
     <script>
