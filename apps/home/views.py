@@ -462,8 +462,12 @@ def combustion_equipment_add(request):
 @login_required(login_url="/login/")
 def official_car_add(request):
     if request.method == "POST":
+        m_method = request.POST.get('radio')
+        print(m_method)
         OffCar_add = OFform(request.POST, request.FILES)
         if OffCar_add.is_valid():
+            # OffCar_add.metering_method = m_method
+            # print(OffCar_add.metering_method)
             OffCar_add.save()
 
             return redirect('/carbon-system/')
