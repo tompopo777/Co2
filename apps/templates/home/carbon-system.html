@@ -13,7 +13,7 @@
 
 {% block content %}
 
-    {% include 'includes/navigation-transparent.html' %}
+    {#    {% include 'includes/navigation-transparent.html' %}#}
 
     <header class="bg-gradient-dark">
         <div class="page-header min-vh-50"
@@ -89,6 +89,42 @@
 
                 </tbody>
             </table>
+        </div>
+    </div>
+    {#    <div>#}
+    {#                <img src="static/assets/img/bg9.jpg" alt="errro">#}
+    {#                <img src="{% static 'static/assets/img/bg9.jpg' %}" alt="errro">#}
+    {##}
+    {#        {% load static %}#}
+    {#        {% for a in data %}#}
+    {#            <h2>{{ a.image_note }}</h2>#}
+    {#            <img src="url('{{ MEDIA_ROOT }}{{ a.image_path }}')" alt="errro">#}
+    {#            url('{{ ASSETS_ROOT }}0008020206520995_b.jpng')#}
+    {#            <h2>{{ a.image_path }}"</h2>#}
+    {#            <img src="{% static 'image/ivana-squares.jpg' %}" alt="errro">#}
+    {#            <img src="{% core '12/{{ a.image_path }}' %}" alt="errro">#}
+    {#            <a href="{{ a.image_path }}">#}
+    {#                <img src="/12/{{ a.image_path.url }}">#}
+    {#            </a>#}
+    {#        {% endfor %}#}
+    {##}
+    {#    </div>#}
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="staticBackdropLabel">注意!!!</h5></div>
+                </div>
+                <div class="modal-body d-flex justify-content-center">
+                    <h6>是否刪除此筆資料</h6>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger delete_btn" data-bs-dismiss="modal">確認刪除</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -267,26 +303,28 @@
                     var thead_row_name = thead.insertRow(-1)//加入"標題"列
                     title.forEach((item, index) => {
                         var i = 0;
-                        thead_row_name.insertCell(-1)//加入"編輯鈕"框框
-                        thead_row_name.insertCell(-1)//加入"刪除紐"框框
                         for (const [key, value] of Object.entries((item))) {
+                            console.warn(">>>>>")
                             var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
                             var a = thead_row_category.appendChild(tr_c)
                             tr_c.innerHTML = key//"分類"框框填質
-                            if (i % 2 == 0) {
-                                tr_c.setAttribute('class', 'table-secondary');
-                            } else {
+                            if (i === 0) {
+                                tr_c.setAttribute('class', 'table-dark');
+                            } else if (i % 2 === 0) {
                                 tr_c.setAttribute('class', 'table-light');
+                            } else {
+                                tr_c.setAttribute('class', 'table-secondary');
                             }
                             tr_c.setAttribute('style', 'border-color: black')
                             value.forEach((item, index) => {
                                 var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框
                                 thead_row_name.appendChild(cr_n)
                                 cr_n.innerHTML = item;//"標題"框框填質
-                                if (i == 0) {
-                                    a.colSpan = index + 3//"分類"列第一個框框空間+2
+                                if (i === 0) {
+                                    cr_n.setAttribute('class', 'table-active')
+                                    a.colSpan = index + 1//"分類"列第一個框框空間+1，因為"序號"欄位
                                 } else {
-                                    a.colSpan = index + 1//"分類"列第一個框框空間+2
+                                    a.colSpan = index + 1//"分類"列第一個框框空間+1
                                 }
                             })
                             i++;
@@ -321,26 +359,35 @@
                         var trash_i_tag = document.createElement('i')//加入"i"tag
                         var pencil = document.createElement('a')//加入"pencil button"tag
                         var pencil_i_tag = document.createElement('i')//加入"i"tag
+                        {#var pic = document.createElement('a')//加入"picture button"tag#}
+                        {#var pic_i_tag = document.createElement('i')//加入"i"tag#}
                         var row = tbody.insertRow(-1)//加入"第一筆資料"列
                         var delete_squ = row.insertCell(-1)//加入刪除鈕框框
                         var edit_squ = row.insertCell(-1)//加入編輯鈕框框
+                        {#var pic_squ = row.insertCell(-1)//加入照片鈕框框#}
                         delete_squ.appendChild(trash)
                         edit_squ.appendChild(pencil)
-                        trash.setAttribute('class', 'btn py-0 m-0 delete_btn')
+                        {#pic_squ.appendChild(pic)#}
+                        trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
+                        trash.setAttribute('data-bs-toggle', 'modal')
+                        trash.setAttribute('data-bs-target', '#staticBackdrop')
                         trash.appendChild(trash_i_tag)
-                        pencil.setAttribute('class', 'btn py-0 m-0 edit_btn')
+                        pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
                         pencil.appendChild(pencil_i_tag)
+                        {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
+                        {#pic.appendChild(pic_i_tag)#}
                         trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
                         pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
+                        {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
                         var cr_id = row.insertCell(-1)//加入"序號"框框
                         cr_id.innerHTML = id
                         var datasheet_id = dropdownmenu3.value;
                         for (const [key, value] of Object.entries((item))) {
                             if (key == "id") {
                                 pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端
-                                pencil.setAttribute('id', value)//設定編輯按鈕的id為設備id
-                                {#trash.setAttribute('href', '/update_device/?datasheet=' + datasheet_id + '&single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端#}
-                                trash.setAttribute('id', value)//設定編輯按鈕的id為設備id
+                                pencil.setAttribute('id', value)//設定按鈕的id為設備id
+                                trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
+                                {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
                                 continue;
                             }
                             var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
@@ -379,26 +426,34 @@
     <!--/*刪除該筆設備*/-->
     <script>
         var dropdownmenu3 = document.getElementById("dropdownmenu3")
-        var single_data = document.getElementsByClassName("edit_btn")
-        $(document).on('click', ".delete_btn", function () {
+        $(document).on('click', ".trash_btn", function () {
             var single_dataID = this.id;
-            var deviceId = dropdownmenu3.value;
-            $.ajax({
-                url: "{% url 'delete_device' %}",
-                data: {
-                    'deviceID': deviceId,
-                    'single_dataID': single_dataID
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function (single_dataID) {
-                    console.warn("111", single_dataID)
-                    var single_data = document.getElementById(single_dataID)
-                    var tr = single_data.closest("tr")
-                    tr.remove();
-                }
-            });
+            var deviceID = dropdownmenu3.value
+            delete_device(single_dataID, deviceID)
         })
+    </script>
+
+    <!--/*刪除function*/-->
+    <script>
+        function delete_device(id, datasheet_id) {
+            $(document).on('click', ".delete_btn", function () {
+                console.warn("single_dataID", id)
+                $.ajax({
+                    url: "{% url 'delete_device' %}",
+                    data: {
+                        'datasheet_id': datasheet_id,
+                        'single_dataID': id
+                    },
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (single_dataID) {
+                        var single_data = document.getElementById(single_dataID)
+                        {#console.warn(">>>>>>>>>>>", single_data)#}
+                        single_data.closest("tr").remove()
+                    }
+                });
+            })
+        }
     </script>
 
     <script>
