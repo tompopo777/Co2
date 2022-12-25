@@ -26,8 +26,7 @@ class emergency_generators(models.Model):
     id = models.AutoField(primary_key=True,)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=1)
     device_id = models.CharField(max_length=30)
-    period_starttime = models.DateField()
-    period_endtime = models.DateField()
+    years = models.IntegerField()
     device_capacity = models.IntegerField()
     position = models.CharField(max_length=30)
     department = models.CharField(max_length=100, null=True)
@@ -45,6 +44,7 @@ class emergency_generators(models.Model):
     december = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='emergency_generators/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class combustion_equipment(models.Model):
     id = models.AutoField(primary_key=True)
@@ -52,8 +52,7 @@ class combustion_equipment(models.Model):
     device_name = models.CharField(max_length=50)
     device_id = models.CharField(max_length=30)
     fuel_type = models.CharField(max_length=10)
-    period_starttime = models.DateField()
-    period_endtime = models.DateField()
+    years = models.IntegerField()
     fuel_january = models.FloatField()
     fuel_february = models.FloatField()
     fuel_march = models.FloatField()
@@ -80,6 +79,7 @@ class combustion_equipment(models.Model):
     heat_december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='combustion_equipment/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class official_car(models.Model):
     id = models.AutoField(primary_key=True)
@@ -89,26 +89,57 @@ class official_car(models.Model):
     fuel_type = models.CharField(max_length=30)
     device_id = models.CharField(max_length=30)
     department = models.CharField(max_length=100, null=True)
-    metering_method = models.CharField(max_length=10, null=True)
-    january = models.FloatField(null=True)
-    february = models.FloatField(null=True)
-    march = models.FloatField(null=True)
-    april = models.FloatField(null=True)
-    may = models.FloatField(null=True)
-    june = models.FloatField(null=True)
-    july = models.FloatField(null=True)
-    august = models.FloatField(null=True)
-    september = models.FloatField(null=True)
-    october = models.FloatField(null=True)
-    november = models.FloatField(null=True)
-    december = models.FloatField(null=True)
+    metering_method = models.CharField(max_length=20)
+    oil_january = models.FloatField(default=0)
+    oil_february = models.FloatField(default=0)
+    oil_march = models.FloatField(default=0)
+    oil_april = models.FloatField(default=0)
+    oil_may = models.FloatField(default=0)
+    oil_june = models.FloatField(default=0)
+    oil_july = models.FloatField(default=0)
+    oil_august = models.FloatField(default=0)
+    oil_september = models.FloatField(default=0)
+    oil_october = models.FloatField(default=0)
+    oil_november = models.FloatField(default=0)
+    oil_december = models.FloatField(default=0)
+    elec_january = models.FloatField(default=0)
+    elec_february = models.FloatField(default=0)
+    elec_march = models.FloatField(default=0)
+    elec_april = models.FloatField(default=0)
+    elec_may = models.FloatField(default=0)
+    elec_june = models.FloatField(default=0)
+    elec_july = models.FloatField(default=0)
+    elec_august = models.FloatField(default=0)
+    elec_september = models.FloatField(default=0)
+    elec_october = models.FloatField(default=0)
+    elec_november = models.FloatField(default=0)
+    elec_december = models.FloatField(default=0)
+    km_january = models.FloatField(default=0)
+    km_february = models.FloatField(default=0)
+    km_march = models.FloatField(default=0)
+    km_april = models.FloatField(default=0)
+    km_may = models.FloatField(default=0)
+    km_june = models.FloatField(default=0)
+    km_july = models.FloatField(default=0)
+    km_august = models.FloatField(default=0)
+    km_september = models.FloatField(default=0)
+    km_october = models.FloatField(default=0)
+    km_november = models.FloatField(default=0)
+    km_december = models.FloatField(default=0)
+    urea_january = models.FloatField(default=0)
+    urea_february = models.FloatField(default=0)
+    urea_march = models.FloatField(default=0)
+    urea_april = models.FloatField(default=0)
+    urea_may = models.FloatField(default=0)
+    urea_june = models.FloatField(default=0)
+    urea_july = models.FloatField(default=0)
+    urea_august = models.FloatField(default=0)
+    urea_september = models.FloatField(default=0)
+    urea_october = models.FloatField(default=0)
+    urea_november = models.FloatField(default=0)
+    urea_december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='official_car/%Y/%m', null=True, default=None)
-    urea = models.BooleanField(null=True, default=False)
-    urea_add_quantity = models.FloatField(null=True)
-    urea_add_date = models.DateField(null=True)
-    urea_image_note = models.CharField(max_length=30, null=True)
-    urea_image_path = models.ImageField(upload_to='official_car/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -130,6 +161,7 @@ class material(models.Model):
     october = models.FloatField()
     november = models.FloatField()
     december = models.FloatField()
+    message_board = models.CharField(max_length=255, null=True)
 
 class process(models.Model):
     id = models.AutoField(primary_key=True)
@@ -155,6 +187,7 @@ class process(models.Model):
     december = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='process/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class refrigerator(models.Model):
     id = models.AutoField(primary_key=True)
@@ -172,6 +205,7 @@ class refrigerator(models.Model):
     effusion_rate = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='refrigerator/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class airconditioner(models.Model):
     id = models.AutoField(primary_key=True)
@@ -189,6 +223,7 @@ class airconditioner(models.Model):
     effusion_rate = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='airconditioner/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class vehicle(models.Model):
     id = models.AutoField(primary_key=True)
@@ -206,6 +241,7 @@ class vehicle(models.Model):
     effusion_rate = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='vehicle/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class water_dispenser(models.Model):
     id = models.AutoField(primary_key=True)
@@ -223,6 +259,7 @@ class water_dispenser(models.Model):
     effusion_rate = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='water_dispenser/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class ice_water_dispenser(models.Model):
     id = models.AutoField(primary_key=True)
@@ -240,6 +277,7 @@ class ice_water_dispenser(models.Model):
     effusion_rate = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='ice_water_dispenser/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class ice_maker(models.Model):
     id = models.AutoField(primary_key=True)
@@ -257,6 +295,7 @@ class ice_maker(models.Model):
     effusion_rate = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='ice_maker/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class other_device(models.Model):
     id = models.AutoField(primary_key=True)
@@ -274,6 +313,7 @@ class other_device(models.Model):
     effusion_rate = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='other_device/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class refrigerant_total_table(models.Model):
     id = models.AutoField(primary_key=True)
@@ -291,6 +331,7 @@ class refrigerant_total_table(models.Model):
     effusion_rate = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='refrigerant_total_table/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class extinguisher(models.Model):
     id = models.AutoField(primary_key=True)
@@ -309,6 +350,7 @@ class extinguisher(models.Model):
     replace_filling_date = models.DateField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='extinguisher/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class personnel_inventory(models.Model):
     id = models.AutoField(primary_key=True)
@@ -323,6 +365,7 @@ class personnel_inventory(models.Model):
     day_off_hours = models.IntegerField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='personnel_inventory/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class security(models.Model):
     id = models.AutoField(primary_key=True)
@@ -334,6 +377,7 @@ class security(models.Model):
     working_days = models.IntegerField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='security/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class electricity(models.Model):
     id = models.AutoField(primary_key=True)
@@ -354,6 +398,7 @@ class electricity(models.Model):
     december = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='electricity/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class upstream_transportation(models.Model):
     id = models.AutoField(primary_key=True)
@@ -388,6 +433,7 @@ class upstream_transportation(models.Model):
     special_trips = models.IntegerField(null=True)
     special_image_note = models.CharField(max_length=30, null=True)
     special_image_path = models.ImageField(upload_to='upstream_transportation/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class downstream_transportation(models.Model):
     id = models.AutoField(primary_key=True)
@@ -422,6 +468,7 @@ class downstream_transportation(models.Model):
     special_trips = models.IntegerField(null=True)
     special_image_note = models.CharField(max_length=30, null=True)
     special_image_path = models.ImageField(upload_to='downstream_transportation/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class employee_commute(models.Model):
     id = models.AutoField(primary_key=True)
@@ -438,6 +485,7 @@ class employee_commute(models.Model):
     commute_distance = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='employee_commute/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class employee_business_trip(models.Model):
     id = models.AutoField(primary_key=True)
@@ -455,6 +503,7 @@ class employee_business_trip(models.Model):
     round_trip_distance = models.IntegerField()
     rtd_image_note = models.CharField(max_length=30, null=True)
     rtd_image_path = models.ImageField(upload_to='employee_business_trip/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
 
 class waste(models.Model):
     id = models.AutoField(primary_key=True)
@@ -464,9 +513,10 @@ class waste(models.Model):
     waste_date = models.DateField()
     waste_disposal = models.CharField(max_length=20)
     waste_location = models.CharField(max_length=100)
-    waste_removal_method = models.CharField(max_length=20)
+    waste_disposal_vendor = models.CharField(max_length=20)
     transport_type = models.CharField(max_length=20, null=True)
     transport_fuel = models.CharField(max_length=10, null=True)
     transport_distance = models.IntegerField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='waste/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)

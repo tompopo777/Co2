@@ -56,17 +56,36 @@ METERING_METHOD_CHOICES = [
     ('電動車', '電動車'),
     ('公里數', '公里數'),
 ]
+WASTE_DISPOSAL_CHOICES = [
+    ('焚化', '焚化'),
+    ('洗淨', '洗淨'),
+    ('熱處理', '熱處理'),
+    ('再利用', '再利用')
+]
+CE_FUEL_TYPE_CHOICES = [
+    ('天然氣', '天然氣'),
+    ('液化石油氣', '液化石油氣'),
+    ('液化天然氣', '液化天然氣'),
+    ('燃煤', '燃煤')
+]
+VEHICLE_TYPE_CHOICES = [
+    ('汽車', '汽車'),
+    ('貨車', '貨車'),
+    ('堆高機', '堆高機'),
+    ('電動車', '電動車'),
+    ('摩托車', '摩托車')
+]
+
 
 class EGform(forms.ModelForm):
     class Meta:
         model = emergency_generators
-        fields = ('device_id', 'period_starttime', 'period_endtime', 'device_capacity', 'position', 'department',
+        fields = ('device_id', 'years', 'device_capacity', 'position', 'department',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
-                  'november', 'december', 'image_note', 'image_path')
+                  'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'period_starttime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'period_endtime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off',
                                                       'pattern': '[0-9]+', 'title': '只能輸入數字',
                                                       'placeholder': '單位:公升'}),
@@ -85,7 +104,8 @@ class EGform(forms.ModelForm):
             'november': forms.TextInput(attrs={'class': 'col-6'}),
             'december': forms.TextInput(attrs={'class': 'col-6'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -93,22 +113,22 @@ class EGform(forms.ModelForm):
         self.fields['department'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class CEform(forms.ModelForm):
     class Meta:
         model = combustion_equipment
-        fields = ('device_name', 'device_id', 'fuel_type', 'period_starttime', 'period_endtime', 'fuel_january',
+        fields = ('device_name', 'device_id', 'fuel_type', 'years', 'fuel_january',
                   'fuel_february', 'fuel_march', 'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august',
                   'fuel_september', 'fuel_october', 'fuel_november', 'fuel_december', 'heat_january', 'heat_february',
                   'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
-                  'heat_october', 'heat_november', 'heat_december', 'image_note', 'image_path')
+                  'heat_october', 'heat_november', 'heat_december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'device_name': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
-            'fuel_type': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
-            'period_starttime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'period_endtime': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'fuel_type': forms.Select(choices=CE_FUEL_TYPE_CHOICES),
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'fuel_january': forms.TextInput(attrs={'class': 'col-6'}),
             'fuel_february': forms.TextInput(attrs={'class': 'col-6'}),
             'fuel_march': forms.TextInput(attrs={'class': 'col-6'}),
@@ -134,55 +154,82 @@ class CEform(forms.ModelForm):
             'heat_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '熱值註解!'})
         }
 
     def __init__(self, *args, **kwargs):
         super(CEform, self).__init__(*args, **kwargs)
-        self.fields['heat_january'].required = False
-        self.fields['heat_february'].required = False
-        self.fields['heat_march'].required = False
-        self.fields['heat_april'].required = False
-        self.fields['heat_may'].required = False
-        self.fields['heat_june'].required = False
-        self.fields['heat_july'].required = False
-        self.fields['heat_august'].required = False
-        self.fields['heat_september'].required = False
-        self.fields['heat_october'].required = False
-        self.fields['heat_november'].required = False
-        self.fields['heat_december'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class OFform(forms.ModelForm):
     class Meta:
         model = official_car
-        fields = ('vehicle_type', 'years', 'fuel_type', 'device_id', 'department', 'metering_method',
-                  'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
-                  'november', 'december', 'image_note', 'image_path', 'urea', 'urea_add_quantity', 'urea_add_date',
-                  'urea_image_note', 'urea_image_path', 'message_board')
+        fields = ('vehicle_type', 'years', 'fuel_type', 'device_id', 'department',
+                  'oil_january', 'oil_february', 'oil_march', 'oil_april', 'oil_may', 'oil_june', 'oil_july', 'oil_august',
+                  'oil_september', 'oil_october', 'oil_november', 'oil_december', 'elec_january', 'elec_february',
+                  'elec_march', 'elec_april', 'elec_may', 'elec_june', 'elec_july', 'elec_august', 'elec_september',
+                  'elec_october', 'elec_november', 'elec_december', 'km_january', 'km_february', 'km_march', 'km_april',
+                  'km_may', 'km_june', 'km_july', 'km_august', 'km_september', 'km_october', 'km_november', 'km_december',
+                  'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july',
+                  'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'vehicle_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如:汽車、堆高機...等'}),
+            'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
-            # 'metering_method': forms.CheckboxInput(attrs={'class': 'form-check-input accordion-header collapsed', 'type': 'radio', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
-            # 'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES, attrs={'class': 'form-check-input accordion-header collapsed', 'id': 'headingTwo', 'type': 'radio', 'name': 'radio', 'data-bs-toggle': 'collapse', 'data-bs-target': '#collapseTwo', 'aria-checked': 'true', 'aria-expanded': 'false', 'aria-controls': 'collapseTwo'}),
-            'metering_method': forms.HiddenInput(),
-            'january': forms.TextInput(attrs={'class': 'col-6'}),
-            'february': forms.TextInput(attrs={'class': 'col-6'}),
-            'march': forms.TextInput(attrs={'class': 'col-6'}),
-            'april': forms.TextInput(attrs={'class': 'col-6'}),
-            'may': forms.TextInput(attrs={'class': 'col-6'}),
-            'june': forms.TextInput(attrs={'class': 'col-6'}),
-            'july': forms.TextInput(attrs={'class': 'col-6'}),
-            'august': forms.TextInput(attrs={'class': 'col-6'}),
-            'september': forms.TextInput(attrs={'class': 'col-6'}),
-            'october': forms.TextInput(attrs={'class': 'col-6'}),
-            'november': forms.TextInput(attrs={'class': 'col-6'}),
-            'december': forms.TextInput(attrs={'class': 'col-6'}),
+            'oil_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'oil_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'elec_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'km_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'urea': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
@@ -196,26 +243,56 @@ class OFform(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
-        self.fields['metering_method'].required = False
-        self.fields['january'].required = False
-        self.fields['february'].required = False
-        self.fields['march'].required = False
-        self.fields['april'].required = False
-        self.fields['may'].required = False
-        self.fields['june'].required = False
-        self.fields['july'].required = False
-        self.fields['august'].required = False
-        self.fields['september'].required = False
-        self.fields['october'].required = False
-        self.fields['november'].required = False
-        self.fields['december'].required = False
+        self.fields['oil_january'].required = False
+        self.fields['oil_february'].required = False
+        self.fields['oil_march'].required = False
+        self.fields['oil_april'].required = False
+        self.fields['oil_may'].required = False
+        self.fields['oil_june'].required = False
+        self.fields['oil_july'].required = False
+        self.fields['oil_august'].required = False
+        self.fields['oil_september'].required = False
+        self.fields['oil_october'].required = False
+        self.fields['oil_november'].required = False
+        self.fields['oil_december'].required = False
+        self.fields['elec_january'].required = False
+        self.fields['elec_february'].required = False
+        self.fields['elec_march'].required = False
+        self.fields['elec_april'].required = False
+        self.fields['elec_may'].required = False
+        self.fields['elec_june'].required = False
+        self.fields['elec_july'].required = False
+        self.fields['elec_august'].required = False
+        self.fields['elec_september'].required = False
+        self.fields['elec_october'].required = False
+        self.fields['elec_november'].required = False
+        self.fields['elec_december'].required = False
+        self.fields['km_january'].required = False
+        self.fields['km_february'].required = False
+        self.fields['km_march'].required = False
+        self.fields['km_april'].required = False
+        self.fields['km_may'].required = False
+        self.fields['km_june'].required = False
+        self.fields['km_july'].required = False
+        self.fields['km_august'].required = False
+        self.fields['km_september'].required = False
+        self.fields['km_october'].required = False
+        self.fields['km_november'].required = False
+        self.fields['km_december'].required = False
+        self.fields['urea_january'].required = False
+        self.fields['urea_february'].required = False
+        self.fields['urea_march'].required = False
+        self.fields['urea_april'].required = False
+        self.fields['urea_may'].required = False
+        self.fields['urea_june'].required = False
+        self.fields['urea_july'].required = False
+        self.fields['urea_august'].required = False
+        self.fields['urea_september'].required = False
+        self.fields['urea_october'].required = False
+        self.fields['urea_november'].required = False
+        self.fields['urea_december'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
-        self.fields['urea'].required = False
-        self.fields['urea_add_quantity'].required = False
-        self.fields['urea_add_date'].required = False
-        self.fields['urea_image_note'].required = False
-        self.fields['urea_image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -835,20 +912,21 @@ class WASTEform(forms.ModelForm):
     class Meta:
         model = waste
         fields = ('waste_name', 'waste_weigh', 'waste_date', 'waste_disposal', 'waste_location',
-                  'waste_removal_method', 'transport_type', 'transport_fuel', 'transport_distance', 'image_note',
-                  'image_path')
+                  'waste_disposal_vendor', 'transport_type', 'transport_fuel', 'transport_distance', 'image_note',
+                  'image_path', 'message_board')
         widgets = {
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_weigh': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'waste_disposal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如: 燃燒、物理處理...等'}),
+            'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_location': forms.TextInput(attrs={'class': 'form-control'}),
-            'waste_removal_method': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '如: 焚化、洗淨、熱處理、再利用'}),
+            'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
             'transport_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'transport_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -858,4 +936,5 @@ class WASTEform(forms.ModelForm):
         self.fields['transport_distance'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
