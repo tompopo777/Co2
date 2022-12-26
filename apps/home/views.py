@@ -466,7 +466,7 @@ def official_car_add(request):
         print(m_method)
         OffCar_add = OFform(request.POST, request.FILES)
         if OffCar_add.is_valid():
-            OffCar_add.metering_method = str(m_method)
+            OffCar_add.metering_method = m_method
             print(OffCar_add.metering_method)
             OffCar_add.save()
 
