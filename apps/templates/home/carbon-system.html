@@ -436,23 +436,21 @@
     <!--/*刪除function*/-->
     <script>
         function delete_device(id, datasheet_id) {
-            $(document).on('click', ".delete_btn", function () {
-                console.warn("single_dataID", id)
-                $.ajax({
-                    url: "{% url 'delete_device' %}",
-                    data: {
-                        'datasheet_id': datasheet_id,
-                        'single_dataID': id
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (single_dataID) {
-                        var single_data = document.getElementById(single_dataID)
-                        {#console.warn(">>>>>>>>>>>", single_data)#}
-                        single_data.closest("tr").remove()
-                    }
-                });
-            })
+            {#console.warn("single_dataID", id)#}
+            $.ajax({
+                url: "{% url 'delete_device' %}",
+                data: {
+                    'datasheet_id': datasheet_id,
+                    'single_dataID': id
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (single_dataID) {
+                    var single_data = document.getElementById(single_dataID)
+                    console.warn(">>>>>>>>>>>", single_data)
+                    single_data.closest("tr").remove()
+                }
+            });
         }
     </script>
 

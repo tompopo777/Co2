@@ -95,14 +95,14 @@ def load_table(request):
                                                                "september", "october", "november", "december")
                 # 計算加油量合計
                 for i in range(raw_data.count()):
-                    total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                            raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                            raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                        raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                        raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
                     # print("total::::::::::::::::::::::::::::::::::::::::", total)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的加油量丟回字典
-                    single_data["total"] = total
+                    single_data["total"] = consumption_total
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
@@ -138,27 +138,49 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id",
-                                                       "fuel_type", "department", "metering_method",
-                                                       "january", "february", "march", "april",
-                                                       "may", "june", "july", "august",
-                                                       "september", "october", "november", "december")
-                urea_data = official_car.objects.values("urea_add_quantity", "urea_add_date")
-                # print("urea_data::::::::::::::::::::::::::::::::::::::::", urea_data)
+                raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
+                oil = official_car.objects.values("oil_january", "oil_february", "oil_march", "oil_april",
+                                                               "oil_may", "oil_june", "oil_july", "oil_august",
+                                                               "oil_september", "oil_october", "oil_november", "oil_december")
+                elec = official_car.objects.values("elec_january", "elec_february", "elec_march", "elec_april",
+                                                   "elec_may", "elec_june", "elec_july", "elec_august",
+                                                   "elec_september", "elec_october", "elec_november", "elec_december")
+                km = official_car.objects.values("km_january", "km_february", "km_march", "km_april",
+                                                 "km_may", "km_june", "km_july", "km_august",
+                                                 "km_september", "km_october", "km_november", "km_december")
+                urea_data = official_car.objects.values("urea_january", "urea_february", "urea_march", "urea_april",
+                                                        "urea_may", "urea_june", "urea_july", "urea_august",
+                                                        "urea_september", "urea_october", "urea_november", "urea_december")
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
-                    total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                            raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                            raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
+                    # print("yes>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", official_car.objects.values("metering_method")[i].get("metering_method"))
+                    if official_car.objects.values("metering_method")[i].get("metering_method") == "油車":
+                        consumption_data = oil
+                    elif official_car.objects.values("metering_method")[i].get("metering_method") == "電動車":
+                        consumption_data = elec
+                    elif official_car.objects.values("metering_method")[i].get("metering_method") == "公里數":
+                        consumption_data = km
+
                     single_data = raw_data[i]
+                    consumption_total = 0
+                    for j in consumption_data[i]:
+                        # print("oil:::", consumption_data[i].get(j))
+                        # 「逐一」將資料(耗用量)丟回字典
+                        single_data[j] = consumption_data[i].get(j)
+                        consumption_total += consumption_data[i].get(j)
+                    # print("single_data11111", single_data)
                     # 將計算後的耗用量丟回字典
-                    single_data["total"] = total
-                    for j in urea_data[i]:
-                        # 「合計」後的資料(尿素)丟回字典
-                        single_data[j] = urea_data[i].get(j)
-                    # print("single_data::::::::::::::::::::::::::::::::", single_data)
+                    single_data["consumption_total"] = consumption_total
+                    urea_total = 0
+                    for k in urea_data[i]:
+                        single_data[k] = urea_data[i].get(k)  # 「逐一」將資料(尿素)丟回字典
+                        if urea_data[i].get(k) != None:
+                            urea_total += urea_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
+                    if urea_total == 0:
+                        single_data["urea_total"] = None  # 如果沒有(尿素)，設為空值
+                    else:
+                        single_data["urea_total"] = urea_total  # 「合計」後的資料(尿素)丟回字典
+                    # print("single_data:::::::::", single_data)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
@@ -463,14 +485,20 @@ def combustion_equipment_add(request):
 def official_car_add(request):
     if request.method == "POST":
         m_method = request.POST.get('radio')
-        print(m_method)
+        print("m_method:", m_method)
         OffCar_add = OFform(request.POST, request.FILES)
         if OffCar_add.is_valid():
-            OffCar_add.metering_method = m_method
-            print(OffCar_add.metering_method)
+            # a = OffCar_add.metering_method
+            # OffCar_add.metering_method = m_method
+            # print("OffCar_add:", OffCar_add)
+            official_car(metering_method=m_method).save()
+
             OffCar_add.save()
+            a = official_car.objects.get(id=3)
+            print("data::::::::", a)
 
             return redirect('/carbon-system/')
+            # return redirect('/official_car_add/')
 
     else:
 
@@ -1002,7 +1030,7 @@ def add_title(request):
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "日期", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
                 "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "尿素": ["添加量(𝓁)", "添加日期"]
+                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
 
             "4": {
