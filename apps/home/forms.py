@@ -6,7 +6,7 @@ import datetime
 YEAR_CHOICES = []
 now = datetime.datetime.now()
 year = int(now.strftime('%Y'))
-for r in range(year, year+5):
+for r in range(year, year + 5):
     YEAR_CHOICES.append((r, r))
 
 MONTH_CHOICES = [
@@ -260,18 +260,17 @@ class OFform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
-
 class MTform(forms.ModelForm):
     class Meta:
         model = material
-        fields = ('material_name', 'material_id', 'material_type', 'january', 'february', 'march', 'april', 'may',
-                  'june', 'july', 'august', 'september', 'october', 'november', 'december')
+        fields = ('years', 'material_name', 'material_id', 'material_type', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
+                  'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'image_path')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control'}),
             'material_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 原料/物料'}),
-            'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'checked data-toggle': 'toggle'}),
+            # 'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control'}),
             'chemical_name': forms.TextInput(attrs={'class': 'form-control'}),
             'chemical_formula': forms.TextInput(attrs={'class': 'form-control'}),
@@ -286,8 +285,16 @@ class MTform(forms.ModelForm):
             'september': forms.TextInput(attrs={'class': 'col-6'}),
             'october': forms.TextInput(attrs={'class': 'col-6'}),
             'november': forms.TextInput(attrs={'class': 'col-6'}),
-            'december': forms.TextInput(attrs={'class': 'col-6'})
+            'december': forms.TextInput(attrs={'class': 'col-6'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(MTform, self).__init__(*args, **kwargs)
+        self.fields['process_add_name'].required = False
+        self.fields['chemical_name'].required = False
+        self.fields['chemical_formula'].required = False
 
 
 class PCform(forms.ModelForm):
@@ -906,4 +913,3 @@ class WASTEform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
-
