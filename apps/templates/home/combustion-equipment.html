@@ -10,7 +10,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
-{% include 'includes/navigation-light.html' %}
+    {% include 'includes/navigation-light.html' %}
     <section>
         <div class="page-header min-vh-100">
             <div class="container">
@@ -24,22 +24,8 @@
                             </div>
                             <div class="card-body">
                                 <form action="/combustion_equipment_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ CE_add.device_name }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ CE_add.device_id }}
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
@@ -54,7 +40,23 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <br><hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40"><br>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ CE_add.device_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ CE_add.device_id }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <br>
                                         <div class="d-flex flex-nowrap">
                                             <table class="table">
                                                 <thead>
@@ -181,7 +183,7 @@
                                                     </td>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                           {{ CE_add.heat_august }}
+                                                            {{ CE_add.heat_august }}
                                                         </div>
                                                     </td>
                                                     <td>
@@ -210,7 +212,9 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <br><hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40"><br>
+                                    <br>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
                                     <div class="d-flex">
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">

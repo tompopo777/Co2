@@ -31,47 +31,36 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年份 <span style="color:red; font-size:16px;">* </span></label>
-                                                    <input type="text" class="form-control" id="datepicker">
+                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.years }}
                                                 </div>
-                                                {#                                                <div class="ms-1 input-group date" id='date1'>#}
-                                                {#                                                    {{ form.years }}#}
-                                                {#                                                </div>#}
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>車輛類別 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>車輛類別 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.vehicle_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.fuel_type }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.device_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>所屬單位</label>
                                                     {{ form.department }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.fuel_type }}
-                                                    {#                                                    <select class="select-field">#}
-                                                    {#                                                        <option><---請選擇---></option>#}
-                                                    {#                                                        <option>電力</option>#}
-                                                    {#                                                        <option>92汽油</option>#}
-                                                    {#                                                        <option>95汽油</option>#}
-                                                    {#                                                        <option>98汽油</option>#}
-                                                    {#                                                        <option>高級柴油</option>#}
-                                                    {#                                                    </select>#}
                                                 </div>
                                             </div>
                                         </div>
@@ -113,57 +102,57 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.february }}
+                                                                        {{ form.february }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.march }}
+                                                                        {{ form.march }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.april }}
+                                                                        {{ form.april }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.may }}
+                                                                        {{ form.may }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.june }}
+                                                                        {{ form.june }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.july }}
+                                                                        {{ form.july }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.august }}
+                                                                        {{ form.august }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.september }}
+                                                                        {{ form.september }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.october }}
+                                                                        {{ form.october }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.november }}
+                                                                        {{ form.november }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.december }}
+                                                                        {{ form.december }}
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -204,27 +193,27 @@
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.january }}
+                                                                        {{ form.january }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.february }}
+                                                                        {{ form.february }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.march }}
+                                                                        {{ form.march }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.april }}
+                                                                        {{ form.april }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.may }}
+                                                                        {{ form.may }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
@@ -259,7 +248,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.december }}
+                                                                        {{ form.december }}
                                                                     </div>
                                                                 </td>
                                                             </tr>
