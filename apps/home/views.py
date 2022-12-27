@@ -88,7 +88,7 @@ def load_table(request):
         for a in t_name:
             if a["d_name"] == "緊急發電機":
                 t_data = []
-                raw_data = emergency_generators.objects.values("id", "device_id", "period_starttime", "period_endtime",
+                raw_data = emergency_generators.objects.values("id", "years", "device_id",
                                                                "device_capacity", "position", "department",
                                                                "january", "february", "march", "april",
                                                                "may", "june", "july", "august",
@@ -987,7 +987,7 @@ def add_title(request):
         htmlName = {
             "1": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "燃料開始日期", "燃料結束日期", "編號", "容量(𝓁)", "地點", "部門"],
+                "內容": ["序號", "年度", "設備編號", "容量(𝓁)", "地點", "部門"],
                 "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
 
