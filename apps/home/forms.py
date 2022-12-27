@@ -2,12 +2,6 @@ from django import forms
 from .models import *
 import datetime
 
-# YEARS_CHOICES = [tuple([x, x]) for x in range(1980, 2023)]
-YEAR_CHOICES = []
-now = datetime.datetime.now()
-year = int(now.strftime('%Y'))
-for r in range(year, year+5):
-    YEAR_CHOICES.append((r, r))
 
 MONTH_CHOICES = [
     ('1', '一月'),
@@ -75,6 +69,31 @@ VEHICLE_TYPE_CHOICES = [
     ('電動車', '電動車'),
     ('摩托車', '摩托車')
 ]
+PROCESS_UNIT_CHOICES = [
+    ('公斤', '公斤'),
+    ('公升', '公升'),
+    ('立方公尺', '立方公尺')
+]
+REFRIGERANT_TYPE_CHOICES = [
+    ('R11', 'R11'),
+    ('R12', 'R12'),
+    ('R115', 'R115'),
+    ('R22', 'R22'),
+    ('R123', 'R123'),
+    ('R124', 'R124'),
+    ('R32', 'R32'),
+    ('R134a', 'R134a'),
+    ('R404A', 'R404A'),
+    ('R407A', 'R407A'),
+    ('R407F', 'R407F'),
+    ('R442A', 'R442A'),
+    ('R410A', 'R410A'),
+    ('R-1234yf', 'R-1234yf'),
+    ('R513A', 'R513A'),
+    ('CO2 R-744', 'CO2 R-744'),
+    ('NH3 R-717', 'NH3 R-717')
+]
+
 
 
 class EGform(forms.ModelForm):
@@ -168,7 +187,7 @@ class CEform(forms.ModelForm):
 class OFform(forms.ModelForm):
     class Meta:
         model = official_car
-        fields = ('vehicle_type', 'years', 'fuel_type', 'device_id', 'department',
+        fields = ('vehicle_type', 'years', 'fuel_type', 'device_id', 'department', 'metering_method',
                   'oil_january', 'oil_february', 'oil_march', 'oil_april', 'oil_may', 'oil_june', 'oil_july', 'oil_august',
                   'oil_september', 'oil_october', 'oil_november', 'oil_december', 'elec_january', 'elec_february',
                   'elec_march', 'elec_april', 'elec_may', 'elec_june', 'elec_july', 'elec_august', 'elec_september',
@@ -218,18 +237,18 @@ class OFform(forms.ModelForm):
             'km_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'km_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'km_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_january': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_february': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_march': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_april': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_may': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_june': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_july': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_august': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_september': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_october': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_november': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_december': forms.TextInput(attrs={'class': 'col-6'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'urea': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
@@ -370,7 +389,7 @@ class RFform(forms.ModelForm):
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
             'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
