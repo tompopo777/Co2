@@ -282,14 +282,14 @@ class OFform(forms.ModelForm):
 class MTform(forms.ModelForm):
     class Meta:
         model = material
-        fields = ('years', 'material_name', 'material_id', 'material_type', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
-                  'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'image_path')
+        fields = ('years', 'material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
+                  'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control'}),
             'material_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 原料/物料'}),
-            # 'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
+            'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control'}),
             'chemical_name': forms.TextInput(attrs={'class': 'form-control'}),
             'chemical_formula': forms.TextInput(attrs={'class': 'form-control'}),
@@ -307,6 +307,7 @@ class MTform(forms.ModelForm):
             'december': forms.TextInput(attrs={'class': 'col-6'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -314,6 +315,10 @@ class MTform(forms.ModelForm):
         self.fields['process_add_name'].required = False
         self.fields['chemical_name'].required = False
         self.fields['chemical_formula'].required = False
+        self.fields['image_note'].required = False
+        self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
+
 
 
 class PCform(forms.ModelForm):
