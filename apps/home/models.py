@@ -146,9 +146,14 @@ class official_car(models.Model):
 class material(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=4)
+    years = models.IntegerField()
     material_name = models.CharField(max_length=20)
     material_id = models.CharField(max_length=30)
     material_type = models.CharField(max_length=10)
+    chemical = models.BooleanField(default=False)
+    process_add_name = models.CharField(max_length=20)
+    chemical_name = models.CharField(max_length=20)
+    chemical_formula = models.CharField(max_length=20, null=True)
     january = models.FloatField()
     february = models.FloatField()
     march = models.FloatField()
@@ -161,6 +166,8 @@ class material(models.Model):
     october = models.FloatField()
     november = models.FloatField()
     december = models.FloatField()
+    image_note = models.CharField(max_length=30, null=True)
+    image_path = models.ImageField(upload_to='material/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 class process(models.Model):

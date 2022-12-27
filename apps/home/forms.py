@@ -262,42 +262,6 @@ class OFform(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
-        self.fields['oil_january'].required = False
-        self.fields['oil_february'].required = False
-        self.fields['oil_march'].required = False
-        self.fields['oil_april'].required = False
-        self.fields['oil_may'].required = False
-        self.fields['oil_june'].required = False
-        self.fields['oil_july'].required = False
-        self.fields['oil_august'].required = False
-        self.fields['oil_september'].required = False
-        self.fields['oil_october'].required = False
-        self.fields['oil_november'].required = False
-        self.fields['oil_december'].required = False
-        self.fields['elec_january'].required = False
-        self.fields['elec_february'].required = False
-        self.fields['elec_march'].required = False
-        self.fields['elec_april'].required = False
-        self.fields['elec_may'].required = False
-        self.fields['elec_june'].required = False
-        self.fields['elec_july'].required = False
-        self.fields['elec_august'].required = False
-        self.fields['elec_september'].required = False
-        self.fields['elec_october'].required = False
-        self.fields['elec_november'].required = False
-        self.fields['elec_december'].required = False
-        self.fields['km_january'].required = False
-        self.fields['km_february'].required = False
-        self.fields['km_march'].required = False
-        self.fields['km_april'].required = False
-        self.fields['km_may'].required = False
-        self.fields['km_june'].required = False
-        self.fields['km_july'].required = False
-        self.fields['km_august'].required = False
-        self.fields['km_september'].required = False
-        self.fields['km_october'].required = False
-        self.fields['km_november'].required = False
-        self.fields['km_december'].required = False
         self.fields['urea_january'].required = False
         self.fields['urea_february'].required = False
         self.fields['urea_march'].required = False
@@ -315,16 +279,20 @@ class OFform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
-
 class MTform(forms.ModelForm):
     class Meta:
         model = material
-        fields = ('material_name', 'material_id', 'material_type', 'january', 'february', 'march', 'april', 'may',
-                  'june', 'july', 'august', 'september', 'october', 'november', 'december')
+        fields = ('years', 'material_name', 'material_id', 'material_type', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
+                  'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'image_path')
         widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control'}),
             'material_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 原料/物料'}),
+            # 'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
+            'process_add_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'chemical_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'chemical_formula': forms.TextInput(attrs={'class': 'form-control'}),
             'january': forms.TextInput(attrs={'class': 'col-6'}),
             'february': forms.TextInput(attrs={'class': 'col-6'}),
             'march': forms.TextInput(attrs={'class': 'col-6'}),
@@ -336,8 +304,16 @@ class MTform(forms.ModelForm):
             'september': forms.TextInput(attrs={'class': 'col-6'}),
             'october': forms.TextInput(attrs={'class': 'col-6'}),
             'november': forms.TextInput(attrs={'class': 'col-6'}),
-            'december': forms.TextInput(attrs={'class': 'col-6'})
+            'december': forms.TextInput(attrs={'class': 'col-6'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(MTform, self).__init__(*args, **kwargs)
+        self.fields['process_add_name'].required = False
+        self.fields['chemical_name'].required = False
+        self.fields['chemical_formula'].required = False
 
 
 class PCform(forms.ModelForm):
@@ -956,4 +932,3 @@ class WASTEform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
-
