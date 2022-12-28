@@ -13,7 +13,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
-{% include 'includes/navigation-light.html' %}
+    {% include 'includes/navigation-light.html' %}
     <section>
         <div class="page-header min-vh-100">
             <div class="container">
@@ -27,8 +27,28 @@
                             </div>
                             <div class="card-body">
                                 <form action="/process_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PC_add.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PC_add.process_stage }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>料號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PC_add.material_id }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
@@ -52,34 +72,29 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PC_add.process_stage }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>料號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PC_add.material_id }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
                                                     <label>CAS NO <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PC_add.CAS_NO }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
-                                                <div class=" form-check form-switch mb-6">
-                                                    <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
+                                            <div class="col-2">
+                                                <div class=" form-check">
+                                                    {#                                                <div class="input-group input-group-static mb-4">#}
                                                     {{ PC_add.burn }}
+                                                    <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class=" form-check">
+                                                    {{ PC_add.VOCs }}
+                                                    <label>揮發性有機化合物(VOCs) <span style="color:red; font-size:16px;">* </span></label>
                                                 </div>
                                             </div>
                                         </div>
+                                        <br>
                                         <div class="d-flex flex-nowrap">
                                             <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                使用量(單位:公斤) <span style="color:red; font-size:16px;">* </span>
+                                                使用量( 單位:{{ PC_add.unit }} )
+                                                <span style="color:red; font-size:16px;">* </span>
                                             </h5>
                                         </div>
                                         <table class="table">
@@ -166,7 +181,9 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <br><hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40"><br>
+                                    <br>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
                                     <div class="d-flex">
                                         <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
@@ -207,21 +224,8 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -233,4 +237,16 @@
             }
         });
     </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
 {% endblock javascripts %}

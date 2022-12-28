@@ -173,6 +173,7 @@ class material(models.Model):
 class process(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=5)
+    years = models.IntegerField()
     process_add_name = models.CharField(max_length=20)
     chemical_name = models.CharField(max_length=20)
     chemical_formula = models.CharField(max_length=20, null=True)
@@ -180,6 +181,8 @@ class process(models.Model):
     material_id = models.CharField(max_length=30)
     CAS_NO = models.CharField(max_length=20)
     burn = models.BooleanField(default=False)
+    VOCs = models.BooleanField(default=False)
+    unit = models.CharField(max_length=20)
     january = models.FloatField()
     february = models.FloatField()
     march = models.FloatField()

@@ -2,7 +2,6 @@ from django import forms
 from .models import *
 import datetime
 
-
 MONTH_CHOICES = [
     ('1', '一月'),
     ('2', '二月'),
@@ -93,7 +92,6 @@ REFRIGERANT_TYPE_CHOICES = [
     ('CO2 R-744', 'CO2 R-744'),
     ('NH3 R-717', 'NH3 R-717')
 ]
-
 
 
 class EGform(forms.ModelForm):
@@ -320,21 +318,23 @@ class MTform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
-
 class PCform(forms.ModelForm):
     class Meta:
         model = process
-        fields = ('process_add_name', 'chemical_name', 'chemical_formula', 'process_stage', 'material_id', 'CAS_NO',
-                  'burn', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
+        fields = ('years', 'process_add_name', 'chemical_name', 'chemical_formula', 'process_stage', 'material_id', 'CAS_NO',
+                  'burn', 'VOCs', 'unit', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
                   'october', 'november', 'december', 'image_note', 'image_path')
         widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control'}),
             'chemical_name': forms.TextInput(attrs={'class': 'form-control'}),
             'chemical_formula': forms.TextInput(attrs={'class': 'form-control'}),
             'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control'}),
             'CAS_NO': forms.TextInput(attrs={'class': 'form-control'}),
-            'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'checked data-toggle': 'toggle'}),
+            'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'VOCs': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'unit': forms.Select(choices=PROCESS_UNIT_CHOICES),
             'january': forms.TextInput(attrs={'class': 'col-6'}),
             'february': forms.TextInput(attrs={'class': 'col-6'}),
             'march': forms.TextInput(attrs={'class': 'col-6'}),
