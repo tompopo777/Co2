@@ -31,25 +31,63 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.material_name }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料料號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.material_id }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="input-group input-group-static mb-4">
-                                                <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
-                                                {{ form.material_type }}
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.material_type }}
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="form-check ps-1">
+                                                <label>
+                                                    {{ form.chemical }}
+                                                    是否為化學品
+                                                </label>
+                                            </div>
+                                            <div class="collapse" id="collapsePee">
+                                                <div class="row mt-3">
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static">
+                                                            <label>製程添加化學名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ form.process_add_name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>化學品名 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ form.chemical_name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>化學式</label>
+                                                            {{ form.chemical_formula }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <br>
                                         <div class="d-flex flex-nowrap">
                                             <h5 class="col-md-12 text-center" style="color: #7b809a !important;">

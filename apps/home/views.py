@@ -108,7 +108,7 @@ def load_table(request):
             elif a["d_name"] == "燃燒設備":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = combustion_equipment.objects.values("id", "device_name", "device_id", "fuel_type", "period_starttime", "period_endtime",
+                raw_data = combustion_equipment.objects.values("id", "years", "device_name", "device_id", "fuel_type",
                                                                "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
                                                                "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
                 heat_data = combustion_equipment.objects.values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
@@ -140,8 +140,8 @@ def load_table(request):
                 # 「合計」前後的資料分開抓
                 raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
                 oil = official_car.objects.values("oil_january", "oil_february", "oil_march", "oil_april",
-                                                               "oil_may", "oil_june", "oil_july", "oil_august",
-                                                               "oil_september", "oil_october", "oil_november", "oil_december")
+                                                  "oil_may", "oil_june", "oil_july", "oil_august",
+                                                  "oil_september", "oil_october", "oil_november", "oil_december")
                 elec = official_car.objects.values("elec_january", "elec_february", "elec_march", "elec_april",
                                                    "elec_may", "elec_june", "elec_july", "elec_august",
                                                    "elec_september", "elec_october", "elec_november", "elec_december")
@@ -187,18 +187,34 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
-                    material.objects.values("id", "material_name", "material_id", "material_type",
+                    material.objects.values("id", "years", "material_id", "material_type", "material_name",
+                                            "process_add_name", "chemical_name", "chemical_formula",
                                             "january", "february", "march", "april",
                                             "may", "june", "july", "august",
                                             "september", "october", "november", "december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製程添加化學品":
-                t_data = list(
-                    process.objects.values("id", "process_add_name", "chemical_name", "chemical_formula",
-                                           "process_stage", "material_id", "CAS_NO", "burn",
-                                           "january", "february", "march", "april",
-                                           "may", "june", "july", "august",
-                                           "september", "october", "november", "december"))
+                t_data = []
+                raw_data = process.objects.values("id", "years", "process_stage", "material_id", "process_add_name",
+                                                  "chemical_name", "chemical_formula", "CAS_NO", "burn", "VOCs",
+                                                  "january", "february", "march", "april",
+                                                  "may", "june", "july", "august",
+                                                  "september", "october", "november", "december")
+                unit = process.objects.values("unit")
+                # 計算使用量合計
+                for i in range(raw_data.count()):
+                    consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                        raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                        raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+
+                    single_data = raw_data[i]
+                    # 將計算後的使用量丟回字典
+                    single_data["total"] = consumption_total
+                    # 將單位丟回字典
+                    for j in unit[i]:
+                        single_data[j] = unit[i].get(j)
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
@@ -1013,28 +1029,29 @@ def add_title(request):
 
             "2": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "名稱", "編號", "燃料種類", "燃料開始日期", "燃料結束日期"],
+                "內容": ["序號", "年度", "名稱", "編號", "燃料種類"],
                 "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
             },
 
             "3": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "日期", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
+                "內容": ["序號", "年度", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
                 "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
 
             "4": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "原物料號", "原/物料", "名稱"],
+                "內容": ["序號", "年度", "原物料號", "原/物料", "名稱"],
+                "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
                 "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
             "5": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒"],
-                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+                "內容": ["序號", "年度", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒", "VOCs"],
+                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
             },
             # 冷媒(6~13)
             "6": {

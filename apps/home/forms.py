@@ -249,9 +249,6 @@ class OFform(forms.ModelForm):
             'urea_december': forms.TextInput(attrs={'class': 'col-6'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'urea': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
-            'urea_add_quantity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '單位:公升'}),
-            'urea_add_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'urea_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'urea_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})

@@ -28,7 +28,7 @@
                             </div>
                             <div class="card-body">
                                 <form action="/material_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-3">
@@ -57,10 +57,7 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="form-check ps-2">
-{#                                                <input class="form-check-input" type="checkbox" data-bs-toggle="collapse" href="#collapsePee" aria-expanded="false" aria-controls="collapsePee">#}
-{#                                                是否為化學品#}
-{#                                                </input>#}
+                                            <div class="form-check ps-1">
                                                 <label>
                                                     {{ MT_add.chemical }}
                                                     是否為化學品

@@ -30,6 +30,26 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.process_stage }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>料號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.material_id }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>製程添加化學名稱 <span style="color:red; font-size:16px;">* </span></label>
@@ -52,31 +72,24 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.process_stage }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>料號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.material_id }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
                                                     <label>CAS NO <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.CAS_NO }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
-                                                <div class=" form-check form-switch mb-6">
-                                                    <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
+                                            <div class="col-2">
+                                                <div class=" form-check">
                                                     {{ form.burn }}
+                                                    <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class=" form-check">
+                                                    {{ form.VOCs }}
+                                                    <label>揮發性有機化合物(VOCs) <span style="color:red; font-size:16px;">* </span></label>
                                                 </div>
                                             </div>
                                         </div>
+                                        <br>
                                         <div class="d-flex flex-nowrap">
                                             <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
                                                 使用量(單位:公斤) <span style="color:red; font-size:16px;">* </span>
