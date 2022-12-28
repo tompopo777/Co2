@@ -173,14 +173,16 @@ def load_table(request):
                     single_data["consumption_total"] = consumption_total
                     urea_total = 0
                     for k in urea_data[i]:
-                        single_data[k] = urea_data[i].get(k)  # 「逐一」將資料(尿素)丟回字典
-                        if urea_data[i].get(k) != None:
-                            urea_total += urea_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
+                        urea_total += urea_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
+
                     if urea_total == 0:
+                        for n in urea_data[i]:
+                            single_data[n] = None  # 「逐一」將資料(尿素)丟回字典
                         single_data["urea_total"] = None  # 如果沒有(尿素)，設為空值
                     else:
-                        single_data["urea_total"] = urea_total  # 「合計」後的資料(尿素)丟回字典
-                    # print("single_data:::::::::", single_data)
+                        for e in urea_data[i]:
+                            single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
+                        single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
