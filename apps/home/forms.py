@@ -320,7 +320,7 @@ class PCform(forms.ModelForm):
         model = process
         fields = ('years', 'process_add_name', 'chemical_name', 'chemical_formula', 'process_stage', 'material_id', 'CAS_NO',
                   'burn', 'VOCs', 'unit', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
-                  'october', 'november', 'december', 'image_note', 'image_path')
+                  'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -345,7 +345,9 @@ class PCform(forms.ModelForm):
             'november': forms.TextInput(attrs={'class': 'col-6'}),
             'december': forms.TextInput(attrs={'class': 'col-6'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+
         }
 
     def __init__(self, *args, **kwargs):
@@ -353,6 +355,7 @@ class PCform(forms.ModelForm):
         self.fields['chemical_formula'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class RFform(forms.ModelForm):
