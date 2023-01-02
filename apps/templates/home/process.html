@@ -255,4 +255,34 @@
         }).datepicker("setDate", 'now');
     </script>
 
+    {# 自動帶入化學品名稱、化學式#}
+    <script>
+        var chemical_name = $(".chemical_name")
+        var chemical_formula = $(".chemical_formula")
+        $(".process_add_name").on('change', function () {
+            chemical_name.val("")
+            chemical_formula.val("")
+            var add_ch_name = $(this).val();
+            $.ajax({
+                url: "{% url 'loadchemical' %}",
+                data: {
+                    'add_ch_name': add_ch_name
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (chemical_data) {
+                    console.warn(chemical_data);
+                    var list = [];
+                    chemical_data.forEach((item) => {
+                        for (const [key, value] of Object.entries((item))) {
+                            list.push(value)
+                        }
+                        chemical_name.val(list[0])
+                        chemical_formula.val(list[1])
+                    })
+                },
+            });
+        });
+    </script>
+
 {% endblock javascripts %}

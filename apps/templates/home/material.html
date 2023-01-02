@@ -31,13 +31,8 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
-                                            <select class="form-select" id="single-select-field" data-placeholder="Choose one thing">
+                                            <select class="form-select" id="single-select-field" data-placeholder="請輸入化學品名稱">
                                                 <option></option>
-                                                <option>Reactive</option>
-                                                <option>Solution</option>
-                                                <option>Conglomeration</option>
-                                                <option>Algoritm</option>
-                                                <option>Holistic</option>
                                             </select>
                                         </div>
                                         <div class="row">
@@ -77,13 +72,13 @@
                                                 <div class="row mt-3">
                                                     <div class="col-4">
                                                         <div class="input-group input-group-static">
-                                                            <label>製程添加化學名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                            <label>化學名稱</label>
                                                             {{ MT_add.process_add_name }}
                                                         </div>
                                                     </div>
                                                     <div class="col-4">
                                                         <div class="input-group input-group-static mb-4">
-                                                            <label>化學品名 <span style="color:red; font-size:16px;">* </span></label>
+                                                            <label>化學品名</label>
                                                             {{ MT_add.chemical_name }}
                                                         </div>
                                                     </div>
@@ -239,10 +234,10 @@
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
-{#    select2#}
+    {#    select2#}
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -266,11 +261,79 @@
         }).datepicker("setDate", 'now');
     </script>
 
+    {# select2#}
     <script>
         $('#single-select-field').select2({
             theme: "bootstrap-5",
-            width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-            placeholder: $(this).data('placeholder'),
+            {#width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',#}
+            {#placeholder: $(this).data('placeholder'),#}
+            width: 300
+        });
+    </script>
+
+    {# 帶入下拉選單資料#}
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "{% url 'chemical_dropdowm' %}",
+                data: {},
+                type: 'GET',
+                dataType: 'json',
+                success: function (chemical_add) {
+                    chemical_add.forEach((item) => {
+                        for (const [key, value] of Object.entries((item))) {
+                            $("#single-select-field").append("<option>" + value + "</option>");
+                        }
+                    })
+                }
+            });
+        })
+    </script>
+
+    {# 自動帶入化學品名稱、化學式#}
+    <script>
+        var chemical_name = $(".chemical_name")
+        var chemical_formula = $(".chemical_formula")
+        $(".process_add_name").on('change', function () {
+            chemical_name.val("")
+            chemical_formula.val("")
+            var add_ch_name = $(this).val();
+            $.ajax({
+                url: "{% url 'loadchemical' %}",
+                data: {
+                    'add_ch_name': add_ch_name
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (chemical_data) {
+                    console.warn(chemical_data);
+                    var list = [];
+                    chemical_data.forEach((item) => {
+                        for (const [key, value] of Object.entries((item))) {
+                            list.push(value)
+                        }
+                        chemical_name.val(list[0])
+                        chemical_formula.val(list[1])
+                    })
+                },
+            });
+        });
+    </script>
+
+    {# 當checkbox勾選，下方摺疊展開#}
+    <script>
+        var process_add_name = $(".process_add_name")
+        var checkbox = document.getElementById("chemical")
+        var collapse = document.getElementById("collapsePee")
+        if (checkbox.checked === true) {
+            collapse.classList.add("show")
+        }
+        $(document).on('click', ".chemical", function () {
+            if (checkbox.checked !== true) {
+                process_add_name.val("")
+                chemical_name.val("")
+                chemical_formula.val("")
+            }
         });
     </script>
 

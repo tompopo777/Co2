@@ -530,3 +530,8 @@ class waste(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='waste/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
+class chemical_table(models.Model):
+    chemical_add = models.CharField(primary_key=True, max_length=50)
+    chemical_name = models.CharField(max_length=50)
+    chemical_formula = models.CharField(max_length=50)

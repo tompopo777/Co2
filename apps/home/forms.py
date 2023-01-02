@@ -93,6 +93,12 @@ REFRIGERANT_TYPE_CHOICES = [
     ('NH3 R-717', 'NH3 R-717')
 ]
 
+# 前面: 存DB，後面: 顯示
+# CHEMICAL_CHOICES = []
+# chemical = chemical_table.objects.values("chemical_add")
+# for add in chemical:
+#     chemical_add = add.get('chemical_add')
+#     CHEMICAL_CHOICES.append((chemical_add, chemical_add))
 
 class EGform(forms.ModelForm):
     class Meta:
@@ -284,22 +290,22 @@ class MTform(forms.ModelForm):
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control'}),
             'material_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 原料/物料'}),
-            'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
-            'process_add_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'chemical_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'chemical_formula': forms.TextInput(attrs={'class': 'form-control'}),
-            'january': forms.TextInput(attrs={'class': 'col-6'}),
-            'february': forms.TextInput(attrs={'class': 'col-6'}),
-            'march': forms.TextInput(attrs={'class': 'col-6'}),
-            'april': forms.TextInput(attrs={'class': 'col-6'}),
-            'may': forms.TextInput(attrs={'class': 'col-6'}),
-            'june': forms.TextInput(attrs={'class': 'col-6'}),
-            'july': forms.TextInput(attrs={'class': 'col-6'}),
-            'august': forms.TextInput(attrs={'class': 'col-6'}),
-            'september': forms.TextInput(attrs={'class': 'col-6'}),
-            'october': forms.TextInput(attrs={'class': 'col-6'}),
-            'november': forms.TextInput(attrs={'class': 'col-6'}),
-            'december': forms.TextInput(attrs={'class': 'col-6'}),
+            'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input chemical chemical', 'id': 'chemical', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
+            'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
+            'chemical_name': forms.TextInput(attrs={'class': 'form-control chemical_name', 'id': 'chemical_name'}),
+            'chemical_formula': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
+            'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -323,27 +329,27 @@ class PCform(forms.ModelForm):
                   'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'process_add_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'chemical_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'chemical_formula': forms.TextInput(attrs={'class': 'form-control'}),
+            'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name'}),
+            'chemical_name': forms.TextInput(attrs={'class': 'form-control chemical_name'}),
+            'chemical_formula': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
             'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control'}),
             'CAS_NO': forms.TextInput(attrs={'class': 'form-control'}),
             'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'VOCs': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'unit': forms.Select(choices=PROCESS_UNIT_CHOICES),
-            'january': forms.TextInput(attrs={'class': 'col-6'}),
-            'february': forms.TextInput(attrs={'class': 'col-6'}),
-            'march': forms.TextInput(attrs={'class': 'col-6'}),
-            'april': forms.TextInput(attrs={'class': 'col-6'}),
-            'may': forms.TextInput(attrs={'class': 'col-6'}),
-            'june': forms.TextInput(attrs={'class': 'col-6'}),
-            'july': forms.TextInput(attrs={'class': 'col-6'}),
-            'august': forms.TextInput(attrs={'class': 'col-6'}),
-            'september': forms.TextInput(attrs={'class': 'col-6'}),
-            'october': forms.TextInput(attrs={'class': 'col-6'}),
-            'november': forms.TextInput(attrs={'class': 'col-6'}),
-            'december': forms.TextInput(attrs={'class': 'col-6'}),
+            'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})

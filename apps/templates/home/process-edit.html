@@ -92,7 +92,8 @@
                                         <br>
                                         <div class="d-flex flex-nowrap">
                                             <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                使用量(單位:公斤) <span style="color:red; font-size:16px;">* </span>
+                                                使用量( 單位:{{ form.unit }} )
+                                                <span style="color:red; font-size:16px;">* </span>
                                             </h5>
                                         </div>
                                         <table class="table">
@@ -199,7 +200,7 @@
                                     <div class="row">
                                         <div class="form-control">
                                             <label>備註欄</label>
-                                            {{ form.message_board }}
+                                            {{ OffCar_add.message_board }}
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
@@ -252,6 +253,36 @@
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
+    </script>
+
+    {# 自動帶入化學品名稱、化學式#}
+    <script>
+        var chemical_name = $(".chemical_name")
+        var chemical_formula = $(".chemical_formula")
+        $(".process_add_name").on('change', function () {
+            chemical_name.val("")
+            chemical_formula.val("")
+            var add_ch_name = $(this).val();
+            $.ajax({
+                url: "{% url 'loadchemical' %}",
+                data: {
+                    'add_ch_name': add_ch_name
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (chemical_data) {
+                    console.warn(chemical_data);
+                    var list = [];
+                    chemical_data.forEach((item) => {
+                        for (const [key, value] of Object.entries((item))) {
+                            list.push(value)
+                        }
+                        chemical_name.val(list[0])
+                        chemical_formula.val(list[1])
+                    })
+                },
+            });
+        });
     </script>
 
 {% endblock javascripts %}

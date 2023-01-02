@@ -846,7 +846,7 @@ def add_page(request):
 
         if htmlName.get(device_id):
             NewDevice_page = htmlName.get(device_id)
-        print("NewDevice_page:", NewDevice_page)
+        # print("NewDevice_page:", NewDevice_page)
     if request.method == "GET":
         return render(request, NewDevice_page, locals())
 
@@ -970,6 +970,7 @@ def update_device(request, datasheet_id, single_dataID):
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(request.POST, request.FILES, instance=current_data)
             if update_from.is_valid():
+                print("yyyyyyyyyyyyyy")
                 update_from.save()
                 return redirect('/carbon-system/', locals())
         else:
@@ -1147,6 +1148,15 @@ def add_title(request):
         }
     title = [htmlName.get(device_id)]
     return JsonResponse(title, safe=False)
+
+def chemical_dropdowm(request):
+    chemical_add = list(chemical_table.objects.values("chemical_add"))
+    return JsonResponse(chemical_add, safe=False)
+
+def load_chemical(request):
+    chemical_add = request.GET.get("add_ch_name")
+    chemical_data = list(chemical_table.objects.filter(chemical_add=chemical_add).values("chemical_name", "chemical_formula"))
+    return JsonResponse(chemical_data, safe=False)
 
 # def export_data(request):
 #     if request.method == 'POST':

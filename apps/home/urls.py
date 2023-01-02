@@ -45,6 +45,8 @@ urlpatterns = [
     path("ajax/title", views.add_title, name='loadtitle'),
     path("new_device/", views.add_page, name='loadadd'),
     path("edit_device/", views.edit_device, name='loadedit'),
+    path("chemical_dropdowm/", views.chemical_dropdowm, name='chemical_dropdowm'),
+    path("loadchemical/", views.load_chemical, name='loadchemical'),
     # Excel
     path("csv_view/", csv.csv_view, name='csv_view'),
     # 編輯設備
