@@ -176,7 +176,7 @@ class CEform(forms.ModelForm):
             'heat_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'image_note': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '熱值註解!'})
         }
