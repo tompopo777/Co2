@@ -28,7 +28,7 @@
                             </div>
                             <div class="card-body">
                                 <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
-                                    {% csrf_token %}
+                                {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
@@ -55,22 +55,22 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物處理方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_disposal }}
+                                                    <label>廢棄物處置地點 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.waste_location }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物處置地點 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_location }}
+                                                    <label>廢棄物處理方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.waste_disposal }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物清運方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_removal_method }}
+                                                    <label>處理廠商名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.waste_disposal_vendor }}
                                                 </div>
                                             </div>
                                             <div class="col-6">

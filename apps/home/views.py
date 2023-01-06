@@ -454,9 +454,9 @@ def load_table(request):
             elif a["d_name"] == "廢棄物":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = waste.objects.values("id", "waste_name", "waste_date", "waste_weigh",
-                                                "waste_disposal", "waste_location", "waste_removal_method",
-                                                "transport_type", "transport_type", "transport_fuel", "transport_distance")
+                raw_data = waste.objects.values("id", "waste_name", "waste_weigh", "waste_date",
+                                                "waste_location", "waste_disposal", "waste_disposal_vendor",
+                                                "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計
                     if (raw_data[i].get("transport_distance") == None):
@@ -1143,7 +1143,7 @@ def add_title(request):
 
             "22": {
                 "編輯區": ["刪除", "修改"],
-                "廢棄物處理": ["序號", "名稱", "運送時間", "重量(噸)", "處理方式", "處置地點", "運輸責任歸屬", "運輸方式", "燃料", "運輸距離(km)", "T*km"],
+                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
             }
         }
     title = [htmlName.get(device_id)]
