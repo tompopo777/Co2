@@ -1,5 +1,10 @@
+import re
 from django import forms
 from .models import *
+from django.core.validators import RegexValidator, validate_slug
+from django.core.exceptions import ValidationError
+from django.forms import widgets, RegexField
+from django.forms import fields
 import datetime
 
 MONTH_CHOICES = [
@@ -92,6 +97,7 @@ REFRIGERANT_TYPE_CHOICES = [
     ('CO2 R-744', 'CO2 R-744'),
     ('NH3 R-717', 'NH3 R-717')
 ]
+
 
 # 前面: 存DB，後面: 顯示
 # CHEMICAL_CHOICES = []
@@ -268,15 +274,31 @@ class OFform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
+def mobile_validate(value):
+    mobile_re = re.compile(r'^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$')
+    if not mobile_re.match(value):
+        raise ValidationError('手機號碼格式錯誤')
+
 class MTform(forms.ModelForm):
+    # material_id = forms.CharField(widget=widgets.TextInput(attrs={'class': 'form-control'}), validators=[RegexValidator(r'^[a-zA-Z0-9_.-]*$', "只能輸入'英文'、'數字'、'-'、'_'")]),
+    # material_id = forms.CharField(validators=[RegexValidator(r'^1[0-9]+$', "只能輸入'英文'、'數字'、'-'、'_'")], widget=widgets.TextInput(attrs={'class': "form-control", 'placeholder': u'手機號碼'})),
+    # material_id = forms.CharField(validators=[mobile_validate], widget=widgets.TextInput(attrs={'class': "form-control", 'placeholder': u'手機號碼'})),
+
+    # material_id = forms.CharField(validators=[validate_slug]),
+
+    # material_id = forms.RegexField(regex="r^1[0-9]+$", widget=widgets.TextInput(attrs={'class': 'form-control'}))
+
     class Meta:
         model = material
         fields = ('years', 'material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
                   'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
+        # material_id = forms.CharField(validators=[mobile_validate], widget=widgets.TextInput(attrs={'class': "form-control", 'placeholder': u'手機號碼'})),
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'material_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'material_id': forms.TextInput(attrs={'class': 'form-control', 'onchange': 'value.replace(/[^\d]/g,'')"'}),
+            # 'material_id': forms.TextInput(attrs={'class': 'form-control'}, validators[validate_slug]),
+            # 'material_id': forms.TextInput(attrs={'class': 'form-control'}, validators=[RegexValidator(regex=[r'^1[3-9]\d{9}$', "只能輸入'英文'、'數字'、'-'、'_'"])]),
             'material_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 原料/物料'}),
             'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input chemical chemical', 'id': 'chemical', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
@@ -307,6 +329,7 @@ class MTform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
+        # self.fields['material_id'].validators[]
 
 
 class PCform(forms.ModelForm):
