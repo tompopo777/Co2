@@ -120,19 +120,19 @@ class EGform(forms.ModelForm):
                                                       'placeholder': '單位:公升'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
-            'january': forms.TextInput(attrs={'class': 'col-6'}),
-            'february': forms.TextInput(attrs={'class': 'col-6'}),
-            'march': forms.TextInput(attrs={'class': 'col-6'}),
-            'april': forms.TextInput(attrs={'class': 'col-6'}),
-            'may': forms.TextInput(attrs={'class': 'col-6'}),
-            'june': forms.TextInput(attrs={'class': 'col-6'}),
-            'july': forms.TextInput(attrs={'class': 'col-6'}),
-            'august': forms.TextInput(attrs={'class': 'col-6'}),
-            'september': forms.TextInput(attrs={'class': 'col-6'}),
-            'october': forms.TextInput(attrs={'class': 'col-6'}),
-            'november': forms.TextInput(attrs={'class': 'col-6'}),
-            'december': forms.TextInput(attrs={'class': 'col-6'}),
-            'image_note': forms.TextInput(attrs={'class': 'form-control'}),
+            'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -154,22 +154,22 @@ class CEform(forms.ModelForm):
                   'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
                   'heat_october', 'heat_november', 'heat_december', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
             'fuel_type': forms.Select(choices=CE_FUEL_TYPE_CHOICES),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'fuel_january': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_february': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_march': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_april': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_may': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_june': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_july': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_august': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_september': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_october': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_november': forms.TextInput(attrs={'class': 'col-6'}),
-            'fuel_december': forms.TextInput(attrs={'class': 'col-6'}),
+            'fuel_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'fuel_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -182,7 +182,7 @@ class CEform(forms.ModelForm):
             'heat_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'image_note': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '熱值註解!'})
         }
@@ -247,21 +247,21 @@ class OFform(forms.ModelForm):
             'km_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'km_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'km_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_january': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_february': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_march': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_april': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_may': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_june': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_july': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_august': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_september': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_october': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_november': forms.TextInput(attrs={'class': 'col-6'}),
-            'urea_december': forms.TextInput(attrs={'class': 'col-6'}),
+            'urea_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'urea_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'urea_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入尿素單據名稱'}),
             'urea_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -269,18 +269,6 @@ class OFform(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
-        self.fields['urea_january'].required = False
-        self.fields['urea_february'].required = False
-        self.fields['urea_march'].required = False
-        self.fields['urea_april'].required = False
-        self.fields['urea_may'].required = False
-        self.fields['urea_june'].required = False
-        self.fields['urea_july'].required = False
-        self.fields['urea_august'].required = False
-        self.fields['urea_september'].required = False
-        self.fields['urea_october'].required = False
-        self.fields['urea_november'].required = False
-        self.fields['urea_december'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
@@ -390,249 +378,257 @@ class PCform(forms.ModelForm):
 class RFform(forms.ModelForm):
     class Meta:
         model = refrigerator
-        fields = ('device_name', 'device_id', 'brand_name', 'model_type', 'years', 'position', 'refrigerant_type',
-                  'filling_volume', 'filling_fix_volume', 'filling_date', 'effusion_rate', 'image_note', 'image_path')
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.5'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(RFform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
+        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
-        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class ACform(forms.ModelForm):
     class Meta:
         model = airconditioner
-        fields = ('device_name', 'device_id', 'brand_name', 'model_type', 'years', 'position', 'refrigerant_type',
-                  'filling_volume', 'filling_fix_volume', 'filling_date', 'effusion_rate', 'image_note', 'image_path')
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '5.5'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(ACform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
+        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
-        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class VCform(forms.ModelForm):
     class Meta:
         model = vehicle
-        fields = ('device_name', 'device_id', 'brand_name', 'model_type', 'years', 'position', 'refrigerant_type',
-                  'filling_volume', 'filling_fix_volume', 'filling_date', 'effusion_rate', 'image_note', 'image_path')
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '15'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(VCform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
+        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
-        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class WDform(forms.ModelForm):
     class Meta:
         model = water_dispenser
-        fields = ('device_name', 'device_id', 'brand_name', 'model_type', 'years', 'position', 'refrigerant_type',
-                  'filling_volume', 'filling_fix_volume', 'filling_date', 'effusion_rate', 'image_note', 'image_path')
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.3'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(WDform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
+        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
-        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class IWDform(forms.ModelForm):
     class Meta:
         model = ice_water_dispenser
-        fields = ('device_name', 'device_id', 'brand_name', 'model_type', 'years', 'position', 'refrigerant_type',
-                  'filling_volume', 'filling_fix_volume', 'filling_date', 'effusion_rate', 'image_note', 'image_path')
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '9'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(IWDform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
+        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
-        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class IMform(forms.ModelForm):
     class Meta:
         model = ice_maker
-        fields = ('device_name', 'device_id', 'brand_name', 'model_type', 'years', 'position', 'refrigerant_type',
-                  'filling_volume', 'filling_fix_volume', 'filling_date', 'effusion_rate', 'image_note', 'image_path')
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '16'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(IMform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
+        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
-        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class ODform(forms.ModelForm):
     class Meta:
         model = other_device
-        fields = ('device_name', 'device_id', 'brand_name', 'model_type', 'years', 'position', 'refrigerant_type',
-                  'filling_volume', 'filling_fix_volume', 'filling_date', 'effusion_rate', 'image_note', 'image_path')
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(ODform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
+        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
-        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class RTTform(forms.ModelForm):
     class Meta:
         model = refrigerant_total_table
-        fields = ('device_name', 'device_id', 'brand_name', 'model_type', 'years', 'position', 'refrigerant_type',
-                  'filling_volume', 'filling_fix_volume', 'filling_date', 'effusion_rate', 'image_note', 'image_path')
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'position': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'refrigerant_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(RTTform, self).__init__(*args, **kwargs)
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
+        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
-        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class EXform(forms.ModelForm):
@@ -640,7 +636,7 @@ class EXform(forms.ModelForm):
         model = extinguisher
         fields = ('extinguisher_name', 'extinguisher_type', 'device_id', 'position', 'extinguisher_vendor', 'inventory',
                   'chemical_spec', 'chemical_weight', 'using_amount', 'using_date', 'replace_filling_amount',
-                  'replace_filling_date', 'image_note', 'image_path')
+                  'replace_filling_date', 'image_note', 'image_path', 'message_board')
         widgets = {
             'extinguisher_name': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -655,7 +651,8 @@ class EXform(forms.ModelForm):
             'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
             'replace_filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -663,24 +660,26 @@ class EXform(forms.ModelForm):
         self.fields['extinguisher_vendor'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class PIform(forms.ModelForm):
     class Meta:
         model = personnel_inventory
         fields = ('years', 'monthly', 'employee_number', 'daily_hours', 'working_days', 'overtime', 'leave_hours',
-                  'day_off_hours', 'image_note', 'image_path')
+                  'day_off_hours', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'monthly': forms.Select(choices=MONTH_CHOICES),
             'employee_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'daily_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'working_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'overtime': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'leave_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'day_off_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
+            'daily_hours': forms.TextInput(attrs={'class': 'form-control'}),
+            'working_days': forms.TextInput(attrs={'class': 'form-control'}),
+            'overtime': forms.TextInput(attrs={'class': 'form-control'}),
+            'leave_hours': forms.TextInput(attrs={'class': 'form-control'}),
+            'day_off_hours': forms.TextInput(attrs={'class': 'form-control'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -692,34 +691,38 @@ class PIform(forms.ModelForm):
         self.fields['day_off_hours'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class SCform(forms.ModelForm):
     class Meta:
         model = security
-        fields = ('years', 'monthly', 'security_number', 'daily_hours', 'working_days', 'image_note', 'image_path')
+        fields = ('years', 'monthly', 'security_number', 'daily_hours', 'working_days', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'monthly': forms.Select(choices=MONTH_CHOICES),
             'security_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'daily_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'working_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
+            'daily_hours': forms.TextInput(attrs={'class': 'form-control'}),
+            'working_days': forms.TextInput(attrs={'class': 'form-control'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(SCform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class ELECform(forms.ModelForm):
     class Meta:
         model = electricity
-        fields = ('EMI_id', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
-                  'september', 'october', 'november', 'december', 'image_note', 'image_path')
+        fields = ('years', 'EMI_id', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+                  'september', 'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'EMI_id': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'january': forms.TextInput(attrs={'class': 'col-6'}),
@@ -735,13 +738,15 @@ class ELECform(forms.ModelForm):
             'november': forms.TextInput(attrs={'class': 'col-6'}),
             'december': forms.TextInput(attrs={'class': 'col-6'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(ELECform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class UTform(forms.ModelForm):
@@ -753,7 +758,7 @@ class UTform(forms.ModelForm):
                   'overseas_transport_type', 'overseas_delivery', 'overseas_arrive', 'overseas_trips',
                   'overseas_image_note', 'overseas_image_path', 'special_transport_distance',
                   'special_transport_country', 'special_transport_type', 'special_vehicle_fuel', 'special_trips',
-                  'special_image_note', 'special_image_path')
+                  'special_image_note', 'special_image_path', 'message_board')
 
         widgets = {
             'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control'}),
@@ -785,7 +790,8 @@ class UTform(forms.ModelForm):
             'special_vehicle_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 柴油'}),
             'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -811,6 +817,7 @@ class UTform(forms.ModelForm):
         self.fields['special_trips'].required = False
         self.fields['special_image_note'].required = False
         self.fields['special_image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class DTform(forms.ModelForm):
@@ -822,7 +829,7 @@ class DTform(forms.ModelForm):
                   'overseas_transport_type', 'overseas_delivery', 'overseas_arrive', 'overseas_trips',
                   'overseas_image_note', 'overseas_image_path', 'special_transport_distance',
                   'special_transport_country', 'special_transport_type', 'special_vehicle_fuel', 'special_trips',
-                  'special_image_note', 'special_image_path')
+                  'special_image_note', 'special_image_path', 'message_board')
         widgets = {
             'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control'}),
             'commodity_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -853,7 +860,8 @@ class DTform(forms.ModelForm):
             'special_vehicle_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 柴油'}),
             'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -879,13 +887,14 @@ class DTform(forms.ModelForm):
         self.fields['special_trips'].required = False
         self.fields['special_image_note'].required = False
         self.fields['special_image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class ECform(forms.ModelForm):
     class Meta:
         model = employee_commute
         fields = ('employee_id', 'employee_name', 'department', 'work_days', 'transportation', 'displacement', 'city',
-                  'township', 'address', 'commute_distance', 'image_note', 'image_path')
+                  'township', 'address', 'commute_distance', 'image_note', 'image_path', 'message_board')
         widgets = {
             'employee_id': forms.TextInput(attrs={'class': 'form-control'}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -898,13 +907,15 @@ class ECform(forms.ModelForm):
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'commute_distance': forms.TextInput(attrs={'class': 'form-control'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(ECform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class EBTform(forms.ModelForm):
@@ -912,7 +923,7 @@ class EBTform(forms.ModelForm):
         model = employee_business_trip
         fields = ('business_trip_location', 'business_trip_date', 'transportation', 'employee_id', 'employee_name',
                   'department', 'departure', 'destination', 'bt_image_note', 'bt_image_path', 'round_trip_distance',
-                  'rtd_image_note', 'rtd_image_path')
+                  'rtd_image_note', 'rtd_image_path', 'message_board')
         widgets = {
             'business_trip_location': forms.TextInput(attrs={'class': 'form-control'}),
             'business_trip_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
@@ -926,7 +937,8 @@ class EBTform(forms.ModelForm):
             'bt_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'round_trip_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '「來回」距離'}),
             'rtd_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'rtd_image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+            'rtd_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
@@ -935,6 +947,7 @@ class EBTform(forms.ModelForm):
         self.fields['bt_image_path'].required = False
         self.fields['rtd_image_note'].required = False
         self.fields['rtd_image_path'].required = False
+        self.fields['message_board'].required = False
 
 
 class WASTEform(forms.ModelForm):
