@@ -23,7 +23,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">公務車</h3>
+                                    <h3 class="text-white text-primary mb-0">編輯公務車</h3>
                                 </div>
                             </div>
                             <div class="card-body">                                
@@ -66,7 +66,7 @@
                                         </div>
                                         <div class="accordion" id="accordionExample">
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" type="radio" name="metering_method" id="radio" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" value="metering_method">
+                                                <input class="form-check-input accordion-header collapsed" type="radio" name="metering_method" id="radio" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" value="油車">
                                                 <label>油車</label>
                                                 </input>
                                                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
@@ -232,7 +232,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" id="radio" type="radio" name="metering_method" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-checked="true" aria-expanded="false" aria-controls="collapseTwo" value="metering_method">
+                                                <input class="form-check-input accordion-header collapsed" id="radio" type="radio" name="metering_method" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-checked="true" aria-expanded="false" aria-controls="collapseTwo" value="電動車">
                                                 <label>電動車</label>
                                                 </input>
                                                 <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
@@ -328,7 +328,7 @@
                                                 </div>
                                             </div>
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" id="radio" type="radio" name="metering_method" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" value="metering_method">
+                                                <input class="form-check-input accordion-header collapsed" id="radio" type="radio" name="metering_method" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" value="公里數">
                                                 <label>公里數</label>
                                                 </input>
                                                 <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
@@ -443,9 +443,11 @@
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                     <div class="row">
-                                        <div class="form-control">
-                                            <label>備註欄</label>
-                                            {{ form.message_board }}
+                                        <div class="col">
+                                            <div class="form-control">
+                                                <label>備註欄</label>
+                                                {{ form.message_board }}
+                                            </div>
                                         </div>
                                     </div>
                                     <br>
