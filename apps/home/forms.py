@@ -148,8 +148,8 @@ class CEform(forms.ModelForm):
                   'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
                   'heat_october', 'heat_november', 'heat_december', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'value': ''}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
             'fuel_type': forms.Select(choices=CE_FUEL_TYPE_CHOICES),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'fuel_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -255,7 +255,7 @@ class OFform(forms.ModelForm):
             'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'urea_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'urea_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入尿素單據名稱'}),
             'urea_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -649,11 +649,11 @@ class PIform(forms.ModelForm):
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'monthly': forms.Select(choices=MONTH_CHOICES),
             'employee_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'daily_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'working_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'overtime': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'leave_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'day_off_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
+            'daily_hours': forms.TextInput(attrs={'class': 'form-control'}),
+            'working_days': forms.TextInput(attrs={'class': 'form-control'}),
+            'overtime': forms.TextInput(attrs={'class': 'form-control'}),
+            'leave_hours': forms.TextInput(attrs={'class': 'form-control'}),
+            'day_off_hours': forms.TextInput(attrs={'class': 'form-control'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -679,8 +679,8 @@ class SCform(forms.ModelForm):
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'monthly': forms.Select(choices=MONTH_CHOICES),
             'security_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'daily_hours': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
-            'working_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '非必填'}),
+            'daily_hours': forms.TextInput(attrs={'class': 'form-control'}),
+            'working_days': forms.TextInput(attrs={'class': 'form-control'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
