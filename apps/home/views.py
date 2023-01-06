@@ -517,6 +517,7 @@ def official_car_add(request):
 def material_add(request):
     if request.method == "POST":
         MT_add = MTform(request.POST, request.FILES)
+        print("yyyyyyyyyyyyyy")
         if MT_add.is_valid():
             MT_add.save()
 
