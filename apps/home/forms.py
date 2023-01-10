@@ -97,6 +97,19 @@ REFRIGERANT_TYPE_CHOICES = [
     ('CO2 R-744', 'CO2 R-744'),
     ('NH3 R-717', 'NH3 R-717')
 ]
+EXTINGUISHER_TYPE_CHOICES = [
+    ('ABC型乾粉滅火器', 'ABC型乾粉滅火器'),
+    ('KBC型乾粉滅火器', 'KBC型乾粉滅火器'),
+    ('BC型乾粉滅火器', 'BC型乾粉滅火器'),
+    ('二氧化碳滅火器', '二氧化碳滅火器'),
+    ('泡沫滅火器', '泡沫滅火器'),
+    ('潔淨滅火器HFC-227ea（FM-200、FE-227）', '潔淨滅火器HFC-227ea（FM-200、FE-227）'),
+    ('潔淨滅火器HFC-125', '潔淨滅火器HFC-125'),
+    ('潔淨滅火器Novec 1230', '潔淨滅火器Novec 1230'),
+    ('潔淨滅火器Inergen（IG-541、IG-55）', '潔淨滅火器Inergen（IG-541、IG-55）'),
+    ('潔淨滅火器Ar（IG-01）HFC-236fa(FE36)', '潔淨滅火器Ar（IG-01）HFC-236fa(FE36)'),
+    ('金屬火災滅火器', '金屬火災滅火器')
+]
 
 
 # 前面: 存DB，後面: 顯示
@@ -634,22 +647,22 @@ class RTTform(forms.ModelForm):
 class EXform(forms.ModelForm):
     class Meta:
         model = extinguisher
-        fields = ('extinguisher_name', 'extinguisher_type', 'device_id', 'position', 'extinguisher_vendor', 'inventory',
-                  'chemical_spec', 'chemical_weight', 'using_amount', 'using_date', 'replace_filling_amount',
+        fields = ('years', 'extinguisher_name', 'extinguisher_type', 'device_id', 'position', 'extinguisher_vendor', 'chemical_weight',
+                  'inventory', 'using_amount', 'monthly', 'replace_filling_amount',
                   'replace_filling_date', 'image_note', 'image_path', 'message_board')
         widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'extinguisher_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'extinguisher_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'extinguisher_type': forms.Select(choices=EXTINGUISHER_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入編號'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '選填'}),
-            'inventory': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'chemical_spec': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'chemical_weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'using_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'using_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'replace_filling_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'chemical_weight': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'inventory': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'using_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'monthly': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker2'}),
+            'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker3'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -657,6 +670,7 @@ class EXform(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EXform, self).__init__(*args, **kwargs)
+        self.fields['device_id'].required = False
         self.fields['extinguisher_vendor'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
@@ -671,7 +685,7 @@ class PIform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'monthly': forms.Select(choices=MONTH_CHOICES),
-            'employee_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
+            'employee_number': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'daily_hours': forms.TextInput(attrs={'class': 'form-control'}),
             'working_days': forms.TextInput(attrs={'class': 'form-control'}),
             'overtime': forms.TextInput(attrs={'class': 'form-control'}),
@@ -701,7 +715,7 @@ class SCform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'monthly': forms.Select(choices=MONTH_CHOICES),
-            'security_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
+            'security_number': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'daily_hours': forms.TextInput(attrs={'class': 'form-control'}),
             'working_days': forms.TextInput(attrs={'class': 'form-control'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
