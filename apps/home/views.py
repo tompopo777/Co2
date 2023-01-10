@@ -345,8 +345,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
-                    extinguisher.objects.values("id", "device_id", "position", "extinguisher_name",
-                                                "extinguisher_type", "extinguisher_vendor", "chemical_spec", "chemical_weight", "inventory", "using_date", "using_amount", "replace_filling_date", "replace_filling_amount"))
+                    extinguisher.objects.values("id", "years", "extinguisher_name", "extinguisher_type", "device_id", "position", "extinguisher_vendor",
+                                                "chemical_weight", "inventory", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
                 t_data = []
@@ -1098,7 +1098,7 @@ def add_title(request):
 
             "14": {
                 "編輯區": ["刪除", "修改"],
-                "滅火器清單": ["序號", "編號", "位置", "名稱", "類型", "廠商", "藥劑規格(單位:磅)", "藥劑重量(單位:kg)", "庫存量", "使用日期", "使用量", "更換/填充日期", "更換/填充量"]
+                "滅火器清單": ["序號", "年度", "滅火器名稱", "類型", "設備編號", "擺放位置(廠別)", "廠商", "藥劑重量(單位:kg)", "庫存量", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
             },
 
             "15": {
