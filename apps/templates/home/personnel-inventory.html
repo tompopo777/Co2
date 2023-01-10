@@ -23,7 +23,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">人員清冊</h3>
+                                    <h3 class="text-white text-primary mb-0">人天清冊</h3>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -39,53 +39,172 @@
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>月份 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ PI_add.monthly }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
                                                     <label>員工人數 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PI_add.employee_number }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>每日工作時數</label>
-                                                    {{ PI_add.daily_hours }}
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>每月工作天數</label>
-                                                    {{ PI_add.working_days }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>加班+補修時數</label>
-                                                    {{ PI_add.overtime }}
-                                                </div>
-                                            </div>
+                                        <div class="d-flex flex-nowrap">
+                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
+                                                總工作時數/人數 <span style="color:red; font-size:16px;">* </span>
+                                            </h5>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>請假時數</label>
-                                                    {{ PI_add.leave_hours }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>休假時數</label>
-                                                    {{ PI_add.day_off_hours }}
-                                                </div>
-                                            </div>
+                                        <div class="d-flex flex-nowrap">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>一月</th>
+                                                    <th>二月</th>
+                                                    <th>三月</th>
+                                                    <th>四月</th>
+                                                    <th>五月</th>
+                                                    <th>六月</th>
+                                                    <th>七月</th>
+                                                    <th>八月</th>
+                                                    <th>九月</th>
+                                                    <th>十月</th>
+                                                    <th>十一月</th>
+                                                    <th>十二月</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <th>
+                                                        時數
+                                                    </th>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_january }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_february }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_march }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_april }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_may }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_june }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_july }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_august }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_september }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_october }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_november }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.fuel_december }}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        人數
+                                                    </th>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_january }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_february }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_march }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_april }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_may }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_june }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_july }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_august }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_september }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_october }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_november }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ CE_add.heat_december }}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr></tr>
+                                                </tbody>
+                                            </table>
                                         </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <br>
                                         <div class="d-flex">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
