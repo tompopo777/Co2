@@ -993,7 +993,7 @@ class WASTEform(forms.ModelForm):
             'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
             'transport_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
-            'transport_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
+            'transport_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.柴油、汽油'}),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),

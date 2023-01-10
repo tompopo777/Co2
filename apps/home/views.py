@@ -349,26 +349,13 @@ def load_table(request):
                                                 "chemical_weight", "inventory", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
-                t_data = []
-                # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = personnel_inventory.objects.values("id", "years", "monthly", "employee_number", "daily_hours",
-                                                              "working_days", "overtime", "leave_hours",
-                                                              "day_off_hours")
-                for i in range(raw_data.count()):
-                    # 計算單筆當月總工作時數
-                    TotalWorkingHour_M = raw_data[i].get("employee_number") * raw_data[i].get("daily_hours") * raw_data[i].get("working_days") \
-                                         + raw_data[i].get("overtime") - raw_data[i].get("leave_hours") - raw_data[i].get("day_off_hours")
-                    # print("TotalWorkingHour_M::::::::::::::::::::::::::::::::::::::::", TotalWorkingHour_M)
-                    # 計算單筆當月總工作人天
-                    TotalWorkingDay_M = TotalWorkingHour_M / raw_data[i].get("daily_hours")
-                    # print("TotalWorkingHour_M::::::::::::::::::::::::::::::::::::::::", TotalWorkingHour_M)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["TotalWorkingHour_M"] = TotalWorkingHour_M
-                    single_data["TotalWorkingDay_M"] = round(TotalWorkingDay_M, 4)
-                    # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
-                    t_data.append(single_data)
+                t_data = list(
+                    personnel_inventory.objects.values("id", "years", "employee_number",
+                                                       "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
+                                                       "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
+                                                       "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
+                                                       "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"
+                                                       ))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "保全清單":
                 t_data = []
@@ -1103,7 +1090,9 @@ def add_title(request):
 
             "15": {
                 "編輯區": ["刪除", "修改"],
-                "人天清冊": ["序號", "年份", "月份", "員工數", "每日工時", "每月工作天數", "加班+補修時數", "請假時數", "休假時數", "當月總工時", "當月總工作人天"]
+                "內容": ["序號", "年份", "員工數"],
+                "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
             "16": {
@@ -1150,9 +1139,11 @@ def add_title(request):
     title = [htmlName.get(device_id)]
     return JsonResponse(title, safe=False)
 
+
 def chemical_dropdowm(request):
     chemical_add = list(chemical_table.objects.values("chemical_add"))
     return JsonResponse(chemical_add, safe=False)
+
 
 def load_chemical(request):
     chemical_add = request.GET.get("add_ch_name")
