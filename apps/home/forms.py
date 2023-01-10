@@ -680,17 +680,37 @@ class EXform(forms.ModelForm):
 class PIform(forms.ModelForm):
     class Meta:
         model = personnel_inventory
-        fields = ('years', 'monthly', 'employee_number', 'daily_hours', 'working_days', 'overtime', 'leave_hours',
-                  'day_off_hours', 'image_note', 'image_path', 'message_board')
+        fields = ('years', 'employee_number', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
+                  'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november',
+                  'WKhours_december', 'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june',
+                  'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'monthly': forms.Select(choices=MONTH_CHOICES),
             'employee_number': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'daily_hours': forms.TextInput(attrs={'class': 'form-control'}),
-            'working_days': forms.TextInput(attrs={'class': 'form-control'}),
-            'overtime': forms.TextInput(attrs={'class': 'form-control'}),
-            'leave_hours': forms.TextInput(attrs={'class': 'form-control'}),
-            'day_off_hours': forms.TextInput(attrs={'class': 'form-control'}),
+            'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKnum_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -698,11 +718,6 @@ class PIform(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PIform, self).__init__(*args, **kwargs)
-        self.fields['daily_hours'].required = False
-        self.fields['working_days'].required = False
-        self.fields['overtime'].required = False
-        self.fields['leave_hours'].required = False
-        self.fields['day_off_hours'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
@@ -973,7 +988,7 @@ class WASTEform(forms.ModelForm):
         widgets = {
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_weigh': forms.TextInput(attrs={'class': 'form-control'}),
-            'waste_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+            'waste_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'waste_location': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
