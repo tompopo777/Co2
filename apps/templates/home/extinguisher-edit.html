@@ -30,39 +30,51 @@
                                 <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-6">
+                                        <div class="row my-3">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.extinguisher_name }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器類型 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.extinguisher_type }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>設備編號 <span style="color:red; font-size:16px;"></span></label>
                                                     {{ form.device_id }}
                                                 </div>
                                             </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>廠商</label>
+                                                    {{ form.extinguisher_vendor }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row  my-3">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器擺放位置 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>滅火器類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.extinguisher_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>滅火器擺放位置(廠別) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.position }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row my-3">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廠商</label>
-                                                    {{ form.extinguisher_vendor }}
+                                                    <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.chemical_weight }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
@@ -72,33 +84,17 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>藥劑規格(單位:磅) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.chemical_spec }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.chemical_weight }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
+                                        <div class="row  my-3">
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器使用數量 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.using_amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-3 ps-md-2">
-                                                <label class="ms-0" for="start">使用日期 <span style="color:red; font-size:16px;">* </span></label>
-                                                <div class="col-6">
-                                                    <div class="ms-1 input-group date" id='date1'>
-                                                        {{ form.using_date }}
-                                                    </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>使用月份 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.monthly }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
@@ -107,36 +103,33 @@
                                                     {{ form.replace_filling_amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-3 ps-md-2">
-                                                <label class="" for="start">更換/填充日期 <span style="color:red; font-size:16px;">* </span></label>
-                                                <div class="col-6">
-                                                    <div class="ms-1 input-group date" id='date1'>
-                                                        {{ form.replace_filling_date }}
-                                                    </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>更換/填充日期 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.replace_filling_date }}
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <br>
-                                    <div class="d-flex">
-                                        <div class="col-6">
-                                            <div class="input-group input-group-static mb-4">
-                                                <label>上傳引用單據</label>
-                                                {{ form.image_note }}
+                                        <div class="d-flex">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>上傳引用單據</label>
+                                                    {{ form.image_note }}
+                                                </div>
+                                            </div>
+                                            <div class=" ps-md-2 align-self-center">
+                                                <div class="col-1 ">
+                                                    {{ form.image_path }}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class=" ps-md-2 align-self-center">
-                                            <div class="col-1 ">
-                                                {{ form.image_path }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="form-control">
-                                                <label>備註欄</label>
-                                                {{ form.message_board }}
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-control">
+                                                    <label>備註欄</label>
+                                                    {{ form.message_board }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -167,6 +160,7 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
@@ -187,6 +181,29 @@
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+    {#    月份篩選器#}
+    <script>
+        $("#datepicker2").datepicker({
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker3").datepicker({
+            format: "yyyy-mm-dd",
+            viewMode: "days",
+            minViewMode: "days",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
