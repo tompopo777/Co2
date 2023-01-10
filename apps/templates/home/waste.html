@@ -43,12 +43,10 @@
                                                     {{ WASTE_add.waste_weigh }}
                                                 </div>
                                             </div>
-                                            <div class="col-4 ps-md-2">
-                                                <label class="ms-0" for="start">廢棄物運送日期 <span style="color:red; font-size:16px;">* </span></label>
-                                                <div class="col-6">
-                                                    <div class="ms-1 input-group date" id='date1'>
-                                                        {{ WASTE_add.waste_date }}
-                                                    </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>廢棄物運送年月度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ WASTE_add.waste_date }}
                                                 </div>
                                             </div>
                                         </div>
@@ -146,21 +144,8 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -172,4 +157,16 @@
             }
         });
     </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
 {% endblock javascripts %}

@@ -43,8 +43,8 @@
                                                     {{ form.waste_weigh }}
                                                 </div>
                                             </div>
-                                            <div class="col-4 ps-md-2">
-                                                <label class="ms-0" for="start">廢棄物運送日期 <span style="color:red; font-size:16px;">* </span></label>
+                                            <div class="col-4">
+                                                <label class="ms-0" for="start">廢棄物運送年月度 <span style="color:red; font-size:16px;">* </span></label>
                                                 <div class="col-6">
                                                     <div class="ms-1 input-group date" id='date1'>
                                                         {{ form.waste_date }}
@@ -163,9 +163,9 @@
     {#    日期篩選器#}
     <script>
         $("#datepicker").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
