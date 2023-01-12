@@ -110,7 +110,23 @@ EXTINGUISHER_TYPE_CHOICES = [
     ('潔淨滅火器Ar（IG-01）HFC-236fa(FE36)', '潔淨滅火器Ar（IG-01）HFC-236fa(FE36)'),
     ('金屬火災滅火器', '金屬火災滅火器')
 ]
-
+TRANSPORT_TYPE_CHOICES = [
+    ('', ''),
+    ('5.5噸以下(小型貨車)', '5.5噸以下(小型貨車)'),
+    ('7.5噸-26噸(中型貨車)', '7.5噸-26噸(中型貨車)'),
+    ('35 噸貨車(重型貨車)', '35 噸貨車(重型貨車)'),
+    ('43 噸(重型貨車)', '43 噸(重型貨車)'),
+    ('46 噸(重型貨車)', '46 噸(重型貨車)'),
+    ('拖掛車(拖架)', '拖掛車(拖架)'),
+    ('牽引車(拖頭)', '牽引車(拖頭)'),
+    ('貨櫃車-35噸（20英呎貨櫃）', '貨櫃車-35噸（20英呎貨櫃）'),
+    ('貨櫃車-43噸（40/45英呎貨櫃）', '貨櫃車-43噸（40/45英呎貨櫃）'),
+    ('平板卡車(拖車)', '平板卡車(拖車)')
+]
+TRANSPORT_FUEL_CHOICES = [
+    ('柴油', '柴油'),
+    ('汽油', '汽油'),
+]
 
 # 前面: 存DB，後面: 顯示
 # CHEMICAL_CHOICES = []
@@ -992,8 +1008,8 @@ class WASTEform(forms.ModelForm):
             'waste_location': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
-            'transport_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
-            'transport_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ex.柴油、汽油'}),
+            'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
+            'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),

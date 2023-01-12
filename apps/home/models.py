@@ -535,7 +535,7 @@ class waste(models.Model):
     waste_disposal = models.CharField(max_length=20)
     waste_location = models.CharField(max_length=100)
     waste_disposal_vendor = models.CharField(max_length=20)
-    transport_type = models.CharField(max_length=20, null=True)
+    transport_type = models.CharField(max_length=50, null=True)
     transport_fuel = models.CharField(max_length=10, null=True)
     transport_distance = models.IntegerField(null=True)
     image_note = models.CharField(max_length=30, null=True)
