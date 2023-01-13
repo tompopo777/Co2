@@ -126,11 +126,10 @@ class EGform(forms.ModelForm):
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
                   'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off',
-                                                      'pattern': '[0-9]+', 'title': '只能輸入數字',
-                                                      'placeholder': '單位:公升'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '單位:公升'}),
+            # 'position': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[^\.\\\+\*\?\^\$\[\]\{\}|\/]*$', 'title': "特殊符號只能輸入'-'、'_'", 'placeholder': "特殊符號只能輸入'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -167,10 +166,10 @@ class CEform(forms.ModelForm):
                   'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
                   'heat_october', 'heat_november', 'heat_december', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
-            'fuel_type': forms.Select(choices=CE_FUEL_TYPE_CHOICES),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'fuel_type': forms.Select(choices=CE_FUEL_TYPE_CHOICES),
             'fuel_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'fuel_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'fuel_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -219,10 +218,10 @@ class OFform(forms.ModelForm):
                   'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july',
                   'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
             'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'oil_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'oil_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -287,14 +286,6 @@ class OFform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 class MTform(forms.ModelForm):
-    # material_id = forms.CharField(widget=widgets.TextInput(attrs={'class': 'form-control'}), validators=[RegexValidator(r'^[a-zA-Z0-9_.-]*$', "只能輸入'英文'、'數字'、'-'、'_'")]),
-    # material_id = forms.CharField(validators=[RegexValidator(r'^1[0-9]+$', "只能輸入'英文'、'數字'、'-'、'_'")], widget=widgets.TextInput(attrs={'class': "form-control", 'placeholder': u'手機號碼'})),
-    # material_id = forms.CharField(validators=[mobile_validate], widget=widgets.TextInput(attrs={'class': "form-control", 'placeholder': u'手機號碼'})),
-
-    # material_id = forms.CharField(validators=[validate_slug]),
-
-    # material_id = forms.RegexField(regex="r^1[0-9]+$", widget=widgets.TextInput(attrs={'class': 'form-control'}))
-
     class Meta:
         model = material
         fields = ('years', 'material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
@@ -344,11 +335,11 @@ class PCform(forms.ModelForm):
                   'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
+            'material_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name'}),
             'chemical_name': forms.TextInput(attrs={'class': 'form-control chemical_name'}),
             'chemical_formula': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
-            'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
-            'material_id': forms.TextInput(attrs={'class': 'form-control'}),
             'CAS_NO': forms.TextInput(attrs={'class': 'form-control'}),
             'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'VOCs': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
@@ -386,7 +377,7 @@ class RFform(forms.ModelForm):
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -418,7 +409,7 @@ class ACform(forms.ModelForm):
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -450,7 +441,7 @@ class VCform(forms.ModelForm):
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -482,7 +473,7 @@ class WDform(forms.ModelForm):
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -514,7 +505,7 @@ class IWDform(forms.ModelForm):
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -546,7 +537,7 @@ class IMform(forms.ModelForm):
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -578,7 +569,7 @@ class ODform(forms.ModelForm):
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -610,7 +601,7 @@ class RTTform(forms.ModelForm):
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
@@ -645,7 +636,7 @@ class EXform(forms.ModelForm):
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'extinguisher_name': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_type': forms.Select(choices=EXTINGUISHER_TYPE_CHOICES),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入編號'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '選填'}),
             'chemical_weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
@@ -743,7 +734,7 @@ class ELECform(forms.ModelForm):
                   'september', 'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'EMI_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'EMI_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -916,7 +907,7 @@ class ECform(forms.ModelForm):
         fields = ('employee_id', 'employee_name', 'department', 'work_days', 'transportation', 'displacement', 'city',
                   'township', 'address', 'commute_distance', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'employee_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'work_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '有來就算一天'}),
@@ -948,7 +939,7 @@ class EBTform(forms.ModelForm):
             'business_trip_location': forms.TextInput(attrs={'class': 'form-control'}),
             'business_trip_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'transportation': forms.Select(choices=EBT_TRANSPORTATION_CHOICES),
-            'employee_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'departure': forms.TextInput(attrs={'class': 'form-control'}),
