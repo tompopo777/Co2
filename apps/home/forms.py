@@ -286,12 +286,6 @@ class OFform(forms.ModelForm):
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
-
-def mobile_validate(value):
-    mobile_re = re.compile(r'^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$')
-    if not mobile_re.match(value):
-        raise ValidationError('手機號碼格式錯誤')
-
 class MTform(forms.ModelForm):
     # material_id = forms.CharField(widget=widgets.TextInput(attrs={'class': 'form-control'}), validators=[RegexValidator(r'^[a-zA-Z0-9_.-]*$', "只能輸入'英文'、'數字'、'-'、'_'")]),
     # material_id = forms.CharField(validators=[RegexValidator(r'^1[0-9]+$', "只能輸入'英文'、'數字'、'-'、'_'")], widget=widgets.TextInput(attrs={'class': "form-control", 'placeholder': u'手機號碼'})),
@@ -305,13 +299,10 @@ class MTform(forms.ModelForm):
         model = material
         fields = ('years', 'material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
                   'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
-        # material_id = forms.CharField(validators=[mobile_validate], widget=widgets.TextInput(attrs={'class': "form-control", 'placeholder': u'手機號碼'})),
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'material_id': forms.TextInput(attrs={'class': 'form-control', 'onchange': 'value.replace(/[^\d]/g,'')"'}),
-            # 'material_id': forms.TextInput(attrs={'class': 'form-control'}, validators[validate_slug]),
-            # 'material_id': forms.TextInput(attrs={'class': 'form-control'}, validators=[RegexValidator(regex=[r'^1[3-9]\d{9}$', "只能輸入'英文'、'數字'、'-'、'_'"])]),
+            'material_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'material_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 原料/物料'}),
             'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input chemical chemical', 'id': 'chemical', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
