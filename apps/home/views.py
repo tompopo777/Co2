@@ -360,22 +360,14 @@ def load_table(request):
             elif a["d_name"] == "保全清單":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = security.objects.values("id", "years", "monthly", "security_number", "daily_hours", "working_days")
-                # "working_days", "total_working_hours", "total_working_day")
-                for i in range(raw_data.count()):
-                    # 計算單筆當月總工作時數
-                    TotalWorkingHour_M = raw_data[i].get("security_number") * raw_data[i].get("daily_hours") * raw_data[i].get("working_days")
-                    # print("TotalWorkingHour_M::::::::::::::::::::::::::::::::::::::::", TotalWorkingHour_M)
-                    # 計算單筆當月總工作人天
-                    TotalWorkingDay_M = TotalWorkingHour_M / raw_data[i].get("daily_hours")
-                    # print("TotalWorkingHour_M::::::::::::::::::::::::::::::::::::::::", TotalWorkingHour_M)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["TotalWorkingHour_M"] = TotalWorkingHour_M
-                    single_data["TotalWorkingDay_M"] = round(TotalWorkingDay_M, 4)
-                    # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
-                    t_data.append(single_data)
+                raw_data = employee.objects.values("id", "years", "career",
+                                                   "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
+                                                   "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
+                                                   "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june",
+                                                   "WKdays_july", "WKdays_august", "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
+                                                   "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
+                                                   "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
+                                                   )
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
@@ -670,17 +662,17 @@ def personnel_inventory_add(request):
 
 
 @login_required(login_url="/login/")
-def security_add(request):
+def employee_add(request):
     if request.method == "POST":
-        SC_add = SCform(request.POST, request.FILES)
-        if SC_add.is_valid():
-            SC_add.save()
+        EMP_add = EMPform(request.POST, request.FILES)
+        if EMP_add.is_valid():
+            EMP_add.save()
 
             return redirect('/carbon-system/')
 
     else:
 
-        return redirect('/security_add/')
+        return redirect('/employee_add/')
 
 
 @login_required(login_url="/login/")
@@ -800,7 +792,7 @@ def add_page(request):
             "13": "home/refrigerant-total-table.html",
             "14": "home/extinguisher.html",
             "15": "home/personnel-inventory.html",
-            "16": "home/security.html",
+            "16": "home/employee.html",
             "17": "home/electricity.html",
             "18": "home/upstream-transportation.html",
             "19": "home/downstream-transportation.html",
@@ -824,7 +816,7 @@ def add_page(request):
         RTT_add = RTTform(request.POST)
         EX_add = EXform(request.POST)
         PI_add = PIform(request.POST)
-        SC_add = SCform(request.POST)
+        EMP_add = EMPform(request.POST)
         ELEC_add = ELECform(request.POST)
         UT_add = UTform(request.POST)
         DT_add = DTform(request.POST)
@@ -860,7 +852,7 @@ def edit_device(request):
         "13": refrigerant_total_table,
         "14": extinguisher,
         "15": personnel_inventory,
-        "16": security,
+        "16": employee,
         "17": electricity,
         "18": upstream_transportation,
         "19": downstream_transportation,
@@ -872,7 +864,7 @@ def edit_device(request):
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
-        "16": SCform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
+        "16": EMPform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
         "21": EBTform, "22": WASTEform
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
@@ -904,7 +896,7 @@ def edit_device(request):
                 "13": "home/refrigerant-total-table-edit.html",
                 "14": "home/extinguisher-edit.html",
                 "15": "home/personnel-inventory-edit.html",
-                "16": "home/security-edit.html",
+                "16": "home/employee-edit.html",
                 "17": "home/electricity-edit.html",
                 "18": "home/upstream-transportation-edit.html",
                 "19": "home/downstream-transportation-edit.html",
@@ -936,7 +928,7 @@ def update_device(request, datasheet_id, single_dataID):
         "13": refrigerant_total_table,
         "14": extinguisher,
         "15": personnel_inventory,
-        "16": security,
+        "16": employee,
         "17": electricity,
         "18": upstream_transportation,
         "19": downstream_transportation,
@@ -948,7 +940,7 @@ def update_device(request, datasheet_id, single_dataID):
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
-        "16": SCform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
+        "16": EMPform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
         "21": EBTform, "22": WASTEform
     }
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
@@ -987,7 +979,7 @@ def delete_device(request):
             "13": refrigerant_total_table,
             "14": extinguisher,
             "15": personnel_inventory,
-            "16": security,
+            "16": employee,
             "17": electricity,
             "18": upstream_transportation,
             "19": downstream_transportation,
@@ -1090,14 +1082,17 @@ def add_title(request):
 
             "15": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年份", "員工數"],
+                "內容": ["序號", "年度", "員工數"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
             "16": {
                 "編輯區": ["刪除", "修改"],
-                "保全清冊": ["序號", "年份", "月份", "保全人數", "每日工時", "每月工作天數", "當月工時", "當月工作人天"]
+                "內容": ["序號", "年度", "人員類別"],
+                "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
             "17": {
