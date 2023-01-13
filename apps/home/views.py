@@ -427,7 +427,7 @@ def load_table(request):
             elif a["d_name"] == "員工出差":
                 t_data = list(
                     employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
-                                                          "business_trip_location", "business_trip_date", "transportation",
+                                                          "business_trip_location", "business_trip_date", "department",
                                                           "departure", "destination", "round_trip_distance"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
@@ -1123,7 +1123,7 @@ def add_title(request):
 
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "員工出差清冊": ["序號", "編號", "部門", "姓名", "出差地點", "出差日期", "交通方式", "出發地", "目的地", "來回距離(pkm)"],
+                "員工出差清冊": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期", "出發地", "目的地", "來回距離(pkm)"],
             },
 
             "22": {
@@ -1138,7 +1138,6 @@ def add_title(request):
 def chemical_dropdowm(request):
     chemical_add = list(chemical_table.objects.values("chemical_add"))
     return JsonResponse(chemical_add, safe=False)
-
 
 def load_chemical(request):
     chemical_add = request.GET.get("add_ch_name")

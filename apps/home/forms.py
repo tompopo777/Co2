@@ -993,13 +993,13 @@ class ECform(forms.ModelForm):
 class EBTform(forms.ModelForm):
     class Meta:
         model = employee_business_trip
-        fields = ('business_trip_location', 'business_trip_date', 'transportation', 'employee_id', 'employee_name',
+        fields = ('business_trip_location', 'business_trip_date', 'business_trip_number', 'employee_id', 'employee_name',
                   'department', 'departure', 'destination', 'bt_image_note', 'bt_image_path', 'round_trip_distance',
                   'rtd_image_note', 'rtd_image_path', 'message_board')
         widgets = {
             'business_trip_location': forms.TextInput(attrs={'class': 'form-control'}),
-            'business_trip_date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'transportation': forms.Select(choices=EBT_TRANSPORTATION_CHOICES),
+            'business_trip_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'business_trip_number': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1007,7 +1007,7 @@ class EBTform(forms.ModelForm):
             'destination': forms.TextInput(attrs={'class': 'form-control'}),
             'bt_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'bt_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'round_trip_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '「來回」距離'}),
+            'round_trip_distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '「來回」距離'}),
             'rtd_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'rtd_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -1015,6 +1015,7 @@ class EBTform(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EBTform, self).__init__(*args, **kwargs)
+        self.fields['employee_id'].required = False
         self.fields['bt_image_note'].required = False
         self.fields['bt_image_path'].required = False
         self.fields['rtd_image_note'].required = False
