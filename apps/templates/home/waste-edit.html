@@ -23,7 +23,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">廢棄物</h3>
+                                    <h3 class="text-white text-primary mb-0">編輯廢棄物</h3>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -44,11 +44,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <label class="ms-0" for="start">廢棄物運送年月度 <span style="color:red; font-size:16px;">* </span></label>
-                                                <div class="col-6">
-                                                    <div class="ms-1 input-group date" id='date1'>
-                                                        {{ form.waste_date }}
-                                                    </div>
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>廢棄物運送年月度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.waste_date }}
                                                 </div>
                                             </div>
                                         </div>
@@ -75,7 +73,7 @@
                                             </div>
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>運輸方式</label>
+                                                    <label>運輸工具&nbsp;</label>
                                                     {{ form.transport_type }}
                                                 </div>
                                             </div>

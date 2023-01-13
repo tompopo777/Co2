@@ -31,7 +31,7 @@ urlpatterns = [
     path("refrigerant_total_table_add/", views.refrigerant_total_table_add),
     path("extinguisher_add/", views.extinguisher_add),
     path("personnel_inventory_add/", views.personnel_inventory_add),
-    path("security_add/", views.security_add),
+    path("employee_add/", views.employee_add),
     path("electricity_add/", views.electricity_add),
     path("upstream_transportation_add/", views.upstream_transportation_add),
     path("downstream_transportation_add/", views.downstream_transportation_add),

@@ -110,7 +110,28 @@ EXTINGUISHER_TYPE_CHOICES = [
     ('潔淨滅火器Ar（IG-01）HFC-236fa(FE36)', '潔淨滅火器Ar（IG-01）HFC-236fa(FE36)'),
     ('金屬火災滅火器', '金屬火災滅火器')
 ]
-
+TRANSPORT_TYPE_CHOICES = [
+    ('', ''),
+    ('5.5噸以下(小型貨車)', '5.5噸以下(小型貨車)'),
+    ('7.5噸-26噸(中型貨車)', '7.5噸-26噸(中型貨車)'),
+    ('35 噸貨車(重型貨車)', '35 噸貨車(重型貨車)'),
+    ('43 噸(重型貨車)', '43 噸(重型貨車)'),
+    ('46 噸(重型貨車)', '46 噸(重型貨車)'),
+    ('拖掛車(拖架)', '拖掛車(拖架)'),
+    ('牽引車(拖頭)', '牽引車(拖頭)'),
+    ('貨櫃車-35噸（20英呎貨櫃）', '貨櫃車-35噸（20英呎貨櫃）'),
+    ('貨櫃車-43噸（40/45英呎貨櫃）', '貨櫃車-43噸（40/45英呎貨櫃）'),
+    ('平板卡車(拖車)', '平板卡車(拖車)')
+]
+TRANSPORT_FUEL_CHOICES = [
+    ('柴油', '柴油'),
+    ('汽油', '汽油'),
+]
+CAREER_CHOICES = [
+    ('保全', '保全'),
+    ('清潔工', '清潔工'),
+    ('其他', '其他')
+]
 
 # 前面: 存DB，後面: 顯示
 # CHEMICAL_CHOICES = []
@@ -705,23 +726,63 @@ class PIform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
-class SCform(forms.ModelForm):
+class EMPform(forms.ModelForm):
     class Meta:
-        model = security
-        fields = ('years', 'monthly', 'security_number', 'daily_hours', 'working_days', 'image_note', 'image_path', 'message_board')
+        model = employee
+        fields = ('years', 'career',
+                  'employeeNum_january', 'employeeNum_february', 'employeeNum_march', 'employeeNum_april', 'employeeNum_may', 'employeeNum_june', 'employeeNum_july', 'employeeNum_august',
+                  'employeeNum_september', 'employeeNum_october', 'employeeNum_november', 'employeeNum_december',
+                  'WKdays_january', 'WKdays_february', 'WKdays_march', 'WKdays_april', 'WKdays_may', 'WKdays_june', 'WKdays_july', 'WKdays_august',
+                  'WKdays_september', 'WKdays_october', 'WKdays_november', 'WKdays_december',
+                  'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august',
+                  'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
+                  'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'monthly': forms.Select(choices=MONTH_CHOICES),
-            'security_number': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'daily_hours': forms.TextInput(attrs={'class': 'form-control'}),
-            'working_days': forms.TextInput(attrs={'class': 'form-control'}),
+            'career': forms.Select(choices=CAREER_CHOICES),
+            'employeeNum_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'employeeNum_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKdays_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'WKhours_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
-        super(SCform, self).__init__(*args, **kwargs)
+        super(EMPform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
@@ -974,8 +1035,8 @@ class WASTEform(forms.ModelForm):
             'waste_location': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
-            'transport_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
-            'transport_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
+            'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
+            'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
