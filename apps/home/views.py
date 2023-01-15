@@ -428,7 +428,7 @@ def load_table(request):
                 t_data = list(
                     employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
                                                           "business_trip_location", "business_trip_date", "department",
-                                                          "departure", "destination", "round_trip_distance"))
+                                                          "car", "taxi", "train", "THSR", "MRT", "ship", "plane"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
@@ -950,7 +950,7 @@ def update_device(request, datasheet_id, single_dataID):
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(request.POST, request.FILES, instance=current_data)
             if update_from.is_valid():
-                print("yyyyyyyyyyyyyy")
+                # print("yyyyyyyyyyyyyy")
                 update_from.save()
                 return redirect('/carbon-system/', locals())
         else:
@@ -1123,7 +1123,8 @@ def add_title(request):
 
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "員工出差清冊": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期", "出發地", "目的地", "來回距離(pkm)"],
+                "內容": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
+                "距離(pkm)": ["自駕汽車", "計程車", "火車", "高鐵", "捷運", "船舶", "飛機"],
             },
 
             "22": {
