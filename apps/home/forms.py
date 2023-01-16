@@ -861,7 +861,7 @@ class UTform(forms.ModelForm):
         fields = ('acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW', 'organizational_use_products', 'customer', 'supplier',
                   'supplier_address', 'trade_term', 'receiving_address', 'delivery_address',
                   'transport_distance', 'transport_country', 'paid', 'transport_type', 'transport_fuel', 'trips', 'image_note', 'image_path',
-                  'overseas_transport_distance', 'overseas_transport_type', 'overseas_paid', 'overseas_delivery', 'overseas_arrive',
+                  'overseas_transport_distance', 'overseas_paid', 'overseas_delivery', 'overseas_arrive',
                   'overseas_trips', 'overseas_image_note', 'overseas_image_path',
                   'special_transport_distance', 'special_transport_country', 'special_paid', 'special_transport_type', 'special_transport_fuel',
                   'special_trips', 'special_image_note', 'special_image_path',
@@ -888,7 +888,6 @@ class UTform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
-            'overseas_transport_type': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_paid': forms.RadioSelect(choices=PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
@@ -923,7 +922,6 @@ class UTform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['overseas_transport_distance'].required = False
-        self.fields['overseas_transport_type'].required = False
         self.fields['overseas_paid'].required = False
         self.fields['overseas_delivery'].required = False
         self.fields['overseas_arrive'].required = False
@@ -953,7 +951,7 @@ class DTform(forms.ModelForm):
         fields = ('acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW', 'customer', 'supplier',
                   'supplier_address', 'trade_term', 'receiving_address', 'delivery_address',
                   'transport_distance', 'transport_country', 'paid', 'transport_type', 'transport_fuel', 'trips', 'image_note', 'image_path',
-                  'overseas_transport_distance', 'overseas_transport_type', 'overseas_paid', 'overseas_delivery', 'overseas_arrive',
+                  'overseas_transport_distance', 'overseas_paid', 'overseas_delivery', 'overseas_arrive',
                   'overseas_trips', 'overseas_image_note', 'overseas_image_path',
                   'special_transport_distance', 'special_transport_country', 'special_paid', 'special_transport_type', 'special_transport_fuel',
                   'special_trips', 'special_image_note', 'special_image_path',
@@ -978,7 +976,6 @@ class DTform(forms.ModelForm):
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
-            'overseas_transport_type': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_paid': forms.RadioSelect(choices=PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1013,7 +1010,6 @@ class DTform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['overseas_transport_distance'].required = False
-        self.fields['overseas_transport_type'].required = False
         self.fields['overseas_paid'].required = False
         self.fields['overseas_delivery'].required = False
         self.fields['overseas_arrive'].required = False

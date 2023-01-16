@@ -393,7 +393,7 @@ def load_table(request):
                                                            "organizational_use_products", "customer", "supplier", "supplier_address",
                                                            "trade_term", "receiving_address", "delivery_address",
                                                            "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                           "overseas_transport_distance", "overseas_transport_type", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                           "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
                                                            "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
                                                            "air_transport_distance", "air_transport_country", "air_paid", "air_trips"))
                 return JsonResponse(t_data, safe=False)
@@ -402,7 +402,7 @@ def load_table(request):
                     downstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
                                                              "trade_term", "receiving_address", "delivery_address",
                                                              "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                             "overseas_transport_distance", "overseas_transport_type", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                             "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
                                                              "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
                                                              "air_transport_distance", "air_transport_country", "air_paid", "air_trips"))
                 return JsonResponse(t_data, safe=False)
@@ -1102,7 +1102,7 @@ def add_title(request):
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "海運": ["海運距離(nm)", "運輸工具", "出貨港口", "到達港口", "支付方", "趟次"],
+                "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
             },
@@ -1111,7 +1111,7 @@ def add_title(request):
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "海運": ["海運距離(nm)", "運輸工具", "出貨港口", "到達港口", "支付方", "趟次"],
+                "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
             },
