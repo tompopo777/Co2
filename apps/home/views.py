@@ -354,20 +354,17 @@ def load_table(request):
                                                        "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
                                                        "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
                                                        "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
-                                                       "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"
-                                                       ))
+                                                       "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "保全清單":
-                t_data = []
-                # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = employee.objects.values("id", "years", "career",
-                                                   "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
-                                                   "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
-                                                   "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june",
-                                                   "WKdays_july", "WKdays_august", "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
-                                                   "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
-                                                   "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
-                                                   )
+            elif a["d_name"] == "委外人員清冊":
+                t_data = list(
+                    employee.objects.values("id", "years", "career",
+                                            "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
+                                            "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
+                                            "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
+                                            "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
+                                            "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
+                                            "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
@@ -392,20 +389,22 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "上游運輸":
                 t_data = list(
-                    upstream_transportation.objects.values("acceptance_receipt", "commodity_name", "commodity_NW",
-                                                           "customer", "supplier", "supplier_address",
-                                                           "trade_term", "receiving_address", "delivery_address", "transport_distance",
-                                                           "transport_country", "transport_type", "vehicle_fuel", "trips",
-                                                           "overseas_transport_type", "overseas_vehicle_fuel", "overseas_transport_distance", "overseas_trips",
-                                                           "special_transport_distance", "special_transport_country", "special_transport_type", "special_vehicle_fuel", "special_trips"))
+                    upstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
+                                                           "organizational_use_products", "customer", "supplier", "supplier_address",
+                                                           "trade_term", "receiving_address", "delivery_address",
+                                                           "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                           "overseas_transport_distance", "overseas_transport_type", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                           "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                           "air_transport_distance", "air_transport_country", "air_paid", "air_trips"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "下游運輸":
                 t_data = list(
-                    downstream_transportation.objects.values("device_id", "period_starttime", "period_endtime",
-                                                             "device_capacity", "position", "department",
-                                                             "january", "february", "march", "april",
-                                                             "may", "june", "july", "august",
-                                                             "september", "october", "november", "december"))
+                    downstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
+                                                             "trade_term", "receiving_address", "delivery_address",
+                                                             "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                             "overseas_transport_distance", "overseas_transport_type", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                             "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                             "air_transport_distance", "air_transport_country", "air_paid", "air_trips"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工通勤":
                 t_data = []
@@ -432,7 +431,6 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
-                # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
                 raw_data = waste.objects.values("id", "waste_name", "waste_weigh", "waste_date",
                                                 "waste_location", "waste_disposal", "waste_disposal_vendor",
                                                 "transport_type", "transport_fuel", "transport_distance")
@@ -1082,7 +1080,7 @@ def add_title(request):
 
             "15": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "員工數"],
+                "內容": ["序號", "年度", "員工總數"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
@@ -1102,18 +1100,20 @@ def add_title(request):
 
             "18": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "驗收單號", "商品", "淨重量(單位:噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
-                "陸運": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"],
-                "海運": ["出貨港口", "到達港口", "海運距離", "趟次", "T*km"],
-                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"]
+                "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+                "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+                "海運": ["海運距離(nm)", "運輸工具", "出貨港口", "到達港口", "支付方", "趟次"],
+                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+                "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
             },
 
             "19": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "驗收單號", "商品", "淨重量(單位:噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
-                "陸運": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"],
-                "海運": ["出貨港口", "到達港口", "海運距離", "趟次", "T*km"],
-                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "方式", "燃料", "趟次", "T*km"]
+                "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+                "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+                "海運": ["海運距離(nm)", "運輸工具", "出貨港口", "到達港口", "支付方", "趟次"],
+                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+                "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
             },
 
             "20": {
