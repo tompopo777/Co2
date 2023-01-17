@@ -31,13 +31,19 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.employee_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.employee_name }}
@@ -45,31 +51,22 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.department }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年工作天數 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.work_days }}
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-6 d-flex align-items-center">
+                                            <div class="col-4 d-flex align-items-center">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.transportation }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>汽/機車排氣量(CC數) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.displacement }}
                                                 </div>
                                             </div>
                                         </div>
@@ -152,6 +149,7 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
@@ -166,12 +164,35 @@
         });
     </script>
 
-    {#    日期篩選器#}
+    {#    年度篩選器#}
     <script>
         $("#datepicker").datepicker({
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+    {#    月份篩選器#}
+    <script>
+        $("#datepicker2").datepicker({
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker3").datepicker({
+            format: "yyyy-mm-dd",
+            viewMode: "days",
+            minViewMode: "days",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');

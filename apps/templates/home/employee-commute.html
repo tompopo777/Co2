@@ -31,13 +31,19 @@
                                 {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ EC_add.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.employee_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.employee_name }}
@@ -45,31 +51,23 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.department }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年工作天數 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.work_days }}
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-6 d-flex align-items-center">
+                                            <div class="col-4 d-flex align-items-center">
+{#                                            <div class="col-4">#}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ EC_add.transportation }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>汽/機車排氣量(CC數) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_add.displacement }}
                                                 </div>
                                             </div>
                                         </div>
@@ -152,28 +150,9 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-
-        $("#datepicker").datepicker({
-            format: "mm-yyyy",
-            startView: "months",
-            minViewMode: "months"
-        });
-    </script>
+    {#    datepicker#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
     {#    禁止enter鍵#}
     <script>
@@ -185,4 +164,39 @@
             }
         });
     </script>
+
+    {#    年度篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+    {#    月份篩選器#}
+    <script>
+        $("#datepicker2").datepicker({
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker3").datepicker({
+            format: "yyyy-mm-dd",
+            viewMode: "days",
+            minViewMode: "days",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
 {% endblock javascripts %}

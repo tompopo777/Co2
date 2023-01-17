@@ -190,13 +190,13 @@
                                                         <div class="row">
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>出貨機場/港口</label>
+                                                                    <label>出貨港口</label>
                                                                     {{ UT_add.overseas_delivery }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>到達機場/港口</label>
+                                                                    <label>到達港口</label>
                                                                     {{ UT_add.overseas_arrive }}
                                                                 </div>
                                                             </div>
@@ -298,25 +298,33 @@
                                                 <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
                                                     <div class="accordion-body">
                                                         <div class="row">
-                                                            <div class="col-3">
+                                                            <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>單趟運輸距離(單位:公里)</label>
                                                                     {{ UT_add.air_transport_distance }}
                                                                 </div>
                                                             </div>
-                                                            <div class="col-3">
+                                                            <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>運輸國家</label>
-                                                                    {{ UT_add.air_transport_country }}
+                                                                    <label>出貨機場</label>
+                                                                    {{ UT_add.air_delivery }}
                                                                 </div>
                                                             </div>
-                                                            <div class="col-3">
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>到達機場</label>
+                                                                    {{ UT_add.air_arrive }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
                                                                     {{ UT_add.air_trips }}
                                                                 </div>
                                                             </div>
-                                                            <div class="col-3">
+                                                            <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>支付方</label>
                                                                     {{ UT_add.air_paid }}
