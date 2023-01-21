@@ -526,13 +526,13 @@ class downstream_transportation(models.Model):
 
 class employee_commute(models.Model):
     id = models.AutoField(primary_key=True)
+    years = models.IntegerField()
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=20)
     employee_id = models.CharField(max_length=30)
     employee_name = models.CharField(max_length=10)
     department = models.CharField(max_length=100)
     work_days = models.IntegerField()
     transportation = models.CharField(max_length=20)
-    displacement = models.IntegerField()
     city = models.CharField(max_length=100)
     township = models.CharField(max_length=10)
     address = models.CharField(max_length=100)
@@ -550,6 +550,15 @@ class employee_business_trip(models.Model):
     employee_id = models.CharField(max_length=30, null=True)
     employee_name = models.CharField(max_length=10)
     department = models.CharField(max_length=100)
+    bt_image_note = models.CharField(max_length=30, null=True)
+    bt_image_path = models.ImageField(upload_to='員工出差/%Y/%m', null=True, default=None)
+    rtd_image_note = models.CharField(max_length=30, null=True)
+    rtd_image_path = models.ImageField(upload_to='員工出差/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
+
+class trip_section(models.Model):
+    id = models.AutoField(primary_key=True)
+    departure = models.CharField(max_length=50)
     car = models.FloatField(null=True)
     taxi = models.FloatField(null=True)
     train = models.FloatField(null=True)
@@ -557,11 +566,7 @@ class employee_business_trip(models.Model):
     MRT = models.FloatField(null=True)
     ship = models.FloatField(null=True)
     plane = models.FloatField(null=True)
-    bt_image_note = models.CharField(max_length=30, null=True)
-    bt_image_path = models.ImageField(upload_to='員工出差/%Y/%m', null=True, default=None)
-    rtd_image_note = models.CharField(max_length=30, null=True)
-    rtd_image_path = models.ImageField(upload_to='員工出差/%Y/%m', null=True, default=None)
-    message_board = models.CharField(max_length=255, null=True)
+    trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE)
 
 class waste(models.Model):
     id = models.AutoField(primary_key=True)

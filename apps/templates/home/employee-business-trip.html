@@ -203,8 +203,13 @@
             clone.id = trip_count
             var transportation = $(".transportation")
             var pkm = $(".pkm")
-            transportation[trip_count - 1].value = ""
-            pkm[trip_count - 1].value = ""
+            {#transportation[trip_count - 1].value = ""#}
+            {#pkm[trip_count - 1].value = ""#}
+
+            transportation[trip_count - 1].value = "捷運"
+            pkm[trip_count - 1].value = "111"
+            transportation[0].value = "高鐵"
+            pkm[0].value = "12312"
         }
 
         function DeleteTrip(deletbutton) {
@@ -217,24 +222,26 @@
     </script>
 
     <script>
-        $("#cancel").on('click', function () {
-            const transportation = []
-            const pkm = []
-            console.log("yyyy", document.getElementsByName("transportation").values())
-            {#transportation.push("")#}
+        $("#submit").on('click', function () {
+            const transportation = $(".transportation")
+            const pkm = $(".pkm")
+            const transportation_list = []
+            const pkm_list = []
+            for (let i = 0; i < trip_count; i++) {
+                transportation_list.push(transportation[i].value)
+                pkm_list.push(pkm[i].value)
+            }
+            console.log("transportation_list", transportation_list)
+            console.log("pkm_list", pkm_list)
             $.ajax({
-                url: "{% url 'delete_device' %}",
+                url: "{% url 'save_trip' %}",
                 data: {
-                    'datasheet_id': datasheet_id,
-                    'single_dataID': id
+                    'transportation_list': JSON.stringify(transportation_list),
+                    'pkm_list': JSON.stringify(pkm_list)
                 },
+                transportation: true,
                 type: 'GET',
-                dataType: 'json',
-                success: function (single_dataID) {
-                    var single_data = document.getElementById(single_dataID)
-                    console.warn(">>>>>>>>>>>", single_data)
-                    single_data.closest("tr").remove()
-                }
+                dataType: 'jason',
             });
         })
     </script>
