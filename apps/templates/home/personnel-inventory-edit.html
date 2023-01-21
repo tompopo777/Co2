@@ -23,7 +23,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">編輯 ᅳ 人天清冊</h3>
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 人天清冊</h3>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -31,22 +31,16 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年度 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.years }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>員工人數 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.employee_number }}
-                                                </div>
-                                            </div>
                                         </div>
                                         <div class="d-flex flex-nowrap">
                                             <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                總工作時數/人數 <span style="color:red; font-size:16px;">* </span>
+                                                當月總工作時數/人數 <span style="color:red; font-size:16px;">* </span>
                                             </h5>
                                         </div>
                                         <div class="d-flex flex-nowrap">
@@ -71,7 +65,7 @@
                                                 <tbody>
                                                 <tr>
                                                     <th>
-                                                        時數
+                                                        當月總時數
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">
@@ -136,7 +130,7 @@
                                                 </tr>
                                                 <tr>
                                                     <th>
-                                                        人數
+                                                        當月總人數
                                                     </th>
                                                     <td>
                                                         <div class="d-flex justify-content-center">

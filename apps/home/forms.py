@@ -111,7 +111,7 @@ EXTINGUISHER_TYPE_CHOICES = [
     ('金屬火災滅火器', '金屬火災滅火器')
 ]
 TRANSPORT_TYPE_CHOICES = [
-    ('', ''),
+    ('', '請選擇運輸工具'),
     ('5.5噸以下(小型貨車)', '5.5噸以下(小型貨車)'),
     ('7.5噸-26噸(中型貨車)', '7.5噸-26噸(中型貨車)'),
     ('35 噸貨車(重型貨車)', '35 噸貨車(重型貨車)'),
@@ -124,6 +124,7 @@ TRANSPORT_TYPE_CHOICES = [
     ('平板卡車(拖車)', '平板卡車(拖車)')
 ]
 TRANSPORT_FUEL_CHOICES = [
+    ('', '無'),
     ('柴油', '柴油'),
     ('汽油', '汽油'),
 ]
@@ -131,6 +132,39 @@ CAREER_CHOICES = [
     ('保全', '保全'),
     ('清潔工', '清潔工'),
     ('其他', '其他')
+]
+ORGANIZATIONAL_USE_PRODUCTS_CHOICES = [
+    ('組織購買原/物料開採、製造與加工過程所產生溫室氣體排放', '組織購買原/物料開採、製造與加工過程所產生溫室氣體排放'),
+    ('資本財製造與加工過程所產生溫室氣體排放', '資本財製造與加工過程所產生溫室氣體排放'),
+    ('處置固體與液體廢棄物產生之運輸排放', '處置固體與液體廢棄物產生之運輸排放'),
+    ('資本財租賃使用之溫室氣體排放', '資本財租賃使用之溫室氣體排放'),
+    ('輔導、清潔、維護、郵遞、銀行業務等服務所產生的溫室氣體排放', '輔導、清潔、維護、郵遞、銀行業務等服務所產生的溫室氣體排放')
+]
+WEIGHT_CHOICES = [
+    ('淨重', '淨重'),
+    ('毛重', '毛重'),
+]
+CUSTOMER_CHOICES = [
+    ('國內', '國內'),
+    ('國外', '國外')
+]
+TRADE_TERM_CHOICES = [
+    ('EXW', 'EXW 工廠交貨'),
+    ('FCA', 'FCA 貨交承運人'),
+    ('FAS', 'FAS 裝運港船邊交貨'),
+    ('FOB', 'FOB 裝運港船上交貨'),
+    ('CFR', 'CFR 成本+運費'),
+    ('CIF', 'CIF 成本保險費+運費'),
+    ('CPT', 'CPT 運費付至'),
+    ('CIP', 'CIP 運費保險費付至'),
+    ('DPU', 'DPU 卸貨地交貨'),
+    ('DAP', 'DAP 目的地交貨'),
+    ('DDP', 'DDP 完稅後交貨')
+]
+PAID_CHOICES = [
+    ('公司支付', '公司支付'),
+    ('客戶支付', '客戶支付'),
+    ('供應商支付', '供應商支付')
 ]
 
 
@@ -245,6 +279,7 @@ class OFform(forms.ModelForm):
             'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES),
             'oil_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'oil_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'oil_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -652,12 +687,11 @@ class RTTform(forms.ModelForm):
 class EXform(forms.ModelForm):
     class Meta:
         model = extinguisher
-        fields = ('years', 'extinguisher_name', 'extinguisher_type', 'device_id', 'position', 'extinguisher_vendor', 'chemical_weight',
+        fields = ('years', 'extinguisher_type', 'device_id', 'position', 'extinguisher_vendor', 'chemical_weight',
                   'inventory', 'using_amount', 'monthly', 'replace_filling_amount',
                   'replace_filling_date', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'extinguisher_name': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_type': forms.Select(choices=EXTINGUISHER_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
@@ -667,7 +701,7 @@ class EXform(forms.ModelForm):
             'using_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'monthly': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker2'}),
             'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker3'}),
+            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker2'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -685,13 +719,12 @@ class EXform(forms.ModelForm):
 class PIform(forms.ModelForm):
     class Meta:
         model = personnel_inventory
-        fields = ('years', 'employee_number', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
+        fields = ('years', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
                   'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november',
                   'WKhours_december', 'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june',
                   'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'employee_number': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -826,33 +859,37 @@ class ELECform(forms.ModelForm):
 class UTform(forms.ModelForm):
     class Meta:
         model = upstream_transportation
-        fields = ('acceptance_receipt', 'commodity_name', 'commodity_NW', 'customer', 'supplier', 'supplier_address',
-                  'trade_term', 'receiving_address', 'delivery_address', 'transport_distance', 'transport_country',
-                  'transport_type', 'vehicle_fuel', 'trips', 'image_note', 'image_path', 'overseas_transport_distance',
-                  'overseas_transport_type', 'overseas_delivery', 'overseas_arrive', 'overseas_trips',
-                  'overseas_image_note', 'overseas_image_path', 'special_transport_distance',
-                  'special_transport_country', 'special_transport_type', 'special_vehicle_fuel', 'special_trips',
-                  'special_image_note', 'special_image_path', 'message_board')
+        fields = ('acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW', 'organizational_use_products', 'customer', 'supplier',
+                  'supplier_address', 'trade_term', 'receiving_address', 'delivery_address',
+                  'transport_distance', 'transport_country', 'paid', 'transport_type', 'transport_fuel', 'trips', 'image_note', 'image_path',
+                  'overseas_transport_distance', 'overseas_paid', 'overseas_delivery', 'overseas_arrive',
+                  'overseas_trips', 'overseas_image_note', 'overseas_image_path',
+                  'special_transport_distance', 'special_transport_country', 'special_paid', 'special_transport_type', 'special_transport_fuel',
+                  'special_trips', 'special_image_note', 'special_image_path',
+                  'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'air_image_note', 'air_image_path', 'message_board')
 
         widgets = {
-            'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control'}),
+            'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '無單號請輸入: 0'}),
             'commodity_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'weight': forms.Select(choices=WEIGHT_CHOICES),
             'commodity_NW': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'customer': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入: 國內/國外'}),
+            'organizational_use_products': forms.Select(choices=ORGANIZATIONAL_USE_PRODUCTS_CHOICES),
+            'customer': forms.Select(choices=CUSTOMER_CHOICES),
             'supplier': forms.TextInput(attrs={'class': 'form-control'}),
             'supplier_address': forms.TextInput(attrs={'class': 'form-control'}),
-            'trade_term': forms.TextInput(attrs={'class': 'form-control'}),
+            'trade_term': forms.Select(choices=TRADE_TERM_CHOICES),
             'receiving_address': forms.TextInput(attrs={'class': 'form-control'}),
             'delivery_address': forms.TextInput(attrs={'class': 'form-control'}),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'transport_country': forms.TextInput(attrs={'class': 'form-control'}),
-            'transport_type': forms.TextInput(attrs={'class': 'form-control'}),
-            'vehicle_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 柴油'}),
+            'paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
+            'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海裡 = 1.852公里'}),
-            'overseas_transport_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
+            'overseas_paid': forms.RadioSelect(choices=PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
@@ -860,11 +897,19 @@ class UTform(forms.ModelForm):
             'overseas_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'special_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'special_transport_country': forms.TextInput(attrs={'class': 'form-control'}),
-            'special_transport_type': forms.TextInput(attrs={'class': 'form-control'}),
-            'special_vehicle_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 柴油'}),
+            'special_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'special_transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
+            'special_transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'air_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
+            'air_delivery': forms.TextInput(attrs={'class': 'form-control'}),
+            'air_arrive': forms.TextInput(attrs={'class': 'form-control'}),
+            'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'air_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'air_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'air_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -872,13 +917,14 @@ class UTform(forms.ModelForm):
         super(UTform, self).__init__(*args, **kwargs)
         self.fields['transport_distance'].required = False
         self.fields['transport_country'].required = False
+        self.fields['paid'].required = False
         self.fields['transport_type'].required = False
-        self.fields['vehicle_fuel'].required = False
+        self.fields['transport_fuel'].required = False
         self.fields['trips'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['overseas_transport_distance'].required = False
-        self.fields['overseas_transport_type'].required = False
+        self.fields['overseas_paid'].required = False
         self.fields['overseas_delivery'].required = False
         self.fields['overseas_arrive'].required = False
         self.fields['overseas_trips'].required = False
@@ -886,43 +932,54 @@ class UTform(forms.ModelForm):
         self.fields['overseas_image_path'].required = False
         self.fields['special_transport_distance'].required = False
         self.fields['special_transport_country'].required = False
+        self.fields['special_paid'].required = False
         self.fields['special_transport_type'].required = False
-        self.fields['special_vehicle_fuel'].required = False
+        self.fields['special_transport_fuel'].required = False
         self.fields['special_trips'].required = False
         self.fields['special_image_note'].required = False
         self.fields['special_image_path'].required = False
+        self.fields['air_transport_distance'].required = False
+        self.fields['air_delivery'].required = False
+        self.fields['air_arrive'].required = False
+        self.fields['air_trips'].required = False
+        self.fields['air_paid'].required = False
+        self.fields['air_image_note'].required = False
+        self.fields['air_image_path'].required = False
         self.fields['message_board'].required = False
 
 
 class DTform(forms.ModelForm):
     class Meta:
         model = downstream_transportation
-        fields = ('acceptance_receipt', 'commodity_name', 'commodity_NW', 'customer', 'supplier', 'supplier_address',
-                  'trade_term', 'receiving_address', 'delivery_address', 'transport_distance', 'transport_country',
-                  'transport_type', 'vehicle_fuel', 'trips', 'image_note', 'image_path', 'overseas_transport_distance',
-                  'overseas_transport_type', 'overseas_delivery', 'overseas_arrive', 'overseas_trips',
-                  'overseas_image_note', 'overseas_image_path', 'special_transport_distance',
-                  'special_transport_country', 'special_transport_type', 'special_vehicle_fuel', 'special_trips',
-                  'special_image_note', 'special_image_path', 'message_board')
+        fields = ('acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW', 'customer', 'supplier',
+                  'supplier_address', 'trade_term', 'receiving_address', 'delivery_address',
+                  'transport_distance', 'transport_country', 'paid', 'transport_type', 'transport_fuel', 'trips', 'image_note', 'image_path',
+                  'overseas_transport_distance', 'overseas_paid', 'overseas_delivery', 'overseas_arrive',
+                  'overseas_trips', 'overseas_image_note', 'overseas_image_path',
+                  'special_transport_distance', 'special_transport_country', 'special_paid', 'special_transport_type', 'special_transport_fuel',
+                  'special_trips', 'special_image_note', 'special_image_path',
+                  'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'air_image_note', 'air_image_path', 'message_board')
         widgets = {
-            'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control'}),
+            'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '無單號請輸入: 0'}),
             'commodity_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'weight': forms.Select(choices=WEIGHT_CHOICES),
             'commodity_NW': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'customer': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入: 國內/國外'}),
+            'customer': forms.Select(choices=CUSTOMER_CHOICES),
             'supplier': forms.TextInput(attrs={'class': 'form-control'}),
             'supplier_address': forms.TextInput(attrs={'class': 'form-control'}),
-            'trade_term': forms.TextInput(attrs={'class': 'form-control'}),
+            'trade_term': forms.Select(choices=TRADE_TERM_CHOICES),
             'receiving_address': forms.TextInput(attrs={'class': 'form-control'}),
             'delivery_address': forms.TextInput(attrs={'class': 'form-control'}),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'transport_country': forms.TextInput(attrs={'class': 'form-control'}),
-            'transport_type': forms.TextInput(attrs={'class': 'form-control'}),
-            'vehicle_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 柴油'}),
+            'paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
+            'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海裡 = 1.852公里'}),
-            'overseas_transport_type': forms.TextInput(attrs={'class': 'form-control'}),
+            'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
+            'overseas_paid': forms.RadioSelect(choices=PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
@@ -930,11 +987,19 @@ class DTform(forms.ModelForm):
             'overseas_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'special_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'special_transport_country': forms.TextInput(attrs={'class': 'form-control'}),
-            'special_transport_type': forms.TextInput(attrs={'class': 'form-control'}),
-            'special_vehicle_fuel': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 柴油'}),
+            'special_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'special_transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
+            'special_transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'air_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
+            'air_delivery': forms.TextInput(attrs={'class': 'form-control'}),
+            'air_arrive': forms.TextInput(attrs={'class': 'form-control'}),
+            'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'air_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'air_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'air_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -942,13 +1007,14 @@ class DTform(forms.ModelForm):
         super(DTform, self).__init__(*args, **kwargs)
         self.fields['transport_distance'].required = False
         self.fields['transport_country'].required = False
+        self.fields['paid'].required = False
         self.fields['transport_type'].required = False
-        self.fields['vehicle_fuel'].required = False
+        self.fields['transport_fuel'].required = False
         self.fields['trips'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['overseas_transport_distance'].required = False
-        self.fields['overseas_transport_type'].required = False
+        self.fields['overseas_paid'].required = False
         self.fields['overseas_delivery'].required = False
         self.fields['overseas_arrive'].required = False
         self.fields['overseas_trips'].required = False
@@ -956,11 +1022,19 @@ class DTform(forms.ModelForm):
         self.fields['overseas_image_path'].required = False
         self.fields['special_transport_distance'].required = False
         self.fields['special_transport_country'].required = False
+        self.fields['special_paid'].required = False
         self.fields['special_transport_type'].required = False
-        self.fields['special_vehicle_fuel'].required = False
+        self.fields['special_transport_fuel'].required = False
         self.fields['special_trips'].required = False
         self.fields['special_image_note'].required = False
         self.fields['special_image_path'].required = False
+        self.fields['air_transport_distance'].required = False
+        self.fields['air_delivery'].required = False
+        self.fields['air_arrive'].required = False
+        self.fields['air_trips'].required = False
+        self.fields['air_paid'].required = False
+        self.fields['air_image_note'].required = False
+        self.fields['air_image_path'].required = False
         self.fields['message_board'].required = False
 
 
