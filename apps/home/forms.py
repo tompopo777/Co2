@@ -1125,3 +1125,32 @@ class WASTEform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
+
+
+class VOCsOneForm(forms.ModelForm):
+    class Meta:
+        model = VOCs_one
+        fields = ('years', 'emission', 'concentration_ch4', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(VOCsOneForm, self).__init__(*args, **kwargs)
+        self.fields['message_board'].required = False
+
+
+class VOCsTwoForm(forms.ModelForm):
+    class Meta:
+        model = VOCs_two
+        fields = ('years', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+    def __init__(self, *args, **kwargs):
+        super(VOCsTwoForm, self).__init__(*args, **kwargs)
+        self.fields['message_board'].required = False

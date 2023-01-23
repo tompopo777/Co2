@@ -38,6 +38,8 @@ urlpatterns = [
     path("employee_commute_add/", views.employee_commute_add),
     path("employee_business_trip_add/", views.employee_business_trip_add),
     path("waste_add/", views.waste_add),
+    path("VOCs_one_add/", views.VOCs_one_add),
+    path("VOCs_two_add/", views.VOCs_two_add),
     # ajax傳質
     path("ajax/process", views.load_process, name='loadprocess'),
     path("ajax/device", views.load_device, name='loaddevice'),
