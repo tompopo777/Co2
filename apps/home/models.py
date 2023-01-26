@@ -616,9 +616,9 @@ class VOCs_two(models.Model):
     concentration_ch4 = models.FloatField()
     voc_capture_rate = models.FloatField()
     combustion_equipment_rate = models.FloatField()
-    VOCs_boolean = models.BooleanField(null=True)
-    concentration_boolean = models.BooleanField(null=True)
-    co2_emission_boolean = models.BooleanField(null=True)
+    radio_VOCs = models.CharField(max_length=20)
+    radio_concentration = models.CharField(max_length=20, null=True)
+    radio_co2_emission = models.CharField(max_length=20, null=True)
     message_board = models.CharField(max_length=255, null=True)
 
 class trip_section(models.Model):

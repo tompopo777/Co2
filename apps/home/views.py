@@ -453,13 +453,27 @@ def load_table(request):
             elif a["d_name"] == "VOCs_1":
                 t_data = []
                 raw_data = VOCs_one.objects.values("id", "years", "emission", "concentration_ch4")
-                # 計算加油量合計
+                # 計算合計
                 for i in range(raw_data.count()):
                     ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
                     # print("total::::::::::::::::::::::::::::::::::::::::", total)
                     # 抓單筆資料
                     single_data = raw_data[i]
-                    # 將計算後的加油量丟回字典
+                    # 將計算後的值丟回字典
+                    single_data["ch4/year"] = round(ch4_count, 4)
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "VOCs_2":
+                t_data = []
+                raw_data = VOCs_two.objects.values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
+                                                   "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate")
+                # 計算合計"
+                for i in range(raw_data.count()):
+                    ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的值丟回字典
                     single_data["ch4/year"] = round(ch4_count, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
@@ -1236,7 +1250,7 @@ def add_title(request):
 
             "24": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
+                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
                 "VOCs濃度": ["入口濃度", "出口濃度"],
                 u"CO\u2082排放係數": ["內設值", "自訂值"],
                 # u"CO\u2082排放係數(公噸C0\u2082/千立方公尺VOC)": ["內設值", "自訂值"],
