@@ -608,6 +608,17 @@ class VOCs_two(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=23)
     years = models.IntegerField()
+    disposal_volume = models.FloatField()
+    concentration_entrance = models.FloatField(null=True)
+    concentration_exit = models.FloatField(null=True)
+    builtIn_rate = models.FloatField(null=True)
+    custom_rate = models.FloatField(null=True)
+    concentration_ch4 = models.FloatField()
+    voc_capture_rate = models.FloatField()
+    combustion_equipment_rate = models.FloatField()
+    VOCs_boolean = models.BooleanField(null=True)
+    concentration_boolean = models.BooleanField(null=True)
+    co2_emission_boolean = models.BooleanField(null=True)
     message_board = models.CharField(max_length=255, null=True)
 
 class trip_section(models.Model):
