@@ -72,27 +72,29 @@
                                         <div class="row mb-4">
                                             出差段數
                                         </div>
-                                        <div class="row mb-4" id="trip_section">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EBT_add.departure }}
+                                        <div id="trip_section">
+                                            <div class="row mb-4 trip" id="1">
+                                                <div class="col-4">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
+                                                        <input type="text" class="form-control">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>目的地 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EBT_add.destination }}
+                                                <div class="col-4">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label>交通工具 <span style="color:red; font-size:16px;">* </span></label>
+                                                        <input type="text" class="form-control transportation">
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static">
-                                                    <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EBT_add.round_trip_distance }}
+                                                <div class="col-4">
+                                                    <div class="input-group input-group-static">
+                                                        <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
+                                                        <input type="text" class="form-control pkm">
+                                                    </div>
                                                 </div>
+                                                <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
                                             </div>
-                                            <a class="col"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
-                                            <a class="col"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <div class="d-flex mb-4">
@@ -132,12 +134,12 @@
                                         </div>
                                         <div class="d-flex justify-content-center">
                                             <div class="col-1">
-                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0" id="submit">
                                                     確認
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" id="cancel"
                                                         onclick="history.back()">
                                                     取消
                                                 </button>
@@ -163,7 +165,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
     {#    icon#}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
 
     {#    禁止enter鍵#}
@@ -188,12 +189,60 @@
         }).datepicker("setDate", 'now');
     </script>
 
-    {#    新增出差段數#}
+    {#    新增/刪除出差段數#}
     <script>
-        var row = document.getElementById("trip_section")
-        $(".fa-circle-plus").on('click', function () {
-            row.insertRow(-1)//加入"第一筆資料"列
+        var trip_count = 1;
+        var trip_delete_count = 0;
 
+        function DuplicateTrip() {
+            trip_count += 1;
+            var trip_section = document.getElementById("trip_section")
+            var first_trip = document.getElementsByClassName("trip")[0]
+            var clone = first_trip.cloneNode(true);
+            trip_section.appendChild(clone)
+            clone.id = trip_count
+            var transportation = $(".transportation")
+            var pkm = $(".pkm")
+            {#transportation[trip_count - 1].value = ""#}
+            {#pkm[trip_count - 1].value = ""#}
+
+            transportation[trip_count - 1].value = "捷運"
+            pkm[trip_count - 1].value = "111"
+            transportation[0].value = "高鐵"
+            pkm[0].value = "12312"
+        }
+
+        function DeleteTrip(deletbutton) {
+            console.log("trip_count", trip_count)
+            if (trip_count - trip_delete_count > 1) {
+                deletbutton.closest("div").remove()
+                trip_delete_count += 1;
+            }
+        }
+    </script>
+
+    <script>
+        $("#submit").on('click', function () {
+            const transportation = $(".transportation")
+            const pkm = $(".pkm")
+            const transportation_list = []
+            const pkm_list = []
+            for (let i = 0; i < trip_count; i++) {
+                transportation_list.push(transportation[i].value)
+                pkm_list.push(pkm[i].value)
+            }
+            console.log("transportation_list", transportation_list)
+            console.log("pkm_list", pkm_list)
+            $.ajax({
+                url: "{% url 'save_trip' %}",
+                data: {
+                    'transportation_list': JSON.stringify(transportation_list),
+                    'pkm_list': JSON.stringify(pkm_list)
+                },
+                transportation: true,
+                type: 'GET',
+                dataType: 'jason',
+            });
         })
     </script>
 {% endblock javascripts %}

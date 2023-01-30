@@ -167,6 +167,7 @@ PAID_CHOICES = [
     ('供應商支付', '供應商支付')
 ]
 
+
 # 前面: 存DB，後面: 顯示
 # CHEMICAL_CHOICES = []
 # chemical = chemical_table.objects.values("chemical_add")
@@ -341,6 +342,7 @@ class OFform(forms.ModelForm):
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
+
 class MTform(forms.ModelForm):
     class Meta:
         model = material
@@ -429,7 +431,7 @@ class PCform(forms.ModelForm):
 class RFform(forms.ModelForm):
     class Meta:
         model = refrigerator
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -461,7 +463,7 @@ class RFform(forms.ModelForm):
 class ACform(forms.ModelForm):
     class Meta:
         model = airconditioner
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -493,7 +495,7 @@ class ACform(forms.ModelForm):
 class VCform(forms.ModelForm):
     class Meta:
         model = vehicle
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -525,7 +527,7 @@ class VCform(forms.ModelForm):
 class WDform(forms.ModelForm):
     class Meta:
         model = water_dispenser
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -557,7 +559,7 @@ class WDform(forms.ModelForm):
 class IWDform(forms.ModelForm):
     class Meta:
         model = ice_water_dispenser
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -589,7 +591,7 @@ class IWDform(forms.ModelForm):
 class IMform(forms.ModelForm):
     class Meta:
         model = ice_maker
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -621,7 +623,7 @@ class IMform(forms.ModelForm):
 class ODform(forms.ModelForm):
     class Meta:
         model = other_device
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -653,7 +655,7 @@ class ODform(forms.ModelForm):
 class RTTform(forms.ModelForm):
     class Meta:
         model = refrigerant_total_table
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type',  'position', 'filling_volume',
+        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
                   'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -1068,7 +1070,7 @@ class EBTform(forms.ModelForm):
     class Meta:
         model = employee_business_trip
         fields = ('business_trip_location', 'business_trip_date', 'business_trip_number', 'employee_id', 'employee_name',
-                  'department', 'departure', 'destination', 'bt_image_note', 'bt_image_path', 'round_trip_distance',
+                  'department', 'bt_image_note', 'bt_image_path',
                   'rtd_image_note', 'rtd_image_path', 'message_board')
         widgets = {
             'business_trip_location': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1077,11 +1079,8 @@ class EBTform(forms.ModelForm):
             'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
-            'departure': forms.TextInput(attrs={'class': 'form-control'}),
-            'destination': forms.TextInput(attrs={'class': 'form-control'}),
             'bt_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'bt_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'round_trip_distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '「來回」距離'}),
             'rtd_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'rtd_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -1125,4 +1124,33 @@ class WASTEform(forms.ModelForm):
         self.fields['transport_distance'].required = False
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
+
+
+class VOCsOneForm(forms.ModelForm):
+    class Meta:
+        model = VOCs_one
+        fields = ('years', 'emission', 'concentration_ch4', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(VOCsOneForm, self).__init__(*args, **kwargs)
+        self.fields['message_board'].required = False
+
+
+class VOCsTwoForm(forms.ModelForm):
+    class Meta:
+        model = VOCs_two
+        fields = ('years', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+    def __init__(self, *args, **kwargs):
+        super(VOCsTwoForm, self).__init__(*args, **kwargs)
         self.fields['message_board'].required = False

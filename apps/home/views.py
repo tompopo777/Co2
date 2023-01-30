@@ -2,6 +2,7 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
+import json
 from json import dumps
 
 import pandas as pd
@@ -409,8 +410,8 @@ def load_table(request):
             elif a["d_name"] == "員工通勤":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = employee_commute.objects.values("id", "employee_id", "department", "employee_name",
-                                                           "transportation", "displacement", "city",
+                raw_data = employee_commute.objects.values("id", "years", "employee_id", "department"
+                                                           , "employee_name", "transportation", "city",
                                                            "township", "address", "commute_distance", "work_days")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計
@@ -426,8 +427,8 @@ def load_table(request):
             elif a["d_name"] == "員工出差":
                 t_data = list(
                     employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
-                                                          "business_trip_location", "business_trip_date", "department",
-                                                          "departure", "destination", "round_trip_distance"))
+                                                          "business_trip_location", "business_trip_date"))
+                # "car", "taxi", "train", "THSR", "MRT", "ship", "plane"
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
@@ -448,6 +449,19 @@ def load_table(request):
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "VOCs_1":
+                t_data = []
+                raw_data = VOCs_one.objects.values("id", "years", "emission", "concentration_ch4")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
+                    single_data["ch4/year"] = round(ch4_count, 4)
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
 
 
@@ -494,7 +508,6 @@ def official_car_add(request):
 def material_add(request):
     if request.method == "POST":
         MT_add = MTform(request.POST, request.FILES)
-        print("yyyyyyyyyyyyyy")
         if MT_add.is_valid():
             MT_add.save()
 
@@ -757,6 +770,78 @@ def waste_add(request):
         return redirect('/waste_add/')
 
 
+# VOCs1表單儲存
+@login_required(login_url="/login/")
+def VOCs_one_add(request):
+    if request.method == "POST":
+        VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
+        if VOCs_one_add.is_valid():
+            VOCs_one_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return redirect('/VOCs_one_add/')
+
+
+# VOCs2表單儲存
+@login_required(login_url="/login/")
+def VOCs_two_add(request):
+    if request.method == "POST":
+        VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
+        if VOCs_two_add.is_valid():
+            VOCs_two_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return redirect('/VOCs_two_add/')
+
+
+# trip_section table儲存
+@login_required(login_url="/login/")
+def save_trip(request):
+    transportation_list = request.GET.get('transportation_list')
+    pkm_list = request.GET.get('pkm_list')
+    transportation = json.loads(transportation_list)
+    pkm = json.loads(pkm_list)
+    transportation_dic = {
+        "自駕車": "car",
+        "計程車": "taxi",
+        "火車": "train",
+        "高鐵": "THSR",
+        "捷運": "MRT",
+        "船舶": "ship",
+        "飛機": "plane",
+    }
+    sum = {}
+    count = 0
+    for i in transportation:
+        transportation_way = transportation_dic.get(i)
+        print("transportation_way", transportation_way)
+        # print("++++++++++++++++++", pkm[count])
+        pkm_current = float(pkm[count])
+        if sum.get(transportation_way):
+            sum[transportation_way] = sum.get(transportation_way) + pkm_current
+            print("pkm>>>>>>>>>>", sum.get(transportation_way))
+        else:
+            sum[transportation_way] = float(pkm[count])
+            print("pkm>>>>>>>>>>", sum.get(transportation_way))
+        count += 1
+    print("trip_section", sum)
+    z = employee_business_trip
+    for j in sum:
+        print("jjjjjjjjjjj", j)
+        # print("jjjjjjjjjjj", sum.get(j))
+        # print("jjjjjjjjjjj", type(sum.get(j)))
+        print("jjjjjjjjjjj", type(j))
+        # z.j = sum.get(j)
+        # z.save()
+    # u = sum.get("THSR")
+    # print("uuuuuuuuuuuu", type(u))
+    print("KKKKKKKKKKKKKKK", type(z.THSR))
+    z.THSR = sum.get("THSR")
+    z.save()
+    context = {}
+    return JsonResponse(context, safe=False)
+
+
 @login_required(login_url="/login/")
 def carbon_system(request):
     # data = emergency_generators.objects.filter(id=5).values("image_path", "image_note")
@@ -796,7 +881,9 @@ def add_page(request):
             "19": "home/downstream-transportation.html",
             "20": "home/employee-commute.html",
             "21": "home/employee-business-trip.html",
-            "22": "home/waste.html"
+            "22": "home/waste.html",
+            "23": "home/VOCs-one.html",
+            "24": "home/VOCs-two.html",
         }
 
         EG_add = EGform(request.POST)
@@ -821,6 +908,8 @@ def add_page(request):
         EC_add = ECform(request.POST)
         EBT_add = EBTform(request.POST)
         WASTE_add = WASTEform(request.POST)
+        VOCs_one_add = VOCsOneForm(request.POST)
+        VOCs_two_add = VOCsTwoForm(request.POST)
 
         if htmlName.get(device_id):
             NewDevice_page = htmlName.get(device_id)
@@ -856,14 +945,16 @@ def edit_device(request):
         "19": downstream_transportation,
         "20": employee_commute,
         "21": employee_business_trip,
-        "22": waste
+        "22": waste,
+        "23": VOCs_one,
+        "24": VOCs_two,
     }
     formlName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
         "16": EMPform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
-        "21": EBTform, "22": WASTEform
+        "21": EBTform, "22": WASTEform, "23": VOCsOneForm, "24": VOCsTwoForm
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -900,7 +991,9 @@ def edit_device(request):
                 "19": "home/downstream-transportation-edit.html",
                 "20": "home/employee-commute-edit.html",
                 "21": "home/employee-business-trip-edit.html",
-                "22": "home/waste-edit.html"
+                "22": "home/waste-edit.html",
+                "23": "home/VOCs-one-edit.html",
+                "24": "home/VOCs-two-edit.html",
             }
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
@@ -932,14 +1025,16 @@ def update_device(request, datasheet_id, single_dataID):
         "19": downstream_transportation,
         "20": employee_commute,
         "21": employee_business_trip,
-        "22": waste
+        "22": waste,
+        "23": VOCs_one,
+        "24": VOCs_two
     }
     formName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
         "16": EMPform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
-        "21": EBTform, "22": WASTEform
+        "21": EBTform, "22": WASTEform, "23": VOCsOneForm, "24": VOCsTwoForm,
     }
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -948,7 +1043,6 @@ def update_device(request, datasheet_id, single_dataID):
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(request.POST, request.FILES, instance=current_data)
             if update_from.is_valid():
-                print("yyyyyyyyyyyyyy")
                 update_from.save()
                 return redirect('/carbon-system/', locals())
         else:
@@ -983,7 +1077,9 @@ def delete_device(request):
             "19": downstream_transportation,
             "20": employee_commute,
             "21": employee_business_trip,
-            "22": waste
+            "22": waste,
+            "23": VOCs_one,
+            "24": VOCs_two
         }
         if modelName.get(datasheet_id):
             dbName = modelName.get(datasheet_id)
@@ -1118,18 +1214,30 @@ def add_title(request):
 
             "20": {
                 "編輯區": ["刪除", "修改"],
-                "員工通勤清冊": ["序號", "編號", "部門", "姓名", "交通方式", "排氣量(CC數)", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
+                "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
             },
 
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "員工出差清冊": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期", "出發地", "目的地", "來回距離(pkm)"],
+                "內容": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
+                "距離(pkm)": ["自駕汽車", "計程車", "火車", "高鐵", "捷運", "船舶", "飛機"],
             },
 
             "22": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
-            }
+            },
+
+            "23": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
+            "24": {
+                "編輯區": ["刪除", "修改"],
+                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+            },
         }
     title = [htmlName.get(device_id)]
     return JsonResponse(title, safe=False)
@@ -1138,6 +1246,7 @@ def add_title(request):
 def chemical_dropdowm(request):
     chemical_add = list(chemical_table.objects.values("chemical_add"))
     return JsonResponse(chemical_add, safe=False)
+
 
 def load_chemical(request):
     chemical_add = request.GET.get("add_ch_name")

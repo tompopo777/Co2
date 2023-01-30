@@ -8,22 +8,26 @@ from django.contrib.auth.models import User
 import datetime
 
 YEAR_CHOICES = []
-for r in range(1980, (datetime.datetime.now().year+1)):
+for r in range(1980, (datetime.datetime.now().year + 1)):
     YEAR_CHOICES.append((r, r))
+
 
 # Create your models here.
 class section_one(models.Model):
     cpid = models.AutoField(primary_key=True)
     c_name = models.IntegerField()
     p_name = models.CharField(max_length=30)
+
+
 class section_two(models.Model):
     did = models.AutoField(primary_key=True)
     d_name = models.CharField(max_length=30)
     cpid = models.ForeignKey(section_one, on_delete=models.CASCADE)
     t_name = models.CharField(max_length=30)
 
+
 class emergency_generators(models.Model):
-    id = models.AutoField(primary_key=True,)
+    id = models.AutoField(primary_key=True, )
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=1)
     device_id = models.CharField(max_length=30)
     years = models.IntegerField()
@@ -45,6 +49,7 @@ class emergency_generators(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='緊急發電機/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class combustion_equipment(models.Model):
     id = models.AutoField(primary_key=True)
@@ -80,6 +85,7 @@ class combustion_equipment(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='燃燒設備/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class official_car(models.Model):
     id = models.AutoField(primary_key=True)
@@ -170,6 +176,7 @@ class material(models.Model):
     image_path = models.ImageField(upload_to='原物料使用/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class process(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=5)
@@ -199,6 +206,7 @@ class process(models.Model):
     image_path = models.ImageField(upload_to='製程添加化學品/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class refrigerator(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=6)
@@ -215,6 +223,7 @@ class refrigerator(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='冰箱清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class airconditioner(models.Model):
     id = models.AutoField(primary_key=True)
@@ -233,6 +242,7 @@ class airconditioner(models.Model):
     image_path = models.ImageField(upload_to='冷氣機清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class vehicle(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=8)
@@ -249,6 +259,7 @@ class vehicle(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='車輛清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class water_dispenser(models.Model):
     id = models.AutoField(primary_key=True)
@@ -267,6 +278,7 @@ class water_dispenser(models.Model):
     image_path = models.ImageField(upload_to='飲水機清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class ice_water_dispenser(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=10)
@@ -283,6 +295,7 @@ class ice_water_dispenser(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='冰水機清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class ice_maker(models.Model):
     id = models.AutoField(primary_key=True)
@@ -301,6 +314,7 @@ class ice_maker(models.Model):
     image_path = models.ImageField(upload_to='製冰機清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class other_device(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=12)
@@ -317,6 +331,7 @@ class other_device(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='其他設備清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class refrigerant_total_table(models.Model):
     id = models.AutoField(primary_key=True)
@@ -335,6 +350,7 @@ class refrigerant_total_table(models.Model):
     image_path = models.ImageField(upload_to='冷媒總表/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class extinguisher(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=14)
@@ -352,6 +368,7 @@ class extinguisher(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='滅火器/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class personnel_inventory(models.Model):
     id = models.AutoField(primary_key=True)
@@ -384,6 +401,7 @@ class personnel_inventory(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='人天清冊/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class employee(models.Model):
     id = models.AutoField(primary_key=True)
@@ -430,6 +448,7 @@ class employee(models.Model):
     image_path = models.ImageField(upload_to='保全清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class electricity(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=17)
@@ -451,6 +470,7 @@ class electricity(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.ImageField(upload_to='用電量/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class upstream_transportation(models.Model):
     id = models.AutoField(primary_key=True)
@@ -497,6 +517,7 @@ class upstream_transportation(models.Model):
     air_image_note = models.CharField(max_length=30, null=True)
     air_image_path = models.ImageField(upload_to='上游運輸/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class downstream_transportation(models.Model):
     id = models.AutoField(primary_key=True)
@@ -569,14 +590,38 @@ class employee_business_trip(models.Model):
     employee_id = models.CharField(max_length=30, null=True)
     employee_name = models.CharField(max_length=10)
     department = models.CharField(max_length=100)
-    departure = models.CharField(max_length=100)
-    destination = models.CharField(max_length=100)
     bt_image_note = models.CharField(max_length=30, null=True)
     bt_image_path = models.ImageField(upload_to='員工出差/%Y/%m', null=True, default=None)
-    round_trip_distance = models.IntegerField()
     rtd_image_note = models.CharField(max_length=30, null=True)
     rtd_image_path = models.ImageField(upload_to='員工出差/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
+class VOCs_one(models.Model):
+    id = models.AutoField(primary_key=True)
+    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=22)
+    years = models.IntegerField()
+    emission = models.FloatField()
+    concentration_ch4 = models.FloatField()
+    message_board = models.CharField(max_length=255, null=True)
+
+class VOCs_two(models.Model):
+    id = models.AutoField(primary_key=True)
+    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=23)
+    years = models.IntegerField()
+    message_board = models.CharField(max_length=255, null=True)
+
+class trip_section(models.Model):
+    id = models.AutoField(primary_key=True)
+    departure = models.CharField(max_length=50)
+    car = models.FloatField(null=True)
+    taxi = models.FloatField(null=True)
+    train = models.FloatField(null=True)
+    THSR = models.FloatField(null=True)
+    MRT = models.FloatField(null=True)
+    ship = models.FloatField(null=True)
+    plane = models.FloatField(null=True)
+    trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE)
+
 
 class waste(models.Model):
     id = models.AutoField(primary_key=True)

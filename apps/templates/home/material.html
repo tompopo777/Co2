@@ -308,7 +308,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (chemical_data) {
-                    console.warn(chemical_data);
+                    {#console.warn(chemical_data);#}
                     var list = [];
                     chemical_data.forEach((item) => {
                         for (const [key, value] of Object.entries((item))) {

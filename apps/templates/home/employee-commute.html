@@ -28,12 +28,12 @@
                             </div>
                             <div class="card-body">
                                 <form action="/employee_commute_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.years }}
                                                 </div>
                                             </div>
@@ -64,7 +64,6 @@
                                                 </div>
                                             </div>
                                             <div class="col-4 d-flex align-items-center">
-{#                                            <div class="col-4">#}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ EC_add.transportation }}
@@ -165,7 +164,7 @@
         });
     </script>
 
-    {#    年度篩選器#}
+    {#    日期篩選器#}
     <script>
         $("#datepicker").datepicker({
             format: "yyyy",
@@ -175,28 +174,4 @@
             autoclose: "true",
         }).datepicker("setDate", 'now');
     </script>
-
-    {#    月份篩選器#}
-    <script>
-        $("#datepicker2").datepicker({
-            format: "yyyy-mm",
-            viewMode: "months",
-            minViewMode: "months",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-    </script>
-
-
-    {#    日期篩選器#}
-    <script>
-        $("#datepicker3").datepicker({
-            format: "yyyy-mm-dd",
-            viewMode: "days",
-            minViewMode: "days",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-    </script>
-
 {% endblock javascripts %}
