@@ -685,6 +685,20 @@ def employee_add(request):
 
         return redirect('/employee_add/')
 
+#廢水
+@login_required(login_url="/login/")
+def waste_water_add(request):
+    if request.method == "POST":
+        waste_water_add = WASTEWATERform(request.POST, request.FILES)
+        if waste_water_add.is_valid():
+            waste_water_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/waste_water_add/')
+
 
 @login_required(login_url="/login/")
 def electricity_add(request):
@@ -872,18 +886,18 @@ def add_page(request):
             "10": "home/ice-water-dispenser.html",
             "11": "home/ice-maker.html",
             "12": "home/other-device.html",
-            "13": "home/refrigerant-total-table.html",
-            "14": "home/extinguisher.html",
-            "15": "home/personnel-inventory.html",
-            "16": "home/employee.html",
-            "17": "home/electricity.html",
-            "18": "home/upstream-transportation.html",
-            "19": "home/downstream-transportation.html",
-            "20": "home/employee-commute.html",
-            "21": "home/employee-business-trip.html",
-            "22": "home/waste.html",
-            "23": "home/VOCs-one.html",
-            "24": "home/VOCs-two.html",
+            "13": "home/extinguisher.html",
+            "14": "home/personnel-inventory.html",
+            "15": "home/employee.html",
+            "16": "home/waste-water.html",
+            "19": "home/VOCs-one.html",
+            "20": "home/VOCs-two.html",
+            "21": "home/electricity.html",
+            "22": "home/upstream-transportation.html",
+            "23": "home/downstream-transportation.html",
+            "24": "home/employee-commute.html",
+            "25": "home/employee-business-trip.html",
+            "26": "home/waste.html",
         }
 
         EG_add = EGform(request.POST)
@@ -898,18 +912,18 @@ def add_page(request):
         IWD_add = IWDform(request.POST)
         IM_add = IMform(request.POST)
         OD_add = ODform(request.POST)
-        RTT_add = RTTform(request.POST)
         EX_add = EXform(request.POST)
         PI_add = PIform(request.POST)
         EMP_add = EMPform(request.POST)
+        waste_water_add = WASTEWATERform(request.POST)
+        VOCs_one_add = VOCsOneForm(request.POST)
+        VOCs_two_add = VOCsTwoForm(request.POST)
         ELEC_add = ELECform(request.POST)
         UT_add = UTform(request.POST)
         DT_add = DTform(request.POST)
         EC_add = ECform(request.POST)
         EBT_add = EBTform(request.POST)
         WASTE_add = WASTEform(request.POST)
-        VOCs_one_add = VOCsOneForm(request.POST)
-        VOCs_two_add = VOCsTwoForm(request.POST)
 
         if htmlName.get(device_id):
             NewDevice_page = htmlName.get(device_id)

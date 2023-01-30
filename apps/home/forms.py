@@ -823,6 +823,32 @@ class EMPform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
+#廢水
+class WASTEWATERform(forms.ModelForm):
+    class Meta:
+        model = waste_water
+        fields = ('years', 'waste_water_treatment_name', 'waste_water_inflow_rate', 'average_inlet_COD_concentration',
+                  'average_COD_removal_rate', 'CH4_capture_system_rate', 'combustion_equipment_efficiency',
+                  'image_note', 'image_path', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'waste_water_treatment_name': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'waste_water_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'average_inlet_COD_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'average_COD_removal_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(WASTEWATERform, self).__init__(*args, **kwargs)
+        self.fields['image_note'].required = False
+        self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
+
 class ELECform(forms.ModelForm):
     class Meta:
         model = electricity
