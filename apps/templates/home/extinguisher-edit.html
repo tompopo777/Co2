@@ -180,7 +180,7 @@
         }).datepicker("setDate", 'now');
     </script>
 
-    {#    月份篩選器#}
+    {#    月份篩選器1#}
     <script>
         $("#datepicker2").datepicker({
             format: "yyyy-mm",
@@ -191,10 +191,20 @@
         }).datepicker("setDate", 'now');
     </script>
 
+    {#    月份篩選器2#}
+    <script>
+        $("#datepicker3").datepicker({
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
 
     {#    日期篩選器#}
     <script>
-        $("#datepicker3").datepicker({
+        $("#datepicker4").datepicker({
             format: "yyyy-mm-dd",
             viewMode: "days",
             minViewMode: "days",

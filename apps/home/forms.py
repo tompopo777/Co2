@@ -699,7 +699,7 @@ class EXform(forms.ModelForm):
             'using_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'monthly': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker2'}),
             'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker2'}),
+            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker3'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -1051,7 +1051,7 @@ class ECform(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'township': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
-            'commute_distance': forms.TextInput(attrs={'class': 'form-control'}),
+            'commute_distance': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9.]*$', 'title': "只能輸入數字", 'placeholder': "只能輸入數字"}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
