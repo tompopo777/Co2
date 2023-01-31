@@ -329,21 +329,6 @@ def load_table(request):
                     single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "冷媒總表":
-                t_data = []
-                raw_data = refrigerant_total_table.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                  "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                  "effusion_rate")
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
                     extinguisher.objects.values("id", "years", "extinguisher_name", "extinguisher_type", "device_id", "position", "extinguisher_vendor",
@@ -366,6 +351,66 @@ def load_table(request):
                                             "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
                                             "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
                                             "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "廢水":
+                t_data = []
+                raw_data = waste_water.objects.values("id", "years", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
+                                                      "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    ch4_count = raw_data[i].get("waste_water_inflow_rate") * raw_data[i].get("average_inlet_COD_concentration") * raw_data[i].get("average_COD_removal_rate") \
+                                / 100000000 * (1 - raw_data[i].get("CH4_capture_system_rate") * raw_data[i].get("combustion_equipment_efficiency")) * 0.25
+                    co2e_count = ch4_count * 21
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
+                    single_data["ch4_count"] = round(ch4_count, 4)
+                    single_data["co2e_count"] = round(co2e_count, 4)
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "廢汙泥":
+                t_data = []
+                raw_data = waste_sludge.objects.values("id", "years", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
+                                                       "CH4_capture_system_rate", "combustion_equipment_efficiency")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    ch4_count = raw_data[i].get("waste_sludge_inflow_rate") * raw_data[i].get("average_inlet_MLSS_concentration") * 1.42 * 0.5 \
+                                * (1 - raw_data[i].get("CH4_capture_system_rate") * raw_data[i].get("combustion_equipment_efficiency")) / 1000000 * 0.25
+                    co2e_count = ch4_count * 21
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
+                    single_data["ch4_count"] = round(ch4_count, 4)
+                    single_data["co2e_count"] = round(co2e_count, 4)
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "溶劑、噴霧劑":
+                t_data = []
+                raw_data = solvent_aerosol_emission_sources.objects.values("id", "years", "species_used", "fugitive_recharge", "global_warming_potential")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    co2e_count = raw_data[i].get("fugitive_recharge") * raw_data[i].get("global_warming_potential")
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
+                    single_data["co2e_count"] = round(co2e_count, 4)
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "VOCs_1":
+                t_data = []
+                raw_data = VOCs_one.objects.values("id", "years", "emission", "concentration_ch4")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
+                    single_data["ch4/year"] = round(ch4_count, 4)
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
@@ -649,20 +694,6 @@ def other_device_add(request):
 
 
 @login_required(login_url="/login/")
-def refrigerant_total_table_add(request):
-    if request.method == "POST":
-        RTT_add = RTTform(request.POST, request.FILES)
-        if RTT_add.is_valid():
-            RTT_add.save()
-
-            return redirect('/carbon-system/')
-
-    else:
-
-        return redirect('/refrigerant_total_table_add/')
-
-
-@login_required(login_url="/login/")
 def extinguisher_add(request):
     if request.method == "POST":
         EX_add = EXform(request.POST, request.FILES)
@@ -702,6 +733,75 @@ def employee_add(request):
     else:
 
         return redirect('/employee_add/')
+
+
+# 廢水
+@login_required(login_url="/login/")
+def waste_water_add(request):
+    if request.method == "POST":
+        waste_water_add = WASTEWATERform(request.POST, request.FILES)
+        if waste_water_add.is_valid():
+            waste_water_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/waste_water_add/')
+
+
+# 廢汙泥
+@login_required(login_url="/login/")
+def waste_sludge_add(request):
+    if request.method == "POST":
+        waste_sludge_add = WasteSludgeForm(request.POST, request.FILES)
+        if waste_sludge_add.is_valid():
+            waste_sludge_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/waste_sludge_add/')
+
+
+# 溶劑、噴霧劑
+@login_required(login_url="/login/")
+def solvent_aerosol_emission_sources_add(request):
+    if request.method == "POST":
+        solvent_aerosol_emission_sources_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
+        if solvent_aerosol_emission_sources_add.is_valid():
+            solvent_aerosol_emission_sources_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/solvent_aerosol_emission_sources_add/')
+
+
+# VOCs1表單儲存
+@login_required(login_url="/login/")
+def VOCs_one_add(request):
+    if request.method == "POST":
+        VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
+        if VOCs_one_add.is_valid():
+            VOCs_one_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return redirect('/VOCs_one_add/')
+
+
+# VOCs2表單儲存
+@login_required(login_url="/login/")
+def VOCs_two_add(request):
+    if request.method == "POST":
+        VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
+        if VOCs_two_add.is_valid():
+            VOCs_two_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return redirect('/VOCs_two_add/')
 
 
 @login_required(login_url="/login/")
@@ -788,30 +888,6 @@ def waste_add(request):
         return redirect('/waste_add/')
 
 
-# VOCs1表單儲存
-@login_required(login_url="/login/")
-def VOCs_one_add(request):
-    if request.method == "POST":
-        VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
-        if VOCs_one_add.is_valid():
-            VOCs_one_add.save()
-            return redirect('/carbon-system/')
-    else:
-        return redirect('/VOCs_one_add/')
-
-
-# VOCs2表單儲存
-@login_required(login_url="/login/")
-def VOCs_two_add(request):
-    if request.method == "POST":
-        VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
-        if VOCs_two_add.is_valid():
-            VOCs_two_add.save()
-            return redirect('/carbon-system/')
-    else:
-        return redirect('/VOCs_two_add/')
-
-
 # trip_section table儲存
 @login_required(login_url="/login/")
 def save_trip(request):
@@ -890,18 +966,20 @@ def add_page(request):
             "10": "home/ice-water-dispenser.html",
             "11": "home/ice-maker.html",
             "12": "home/other-device.html",
-            "13": "home/refrigerant-total-table.html",
-            "14": "home/extinguisher.html",
-            "15": "home/personnel-inventory.html",
-            "16": "home/employee.html",
-            "17": "home/electricity.html",
-            "18": "home/upstream-transportation.html",
-            "19": "home/downstream-transportation.html",
-            "20": "home/employee-commute.html",
-            "21": "home/employee-business-trip.html",
-            "22": "home/waste.html",
-            "23": "home/VOCs-one.html",
-            "24": "home/VOCs-two.html",
+            "13": "home/extinguisher.html",
+            "14": "home/personnel-inventory.html",
+            "15": "home/employee.html",
+            "16": "home/waste-water.html",
+            "17": "home/waste-sludge.html",
+            "18": "home/solvent-aerosol-emission-sources.html",
+            "19": "home/VOCs-one.html",
+            "20": "home/VOCs-two.html",
+            "21": "home/electricity.html",
+            "22": "home/upstream-transportation.html",
+            "23": "home/downstream-transportation.html",
+            "24": "home/employee-commute.html",
+            "25": "home/employee-business-trip.html",
+            "26": "home/waste.html",
         }
 
         EG_add = EGform(request.POST)
@@ -916,18 +994,20 @@ def add_page(request):
         IWD_add = IWDform(request.POST)
         IM_add = IMform(request.POST)
         OD_add = ODform(request.POST)
-        RTT_add = RTTform(request.POST)
         EX_add = EXform(request.POST)
         PI_add = PIform(request.POST)
         EMP_add = EMPform(request.POST)
+        waste_water_add = WASTEWATERform(request.POST)
+        waste_sludge_add = WasteSludgeForm(request.POST)
+        solvent_aerosol_emission_sources_add = SolventAerosolEmissionSourcesForm(request.POST)
+        VOCs_one_add = VOCsOneForm(request.POST)
+        VOCs_two_add = VOCsTwoForm(request.POST)
         ELEC_add = ELECform(request.POST)
         UT_add = UTform(request.POST)
         DT_add = DTform(request.POST)
         EC_add = ECform(request.POST)
         EBT_add = EBTform(request.POST)
         WASTE_add = WASTEform(request.POST)
-        VOCs_one_add = VOCsOneForm(request.POST)
-        VOCs_two_add = VOCsTwoForm(request.POST)
 
         if htmlName.get(device_id):
             NewDevice_page = htmlName.get(device_id)
@@ -954,25 +1034,28 @@ def edit_device(request):
         "10": ice_water_dispenser,
         "11": ice_maker,
         "12": other_device,
-        "13": refrigerant_total_table,
-        "14": extinguisher,
-        "15": personnel_inventory,
-        "16": employee,
-        "17": electricity,
-        "18": upstream_transportation,
-        "19": downstream_transportation,
-        "20": employee_commute,
-        "21": employee_business_trip,
-        "22": waste,
-        "23": VOCs_one,
-        "24": VOCs_two,
+        "13": extinguisher,
+        "14": personnel_inventory,
+        "15": employee,
+        "16": waste_water,
+        "17": waste_sludge,
+        "18": solvent_aerosol_emission_sources,
+        "19": VOCs_one,
+        "20": VOCs_two,
+        "21": electricity,
+        "22": upstream_transportation,
+        "23": downstream_transportation,
+        "24": employee_commute,
+        "25": employee_business_trip,
+        "26": waste,
     }
     formlName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
-        "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
-        "16": EMPform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
-        "21": EBTform, "22": WASTEform, "23": VOCsOneForm, "24": VOCsTwoForm
+        "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
+        "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -1000,18 +1083,20 @@ def edit_device(request):
                 "10": "home/ice-water-dispenser-edit.html",
                 "11": "home/ice-maker-edit.html",
                 "12": "home/other-device-edit.html",
-                "13": "home/refrigerant-total-table-edit.html",
-                "14": "home/extinguisher-edit.html",
-                "15": "home/personnel-inventory-edit.html",
-                "16": "home/employee-edit.html",
-                "17": "home/electricity-edit.html",
-                "18": "home/upstream-transportation-edit.html",
-                "19": "home/downstream-transportation-edit.html",
-                "20": "home/employee-commute-edit.html",
-                "21": "home/employee-business-trip-edit.html",
-                "22": "home/waste-edit.html",
-                "23": "home/VOCs-one-edit.html",
-                "24": "home/VOCs-two-edit.html",
+                "13": "home/extinguisher-edit.html",
+                "14": "home/personnel-inventory-edit.html",
+                "15": "home/employee-edit.html",
+                "16": "home/waste-water-edit.html",
+                "17": "home/waste-sludge-edit.html",
+                "18": "home/solvent-aerosol-emission-sources-edit.html",
+                "19": "home/VOCs-one-edit.html",
+                "20": "home/VOCs-two-edit.html",
+                "21": "home/electricity-edit.html",
+                "22": "home/upstream-transportation-edit.html",
+                "23": "home/downstream-transportation-edit.html",
+                "24": "home/employee-commute-edit.html",
+                "25": "home/employee-business-trip-edit.html",
+                "26": "home/waste-edit.html",
             }
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
@@ -1034,25 +1119,28 @@ def update_device(request, datasheet_id, single_dataID):
         "10": ice_water_dispenser,
         "11": ice_maker,
         "12": other_device,
-        "13": refrigerant_total_table,
-        "14": extinguisher,
-        "15": personnel_inventory,
-        "16": employee,
-        "17": electricity,
-        "18": upstream_transportation,
-        "19": downstream_transportation,
-        "20": employee_commute,
-        "21": employee_business_trip,
-        "22": waste,
-        "23": VOCs_one,
-        "24": VOCs_two
+        "13": extinguisher,
+        "14": personnel_inventory,
+        "15": employee,
+        "16": waste_water,
+        "17": waste_sludge,
+        "18": solvent_aerosol_emission_sources,
+        "19": VOCs_one,
+        "20": VOCs_two,
+        "21": electricity,
+        "22": upstream_transportation,
+        "23": downstream_transportation,
+        "24": employee_commute,
+        "25": employee_business_trip,
+        "26": waste,
     }
     formName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
-        "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
-        "16": EMPform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
-        "21": EBTform, "22": WASTEform, "23": VOCsOneForm, "24": VOCsTwoForm,
+        "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
+        "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -1086,18 +1174,20 @@ def delete_device(request):
             "10": ice_water_dispenser,
             "11": ice_maker,
             "12": other_device,
-            "13": refrigerant_total_table,
-            "14": extinguisher,
-            "15": personnel_inventory,
-            "16": employee,
-            "17": electricity,
-            "18": upstream_transportation,
-            "19": downstream_transportation,
-            "20": employee_commute,
-            "21": employee_business_trip,
-            "22": waste,
-            "23": VOCs_one,
-            "24": VOCs_two
+            "13": extinguisher,
+            "14": personnel_inventory,
+            "15": employee,
+            "16": waste_water,
+            "17": waste_sludge,
+            "18": solvent_aerosol_emission_sources,
+            "19": VOCs_one,
+            "20": VOCs_two,
+            "21": electricity,
+            "22": upstream_transportation,
+            "23": downstream_transportation,
+            "24": employee_commute,
+            "25": employee_business_trip,
+            "26": waste,
         }
         if modelName.get(datasheet_id):
             dbName = modelName.get(datasheet_id)
@@ -1184,22 +1274,17 @@ def add_title(request):
 
             "13": {
                 "編輯區": ["刪除", "修改"],
-                "冷媒總表": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "14": {
-                "編輯區": ["刪除", "修改"],
                 "滅火器清單": ["序號", "年度", "滅火器名稱", "類型", "設備編號", "擺放位置(廠別)", "廠商", "藥劑重量(單位:kg)", "庫存量", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
             },
 
-            "15": {
+            "14": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "員工總數"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
-            "16": {
+            "15": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "人員類別"],
                 "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
@@ -1207,12 +1292,41 @@ def add_title(request):
                 "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
+            "16": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
             "17": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
+            "18": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "使用物種", "逸散 / 補充量(公噸/年)", "全球暖化潛勢(GWP-AR6)"],
+                "溫室氣體排放": [u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
+            "19": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
+            "20": {
+                "編輯區": ["刪除", "修改"],
+                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+            },
+
+            "21": {
                 "編輯區": ["刪除", "修改"],
                 "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
             },
 
-            "18": {
+            "22": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
@@ -1221,7 +1335,7 @@ def add_title(request):
                 "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
             },
 
-            "19": {
+            "23": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
@@ -1230,18 +1344,18 @@ def add_title(request):
                 "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
             },
 
-            "20": {
+            "24": {
                 "編輯區": ["刪除", "修改"],
                 "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
             },
 
-            "21": {
+            "25": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
                 "距離(pkm)": ["自駕汽車", "計程車", "火車", "高鐵", "捷運", "船舶", "飛機"],
             },
 
-            "22": {
+            "26": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
             },

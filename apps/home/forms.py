@@ -665,38 +665,6 @@ class ODform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
-class RTTform(forms.ModelForm):
-    class Meta:
-        model = refrigerant_total_table
-        fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
-        widgets = {
-            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'model_type': forms.TextInput(attrs={'class': 'form-control'}),
-            'position': forms.TextInput(attrs={'class': 'form-control'}),
-            'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
-            'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
-            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(RTTform, self).__init__(*args, **kwargs)
-        self.fields['brand_name'].required = False
-        self.fields['position'].required = False
-        self.fields['filling_volume'].required = False
-        self.fields['filling_fix_volume'].required = False
-        self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
-        self.fields['message_board'].required = False
-
-
 class EXform(forms.ModelForm):
     class Meta:
         model = extinguisher
@@ -714,7 +682,7 @@ class EXform(forms.ModelForm):
             'using_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'monthly': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker2'}),
             'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker2'}),
+            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker3'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -833,6 +801,111 @@ class EMPform(forms.ModelForm):
         super(EMPform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
+
+
+# 廢水
+class WASTEWATERform(forms.ModelForm):
+    class Meta:
+        model = waste_water
+        fields = ('years', 'waste_water_treatment_name', 'waste_water_inflow_rate', 'average_inlet_COD_concentration',
+                  'average_COD_removal_rate', 'CH4_capture_system_rate', 'combustion_equipment_efficiency',
+                  'image_note', 'image_path', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'waste_water_treatment_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'waste_water_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'average_inlet_COD_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'average_COD_removal_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(WASTEWATERform, self).__init__(*args, **kwargs)
+        self.fields['image_note'].required = False
+        self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
+
+
+# 廢淤泥
+class WasteSludgeForm(forms.ModelForm):
+    class Meta:
+        model = waste_sludge
+        fields = ('years', 'waste_sludge_treatment_name', 'waste_sludge_inflow_rate', 'average_inlet_MLSS_concentration',
+                  'CH4_capture_system_rate', 'combustion_equipment_efficiency', 'image_note', 'image_path', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'waste_sludge_treatment_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'waste_sludge_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'average_inlet_MLSS_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(WasteSludgeForm, self).__init__(*args, **kwargs)
+        self.fields['image_note'].required = False
+        self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
+
+
+# 溶劑、噴霧劑
+class SolventAerosolEmissionSourcesForm(forms.ModelForm):
+    class Meta:
+        model = solvent_aerosol_emission_sources
+        fields = ('years', 'species_used', 'fugitive_recharge', 'global_warming_potential',
+                  'image_note', 'image_path', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'species_used': forms.TextInput(attrs={'class': 'form-control'}),
+            'fugitive_recharge': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'global_warming_potential': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(SolventAerosolEmissionSourcesForm, self).__init__(*args, **kwargs)
+        self.fields['image_note'].required = False
+        self.fields['image_path'].required = False
+        self.fields['message_board'].required = False
+
+
+class VOCsOneForm(forms.ModelForm):
+    class Meta:
+        model = VOCs_one
+        fields = ('years', 'emission', 'concentration_ch4', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(VOCsOneForm, self).__init__(*args, **kwargs)
+        self.fields['message_board'].required = False
+
+
+class VOCsTwoForm(forms.ModelForm):
+    class Meta:
+        model = VOCs_two
+        fields = ('years', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(VOCsTwoForm, self).__init__(*args, **kwargs)
         self.fields['message_board'].required = False
 
 
@@ -1066,7 +1139,7 @@ class ECform(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'township': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
-            'commute_distance': forms.TextInput(attrs={'class': 'form-control'}),
+            'commute_distance': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9.]*$', 'title': "只能輸入數字", 'placeholder': "只能輸入數字"}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
