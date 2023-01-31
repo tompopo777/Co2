@@ -32,6 +32,8 @@ urlpatterns = [
     path("personnel_inventory_add/", views.personnel_inventory_add),
     path("employee_add/", views.employee_add),
     path("waste_water_add/", views.waste_water_add),
+    path("waste_sludge_add/", views.waste_sludge_add),
+    path("solvent_aerosol_emission_sources_add/", views.solvent_aerosol_emission_sources_add),
     path("VOCs_one_add/", views.VOCs_one_add),
     path("VOCs_two_add/", views.VOCs_two_add),
     path("electricity_add/", views.electricity_add),

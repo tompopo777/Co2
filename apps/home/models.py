@@ -446,6 +446,35 @@ class waste_water(models.Model):
     image_path = models.ImageField(upload_to='廢水/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
+#廢汙泥
+class waste_sludge(models.Model):
+    id = models.AutoField(primary_key=True)
+    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=17)
+    years = models.IntegerField()
+    waste_sludge_treatment_name = models.CharField(max_length=50)
+    waste_sludge_inflow_rate = models.IntegerField()
+    average_inlet_MLSS_concentration = models.IntegerField()
+    CH4_capture_system_rate = models.FloatField()
+    combustion_equipment_efficiency = models.FloatField()
+    image_note = models.CharField(max_length=30, null=True)
+    image_path = models.ImageField(upload_to='廢汙泥/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
+
+
+#溶劑、噴霧劑
+class solvent_aerosol_emission_sources(models.Model):
+    id = models.AutoField(primary_key=True)
+    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=18)
+    years = models.IntegerField()
+    species_used = models.CharField(max_length=255)
+    fugitive_recharge = models.IntegerField()
+    global_warming_potential = models.IntegerField()
+    image_note = models.CharField(max_length=30, null=True)
+    image_path = models.ImageField(upload_to='溶劑、噴霧劑/%Y/%m', null=True, default=None)
+    message_board = models.CharField(max_length=255, null=True)
+
+
 class VOCs_one(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=19)

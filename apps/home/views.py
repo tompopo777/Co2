@@ -700,6 +700,60 @@ def waste_water_add(request):
         return redirect('/waste_water_add/')
 
 
+#廢汙泥
+@login_required(login_url="/login/")
+def waste_sludge_add(request):
+    if request.method == "POST":
+        waste_sludge_add = WasteSludgeForm(request.POST, request.FILES)
+        if waste_sludge_add.is_valid():
+            waste_sludge_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/waste_sludge_add/')
+
+
+#溶劑、噴霧劑
+@login_required(login_url="/login/")
+def solvent_aerosol_emission_sources_add(request):
+    if request.method == "POST":
+        solvent_aerosol_emission_sources_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
+        if solvent_aerosol_emission_sources_add.is_valid():
+            solvent_aerosol_emission_sources_add.save()
+
+            return redirect('/carbon-system/')
+
+    else:
+
+        return redirect('/solvent_aerosol_emission_sources_add/')
+
+
+# VOCs1表單儲存
+@login_required(login_url="/login/")
+def VOCs_one_add(request):
+    if request.method == "POST":
+        VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
+        if VOCs_one_add.is_valid():
+            VOCs_one_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return redirect('/VOCs_one_add/')
+
+
+# VOCs2表單儲存
+@login_required(login_url="/login/")
+def VOCs_two_add(request):
+    if request.method == "POST":
+        VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
+        if VOCs_two_add.is_valid():
+            VOCs_two_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return redirect('/VOCs_two_add/')
+
+
 @login_required(login_url="/login/")
 def electricity_add(request):
     if request.method == "POST":
@@ -784,29 +838,6 @@ def waste_add(request):
         return redirect('/waste_add/')
 
 
-# VOCs1表單儲存
-@login_required(login_url="/login/")
-def VOCs_one_add(request):
-    if request.method == "POST":
-        VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
-        if VOCs_one_add.is_valid():
-            VOCs_one_add.save()
-            return redirect('/carbon-system/')
-    else:
-        return redirect('/VOCs_one_add/')
-
-
-# VOCs2表單儲存
-@login_required(login_url="/login/")
-def VOCs_two_add(request):
-    if request.method == "POST":
-        VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
-        if VOCs_two_add.is_valid():
-            VOCs_two_add.save()
-            return redirect('/carbon-system/')
-    else:
-        return redirect('/VOCs_two_add/')
-
 
 # trip_section table儲存
 @login_required(login_url="/login/")
@@ -890,6 +921,8 @@ def add_page(request):
             "14": "home/personnel-inventory.html",
             "15": "home/employee.html",
             "16": "home/waste-water.html",
+            "17": "home/waste-sludge.html",
+            "18": "home/solvent-aerosol-emission-sources.html",
             "19": "home/VOCs-one.html",
             "20": "home/VOCs-two.html",
             "21": "home/electricity.html",
@@ -916,6 +949,8 @@ def add_page(request):
         PI_add = PIform(request.POST)
         EMP_add = EMPform(request.POST)
         waste_water_add = WASTEWATERform(request.POST)
+        waste_sludge_add = WasteSludgeForm(request.POST)
+        solvent_aerosol_emission_sources_add = SolventAerosolEmissionSourcesForm(request.POST)
         VOCs_one_add = VOCsOneForm(request.POST)
         VOCs_two_add = VOCsTwoForm(request.POST)
         ELEC_add = ELECform(request.POST)
@@ -954,6 +989,8 @@ def edit_device(request):
         "14": personnel_inventory,
         "15": employee,
         "16": waste_water,
+        "17": waste_sludge,
+        "18": solvent_aerosol_emission_sources,
         "19": VOCs_one,
         "20": VOCs_two,
         "21": electricity,
@@ -967,9 +1004,9 @@ def edit_device(request):
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
-        "16": WASTEWATERform, "19": VOCsOneForm, "20": VOCsTwoForm,
-        "21": ELECform, "22": UTform, "23": DTform, "24": ECform,
-        "25": EBTform, "26": WASTEform
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
+        "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -1001,6 +1038,8 @@ def edit_device(request):
                 "14": "home/personnel-inventory.html",
                 "15": "home/employee.html",
                 "16": "home/waste-water.html",
+                "17": "home/waste-sludge.html",
+                "18": "home/solvent-aerosol-emission-sources.html",
                 "19": "home/VOCs-one.html",
                 "20": "home/VOCs-two.html",
                 "21": "home/electricity.html",
@@ -1035,6 +1074,8 @@ def update_device(request, datasheet_id, single_dataID):
         "14": personnel_inventory,
         "15": employee,
         "16": waste_water,
+        "17": waste_sludge,
+        "18": solvent_aerosol_emission_sources,
         "19": VOCs_one,
         "20": VOCs_two,
         "21": electricity,
@@ -1048,9 +1089,9 @@ def update_device(request, datasheet_id, single_dataID):
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
-        "16": WASTEWATERform, "19": VOCsOneForm, "20": VOCsTwoForm,
-        "21": ELECform, "22": UTform, "23": DTform, "24": ECform,
-        "25": EBTform, "26": WASTEform
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
+        "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -1088,6 +1129,8 @@ def delete_device(request):
             "14": personnel_inventory,
             "15": employee,
             "16": waste_water,
+            "17": waste_sludge,
+            "18": solvent_aerosol_emission_sources,
             "19": VOCs_one,
             "20": VOCs_two,
             "21": electricity,
