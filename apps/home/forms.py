@@ -804,8 +804,8 @@ class WASTEWATERform(forms.ModelForm):
             'waste_water_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'average_inlet_COD_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'average_COD_removal_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -829,8 +829,8 @@ class WasteSludgeForm(forms.ModelForm):
             'waste_sludge_treatment_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_sludge_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'average_inlet_MLSS_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})

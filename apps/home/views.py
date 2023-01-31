@@ -358,7 +358,7 @@ def load_table(request):
                                                       "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency")
                 # 計算加油量合計
                 for i in range(raw_data.count()):
-                    ch4_count = raw_data[i].get("waste_water_inflow_rate") * raw_data[i].get("average_inlet_COD_concentration") * raw_data[i].get("average_COD_removal_rate")\
+                    ch4_count = raw_data[i].get("waste_water_inflow_rate") * raw_data[i].get("average_inlet_COD_concentration") * raw_data[i].get("average_COD_removal_rate") \
                                 / 100000000 * (1 - raw_data[i].get("CH4_capture_system_rate") * raw_data[i].get("combustion_equipment_efficiency")) * 0.25
                     co2e_count = ch4_count * 21
                     # print("total::::::::::::::::::::::::::::::::::::::::", total)
@@ -366,6 +366,36 @@ def load_table(request):
                     single_data = raw_data[i]
                     # 將計算後的加油量丟回字典
                     single_data["ch4_count"] = round(ch4_count, 4)
+                    single_data["co2e_count"] = round(co2e_count, 4)
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "廢汙泥":
+                t_data = []
+                raw_data = waste_sludge.objects.values("id", "years", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
+                                                       "CH4_capture_system_rate", "combustion_equipment_efficiency")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    ch4_count = raw_data[i].get("waste_sludge_inflow_rate") * raw_data[i].get("average_inlet_MLSS_concentration") * 1.42 * 0.5 \
+                                * (1 - raw_data[i].get("CH4_capture_system_rate") * raw_data[i].get("combustion_equipment_efficiency")) / 1000000 * 0.25
+                    co2e_count = ch4_count * 21
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
+                    single_data["ch4_count"] = round(ch4_count, 4)
+                    single_data["co2e_count"] = round(co2e_count, 4)
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "溶劑、噴霧劑":
+                t_data = []
+                raw_data = solvent_aerosol_emission_sources.objects.values("id", "years", "species_used", "fugitive_recharge", "global_warming_potential")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    co2e_count = raw_data[i].get("fugitive_recharge") * raw_data[i].get("global_warming_potential")
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
                     single_data["co2e_count"] = round(co2e_count, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
@@ -465,7 +495,6 @@ def load_table(request):
                     t_data.append(single_data)
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
-
 
 
 @login_required(login_url="/login/")
@@ -674,7 +703,8 @@ def employee_add(request):
 
         return redirect('/employee_add/')
 
-#廢水
+
+# 廢水
 @login_required(login_url="/login/")
 def waste_water_add(request):
     if request.method == "POST":
@@ -689,7 +719,7 @@ def waste_water_add(request):
         return redirect('/waste_water_add/')
 
 
-#廢汙泥
+# 廢汙泥
 @login_required(login_url="/login/")
 def waste_sludge_add(request):
     if request.method == "POST":
@@ -704,7 +734,7 @@ def waste_sludge_add(request):
         return redirect('/waste_sludge_add/')
 
 
-#溶劑、噴霧劑
+# 溶劑、噴霧劑
 @login_required(login_url="/login/")
 def solvent_aerosol_emission_sources_add(request):
     if request.method == "POST":
@@ -825,7 +855,6 @@ def waste_add(request):
     else:
 
         return redirect('/waste_add/')
-
 
 
 # trip_section table儲存
@@ -1011,32 +1040,32 @@ def edit_device(request):
             }
             # 建立字典
             htmlName = {
-                "1": "home/emergency-generator.html",
-                "2": "home/combustion-equipment.html",
-                "3": "home/official-car.html",
-                "4": "home/material.html",
-                "5": "home/process.html",
-                "6": "home/refrigerator.html",
-                "7": "home/airconditioner.html",
-                "8": "home/vehicle.html",
-                "9": "home/water-dispenser.html",
-                "10": "home/ice-water-dispenser.html",
-                "11": "home/ice-maker.html",
-                "12": "home/other-device.html",
-                "13": "home/extinguisher.html",
-                "14": "home/personnel-inventory.html",
-                "15": "home/employee.html",
-                "16": "home/waste-water.html",
-                "17": "home/waste-sludge.html",
-                "18": "home/solvent-aerosol-emission-sources.html",
-                "19": "home/VOCs-one.html",
-                "20": "home/VOCs-two.html",
-                "21": "home/electricity.html",
-                "22": "home/upstream-transportation.html",
-                "23": "home/downstream-transportation.html",
-                "24": "home/employee-commute.html",
-                "25": "home/employee-business-trip.html",
-                "26": "home/waste.html",
+                "1": "home/emergency-generator-edit.html",
+                "2": "home/combustion-equipment-edit.html",
+                "3": "home/official-car-edit.html",
+                "4": "home/material-edit.html",
+                "5": "home/process-edit.html",
+                "6": "home/refrigerator-edit.html",
+                "7": "home/airconditioner-edit.html",
+                "8": "home/vehicle-edit.html",
+                "9": "home/water-dispenser-edit.html",
+                "10": "home/ice-water-dispenser-edit.html",
+                "11": "home/ice-maker-edit.html",
+                "12": "home/other-device-edit.html",
+                "13": "home/extinguisher-edit.html",
+                "14": "home/personnel-inventory-edit.html",
+                "15": "home/employee-edit.html",
+                "16": "home/waste-water-edit.html",
+                "17": "home/waste-sludge-edit.html",
+                "18": "home/solvent-aerosol-emission-sources-edit.html",
+                "19": "home/VOCs-one-edit.html",
+                "20": "home/VOCs-two-edit.html",
+                "21": "home/electricity-edit.html",
+                "22": "home/upstream-transportation-edit.html",
+                "23": "home/downstream-transportation-edit.html",
+                "24": "home/employee-commute-edit.html",
+                "25": "home/employee-business-trip-edit.html",
+                "26": "home/waste-edit.html",
             }
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
