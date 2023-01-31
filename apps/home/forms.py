@@ -182,10 +182,9 @@ class EGform(forms.ModelForm):
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
                   'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '單位:公升'}),
-            # 'position': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[^\.\\\+\*\?\^\$\[\]\{\}|\/]*$', 'title': "特殊符號只能輸入'-'、'_'", 'placeholder': "特殊符號只能輸入'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -211,6 +210,20 @@ class EGform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
+
+    def clean_device_id(self):
+        # device_id_list = []
+        # for form in self.forms:
+            # device_id = form.cleaned_data['device_id']
+        device_id = self.cleaned_data.get('device_id')
+        # llist = emergency_generators.objects.get("device_id")
+        # print("llist::::::::::::;;", llist)
+            # llist = self.cleaned_data.get("device_id")
+        if '1' in device_id:
+            raise ValidationError("設備編號重複!")
+            # self.add_error("設備編號重複!")
+        return device_id
+        # device_id_list.append(device_id)
 
 
 class CEform(forms.ModelForm):
@@ -1150,15 +1163,17 @@ class VOCsTwoForm(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'disposal_volume': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'concentration_entrance': forms.TextInput(attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled":""}),
-            'concentration_exit': forms.TextInput(attrs={'class': 'form-control concentration_exit', "id": "concentration_exit", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled":""}),
-            'builtIn_rate': forms.TextInput(attrs={'class': 'form-control builtIn_rate', 'id': 'builtIn_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled":""}),
-            'custom_rate': forms.TextInput(attrs={'class': 'form-control custom_rate', 'id': 'custom_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled":""}),
+            'concentration_entrance': forms.TextInput(
+                attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
+            'concentration_exit': forms.TextInput(attrs={'class': 'form-control concentration_exit', "id": "concentration_exit", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
+            'builtIn_rate': forms.TextInput(attrs={'class': 'form-control builtIn_rate', 'id': 'builtIn_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
+            'custom_rate': forms.TextInput(attrs={'class': 'form-control custom_rate', 'id': 'custom_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
             'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
             'voc_capture_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
             'combustion_equipment_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
+
     def __init__(self, *args, **kwargs):
         super(VOCsTwoForm, self).__init__(*args, **kwargs)
         self.fields['concentration_entrance'].required = False

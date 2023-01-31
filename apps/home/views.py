@@ -482,10 +482,14 @@ def load_table(request):
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
     if request.method == "POST":
+        print("77777777777777777")
         EG_add = EGform(request.POST, request.FILES)
         if EG_add.is_valid():
             EG_add.save()
             return redirect('/carbon-system/')
+        else:
+            render('/emergency_generator_add/', locals())
+
     else:
         return redirect('/emergency_generator_add/')
 
