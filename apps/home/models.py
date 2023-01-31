@@ -474,21 +474,6 @@ class solvent_aerosol_emission_sources(models.Model):
     image_path = models.ImageField(upload_to='溶劑、噴霧劑/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
-
-class VOCs_one(models.Model):
-    id = models.AutoField(primary_key=True)
-    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=19)
-    years = models.IntegerField()
-    emission = models.FloatField()
-    concentration_ch4 = models.FloatField()
-    message_board = models.CharField(max_length=255, null=True)
-
-class VOCs_two(models.Model):
-    id = models.AutoField(primary_key=True)
-    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=20)
-    years = models.IntegerField()
-    message_board = models.CharField(max_length=255, null=True)
-
 class electricity(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=21)
