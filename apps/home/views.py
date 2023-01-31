@@ -329,21 +329,6 @@ def load_table(request):
                     single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "冷媒總表":
-                t_data = []
-                raw_data = refrigerant_total_table.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                  "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                  "effusion_rate")
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
                     extinguisher.objects.values("id", "years", "extinguisher_name", "extinguisher_type", "device_id", "position", "extinguisher_vendor",
@@ -366,6 +351,36 @@ def load_table(request):
                                             "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
                                             "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
                                             "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "廢水":
+                t_data = []
+                raw_data = waste_water.objects.values("id", "years", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
+                                                      "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    ch4_count = raw_data[i].get("waste_water_inflow_rate") * raw_data[i].get("average_inlet_COD_concentration") * raw_data[i].get("average_COD_removal_rate")\
+                                / 100000000 * (1 - raw_data[i].get("CH4_capture_system_rate") * raw_data[i].get("combustion_equipment_efficiency")) * 0.25
+                    co2e_count = ch4_count * 21
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
+                    single_data["ch4_count"] = round(ch4_count, 4)
+                    single_data["co2e_count"] = round(co2e_count, 4)
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "VOCs_1":
+                t_data = []
+                raw_data = VOCs_one.objects.values("id", "years", "emission", "concentration_ch4")
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
+                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的加油量丟回字典
+                    single_data["ch4/year"] = round(ch4_count, 4)
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
@@ -450,19 +465,7 @@ def load_table(request):
                     t_data.append(single_data)
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "VOCs_1":
-                t_data = []
-                raw_data = VOCs_one.objects.values("id", "years", "emission", "concentration_ch4")
-                # 計算加油量合計
-                for i in range(raw_data.count()):
-                    ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的加油量丟回字典
-                    single_data["ch4/year"] = round(ch4_count, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
+
 
 
 @login_required(login_url="/login/")
@@ -628,20 +631,6 @@ def other_device_add(request):
     else:
 
         return redirect('/other_device_add/')
-
-
-@login_required(login_url="/login/")
-def refrigerant_total_table_add(request):
-    if request.method == "POST":
-        RTT_add = RTTform(request.POST, request.FILES)
-        if RTT_add.is_valid():
-            RTT_add.save()
-
-            return redirect('/carbon-system/')
-
-    else:
-
-        return redirect('/refrigerant_total_table_add/')
 
 
 @login_required(login_url="/login/")
@@ -1225,22 +1214,17 @@ def add_title(request):
 
             "13": {
                 "編輯區": ["刪除", "修改"],
-                "冷媒總表": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
-
-            "14": {
-                "編輯區": ["刪除", "修改"],
                 "滅火器清單": ["序號", "年度", "滅火器名稱", "類型", "設備編號", "擺放位置(廠別)", "廠商", "藥劑重量(單位:kg)", "庫存量", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
             },
 
-            "15": {
+            "14": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "員工總數"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
-            "16": {
+            "15": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "人員類別"],
                 "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
@@ -1248,12 +1232,41 @@ def add_title(request):
                 "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
+            "16": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
             "17": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
+            "18": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "使用物種", "逸散 / 補充量(公噸/年)", "全球暖化潛勢(GWP-AR6)"],
+                "溫室氣體排放": [u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
+            "19": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+            },
+
+            "20": {
+                "編輯區": ["刪除", "修改"],
+                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+            },
+
+            "21": {
                 "編輯區": ["刪除", "修改"],
                 "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
             },
 
-            "18": {
+            "22": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
@@ -1262,7 +1275,7 @@ def add_title(request):
                 "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
             },
 
-            "19": {
+            "23": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
@@ -1271,32 +1284,21 @@ def add_title(request):
                 "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
             },
 
-            "20": {
+            "24": {
                 "編輯區": ["刪除", "修改"],
                 "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
             },
 
-            "21": {
+            "25": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
                 "距離(pkm)": ["自駕汽車", "計程車", "火車", "高鐵", "捷運", "船舶", "飛機"],
             },
 
-            "22": {
+            "26": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
-            },
-
-            "23": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
-                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
-            },
-
-            "24": {
-                "編輯區": ["刪除", "修改"],
-                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
-            },
+            }
         }
     title = [htmlName.get(device_id)]
     return JsonResponse(title, safe=False)
