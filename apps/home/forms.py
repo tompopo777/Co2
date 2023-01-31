@@ -178,12 +178,12 @@ PAID_CHOICES = [
 class EGform(forms.ModelForm):
     class Meta:
         model = emergency_generators
-        fields = ('device_id', 'years', 'device_capacity', 'position', 'department',
+        fields = ('years', 'device_id', 'device_capacity', 'position', 'department',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
                   'november', 'december', 'image_note', 'image_path', 'message_board')
         widgets = {
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '單位:公升'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
@@ -229,7 +229,7 @@ class EGform(forms.ModelForm):
 class CEform(forms.ModelForm):
     class Meta:
         model = combustion_equipment
-        fields = ('device_name', 'device_id', 'fuel_type', 'years', 'fuel_january',
+        fields = ('years', 'device_name', 'device_id', 'fuel_type', 'fuel_january',
                   'fuel_february', 'fuel_march', 'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august',
                   'fuel_september', 'fuel_october', 'fuel_november', 'fuel_december', 'heat_january', 'heat_february',
                   'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
@@ -278,7 +278,7 @@ class CEform(forms.ModelForm):
 class OFform(forms.ModelForm):
     class Meta:
         model = official_car
-        fields = ('vehicle_type', 'years', 'fuel_type', 'device_id', 'department', 'metering_method',
+        fields = ('years', 'vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method',
                   'oil_january', 'oil_february', 'oil_march', 'oil_april', 'oil_may', 'oil_june', 'oil_july', 'oil_august',
                   'oil_september', 'oil_october', 'oil_november', 'oil_december', 'elec_january', 'elec_february',
                   'elec_march', 'elec_april', 'elec_may', 'elec_june', 'elec_july', 'elec_august', 'elec_september',
@@ -289,9 +289,8 @@ class OFform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
-            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES),
             'oil_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'oil_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -876,36 +875,6 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         super(SolventAerosolEmissionSourcesForm, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
-        self.fields['message_board'].required = False
-
-
-class VOCsOneForm(forms.ModelForm):
-    class Meta:
-        model = VOCs_one
-        fields = ('years', 'emission', 'concentration_ch4', 'message_board')
-        widgets = {
-            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(VOCsOneForm, self).__init__(*args, **kwargs)
-        self.fields['message_board'].required = False
-
-
-class VOCsTwoForm(forms.ModelForm):
-    class Meta:
-        model = VOCs_two
-        fields = ('years', 'message_board')
-        widgets = {
-            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(VOCsTwoForm, self).__init__(*args, **kwargs)
         self.fields['message_board'].required = False
 
 
