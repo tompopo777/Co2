@@ -399,19 +399,6 @@ def load_table(request):
                     single_data["co2e_count"] = round(co2e_count, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "VOCs_1":
-                t_data = []
-                raw_data = VOCs_one.objects.values("id", "years", "emission", "concentration_ch4")
-                # 計算加油量合計
-                for i in range(raw_data.count()):
-                    ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的加油量丟回字典
-                    single_data["ch4/year"] = round(ch4_count, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
@@ -441,7 +428,7 @@ def load_table(request):
                                                            "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
                                                            "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
                                                            "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                           "air_transport_distance", "air_transport_country", "air_paid", "air_trips"))
+                                                           "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "下游運輸":
                 t_data = list(
@@ -450,7 +437,7 @@ def load_table(request):
                                                              "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
                                                              "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
                                                              "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                             "air_transport_distance", "air_transport_country", "air_paid", "air_trips"))
+                                                             "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工通勤":
                 t_data = []
@@ -1310,17 +1297,6 @@ def add_title(request):
                 "溫室氣體排放": [u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
             },
 
-            "19": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
-                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
-            },
-
-            "20": {
-                "編輯區": ["刪除", "修改"],
-                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
-            },
-
             "21": {
                 "編輯區": ["刪除", "修改"],
                 "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
@@ -1332,7 +1308,7 @@ def add_title(request):
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
             },
 
             "23": {
@@ -1341,7 +1317,7 @@ def add_title(request):
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
             },
 
             "24": {
@@ -1360,19 +1336,19 @@ def add_title(request):
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
             },
 
-            "23": {
+            "19": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
                 "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
             },
 
-            "24": {
+            "20": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
                 "VOCs濃度": ["入口濃度", "出口濃度"],
                 u"CO\u2082排放係數": ["內設值", "自訂值"],
                 # u"CO\u2082排放係數(公噸C0\u2082/千立方公尺VOC)": ["內設值", "自訂值"],
-                "溫室氣體排放": [u'CO\u2082(公噸/年)', u'CH\u2084(噸/年)', "總溫室氣體u(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
+                "溫室氣體排放": [u'CO\u2082(公噸/年)', u'CH\u2084(噸/年)', "總溫室氣體(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
             },
         }
     title = [htmlName.get(device_id)]
