@@ -483,33 +483,12 @@ def load_table(request):
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_1":
-                t_data = []
-                raw_data = VOCs_one.objects.values("id", "years", "emission", "concentration_ch4")
-                # 計算合計
-                for i in range(raw_data.count()):
-                    ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的值丟回字典
-                    single_data["ch4/year"] = round(ch4_count, 4)
-                    t_data.append(single_data)
+                t_data = list(VOCs_one.objects.values("id", "years", "emission", "concentration_ch4"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_2":
-                t_data = []
-                raw_data = VOCs_two.objects.values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
-                                                   "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate")
-                # 計算合計"
-                for i in range(raw_data.count()):
-                    ch4_count = raw_data[i].get("concentration_ch4") * 100000 / 1000000 / 22.4 * 16
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的值丟回字典
-                    single_data["ch4/year"] = round(ch4_count, 4)
-                    t_data.append(single_data)
+                t_data = list(VOCs_two.objects.values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
+                                                   "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
                 return JsonResponse(t_data, safe=False)
-
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
@@ -1297,6 +1276,18 @@ def add_title(request):
                 "溫室氣體排放": [u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
             },
 
+            "19": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+            },
+
+            "20": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
+                "VOCs濃度": ["入口濃度", "出口濃度"],
+                u"CO\u2082排放係數": ["內設值", "自訂值"],
+            },
+
             "21": {
                 "編輯區": ["刪除", "修改"],
                 "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
@@ -1334,21 +1325,6 @@ def add_title(request):
             "26": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
-            },
-
-            "19": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
-                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
-            },
-
-            "20": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
-                "VOCs濃度": ["入口濃度", "出口濃度"],
-                u"CO\u2082排放係數": ["內設值", "自訂值"],
-                # u"CO\u2082排放係數(公噸C0\u2082/千立方公尺VOC)": ["內設值", "自訂值"],
-                "溫室氣體排放": [u'CO\u2082(公噸/年)', u'CH\u2084(噸/年)', "總溫室氣體(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
             },
         }
     title = [htmlName.get(device_id)]

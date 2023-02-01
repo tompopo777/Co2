@@ -1188,8 +1188,8 @@ class VOCsOneForm(forms.ModelForm):
         fields = ('years', 'emission', 'concentration_ch4', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -1204,15 +1204,15 @@ class VOCsTwoForm(forms.ModelForm):
         fields = ('years', 'disposal_volume', 'concentration_entrance', 'concentration_exit', 'builtIn_rate', 'custom_rate', 'concentration_ch4', 'voc_capture_rate', 'combustion_equipment_rate', 'radio_VOCs', 'radio_concentration', 'radio_co2_emission', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'disposal_volume': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'disposal_volume': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'concentration_entrance': forms.TextInput(
-                attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
-            'concentration_exit': forms.TextInput(attrs={'class': 'form-control concentration_exit', "id": "concentration_exit", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
-            'builtIn_rate': forms.TextInput(attrs={'class': 'form-control builtIn_rate', 'id': 'builtIn_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
-            'custom_rate': forms.TextInput(attrs={'class': 'form-control custom_rate', 'id': 'custom_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
-            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'voc_capture_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'combustion_equipment_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+                attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)', "disabled": ""}),
+            'concentration_exit': forms.TextInput(attrs={'class': 'form-control concentration_exit', "id": "concentration_exit", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)', "disabled": ""}),
+            'builtIn_rate': forms.TextInput(attrs={'class': 'form-control builtIn_rate', 'id': 'builtIn_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)', "disabled": ""}),
+            'custom_rate': forms.TextInput(attrs={'class': 'form-control custom_rate', 'id': 'custom_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)', "disabled": ""}),
+            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'voc_capture_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'combustion_equipment_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
