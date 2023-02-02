@@ -621,6 +621,13 @@ class employee_business_trip(models.Model):
     rtd_image_path = models.ImageField(upload_to='員工出差/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+class trip_section(models.Model):
+    id = models.AutoField(primary_key=True)
+    departure = models.CharField(max_length=50)
+    transportation = models.CharField(max_length=30)
+    distance = models.FloatField(null=True)
+    trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE)
+
 class VOCs_one(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=22)
@@ -645,18 +652,6 @@ class VOCs_two(models.Model):
     radio_concentration = models.CharField(max_length=20, null=True)
     radio_co2_emission = models.CharField(max_length=20, null=True)
     message_board = models.CharField(max_length=255, null=True)
-
-class trip_section(models.Model):
-    id = models.AutoField(primary_key=True)
-    departure = models.CharField(max_length=50)
-    car = models.FloatField(null=True)
-    taxi = models.FloatField(null=True)
-    train = models.FloatField(null=True)
-    THSR = models.FloatField(null=True)
-    MRT = models.FloatField(null=True)
-    ship = models.FloatField(null=True)
-    plane = models.FloatField(null=True)
-    trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE)
 
 
 class waste(models.Model):

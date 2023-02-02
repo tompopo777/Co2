@@ -487,419 +487,371 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_2":
                 t_data = list(VOCs_two.objects.values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
-                                                   "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
+                                                      "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
                 return JsonResponse(t_data, safe=False)
+
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
+    EG_add = EGform(request.POST, request.FILES)
     if request.method == "POST":
         print("77777777777777777")
-        EG_add = EGform(request.POST, request.FILES)
+        print("EG_add", EG_add)
         if EG_add.is_valid():
             EG_add.save()
             return redirect('/carbon-system/')
         else:
-            render('/emergency_generator_add/', locals())
-
+            return redirect('/new_device/')
     else:
-        return redirect('/emergency_generator_add/')
+        return render(request, 'home/emergency-generator.html', {'EG_add': EG_add})
 
 
 @login_required(login_url="/login/")
 def combustion_equipment_add(request):
+    CE_add = CEform(request.POST, request.FILES)
     if request.method == "POST":
-        CE_add = CEform(request.POST, request.FILES)
         if CE_add.is_valid():
             CE_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/combustion_equipment_add/')
+        return render(request, 'home/combustion-equipment.html', {'CE_add': CE_add})
 
 
 @login_required(login_url="/login/")
 def official_car_add(request):
+    OffCar_add = OFform(request.POST, request.FILES)
     if request.method == "POST":
-        OffCar_add = OFform(request.POST, request.FILES)
         if OffCar_add.is_valid():
             OffCar_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/official_car_add/')
+        return render(request, 'home/official-car.html', {'OffCar_add': OffCar_add})
 
 
 @login_required(login_url="/login/")
 def material_add(request):
+    MT_add = MTform(request.POST, request.FILES)
     if request.method == "POST":
-        MT_add = MTform(request.POST, request.FILES)
         if MT_add.is_valid():
             MT_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/material_add/')
+        return render(request, 'home/material.html', {'MT_add': MT_add})
 
 
 @login_required(login_url="/login/")
 def process_add(request):
+    PC_add = PCform(request.POST, request.FILES)
     if request.method == "POST":
-        PC_add = PCform(request.POST, request.FILES)
         if PC_add.is_valid():
             PC_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/material_add/')
+        return render(request, 'home/process.html', {'PC_add': PC_add})
 
 
 @login_required(login_url="/login/")
 def refrigerator_add(request):
+    RF_add = RFform(request.POST, request.FILES)
     if request.method == "POST":
-        RF_add = RFform(request.POST, request.FILES)
         if RF_add.is_valid():
             RF_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/refrigerator_add/')
+        return render(request, 'home/refrigerator.html', {'RF_add': RF_add})
 
 
 @login_required(login_url="/login/")
 def airconditioner_add(request):
+    AC_add = ACform(request.POST, request.FILES)
     if request.method == "POST":
-        AC_add = ACform(request.POST, request.FILES)
         if AC_add.is_valid():
             AC_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/airconditioner_add/')
+        return render(request, 'home/airconditioner.html', {'AC_add': AC_add})
 
 
 @login_required(login_url="/login/")
 def vehicle_add(request):
+    VC_add = VCform(request.POST, request.FILES)
     if request.method == "POST":
-        VC_add = VCform(request.POST, request.FILES)
         if VC_add.is_valid():
             VC_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/vehicle_add/')
+        return render(request, 'home/vehicle.html', {'VC_add': VC_add})
 
 
 @login_required(login_url="/login/")
 def water_dispenser_add(request):
+    WD_add = WDform(request.POST, request.FILES)
     if request.method == "POST":
-        WD_add = WDform(request.POST, request.FILES)
         if WD_add.is_valid():
             WD_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/water_dispenser_add/')
+        return render(request, 'home/water-dispenser.html', {'WD_add': WD_add})
 
 
 @login_required(login_url="/login/")
 def ice_water_dispenser_add(request):
+    IWD_add = IWDform(request.POST, request.FILES)
     if request.method == "POST":
-        IWD_add = IWDform(request.POST, request.FILES)
         if IWD_add.is_valid():
             IWD_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/ice_water_dispenser_add/')
+        return render(request, 'home/ice-water-dispenser.html', {'IWD_add': IWD_add})
 
 
 @login_required(login_url="/login/")
 def ice_maker_add(request):
+    IM_add = IMform(request.POST, request.FILES)
     if request.method == "POST":
-        IM_add = IMform(request.POST, request.FILES)
         if IM_add.is_valid():
             IM_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/ice_maker_add/')
+        return render(request, 'home/ice-maker.html', {'IM_add': IM_add})
 
 
 @login_required(login_url="/login/")
 def other_device_add(request):
+    OD_add = ODform(request.POST, request.FILES)
     if request.method == "POST":
-        OD_add = ODform(request.POST, request.FILES)
         if OD_add.is_valid():
             OD_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/other_device_add/')
+        return render(request, 'home/other-device.html', {'OD_add': OD_add})
 
 
 @login_required(login_url="/login/")
 def extinguisher_add(request):
+    EX_add = EXform(request.POST, request.FILES)
     if request.method == "POST":
-        EX_add = EXform(request.POST, request.FILES)
         if EX_add.is_valid():
             EX_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/extinguisher_add/')
+        return render(request, 'home/extinguisher.html', {'EX_add': EX_add})
 
 
 @login_required(login_url="/login/")
 def personnel_inventory_add(request):
+    PI_add = PIform(request.POST, request.FILES)
     if request.method == "POST":
-        PI_add = PIform(request.POST, request.FILES)
         if PI_add.is_valid():
             PI_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/personnel_inventory_add/')
+        return render(request, 'home/personnel-inventory.html', {'PI_add': PI_add})
 
 
 @login_required(login_url="/login/")
 def employee_add(request):
+    EMP_add = EMPform(request.POST, request.FILES)
     if request.method == "POST":
-        EMP_add = EMPform(request.POST, request.FILES)
         if EMP_add.is_valid():
             EMP_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/employee_add/')
+        return render(request, 'home/employee.html', {'EMP_add': EMP_add})
 
 
 # 廢水
 @login_required(login_url="/login/")
 def waste_water_add(request):
+    waste_water_add = WASTEWATERform(request.POST, request.FILES)
     if request.method == "POST":
-        waste_water_add = WASTEWATERform(request.POST, request.FILES)
         if waste_water_add.is_valid():
             waste_water_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/waste_water_add/')
+        return render(request, 'home/waste-water.html', {'waste_water_add': waste_water_add})
 
 
 # 廢汙泥
 @login_required(login_url="/login/")
 def waste_sludge_add(request):
+    waste_sludge_add = WasteSludgeForm(request.POST, request.FILES)
     if request.method == "POST":
-        waste_sludge_add = WasteSludgeForm(request.POST, request.FILES)
         if waste_sludge_add.is_valid():
             waste_sludge_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/waste_sludge_add/')
+        return render(request, 'home/waste-sludge.html', {'waste_sludge_add': waste_sludge_add})
 
 
 # 溶劑、噴霧劑
 @login_required(login_url="/login/")
 def solvent_aerosol_emission_sources_add(request):
+    solvent_aerosol_emission_sources_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
     if request.method == "POST":
-        solvent_aerosol_emission_sources_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
         if solvent_aerosol_emission_sources_add.is_valid():
             solvent_aerosol_emission_sources_add.save()
 
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/solvent_aerosol_emission_sources_add/')
+        return render(request, 'home/solvent-aerosol-emission-sources.html', {'solvent_aerosol_emission_sources_add': solvent_aerosol_emission_sources_add})
 
 
 # VOCs1表單儲存
 @login_required(login_url="/login/")
 def VOCs_one_add(request):
+    VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
     if request.method == "POST":
-        VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
         if VOCs_one_add.is_valid():
             VOCs_one_add.save()
             return redirect('/carbon-system/')
     else:
-        return redirect('/VOCs_one_add/')
+        return render(request, 'home/VOCs-one.html', {'VOCs_one_add': VOCs_one_add})
 
 
 # VOCs2表單儲存
 @login_required(login_url="/login/")
 def VOCs_two_add(request):
+    VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
     if request.method == "POST":
-        VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
         if VOCs_two_add.is_valid():
             VOCs_two_add.save()
             return redirect('/carbon-system/')
     else:
-        return redirect('/VOCs_two_add/')
+        return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add})
 
 
 @login_required(login_url="/login/")
 def electricity_add(request):
+    ELEC_add = ELECform(request.POST, request.FILES)
     if request.method == "POST":
-        ELEC_add = ELECform(request.POST, request.FILES)
         if ELEC_add.is_valid():
             ELEC_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/electricity_add/')
+        return render(request, 'home/electricity.html', {'ELEC_add': ELEC_add})
 
 
 @login_required(login_url="/login/")
 def upstream_transportation_add(request):
+    UT_add = UTform(request.POST, request.FILES)
     if request.method == "POST":
-        UT_add = UTform(request.POST, request.FILES)
         if UT_add.is_valid():
             UT_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/upstream_transportation_add/')
+        return render(request, 'home/upstream-transportation.html', {'UT_add': UT_add})
 
 
 @login_required(login_url="/login/")
 def downstream_transportation_add(request):
+    DT_add = DTform(request.POST, request.FILES)
     if request.method == "POST":
-        DT_add = DTform(request.POST, request.FILES)
         if DT_add.is_valid():
             DT_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/downstream_transportation_add/')
+        return render(request, 'home/downstream-transportation.html', {'DT_add': DT_add})
 
 
 @login_required(login_url="/login/")
 def employee_commute_add(request):
+    EC_add = ECform(request.POST, request.FILES)
     if request.method == "POST":
-        EC_add = ECform(request.POST, request.FILES)
         if EC_add.is_valid():
             EC_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/employee_commute_add/')
+        return render(request, 'home/employee-commute.html', {'EC_add': EC_add})
 
 
 @login_required(login_url="/login/")
 def employee_business_trip_add(request):
+    EBT_add = EBTform(request.POST, request.FILES)
     if request.method == "POST":
-        EBT_add = EBTform(request.POST, request.FILES)
         if EBT_add.is_valid():
-            EBT_add.save()
-
+            business = EBT_add.save()
+            tripsection_formSet = TripSectionFormSet(request.POST, instance=business)
+            if tripsection_formSet.is_valid():
+                tripsection_formSet.save()
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/employee_business_trip_add/')
+        return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
 
 
 @login_required(login_url="/login/")
 def waste_add(request):
+    WASTE_add = WASTEform(request.POST, request.FILES)
     if request.method == "POST":
-        WASTE_add = WASTEform(request.POST, request.FILES)
         if WASTE_add.is_valid():
             WASTE_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/waste_add/')
+        return render(request, 'home/waste.html', {'WASTE_add': WASTE_add})
 
 
 # trip_section table儲存
-@login_required(login_url="/login/")
-def save_trip(request):
-    transportation_list = request.GET.get('transportation_list')
-    pkm_list = request.GET.get('pkm_list')
-    transportation = json.loads(transportation_list)
-    pkm = json.loads(pkm_list)
-    transportation_dic = {
-        "自駕車": "car",
-        "計程車": "taxi",
-        "火車": "train",
-        "高鐵": "THSR",
-        "捷運": "MRT",
-        "船舶": "ship",
-        "飛機": "plane",
-    }
-    sum = {}
-    count = 0
-    for i in transportation:
-        transportation_way = transportation_dic.get(i)
-        print("transportation_way", transportation_way)
-        # print("++++++++++++++++++", pkm[count])
-        pkm_current = float(pkm[count])
-        if sum.get(transportation_way):
-            sum[transportation_way] = sum.get(transportation_way) + pkm_current
-            print("pkm>>>>>>>>>>", sum.get(transportation_way))
-        else:
-            sum[transportation_way] = float(pkm[count])
-            print("pkm>>>>>>>>>>", sum.get(transportation_way))
-        count += 1
-    print("trip_section", sum)
-    z = employee_business_trip
-    for j in sum:
-        print("jjjjjjjjjjj", j)
-        # print("jjjjjjjjjjj", sum.get(j))
-        # print("jjjjjjjjjjj", type(sum.get(j)))
-        print("jjjjjjjjjjj", type(j))
-        # z.j = sum.get(j)
-        # z.save()
-    # u = sum.get("THSR")
-    # print("uuuuuuuuuuuu", type(u))
-    print("KKKKKKKKKKKKKKK", type(z.THSR))
-    z.THSR = sum.get("THSR")
-    z.save()
-    context = {}
-    return JsonResponse(context, safe=False)
+# @login_required(login_url="/login/")
+# def save_trip(request):
+#     transportation_list = request.GET.get('transportation_list')
+#     pkm_list = request.GET.get('pkm_list')
+#     transportation = json.loads(transportation_list)
+#     pkm = json.loads(pkm_list)
+#     transportation_dic = {
+#         "自駕車": "car",
+#         "計程車": "taxi",
+#         "火車": "train",
+#         "高鐵": "THSR",
+#         "捷運": "MRT",
+#         "船舶": "ship",
+#         "飛機": "plane",
+#     }
+#     sum = {}
+#     count = 0
+#     for i in transportation:
+#         transportation_way = transportation_dic.get(i)
+#         print("transportation_way", transportation_way)
+#         # print("++++++++++++++++++", pkm[count])
+#         pkm_current = float(pkm[count])
+#         if sum.get(transportation_way):
+#             sum[transportation_way] = sum.get(transportation_way) + pkm_current
+#             print("pkm>>>>>>>>>>", sum.get(transportation_way))
+#         else:
+#             sum[transportation_way] = float(pkm[count])
+#             print("pkm>>>>>>>>>>", sum.get(transportation_way))
+#         count += 1
+#     print("trip_section", sum)
+#     z = employee_business_trip
+#     for j in sum:
+#         print("jjjjjjjjjjj", j)
+#         # print("jjjjjjjjjjj", sum.get(j))
+#         # print("jjjjjjjjjjj", type(sum.get(j)))
+#         print("jjjjjjjjjjj", type(j))
+#         # z.j = sum.get(j)
+#         # z.save()
+#     # u = sum.get("THSR")
+#     # print("uuuuuuuuuuuu", type(u))
+#     print("KKKKKKKKKKKKKKK", type(z.THSR))
+#     z.THSR = sum.get("THSR")
+#     z.save()
+#     context = {}
+#     return JsonResponse(context, safe=False)
 
 
 @login_required(login_url="/login/")
@@ -914,73 +866,43 @@ def carbon_system(request):
 
 # 新增轉跳
 @login_required(login_url="/login/")
-def add_page(request):
-    global NewDevice_page
+def add_page(request, ):
+    global device_function
     if request.method == "GET":
         device_id = request.GET.get('deviceId')
         # 建立字典
-        htmlName = {
-            "1": "home/emergency-generator.html",
-            "2": "home/combustion-equipment.html",
-            "3": "home/official-car.html",
-            "4": "home/material.html",
-            "5": "home/process.html",
-            "6": "home/refrigerator.html",
-            "7": "home/airconditioner.html",
-            "8": "home/vehicle.html",
-            "9": "home/water-dispenser.html",
-            "10": "home/ice-water-dispenser.html",
-            "11": "home/ice-maker.html",
-            "12": "home/other-device.html",
-            "13": "home/extinguisher.html",
-            "14": "home/personnel-inventory.html",
-            "15": "home/employee.html",
-            "16": "home/waste-water.html",
-            "17": "home/waste-sludge.html",
-            "18": "home/solvent-aerosol-emission-sources.html",
-            "19": "home/VOCs-one.html",
-            "20": "home/VOCs-two.html",
-            "21": "home/electricity.html",
-            "22": "home/upstream-transportation.html",
-            "23": "home/downstream-transportation.html",
-            "24": "home/employee-commute.html",
-            "25": "home/employee-business-trip.html",
-            "26": "home/waste.html",
+        function_dic = {
+            "1": emergency_generators_add(request),
+            "2": combustion_equipment_add(request),
+            "3": official_car_add(request),
+            "4": material_add(request),
+            "5": process_add(request),
+            "6": refrigerator_add(request),
+            "7": airconditioner_add(request),
+            "8": vehicle_add(request),
+            "9": water_dispenser_add(request),
+            "10": ice_water_dispenser_add(request),
+            "11": ice_maker_add,
+            "12": other_device_add(request),
+            "13": extinguisher_add(request),
+            "14": personnel_inventory_add(request),
+            "15": employee_add(request),
+            "16": waste_water_add(request),
+            "17": waste_sludge_add(request),
+            "18": solvent_aerosol_emission_sources_add(request),
+            "19": VOCs_one_add(request),
+            "20": VOCs_two_add(request),
+            "21": electricity_add(request),
+            "22": upstream_transportation_add(request),
+            "23": downstream_transportation_add(request),
+            "24": employee_commute_add(request),
+            "25": employee_business_trip_add(request),
+            "26": waste_add(request),
         }
-
-        EG_add = EGform(request.POST)
-        CE_add = CEform(request.POST)
-        OffCar_add = OFform(request.POST)
-        MT_add = MTform(request.POST)
-        PC_add = PCform(request.POST)
-        RF_add = RFform(request.POST)
-        AC_add = ACform(request.POST)
-        VC_add = VCform(request.POST)
-        WD_add = WDform(request.POST)
-        IWD_add = IWDform(request.POST)
-        IM_add = IMform(request.POST)
-        OD_add = ODform(request.POST)
-        EX_add = EXform(request.POST)
-        PI_add = PIform(request.POST)
-        EMP_add = EMPform(request.POST)
-        waste_water_add = WASTEWATERform(request.POST)
-        waste_sludge_add = WasteSludgeForm(request.POST)
-        solvent_aerosol_emission_sources_add = SolventAerosolEmissionSourcesForm(request.POST)
-        VOCs_one_add = VOCsOneForm(request.POST)
-        VOCs_two_add = VOCsTwoForm(request.POST)
-        ELEC_add = ELECform(request.POST)
-        UT_add = UTform(request.POST)
-        DT_add = DTform(request.POST)
-        EC_add = ECform(request.POST)
-        EBT_add = EBTform(request.POST)
-        WASTE_add = WASTEform(request.POST)
-
-        if htmlName.get(device_id):
-            NewDevice_page = htmlName.get(device_id)
-        # print("NewDevice_page:", NewDevice_page)
-    if request.method == "GET":
-        return render(request, NewDevice_page, locals())
-
+        if function_dic.get(device_id):
+            device_function = function_dic.get(device_id)
+        print("device_function:", device_function)
+        return device_function
 
 # 編輯轉跳
 @login_required(login_url="/login/")

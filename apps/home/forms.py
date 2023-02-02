@@ -3,7 +3,7 @@ from django import forms
 from .models import *
 from django.core.validators import RegexValidator, validate_slug
 from django.core.exceptions import ValidationError
-from django.forms import widgets, RegexField
+from django.forms import widgets, RegexField, inlineformset_factory
 from django.forms import fields
 import datetime
 
@@ -214,13 +214,13 @@ class EGform(forms.ModelForm):
     def clean_device_id(self):
         # device_id_list = []
         # for form in self.forms:
-            # device_id = form.cleaned_data['device_id']
+        # device_id = form.cleaned_data['device_id']
         device_id = self.cleaned_data.get('device_id')
         # llist = emergency_generators.objects.get("device_id")
         # print("llist::::::::::::;;", llist)
-            # llist = self.cleaned_data.get("device_id")
+        # llist = self.cleaned_data.get("device_id")
         if '1' in device_id:
-            raise ValidationError("設備編號重複!")
+            raise forms.ValidationError("設備編號重複!")
             # self.add_error("設備編號重複!")
         return device_id
         # device_id_list.append(device_id)
@@ -290,7 +290,7 @@ class OFform(forms.ModelForm):
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES), 'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES),
             'oil_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'oil_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -1149,6 +1149,9 @@ class EBTform(forms.ModelForm):
         self.fields['rtd_image_note'].required = False
         self.fields['rtd_image_path'].required = False
         self.fields['message_board'].required = False
+
+
+TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1)
 
 
 class WASTEform(forms.ModelForm):
