@@ -353,51 +353,18 @@ def load_table(request):
                                             "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢水":
-                t_data = []
-                raw_data = waste_water.objects.values("id", "years", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
-                                                      "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency")
-                # 計算加油量合計
-                for i in range(raw_data.count()):
-                    ch4_count = raw_data[i].get("waste_water_inflow_rate") * raw_data[i].get("average_inlet_COD_concentration") * raw_data[i].get("average_COD_removal_rate") \
-                                / 100000000 * (1 - raw_data[i].get("CH4_capture_system_rate") * raw_data[i].get("combustion_equipment_efficiency")) * 0.25
-                    co2e_count = ch4_count * 21
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的加油量丟回字典
-                    single_data["ch4_count"] = round(ch4_count, 4)
-                    single_data["co2e_count"] = round(co2e_count, 4)
-                    t_data.append(single_data)
+                t_data = list(
+                    waste_water.objects.values("id", "years", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
+                                               "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢汙泥":
-                t_data = []
-                raw_data = waste_sludge.objects.values("id", "years", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
-                                                       "CH4_capture_system_rate", "combustion_equipment_efficiency")
-                # 計算加油量合計
-                for i in range(raw_data.count()):
-                    ch4_count = raw_data[i].get("waste_sludge_inflow_rate") * raw_data[i].get("average_inlet_MLSS_concentration") * 1.42 * 0.5 \
-                                * (1 - raw_data[i].get("CH4_capture_system_rate") * raw_data[i].get("combustion_equipment_efficiency")) / 1000000 * 0.25
-                    co2e_count = ch4_count * 21
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的加油量丟回字典
-                    single_data["ch4_count"] = round(ch4_count, 4)
-                    single_data["co2e_count"] = round(co2e_count, 4)
-                    t_data.append(single_data)
+                t_data = list(
+                    waste_sludge.objects.values("id", "years", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
+                                                "CH4_capture_system_rate", "combustion_equipment_efficiency"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
-                t_data = []
-                raw_data = solvent_aerosol_emission_sources.objects.values("id", "years", "species_used", "fugitive_recharge", "global_warming_potential")
-                # 計算加油量合計
-                for i in range(raw_data.count()):
-                    co2e_count = raw_data[i].get("fugitive_recharge") * raw_data[i].get("global_warming_potential")
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的加油量丟回字典
-                    single_data["co2e_count"] = round(co2e_count, 4)
-                    t_data.append(single_data)
+                t_data = list(
+                    solvent_aerosol_emission_sources.objects.values("id", "years", "species_used", "fugitive_recharge", "global_warming_potential"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
@@ -1282,19 +1249,16 @@ def add_title(request):
             "16": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
-                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
             },
 
             "17": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
-                "溫室氣體排放": [u'(公噸CH\u2084/年)', u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
             },
 
             "18": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "使用物種", "逸散 / 補充量(公噸/年)", "全球暖化潛勢(GWP-AR6)"],
-                "溫室氣體排放": [u"(公噸CO\u2082\N{LATIN SUBSCRIPT SMALL LETTER E}/年)"],
             },
 
             "21": {
