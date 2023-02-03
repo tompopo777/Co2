@@ -3,7 +3,7 @@ from django import forms
 from .models import *
 from django.core.validators import RegexValidator, validate_slug
 from django.core.exceptions import ValidationError
-from django.forms import widgets, RegexField
+from django.forms import widgets, RegexField, inlineformset_factory
 from django.forms import fields
 import datetime
 
@@ -214,13 +214,13 @@ class EGform(forms.ModelForm):
     def clean_device_id(self):
         # device_id_list = []
         # for form in self.forms:
-            # device_id = form.cleaned_data['device_id']
+        # device_id = form.cleaned_data['device_id']
         device_id = self.cleaned_data.get('device_id')
         # llist = emergency_generators.objects.get("device_id")
         # print("llist::::::::::::;;", llist)
-            # llist = self.cleaned_data.get("device_id")
+        # llist = self.cleaned_data.get("device_id")
         if '1' in device_id:
-            raise ValidationError("設備編號重複!")
+            raise forms.ValidationError("設備編號重複!")
             # self.add_error("設備編號重複!")
         return device_id
         # device_id_list.append(device_id)
@@ -290,7 +290,7 @@ class OFform(forms.ModelForm):
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
+            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES), 'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES),
             'oil_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'oil_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -1151,6 +1151,9 @@ class EBTform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
+TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1)
+
+
 class WASTEform(forms.ModelForm):
     class Meta:
         model = waste
@@ -1188,8 +1191,8 @@ class VOCsOneForm(forms.ModelForm):
         fields = ('years', 'emission', 'concentration_ch4', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -1204,15 +1207,15 @@ class VOCsTwoForm(forms.ModelForm):
         fields = ('years', 'disposal_volume', 'concentration_entrance', 'concentration_exit', 'builtIn_rate', 'custom_rate', 'concentration_ch4', 'voc_capture_rate', 'combustion_equipment_rate', 'radio_VOCs', 'radio_concentration', 'radio_co2_emission', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
-            'disposal_volume': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'disposal_volume': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'concentration_entrance': forms.TextInput(
-                attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
-            'concentration_exit': forms.TextInput(attrs={'class': 'form-control concentration_exit', "id": "concentration_exit", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
-            'builtIn_rate': forms.TextInput(attrs={'class': 'form-control builtIn_rate', 'id': 'builtIn_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
-            'custom_rate': forms.TextInput(attrs={'class': 'form-control custom_rate', 'id': 'custom_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)', "disabled": ""}),
-            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'voc_capture_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
-            'combustion_equipment_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+                attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)', "disabled": ""}),
+            'concentration_exit': forms.TextInput(attrs={'class': 'form-control concentration_exit', "id": "concentration_exit", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)', "disabled": ""}),
+            'builtIn_rate': forms.TextInput(attrs={'class': 'form-control builtIn_rate', 'id': 'builtIn_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)', "disabled": ""}),
+            'custom_rate': forms.TextInput(attrs={'class': 'form-control custom_rate', 'id': 'custom_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)', "disabled": ""}),
+            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'voc_capture_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'combustion_equipment_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 

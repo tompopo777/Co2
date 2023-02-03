@@ -51,7 +51,6 @@ urlpatterns = [
     path("edit_device/", views.edit_device, name='loadedit'),
     path("chemical_dropdowm/", views.chemical_dropdowm, name='chemical_dropdowm'),
     path("loadchemical/", views.load_chemical, name='loadchemical'),
-    path("save_trip/", views.save_trip, name='save_trip'),
     # Excel
     path("csv_view/", csv.csv_view, name='csv_view'),
     # 編輯設備
