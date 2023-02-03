@@ -489,7 +489,7 @@ class ACform(forms.ModelForm):
             'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file', 'multiple': 'multiple', 'accept': 'image/*, .pdf'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
