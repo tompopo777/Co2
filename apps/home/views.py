@@ -457,10 +457,27 @@ def load_table(request):
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工出差":
-                t_data = list(
-                    employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
-                                                          "business_trip_location", "business_trip_date"))
-                # "car", "taxi", "train", "THSR", "MRT", "ship", "plane"
+                # t_data = []
+                # # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
+                # raw_data = employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
+                #                                           "business_trip_location", "business_trip_date")
+                # a = trip_section.objects.values("departure", "transportation", "distance", "trip_id_id")
+                # # for i in range(a.count()):
+                # for i in a:
+                #     print("i>>>>>>>>", i)
+                #     # total_distance = raw_data[i].get("commute_distance") * raw_data[i].get("work_days") * 2
+                #
+                #     # print("total_distance::::::::::::::::::::::::::::::::::::::::", total_distance)
+                #     # 抓單筆資料
+                #     # single_data = raw_data[i]
+                #     # 將計算後的逸散量丟回字典
+                #     # single_data["total_distance"] = total_distance
+                #     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
+                #     # t_data.append(single_data)
+                # return JsonResponse(t_data, safe=False)
+
+                t_data = list(employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
+                                                                    "business_trip_location", "business_trip_date"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
@@ -785,12 +802,16 @@ def employee_commute_add(request):
 def employee_business_trip_add(request):
     EBT_add = EBTform(request.POST, request.FILES)
     if request.method == "POST":
+        # print(EBT_add, "\n")
         if EBT_add.is_valid():
             business = EBT_add.save()
             tripsection_formSet = TripSectionFormSet(request.POST, instance=business)
             if tripsection_formSet.is_valid():
                 tripsection_formSet.save()
-            return redirect('/carbon-system/')
+                return redirect('/carbon-system/')
+            else:
+                print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", tripsection_formSet)
+                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
     else:
         return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
 
@@ -903,6 +924,7 @@ def add_page(request, ):
             device_function = function_dic.get(device_id)
         print("device_function:", device_function)
         return device_function
+
 
 # 編輯轉跳
 @login_required(login_url="/login/")

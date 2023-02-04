@@ -166,6 +166,16 @@ PAID_CHOICES = [
     ('客戶支付', '客戶支付'),
     ('供應商支付', '供應商支付')
 ]
+BUSINESS_TRANSPORTATION_CHOICES = [
+    ('------', '------'),
+    ('自駕汽車', '自駕汽車'),
+    ('計程車', '計程車'),
+    ('火車', '火車'),
+    ('高鐵', '高鐵'),
+    ('捷運', '捷運'),
+    ('飛機', '飛機'),
+    ('船舶', '船舶'),
+]
 
 
 # 前面: 存DB，後面: 顯示
@@ -1151,7 +1161,11 @@ class EBTform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
-TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1)
+TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1,
+                                           widgets={'departure': forms.TextInput(attrs={'class': 'form-control'}),
+                                                    # 'transportation': forms.Select(attrs={'class': 'form-control'}),
+                                                    'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
+                                                    'distance': forms.TextInput(attrs={'class': 'form-control'}), })
 
 
 class WASTEform(forms.ModelForm):
