@@ -169,9 +169,10 @@ PAID_CHOICES = [
 BUSINESS_TRANSPORTATION_CHOICES = [
     ('------', '------'),
     ('自駕汽車', '自駕汽車'),
-    ('計程車', '計程車'),
-    ('火車', '火車'),
     ('高鐵', '高鐵'),
+    ('火車', '火車'),
+    ('計程車', '計程車'),
+    ('機車', '機車'),
     ('捷運', '捷運'),
     ('飛機', '飛機'),
     ('船舶', '船舶'),
@@ -1163,9 +1164,8 @@ class EBTform(forms.ModelForm):
 
 TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1,
                                            widgets={'departure': forms.TextInput(attrs={'class': 'form-control'}),
-                                                    # 'transportation': forms.Select(attrs={'class': 'form-control'}),
                                                     'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
-                                                    'distance': forms.TextInput(attrs={'class': 'form-control'}), })
+                                                    'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}), })
 
 
 class WASTEform(forms.ModelForm):

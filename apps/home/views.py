@@ -10,7 +10,7 @@ from django import template
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.datastructures import MultiValueDictKeyError
@@ -424,27 +424,23 @@ def load_table(request):
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工出差":
-                # t_data = []
-                # # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                # raw_data = employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
-                #                                           "business_trip_location", "business_trip_date")
-                # a = trip_section.objects.values("departure", "transportation", "distance", "trip_id_id")
-                # # for i in range(a.count()):
-                # for i in a:
-                #     print("i>>>>>>>>", i)
-                #     # total_distance = raw_data[i].get("commute_distance") * raw_data[i].get("work_days") * 2
-                #
-                #     # print("total_distance::::::::::::::::::::::::::::::::::::::::", total_distance)
-                #     # 抓單筆資料
-                #     # single_data = raw_data[i]
-                #     # 將計算後的逸散量丟回字典
-                #     # single_data["total_distance"] = total_distance
-                #     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
-                #     # t_data.append(single_data)
-                # return JsonResponse(t_data, safe=False)
-
-                t_data = list(employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
-                                                                    "business_trip_location", "business_trip_date"))
+                t_data = []
+                raw_data = employee_business_trip.objects.values("id", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
+                for i in range(raw_data.count()):
+                    single_data = raw_data[i]
+                    id = raw_data[i].get("id")
+                    section = trip_section.objects.filter(trip_id=id).values("transportation", "distance")
+                    transportation_dic = {"自駕汽車": 0.0, "高鐵": 0.0, "火車": 0.0, "計程車": 0.0, "機車": 0.0, "捷運": 0.0, "飛機": 0.0, "船舶": 0.0}
+                    for s in section:
+                        way = s.get("transportation")
+                        if way in transportation_dic:
+                            transportation_dic[way] += s.get("distance")
+                        for d in transportation_dic:
+                            if transportation_dic.get(d) == 0:
+                                single_data[d] = None
+                            else:
+                                single_data[d] = round(transportation_dic.get(d), 4)
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
@@ -772,11 +768,13 @@ def employee_business_trip_add(request):
         # print(EBT_add, "\n")
         if EBT_add.is_valid():
             business = EBT_add.save()
-            tripsection_formSet = TripSectionFormSet(request.POST, instance=business)
+            tripsection_formSet = TripSectionFormSet(request.POST, request.FILES, instance=business)
             if tripsection_formSet.is_valid():
                 tripsection_formSet.save()
                 return redirect('/carbon-system/')
             else:
+                last_data = employee_business_trip.objects.last()
+                last_data.delete()
                 print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", tripsection_formSet)
                 return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
     else:
@@ -870,7 +868,7 @@ def add_page(request, ):
             "8": vehicle_add(request),
             "9": water_dispenser_add(request),
             "10": ice_water_dispenser_add(request),
-            "11": ice_maker_add,
+            "11": ice_maker_add(request),
             "12": other_device_add(request),
             "13": extinguisher_add(request),
             "14": personnel_inventory_add(request),
@@ -940,11 +938,13 @@ def edit_device(request):
         if request.method == 'GET':
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(instance=current_data)
+            update_formset = TripSectionFormSet(instance=current_data)
 
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
-                'single_dataID': single_dataID
+                'single_dataID': single_dataID,
+                'update_formset': update_formset
             }
             # 建立字典
             htmlName = {
@@ -1022,11 +1022,25 @@ def update_device(request, datasheet_id, single_dataID):
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
         form = formName.get(datasheet_id)
+        # current_data = get_object_or_404(dbName, id=datasheet_id)
+        current_data = dbName.objects.get(id=single_dataID)
+        print("current_data>>>>>>>>", current_data)
         if request.method == 'POST':
-            current_data = dbName.objects.get(id=single_dataID)
+            # current_data = dbName.objects.get(id=single_dataID)
             update_from = form(request.POST, request.FILES, instance=current_data)
-            if update_from.is_valid():
-                update_from.save()
+            update_formset = TripSectionFormSet(request.POST, request.FILES, instance=current_data)
+            print("update_from>>>>>>>>", update_from)
+            print("update_formset>>>>>>>>", update_formset)
+            print("ok")
+            if update_from.is_valid() and update_formset.is_valid():
+                business = update_from.save()
+                update_formset.save()
+                # if update_from.is_valid():
+            #     business = update_from.save()
+            #     update_formset = TripSectionFormSet(request.POST, request.FILES, instance=business)
+            #     if update_formset.is_valid():
+            #         update_device.save()
+            #         return redirect('/carbon-system/', locals())
                 return redirect('/carbon-system/', locals())
         else:
             return render(request, 'home/index.html', locals())
@@ -1224,10 +1238,11 @@ def add_title(request):
                 "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
             },
 
+            # 員工出差
             "25": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
-                "距離(pkm)": ["自駕汽車", "計程車", "火車", "高鐵", "捷運", "船舶", "飛機"],
+                "距離(pkm)": ["自駕汽車", "高鐵", "火車", "計程車", "機車", "捷運", "飛機", "船舶"],
             },
 
             "26": {
@@ -1235,8 +1250,8 @@ def add_title(request):
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
             },
         }
-    title = [htmlName.get(device_id)]
-    return JsonResponse(title, safe=False)
+        title = [htmlName.get(device_id)]
+        return JsonResponse(title, safe=False)
 
 
 def chemical_dropdowm(request):
