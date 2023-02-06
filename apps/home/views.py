@@ -409,15 +409,27 @@ def load_table(request):
             elif a["d_name"] == "員工通勤":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = employee_commute.objects.values("id", "years", "employee_id", "department"
-                                                           , "employee_name", "transportation", "city",
-                                                           "township", "address", "commute_distance", "work_days")
-                for i in range(raw_data.count()):
+                pre_data = employee_commute.objects.values("id", "years", "employee_id", "department", "employee_name")
+                post_data = employee_commute.objects.values("city", "township", "address", "commute_distance", "work_days")
+                for i in range(pre_data.count()):
+                    single_data = pre_data[i]
+                    id = pre_data[i].get("id")
+                    transportation = transportation_way.objects.filter(commute=id).values("transportation")
+                    print("transportation", transportation)
+                    print("long:::::::::", len(transportation))
+                    if len(transportation) > 1:
+                        transportation_first = transportation_way.objects.filter(commute=id).values("transportation").first()
+                        print("transportation111111111111111111111", transportation_first)
+                        single_data["transportation"] = transportation_first.get("transportation") + "*"
+                    else:
+                        for t in transportation:
+                            single_data["transportation"] = t.get("transportation")
+                    for j in post_data[i]:
+                        single_data[j] = post_data[i].get(j)
                     # 計算單筆距離合計
-                    total_distance = raw_data[i].get("commute_distance") * raw_data[i].get("work_days") * 2
+                    total_distance = post_data[i].get("commute_distance") * post_data[i].get("work_days") * 2
                     # print("total_distance::::::::::::::::::::::::::::::::::::::::", total_distance)
                     # 抓單筆資料
-                    single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
                     single_data["total_distance"] = total_distance
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
@@ -755,10 +767,18 @@ def employee_commute_add(request):
     EC_add = ECform(request.POST, request.FILES)
     if request.method == "POST":
         if EC_add.is_valid():
-            EC_add.save()
-            return redirect('/carbon-system/')
+            commute = EC_add.save()
+            Commute_formSet = CommuteFormSet(request.POST, request.FILES, instance=commute)
+            if Commute_formSet.is_valid():
+                Commute_formSet.save()
+                return redirect('/carbon-system/')
+            else:
+                last_data = employee_commute.objects.last()
+                last_data.delete()
+                print("Commute_formSet>>>>>>>>>>>>>>>>>>>>\n", Commute_formSet)
+                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
     else:
-        return render(request, 'home/employee-commute.html', {'EC_add': EC_add})
+        return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
 
 
 @login_required(login_url="/login/")
@@ -790,54 +810,6 @@ def waste_add(request):
             return redirect('/carbon-system/')
     else:
         return render(request, 'home/waste.html', {'WASTE_add': WASTE_add})
-
-
-# trip_section table儲存
-# @login_required(login_url="/login/")
-# def save_trip(request):
-#     transportation_list = request.GET.get('transportation_list')
-#     pkm_list = request.GET.get('pkm_list')
-#     transportation = json.loads(transportation_list)
-#     pkm = json.loads(pkm_list)
-#     transportation_dic = {
-#         "自駕車": "car",
-#         "計程車": "taxi",
-#         "火車": "train",
-#         "高鐵": "THSR",
-#         "捷運": "MRT",
-#         "船舶": "ship",
-#         "飛機": "plane",
-#     }
-#     sum = {}
-#     count = 0
-#     for i in transportation:
-#         transportation_way = transportation_dic.get(i)
-#         print("transportation_way", transportation_way)
-#         # print("++++++++++++++++++", pkm[count])
-#         pkm_current = float(pkm[count])
-#         if sum.get(transportation_way):
-#             sum[transportation_way] = sum.get(transportation_way) + pkm_current
-#             print("pkm>>>>>>>>>>", sum.get(transportation_way))
-#         else:
-#             sum[transportation_way] = float(pkm[count])
-#             print("pkm>>>>>>>>>>", sum.get(transportation_way))
-#         count += 1
-#     print("trip_section", sum)
-#     z = employee_business_trip
-#     for j in sum:
-#         print("jjjjjjjjjjj", j)
-#         # print("jjjjjjjjjjj", sum.get(j))
-#         # print("jjjjjjjjjjj", type(sum.get(j)))
-#         print("jjjjjjjjjjj", type(j))
-#         # z.j = sum.get(j)
-#         # z.save()
-#     # u = sum.get("THSR")
-#     # print("uuuuuuuuuuuu", type(u))
-#     print("KKKKKKKKKKKKKKK", type(z.THSR))
-#     z.THSR = sum.get("THSR")
-#     z.save()
-#     context = {}
-#     return JsonResponse(context, safe=False)
 
 
 @login_required(login_url="/login/")
@@ -1036,11 +1008,11 @@ def update_device(request, datasheet_id, single_dataID):
                 business = update_from.save()
                 update_formset.save()
                 # if update_from.is_valid():
-            #     business = update_from.save()
-            #     update_formset = TripSectionFormSet(request.POST, request.FILES, instance=business)
-            #     if update_formset.is_valid():
-            #         update_device.save()
-            #         return redirect('/carbon-system/', locals())
+                #     business = update_from.save()
+                #     update_formset = TripSectionFormSet(request.POST, request.FILES, instance=business)
+                #     if update_formset.is_valid():
+                #         update_device.save()
+                #         return redirect('/carbon-system/', locals())
                 return redirect('/carbon-system/', locals())
         else:
             return render(request, 'home/index.html', locals())

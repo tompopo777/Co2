@@ -600,7 +600,6 @@ class employee_commute(models.Model):
     employee_name = models.CharField(max_length=10)
     department = models.CharField(max_length=100)
     work_days = models.IntegerField()
-    transportation = models.CharField(max_length=20)
     city = models.CharField(max_length=100)
     township = models.CharField(max_length=10)
     address = models.CharField(max_length=100)
@@ -608,6 +607,11 @@ class employee_commute(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.FileField(upload_to='員工通勤/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
+class transportation_way(models.Model):
+    id = models.AutoField(primary_key=True)
+    transportation = models.CharField(max_length=30)
+    commute = models.ForeignKey(employee_commute, on_delete=models.CASCADE)
 
 class employee_business_trip(models.Model):
     id = models.AutoField(primary_key=True)
@@ -628,7 +632,7 @@ class trip_section(models.Model):
     id = models.AutoField(primary_key=True)
     departure = models.CharField(max_length=50)
     transportation = models.CharField(max_length=30)
-    distance = models.FloatField(null=True)
+    distance = models.FloatField()
     trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE)
 
 class VOCs_one(models.Model):

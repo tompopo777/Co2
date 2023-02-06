@@ -1107,7 +1107,7 @@ class DTform(forms.ModelForm):
 class ECform(forms.ModelForm):
     class Meta:
         model = employee_commute
-        fields = ('years', 'employee_id', 'employee_name', 'department', 'work_days', 'transportation', 'city',
+        fields = ('years', 'employee_id', 'employee_name', 'department', 'work_days', 'city',
                   'township', 'address', 'commute_distance', 'image_note', 'image_path', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -1115,7 +1115,6 @@ class ECform(forms.ModelForm):
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'work_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '有來就算一天'}),
-            'transportation': forms.Select(choices=TRANSPORTATION_CHOICES),
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'township': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1130,6 +1129,10 @@ class ECform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
+
+
+CommuteFormSet = inlineformset_factory(employee_commute, transportation_way, fields=('transportation',), extra=1,
+                                       widgets={'transportation': forms.Select(choices=TRANSPORTATION_CHOICES, attrs={'class': 'form-control'})})
 
 
 class EBTform(forms.ModelForm):
