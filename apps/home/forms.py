@@ -22,6 +22,7 @@ MONTH_CHOICES = [
     ('12', '十二月'),
 ]
 TRANSPORTATION_CHOICES = [
+    ('------', '------'),
     ('走路', '走路'),
     ('自行車', '自行車'),
     ('機車', '機車'),
@@ -230,7 +231,7 @@ class EGform(forms.ModelForm):
         # llist = emergency_generators.objects.get("device_id")
         # print("llist::::::::::::;;", llist)
         # llist = self.cleaned_data.get("device_id")
-        if '1' in device_id:
+        if '100-001-001' in device_id:
             raise forms.ValidationError("設備編號重複!")
             # self.add_error("設備編號重複!")
         return device_id
@@ -1165,7 +1166,7 @@ class EBTform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
-TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1,
+TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=0,
                                            widgets={'departure': forms.TextInput(attrs={'class': 'form-control'}),
                                                     'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
                                                     'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}), })

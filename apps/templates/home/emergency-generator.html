@@ -41,7 +41,10 @@
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
 {#                                                    {{ EG_add.non_field_errors }}#}
-{#                                                    {{ EG_add.errors }}#}
+                                                    {% for a in device.errors %}
+                                                        {{ a }}
+                                                    {% endfor %}
+{#                                                    {{ device.errors }}#}
 {#                                                    {{ EG_add.as_ul }}#}
                                                     {{ EG_add.device_id }}
                                                 </div>

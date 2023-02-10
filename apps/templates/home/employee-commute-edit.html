@@ -30,7 +30,7 @@
                                 <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年度 <span style="color:red; font-size:16px;">* </span></label>
@@ -50,27 +50,21 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-4">
+                                        <div class="row mb-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.department }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年工作天數 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.work_days }}
                                                 </div>
                                             </div>
-                                            <div class="col-4 d-flex align-items-center">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ form.transportation }}
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>居住縣市 <span style="color:red; font-size:16px;">* </span></label>
@@ -84,7 +78,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>行政區公家機關地址 <span style="color:red; font-size:16px;">* </span></label>
@@ -97,6 +91,28 @@
                                                     {{ form.commute_distance }}
                                                 </div>
                                             </div>
+
+                                            <br>
+                                            <div class="row mb-4">
+                                                交通方式
+                                            </div>
+                                            {{ update_formset.management_form }}
+                                            {{ update_formset.non_form_errors }}
+                                            {% for a in update_formset %}
+                                                <div id="commute_section">
+                                                    <div class="row mb-4 commute" id="0">
+                                                        <div class="col-4">
+                                                            <div class="input-group input-group-static mb-4">
+                                                                <label>交通方式 <span style="color:red; font-size:16px;">* </span></label>
+                                                                {{ a.transportation.errors }}
+                                                                {{ a.transportation }}
+                                                            </div>
+                                                        </div>
+                                                        <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                        <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
                                             <div class="d-flex">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-static mb-4">
@@ -112,7 +128,7 @@
                                             </div>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
@@ -152,6 +168,8 @@
     {#    datepicker#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    icon#}
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
 
     {#    禁止enter鍵#}
     <script>
@@ -164,7 +182,7 @@
         });
     </script>
 
-    {#    年度篩選器#}
+    {#    日期篩選器#}
     <script>
         $("#datepicker").datepicker({
             format: "yyyy",
@@ -173,5 +191,40 @@
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
+    </script>
+
+    {#    新增/刪除出差段數#}
+    <script>
+        var commute_count = 0;
+
+        function DuplicateTrip() {
+            commute_count += 1;
+            document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (commute_count + 1).toString()
+            var commute_section = document.getElementById("commute_section")
+            var first_trip = document.getElementsByClassName("commute")[0]
+            var clone = first_trip.cloneNode(true);
+            commute_section.appendChild(clone)
+            clone.id = (commute_count)
+            var select = document.querySelectorAll(".commute:last-child > div > div > select")
+            select[0].id = "id_transportation_way_set-" + commute_count + "-transportation"
+            select[0].name = "transportation_way_set-" + commute_count + "-transportation"
+            select[0].value = ""
+        }
+
+        function DeleteTrip(deletbutton) {
+            if (commute_count > 0) {
+                commute_count -= 1;
+                deletbutton.closest("div").remove()
+                document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (commute_count + 1).toString()
+                {#console.warn(document.getElementById("id_transportation_way_set-TOTAL_FORMS").value)#}
+                var commute = document.getElementsByClassName("commute")
+                for (let i = 0; i <= commute_count; i++) {
+                    commute[i].id = i.toString()
+                    let select = document.querySelectorAll(".commute:nth-child(" + (i + 1) + ") > div > div > select")
+                    select[0].id = ("id_transportation_way_set-" + i + "-transportation").toString()
+                    select[0].name = ("transportation_way_set-" + i + "-transportation").toString()
+                }
+            }
+        }
     </script>
 {% endblock javascripts %}
