@@ -488,7 +488,7 @@ class ACform(forms.ModelForm):
     class Meta:
         model = airconditioner
         fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -501,7 +501,7 @@ class ACform(forms.ModelForm):
             'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file', 'multiple': 'multiple', 'accept': 'image/*, .pdf'}),
+            # 'image_path': forms.FileInput(attrs={'class': 'form-control-file', 'multiple': 'multiple', 'accept': 'image/*, .pdf'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -512,7 +512,7 @@ class ACform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
+        # self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -888,6 +888,12 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
+
+AdditiveFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1,
+                                           widgets={'departure': forms.TextInput(attrs={'class': 'form-control'}),
+                                                    'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
+                                                    'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}), })
+
 
 
 class ELECform(forms.ModelForm):

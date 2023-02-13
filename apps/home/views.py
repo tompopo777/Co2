@@ -552,8 +552,9 @@ def refrigerator_add(request):
     if request.method == "POST":
         if RF_add.is_valid():
             RF_add.save()
-
             return redirect('/carbon-system/')
+        else:
+            return redirect('/new_device/', {'RF_add': RF_add})
     else:
         return render(request, 'home/refrigerator.html', {'RF_add': RF_add})
 
@@ -564,8 +565,14 @@ def airconditioner_add(request):
     if request.method == "POST":
         if AC_add.is_valid():
             AC_add.save()
-
+            image_path = request.FILES.getlist('file_field')
+            last_id = airconditioner.objects.values("id").last().get("id")
+            for img in image_path:
+                photo = image(image_path=img, ac_id=last_id)
+                photo.save()
             return redirect('/carbon-system/')
+        else:
+            return redirect('/new_device/', {'AC_add': AC_add})
     else:
         return render(request, 'home/airconditioner.html', {'AC_add': AC_add})
 

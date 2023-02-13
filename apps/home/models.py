@@ -681,3 +681,9 @@ class chemical_table(models.Model):
     chemical_add = models.CharField(primary_key=True, max_length=50)
     chemical_name = models.CharField(max_length=50)
     chemical_formula = models.CharField(max_length=50)
+
+
+class image(models.Model):
+    id = models.AutoField(primary_key=True)
+    ac = models.ForeignKey(airconditioner, on_delete=models.CASCADE)
+    image_path = models.FileField(upload_to='airconditioner/%Y/%m', validators=[validators.FileExtensionValidator(['jpg', 'png', 'pdf'])], null=True, default=None)

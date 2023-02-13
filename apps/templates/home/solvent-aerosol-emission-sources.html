@@ -39,11 +39,74 @@
                                             </div>
                                             <div class="col-9">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>使用物種  <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>溶劑、噴霧劑名稱  <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ solvent_aerosol_emission_sources_add.species_used }}
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>溶劑數量<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ solvent_aerosol_emission_sources_add.fugitive_recharge }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>溶劑數量單位<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ solvent_aerosol_emission_sources_add.fugitive_recharge }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>溶劑容量<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ solvent_aerosol_emission_sources_add.fugitive_recharge }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>溶劑容量的單位<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ solvent_aerosol_emission_sources_add.fugitive_recharge }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row mb-4">
+                                            <div class="col">
+                                                添加物段數
+                                            </div>
+                                        </div>
+                                        {{ AdditiveFormSet.management_form }}
+                                        {{ AdditiveFormSet.non_form_errors }}
+                                        {% for a in TripSectionFormSet %}
+                                            <div id="trip_section">
+                                                <div class="row mb-4 trip" id="0">
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.departure.errors }}
+                                                            {{ a.departure }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>交通工具 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.transportation.errors }}
+                                                            {{ a.transportation }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.distance.errors }}
+                                                            {{ a.distance }}
+                                                        </div>
+                                                    </div>
+                                                    <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                    <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
@@ -51,12 +114,6 @@
                                                     {{ solvent_aerosol_emission_sources_add.fugitive_recharge }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>全球暖化潛勢(GWP-AR6)<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ solvent_aerosol_emission_sources_add.global_warming_potential }}
-                                                </div>
-                                            </div>                                            
                                         </div>
                                         <div class="d-flex">
                                             <div class="col-6">
@@ -109,8 +166,11 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    icon#}
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
 
     {#    禁止enter鍵#}
     <script>
@@ -134,4 +194,51 @@
         }).datepicker("setDate", 'now');
     </script>
 
+    {#    新增/刪除出差段數#}
+    <script>
+        var trip_count = 0;
+
+        function DuplicateTrip() {
+            trip_count += 1;
+            document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (trip_count + 1).toString()
+            var trip_section = document.getElementById("trip_section")
+            var first_trip = document.getElementsByClassName("trip")[0]
+            var clone = first_trip.cloneNode(true);
+            trip_section.appendChild(clone)
+            clone.id = (trip_count)
+            var input = document.querySelectorAll(".trip:last-child > div > div > input")
+            input[0].id = "id_trip_section_set-" + trip_count + "-departure"
+            input[0].name = "trip_section_set-" + trip_count + "-departure"
+            input[1].id = "id_trip_section_set-" + trip_count + "-distance"
+            input[1].name = "trip_section_set-" + trip_count + "-distance"
+            input[0].value = ""
+            input[1].value = ""
+            var select = document.querySelectorAll(".trip:last-child > div > div > select")
+            select[0].id = "id_trip_section_set-" + trip_count + "-transportation"
+            select[0].name = "trip_section_set-" + trip_count + "-transportation"
+            select[0].value = ""
+        }
+
+        function DeleteTrip(deletbutton) {
+            {#console.log("trip_count", trip_count)#}
+            if (trip_count > 0) {
+                trip_count -= 1;
+                deletbutton.closest("div").remove()
+                document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (trip_count + 1).toString()
+                {#console.warn(document.getElementById("id_trip_section_set-TOTAL_FORMS").value)#}
+                var trip = document.getElementsByClassName("trip")
+                for (let i = 0; i <= trip_count; i++) {
+                    trip[i].id = i.toString()
+                    let input = document.querySelectorAll(".trip:nth-child(" + (i + 1) + ") > div > div > input")
+                    input[0].id = ("id_trip_section_set-" + i + "-departure").toString()
+                    input[0].name = ("trip_section_set-" + i + "-departure").toString()
+                    input[1].id = ("id_trip_section_set-" + i + "-distance").toString()
+                    input[1].name = ("trip_section_set-" + i + "-distance").toString()
+                    let select = document.querySelectorAll(".trip:nth-child(" + (i + 1) + ") > div > div > select")
+                    select[0].id = ("id_trip_section_set-" + i + "-transportation").toString()
+                    select[0].name = ("trip_section_set-" + i + "-transportation").toString()
+                }
+            }
+        }
+    </script>
 {% endblock javascripts %}
