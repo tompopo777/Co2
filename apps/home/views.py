@@ -921,7 +921,7 @@ def edit_device(request):
                 'single_dataID': single_dataID,
             }
             try:
-                if datasheet_id == "24" or "25":
+                if datasheet_id in formsetName:
                     update_formset = formset(instance=current_data)
                     formUpdata_name["update_formset"] = update_formset
 
@@ -1020,7 +1020,7 @@ def update_device(request, datasheet_id, single_dataID):
                         return redirect('/carbon-system/', locals())
                     else:
                         print("\n", update_formset.errors)
-                        return redirect('/edit_device/?datasheet=' + str(datasheet_id) + '&single_dataID=' + str(single_dataID), context={'update_formset_trip.errors': update_formset.errors})
+                        return redirect('/edit_device/?datasheet=' + str(datasheet_id) + '&single_dataID=' + str(single_dataID), locals())
             except:
                 pass
             if update_from.is_valid():
