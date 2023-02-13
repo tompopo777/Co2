@@ -96,11 +96,17 @@
                                             <div class="row mb-4">
                                                 交通方式
                                             </div>
-                                            {{ update_formset.management_form }}
-                                            {{ update_formset.non_form_errors }}
-                                            {% for a in update_formset %}
-                                                <div id="commute_section">
+                                            <div id="commute_section">
+                                                {{ update_formset.management_form }}
+                                                {{ update_formset.non_form_errors }}
+                                                {% for a in update_formset %}
                                                     <div class="row mb-4 commute" id="0">
+                                                        {% for hidden in a.hidden_fields %}
+                                                            {{ hidden }}
+                                                        {% endfor %}
+                                                        <div style="display: none">
+                                                            {{ a.DELETE }}
+                                                        </div>
                                                         <div class="col-4">
                                                             <div class="input-group input-group-static mb-4">
                                                                 <label>交通方式 <span style="color:red; font-size:16px;">* </span></label>
@@ -108,11 +114,15 @@
                                                                 {{ a.transportation }}
                                                             </div>
                                                         </div>
-                                                        <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
-                                                        <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        <div class="col-1 d-flex align-items-center">
+                                                            <div class="input-group input-group-static mb-4">
+                                                                <a class="col" onclick="DuplicateCommute()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                                <a class="col" onclick="DeleteCommute(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            {% endfor %}
+                                                {% endfor %}
+                                            </div>
                                             <div class="d-flex">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-static mb-4">
@@ -195,36 +205,60 @@
 
     {#    新增/刪除出差段數#}
     <script>
-        var commute_count = 0;
 
-        function DuplicateTrip() {
-            commute_count += 1;
-            document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (commute_count + 1).toString()
-            var commute_section = document.getElementById("commute_section")
-            var first_trip = document.getElementsByClassName("commute")[0]
-            var clone = first_trip.cloneNode(true);
-            commute_section.appendChild(clone)
-            clone.id = (commute_count)
-            var select = document.querySelectorAll(".commute:last-child > div > div > select")
-            select[0].id = "id_transportation_way_set-" + commute_count + "-transportation"
-            select[0].name = "transportation_way_set-" + commute_count + "-transportation"
-            select[0].value = ""
+        //刪除extra=1新增的空白表單
+        var remove_extra = document.querySelectorAll(".commute:last-child")[0]
+        remove_extra.remove()
+        var TOTAL_FORMS = document.querySelectorAll("#commute_section > input")[0]
+        var commute_count = parseInt(TOTAL_FORMS.value, 10) - 1
+        var id_count = commute_count
+        TOTAL_FORMS.value = id_count.toString()
+
+        //將initial表單排序
+        let commute_id = document.querySelectorAll(".commute")
+        for (let i = 0; i < id_count; i++) {
+            commute_id[i].id = i.toString();
         }
 
-        function DeleteTrip(deletbutton) {
-            if (commute_count > 0) {
+        function DeleteCommute(deletbutton) {
+            if (commute_count > 1) {
+                commute = deletbutton.closest("div.commute")
+                var delete_checkbox = document.getElementById("id_transportation_way_set-" + commute.id + "-DELETE")
+                delete_checkbox.checked = true;
+                commute.style.display = "none";
                 commute_count -= 1;
-                deletbutton.closest("div").remove()
-                document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (commute_count + 1).toString()
-                {#console.warn(document.getElementById("id_transportation_way_set-TOTAL_FORMS").value)#}
-                var commute = document.getElementsByClassName("commute")
-                for (let i = 0; i <= commute_count; i++) {
-                    commute[i].id = i.toString()
-                    let select = document.querySelectorAll(".commute:nth-child(" + (i + 1) + ") > div > div > select")
-                    select[0].id = ("id_transportation_way_set-" + i + "-transportation").toString()
-                    select[0].name = ("transportation_way_set-" + i + "-transportation").toString()
-                }
             }
+        }
+
+        function DuplicateCommute() {
+            document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (id_count + 1).toString()
+            var commute_section = document.getElementById("commute_section")
+            var first_commute = document.getElementsByClassName("commute")[0]
+            var clone = first_commute.cloneNode(true);
+            commute_section.appendChild(clone)
+            clone.id = (id_count)
+            var hidden = document.querySelectorAll(".commute:last-child > input")
+            //主鍵
+            hidden[0].name = "transportation_way_set-" + id_count + "-id"
+            hidden[0].id = "id_transportation_way_set-" + id_count + "-id"
+            hidden[0].removeAttribute("value")
+
+            //外鍵
+            hidden[1].name = "transportation_way_set-" + id_count + "-commute"
+            hidden[1].id = "id_transportation_way_set-" + id_count + "-commute"
+
+            //刪除
+            var deleted = document.querySelectorAll(".commute:last-child > div > input")
+            deleted[0].name = "transportation_way_set-" + id_count + "-DELETE"
+            deleted[0].id = "id_transportation_way_set-" + id_count + "-DELETE"
+
+            //輸入欄位
+            var select = document.querySelectorAll(".commute:last-child > div > div > select")
+            select[0].name = "transportation_way_set-" + id_count + "-transportation"
+            select[0].id = "id_transportation_way_set-" + id_count + "-transportation"
+            select[0].value = ""
+            id_count += 1;
+            commute_count += 1;
         }
     </script>
 {% endblock javascripts %}

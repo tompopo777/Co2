@@ -92,27 +92,35 @@
                                                 </div>
                                             </div>
 
-                                        <br>
-                                        <div class="row mb-4">
-                                            交通方式
-                                        </div>
-                                        {{ CommuteFormSet.management_form }}
-                                        {{ CommuteFormSet.non_form_errors }}
-                                        {% for a in CommuteFormSet %}
-                                            <div id="commute_section">
-                                                <div class="row mb-4 commute" id="0">
-                                                    <div class="col-4">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>交通方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.transportation.errors }}
-                                                            {{ a.transportation }}
-                                                        </div>
-                                                    </div>
-                                                    <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
-                                                    <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
-                                                </div>
+                                            <br>
+                                            <div class="row mb-4">
+                                                交通方式
                                             </div>
-                                        {% endfor %}
+                                            {{ CommuteFormSet.management_form }}
+                                            {{ CommuteFormSet.non_form_errors }}
+                                            {% for a in CommuteFormSet %}
+                                                <div id="commute_section">
+                                                    <div class="row mb-4 commute" id="0">
+                                                        {% for hidden in a.hidden_fields %}
+                                                            {{ hidden }}
+                                                        {% endfor %}
+                                                        <div class="col-4">
+                                                            <div class="input-group input-group-static mb-4">
+                                                                <label>交通方式 <span style="color:red; font-size:16px;">* </span></label>
+                                                                {{ a.transportation.errors }}
+                                                                {{ a.transportation }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-1 d-flex align-items-center">
+                                                            <div class="input-group input-group-static mb-4">
+                                                                <a class="col" onclick="DuplicateCommute()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                                <a class="col" onclick="DeleteCommute(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
                                             <div class="d-flex">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-static mb-4">
@@ -196,7 +204,8 @@
     {#    新增/刪除出差段數#}
     <script>
         var commute_count = 0;
-        function DuplicateTrip() {
+
+        function DuplicateCommute() {
             commute_count += 1;
             document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (commute_count + 1).toString()
             var commute_section = document.getElementById("commute_section")
@@ -210,12 +219,11 @@
             select[0].value = ""
         }
 
-        function DeleteTrip(deletbutton) {
+        function DeleteCommute(deletbutton) {
             if (commute_count > 0) {
                 commute_count -= 1;
-                deletbutton.closest("div").remove()
+                deletbutton.closest("div.commute").remove()
                 document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (commute_count + 1).toString()
-                {#console.warn(document.getElementById("id_transportation_way_set-TOTAL_FORMS").value)#}
                 var commute = document.getElementsByClassName("commute")
                 for (let i = 0; i <= commute_count; i++) {
                     commute[i].id = i.toString()

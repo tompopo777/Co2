@@ -88,22 +88,26 @@
                                                             {{ a.departure }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>交通工具 <span style="color:red; font-size:16px;">* </span></label>
                                                             {{ a.transportation.errors }}
                                                             {{ a.transportation }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
                                                             {{ a.distance.errors }}
                                                             {{ a.distance }}
                                                         </div>
                                                     </div>
-                                                    <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
-                                                    <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                            <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         {% endfor %}
@@ -226,12 +230,10 @@
         }
 
         function DeleteTrip(deletbutton) {
-            {#console.log("trip_count", trip_count)#}
             if (trip_count > 0) {
                 trip_count -= 1;
-                deletbutton.closest("div").remove()
+                deletbutton.closest("div.trip").remove()
                 document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (trip_count + 1).toString()
-                {#console.warn(document.getElementById("id_trip_section_set-TOTAL_FORMS").value)#}
                 var trip = document.getElementsByClassName("trip")
                 for (let i = 0; i <= trip_count; i++) {
                     trip[i].id = i.toString()

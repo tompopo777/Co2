@@ -73,17 +73,23 @@
                                         <br>
                                         <div class="row mb-4">
                                             出差段數
+                                            {% if update_formset_trip.errors %}
+                                                <div class="alert alert-danger">
+                                                    {{ update_formset_trip.errors }}
+                                                </div>
+                                            {% endif %}
                                         </div>
                                         <div id="trip_section">
                                             {{ update_formset.non_form_errors }}
                                             {{ update_formset.management_form }}
                                             {% for a in update_formset %}
-{#                                                {{ a }}#}
-                                                {{ forloop.counter }}
                                                 <div class="row mb-4 trip" id="0">
                                                     {% for hidden in a.hidden_fields %}
                                                         {{ hidden }}
                                                     {% endfor %}
+                                                    <div style="display: none">
+                                                        {{ a.DELETE }}
+                                                    </div>
                                                     <div class="col-4">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
@@ -92,22 +98,26 @@
                                                             {{ a.departure }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>交通工具 <span style="color:red; font-size:16px;">* </span></label>
                                                             {{ a.transportation.errors }}
                                                             {{ a.transportation }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
                                                             {{ a.distance.errors }}
                                                             {{ a.distance }}
                                                         </div>
                                                     </div>
-                                                    <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
-                                                    <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                            <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             {% endfor %}
                                         </div>
@@ -205,51 +215,67 @@
 
     {#    新增/刪除出差段數#}
     <script>
-        var trip_count = 0;
+
+        //刪除extra=1新增的空白表單
+        var remove_extra = document.querySelectorAll(".trip:last-child")[0]
+        remove_extra.remove()
+        var TOTAL_FORMS = document.querySelectorAll("#trip_section > input")[0]
+        var trip_count = parseInt(TOTAL_FORMS.value, 10) -1
+        var id_count = trip_count
+        TOTAL_FORMS.value = id_count.toString()
+
+        //將initial表單排序
+        let trip_id = document.querySelectorAll(".trip")
+        for (let i = 0; i < id_count; i++) {
+            trip_id[i].id = i.toString();
+        }
+
+        function DeleteTrip(deletbutton) {
+            if (trip_count > 1) {
+                trip = deletbutton.closest("div.trip")
+                var delete_checkbox = document.getElementById("id_trip_section_set-" + trip.id + "-DELETE")
+                delete_checkbox.checked = true;
+                trip.style.display = "none";
+                trip_count -= 1
+            }
+        }
 
         function DuplicateTrip() {
-            trip_count += 1;
-            document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (trip_count + 1).toString()
+            document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (id_count + 1).toString()
             var trip_section = document.getElementById("trip_section")
             var first_trip = document.getElementsByClassName("trip")[0]
             var clone = first_trip.cloneNode(true);
             trip_section.appendChild(clone)
-            clone.id = (trip_count)
+            clone.id = (id_count)
+            var hidden = document.querySelectorAll(".trip:last-child > input")
+            //主鍵
+            hidden[0].name = "trip_section_set-" + id_count + "-id"
+            hidden[0].id = "id_trip_section_set-" + id_count + "-id"
+            hidden[0].removeAttribute("value")
+
+            //外鍵
+            hidden[1].name = "trip_section_set-" + id_count + "-id"
+            hidden[1].id = "id_trip_section_set-" + id_count + "-id"
+
+            //刪除
+            var deleted = document.querySelectorAll(".trip:last-child > div > input")
+            deleted[0].name = "trip_section_set-" + id_count + "-DELETE"
+            deleted[0].id = "id_trip_section_set-" + id_count + "-DELETE"
+
+            //輸入欄位
             var input = document.querySelectorAll(".trip:last-child > div > div > input")
-            input[0].id = "id_trip_section_set-" + trip_count + "-departure"
-            input[0].name = "trip_section_set-" + trip_count + "-departure"
-            input[1].id = "id_trip_section_set-" + trip_count + "-distance"
-            input[1].name = "trip_section_set-" + trip_count + "-distance"
+            input[0].id = "id_trip_section_set-" + id_count + "-departure"
+            input[0].name = "trip_section_set-" + id_count + "-departure"
+            input[1].id = "id_trip_section_set-" + id_count + "-distance"
+            input[1].name = "trip_section_set-" + id_count + "-distance"
             input[0].value = ""
             input[1].value = ""
             var select = document.querySelectorAll(".trip:last-child > div > div > select")
-            select[0].id = "id_trip_section_set-" + trip_count + "-transportation"
-            select[0].name = "trip_section_set-" + trip_count + "-transportation"
+            select[0].id = "id_trip_section_set-" + id_count + "-transportation"
+            select[0].name = "trip_section_set-" + id_count + "-transportation"
             select[0].value = ""
-        }
-
-        function DeleteTrip(deletbutton) {
-            {#console.log("trip_count", trip_count)#}
-            if (trip_count > 0) {
-                trip_count -= 1;
-                deletbutton.closest("div").remove()
-
-                document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (trip_count + 1).toString()
-                console.warn(document.getElementById("id_trip_section_set-TOTAL_FORMS").value)
-
-                var trip = document.getElementsByClassName("trip")
-                for (let i = 0; i <= trip_count; i++) {
-                    trip[i].id = i.toString()
-                    let input = document.querySelectorAll(".trip:nth-child(" + (i + 1) + ") > div > div > input")
-                    input[0].id = ("id_trip_section_set-" + i + "-departure").toString()
-                    input[0].name = ("trip_section_set-" + i + "-departure").toString()
-                    input[1].id = ("id_trip_section_set-" + i + "-distance").toString()
-                    input[1].name = ("trip_section_set-" + i + "-distance").toString()
-                    let select = document.querySelectorAll(".trip:nth-child(" + (i + 1) + ") > div > div > select")
-                    select[0].id = ("id_trip_section_set-" + i + "-transportation").toString()
-                    select[0].name = ("trip_section_set-" + i + "-transportation").toString()
-                }
-            }
+            id_count += 1;
+            trip_count += 1;
         }
     </script>
 {% endblock javascripts %}

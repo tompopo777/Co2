@@ -859,7 +859,7 @@ def add_page(request, ):
         }
         if function_dic.get(device_id):
             device_function = function_dic.get(device_id)
-        print("device_function:", device_function)
+        # print("device_function:", device_function)
         return device_function
 
 
@@ -924,6 +924,7 @@ def edit_device(request):
                 if datasheet_id == "24" or "25":
                     update_formset = formset(instance=current_data)
                     formUpdata_name["update_formset"] = update_formset
+
             except:
                 pass
 
@@ -1000,41 +1001,34 @@ def update_device(request, datasheet_id, single_dataID):
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
+    formsetName = {
+        "24": CommuteFormSet, "25": TripSectionFormSet
+    }
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
         form = formName.get(datasheet_id)
-        current_data = get_object_or_404(dbName, id=datasheet_id)
-        # current_data = dbName.objects.get(id=single_dataID)
-        print("current_data>>>>>>>>", current_data)
+        current_data = get_object_or_404(dbName, id=single_dataID)
+        update_from = form(request.POST, request.FILES, instance=current_data)
         if request.method == 'POST':
-            # current_data = dbName.objects.get(id=single_dataID)
-            update_from = form(request.POST, request.FILES, instance=current_data)
-            # update_formset_trip = TripSectionFormSet(request.POST, request.FILES, instance=current_data)
-            # print("update_from>>>>>>>>", update_from)
-            # print("update_formset_trip>>>>>>>>", update_formset_trip)
-
-            # if update_from.is_valid() and update_formset_trip.is_valid():
-            #     print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
-            #     business = update_from.save()
-            #     update_formset_trip.save()
-
+            try:
+                if datasheet_id in formsetName:
+                    formset = formsetName.get(datasheet_id)
+                    update_formset = formset(request.POST, request.FILES, instance=current_data)
+                    if update_from.is_valid() and update_formset.is_valid():
+                        update_from.save()
+                        update_formset.save()
+                        return redirect('/carbon-system/', locals())
+                    else:
+                        print("\n", update_formset.errors)
+                        return redirect('/edit_device/?datasheet=' + str(datasheet_id) + '&single_dataID=' + str(single_dataID), context={'update_formset_trip.errors': update_formset.errors})
+            except:
+                pass
             if update_from.is_valid():
-                print("ok")
-                business = update_from.save()
-                update_formset_trip = TripSectionFormSet(request.POST, request.FILES, instance=business)
-                # update_formset_trip = TripSectionFormSet(request.POST, request.FILES, instance=business)
-                print("update_from>>>>>>>>>>>>>>>>>>>>>save")
-                if update_formset_trip.is_valid():
-                    update_formset_trip.save()
-                    # print("formset_trip>>>>>>>>>>>>>>>>>>>save")
-                #         return redirect('/carbon-system/', locals())
-                #     return redirect('/carbon-system/', locals())
-                    print("update_formset_trip>>>>>>>>>>>>>>>>>>>>>save")
-                    return redirect('/carbon-system/', locals())
-                else:
-                    print("\n", update_formset_trip.errors)
-                    # print("update_formset_trip>>>>>>>>錯誤\n", update_formset_trip)
-
+                update_from.save()
+                return redirect('/carbon-system/', locals())
+            else:
+                print("\n", update_from.errors)
+                return redirect('/edit_device/?datasheet=' + str(datasheet_id) + '&single_dataID=' + str(single_dataID), locals())
         else:
             return render(request, 'home/index.html', locals())
 
