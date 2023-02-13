@@ -415,11 +415,8 @@ def load_table(request):
                     single_data = pre_data[i]
                     id = pre_data[i].get("id")
                     transportation = transportation_way.objects.filter(commute=id).values("transportation")
-                    print("transportation", transportation)
-                    print("long:::::::::", len(transportation))
                     if len(transportation) > 1:
                         transportation_first = transportation_way.objects.filter(commute=id).values("transportation").first()
-                        print("transportation111111111111111111111", transportation_first)
                         single_data["transportation"] = transportation_first.get("transportation") + "*"
                     else:
                         for t in transportation:
@@ -437,7 +434,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工出差":
                 t_data = []
-                raw_data = employee_business_trip.objects.values("id", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
+                raw_data = employee_business_trip.objects.values("id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
                 for i in range(raw_data.count()):
                     single_data = raw_data[i]
                     id = raw_data[i].get("id")
@@ -487,13 +484,16 @@ def load_table(request):
 def emergency_generators_add(request):
     EG_add = EGform(request.POST, request.FILES)
     if request.method == "POST":
-        print("77777777777777777")
-        print("EG_add", EG_add)
+        # print("77777777777777777")
+        # print("EG_add", EG_add)
         if EG_add.is_valid():
             EG_add.save()
             return redirect('/carbon-system/')
         else:
-            return redirect('/new_device/')
+            print(EG_add.errors)
+            return redirect('/new_device/', {'device.errors': EG_add.errors})
+            # return render(request, new_device, {'EG_add.errors': EG_add.errors})
+
     else:
         return render(request, 'home/emergency-generator.html', {'EG_add': EG_add})
 
@@ -911,20 +911,29 @@ def edit_device(request):
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
+    formsetName = {
+        "24": CommuteFormSet, "25": TripSectionFormSet
+    }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
         form = formlName.get(datasheet_id)
+        formset = formsetName.get(datasheet_id)
         if request.method == 'GET':
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(instance=current_data)
-            update_formset = TripSectionFormSet(instance=current_data)
 
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
                 'single_dataID': single_dataID,
-                'update_formset': update_formset
             }
+            try:
+                if datasheet_id == "24" or "25":
+                    update_formset = formset(instance=current_data)
+                    formUpdata_name["update_formset"] = update_formset
+            except:
+                pass
+
             # 建立字典
             htmlName = {
                 "1": "home/emergency-generator-edit.html",
@@ -1001,26 +1010,38 @@ def update_device(request, datasheet_id, single_dataID):
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
         form = formName.get(datasheet_id)
-        # current_data = get_object_or_404(dbName, id=datasheet_id)
-        current_data = dbName.objects.get(id=single_dataID)
+        current_data = get_object_or_404(dbName, id=datasheet_id)
+        # current_data = dbName.objects.get(id=single_dataID)
         print("current_data>>>>>>>>", current_data)
         if request.method == 'POST':
             # current_data = dbName.objects.get(id=single_dataID)
             update_from = form(request.POST, request.FILES, instance=current_data)
-            update_formset = TripSectionFormSet(request.POST, request.FILES, instance=current_data)
-            print("update_from>>>>>>>>", update_from)
-            print("update_formset>>>>>>>>", update_formset)
-            print("ok")
-            if update_from.is_valid() and update_formset.is_valid():
+            # update_formset_trip = TripSectionFormSet(request.POST, request.FILES, instance=current_data)
+            # print("update_from>>>>>>>>", update_from)
+            # print("update_formset_trip>>>>>>>>", update_formset_trip)
+
+            # if update_from.is_valid() and update_formset_trip.is_valid():
+            #     print("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+            #     business = update_from.save()
+            #     update_formset_trip.save()
+
+            if update_from.is_valid():
+                print("ok")
                 business = update_from.save()
-                update_formset.save()
-                # if update_from.is_valid():
-                #     business = update_from.save()
-                #     update_formset = TripSectionFormSet(request.POST, request.FILES, instance=business)
-                #     if update_formset.is_valid():
-                #         update_device.save()
+                update_formset_trip = TripSectionFormSet(request.POST, request.FILES, instance=business)
+                # update_formset_trip = TripSectionFormSet(request.POST, request.FILES, instance=business)
+                print("update_from>>>>>>>>>>>>>>>>>>>>>save")
+                if update_formset_trip.is_valid():
+                    update_formset_trip.save()
+                    # print("formset_trip>>>>>>>>>>>>>>>>>>>save")
                 #         return redirect('/carbon-system/', locals())
-                return redirect('/carbon-system/', locals())
+                #     return redirect('/carbon-system/', locals())
+                    print("update_formset_trip>>>>>>>>>>>>>>>>>>>>>save")
+                    return redirect('/carbon-system/', locals())
+                else:
+                    print("\n", update_formset_trip.errors)
+                    # print("update_formset_trip>>>>>>>>錯誤\n", update_formset_trip)
+
         else:
             return render(request, 'home/index.html', locals())
 
@@ -1220,7 +1241,7 @@ def add_title(request):
             # 員工出差
             "25": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
+                "內容": ["序號", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
                 "距離(pkm)": ["自駕汽車", "高鐵", "火車", "計程車", "機車", "捷運", "飛機", "船舶"],
             },
 

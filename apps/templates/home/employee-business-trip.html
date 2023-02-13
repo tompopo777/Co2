@@ -78,6 +78,9 @@
                                         {% for a in TripSectionFormSet %}
                                             <div id="trip_section">
                                                 <div class="row mb-4 trip" id="0">
+                                                    {% for hidden in a.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
                                                     <div class="col-4">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>出發地 <span style="color:red; font-size:16px;">* </span></label>

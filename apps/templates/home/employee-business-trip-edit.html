@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype=multipart/form-data>
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-4 d-flex align-items-center">
@@ -74,14 +74,20 @@
                                         <div class="row mb-4">
                                             出差段數
                                         </div>
-                                        {{ update_formset.management_form }}
-                                        {{ update_formset.non_form_errors }}
                                         <div id="trip_section">
+                                            {{ update_formset.non_form_errors }}
+                                            {{ update_formset.management_form }}
                                             {% for a in update_formset %}
+{#                                                {{ a }}#}
+                                                {{ forloop.counter }}
                                                 <div class="row mb-4 trip" id="0">
+                                                    {% for hidden in a.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
                                                     <div class="col-4">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.departure.hidden_fields }}
                                                             {{ a.departure.errors }}
                                                             {{ a.departure }}
                                                         </div>
