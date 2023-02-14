@@ -702,15 +702,21 @@ def waste_sludge_add(request):
 # 溶劑、噴霧劑
 @login_required(login_url="/login/")
 def solvent_aerosol_emission_sources_add(request):
-    solvent_aerosol_emission_sources_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
+    SAES_add = SAESform(request.POST, request.FILES)
     if request.method == "POST":
-        if solvent_aerosol_emission_sources_add.is_valid():
-            solvent_aerosol_emission_sources_add.save()
-
-            return redirect('/carbon-system/')
+        if SAES_add.is_valid():
+            solvent = SAES_add.save()
+            additivesection_formSet = AdditiveFormSet(request.POST, request.FILES, instance=solvent)
+            if additivesection_formSet.is_valid():
+                additivesection_formSet.save()
+                return redirect('/carbon-system/')
+            else:
+                last_data = solvent_aerosol_emission_sources.objects.last()
+                last_data.delete()
+                print("additivesection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", additivesection_formSet)
+                return render(request, 'home/employee-business-trip.html', {'SAES_add': SAES_add, 'TripSectionFormSet': TripSectionFormSet})
     else:
-        return render(request, 'home/solvent-aerosol-emission-sources.html', {'solvent_aerosol_emission_sources_add': solvent_aerosol_emission_sources_add})
-
+        return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'AdditiveFormSet': AdditiveFormSet})
 
 # VOCs1表單儲存
 @login_required(login_url="/login/")
