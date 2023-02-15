@@ -732,6 +732,9 @@ def VOCs_two_add(request):
         if VOCs_two_add.is_valid():
             VOCs_two_add.save()
             return redirect('/carbon-system/')
+        else:
+            print("\n", VOCs_two_add.errors)
+            return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add})
     else:
         return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add})
 

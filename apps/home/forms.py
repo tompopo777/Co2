@@ -889,11 +889,11 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
-AdditiveFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1,
-                                           widgets={'departure': forms.TextInput(attrs={'class': 'form-control'}),
-                                                    'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
-                                                    'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}), })
 
+AdditiveFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1,
+                                        widgets={'departure': forms.TextInput(attrs={'class': 'form-control'}),
+                                                 'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
+                                                 'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}), })
 
 
 class ELECform(forms.ModelForm):
@@ -1226,20 +1226,23 @@ class VOCsOneForm(forms.ModelForm):
 
 
 class VOCsTwoForm(forms.ModelForm):
+    # radio_concentration = forms.fields.ChoiceField(choices=((1, "出口濃度"), (2, "入口濃度")), widget=forms.widgets.Select()),
     class Meta:
         model = VOCs_two
         fields = ('years', 'disposal_volume', 'concentration_entrance', 'concentration_exit', 'builtIn_rate', 'custom_rate', 'concentration_ch4', 'voc_capture_rate', 'combustion_equipment_rate', 'radio_VOCs', 'radio_concentration', 'radio_co2_emission', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'disposal_volume': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-            'concentration_entrance': forms.TextInput(
-                attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)', "disabled": ""}),
+            'concentration_entrance': forms.TextInput(attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)', "disabled": ""}),
             'concentration_exit': forms.TextInput(attrs={'class': 'form-control concentration_exit', "id": "concentration_exit", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)', "disabled": ""}),
             'builtIn_rate': forms.TextInput(attrs={'class': 'form-control builtIn_rate', 'id': 'builtIn_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)', "disabled": ""}),
             'custom_rate': forms.TextInput(attrs={'class': 'form-control custom_rate', 'id': 'custom_rate', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)', "disabled": ""}),
             'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'voc_capture_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'combustion_equipment_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'radio_VOCs': forms.RadioSelect(choices=((1, "已知VOCs濃度"), (2, "未知VOCs濃度或已知CO\u2082濃度'排放係數")), attrs={'class': 'form-check-input', 'id': 'radio_VOCs'}),
+            'radio_concentration': forms.RadioSelect(choices=((1, "入口濃度"), (2, "出口濃度")), attrs={'class': 'form-check-input m-0', 'id': 'radio_concentration', "disabled": ""}),
+            'radio_co2_emission': forms.RadioSelect(choices=((1, "內設值"), (2, "自訂值")), attrs={'class': 'form-check-input m-0', 'id': 'radio_co2_emission', "disabled": ""}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -1249,4 +1252,6 @@ class VOCsTwoForm(forms.ModelForm):
         self.fields['concentration_exit'].required = False
         self.fields['builtIn_rate'].required = False
         self.fields['custom_rate'].required = False
+        self.fields['radio_co2_emission'].required = False
+        self.fields['radio_concentration'].required = False
         self.fields['message_board'].required = False
