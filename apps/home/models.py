@@ -470,12 +470,24 @@ class solvent_aerosol_emission_sources(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=18)
     years = models.IntegerField()
-    species_used = models.CharField(max_length=255)
-    fugitive_recharge = models.IntegerField()
-    global_warming_potential = models.IntegerField()
+    solvent_name = models.CharField(max_length=100)
+    solvent_amount = models.IntegerField()
+    solvent_amount_unit = models.CharField(max_length=30)
+    solvent_capacity = models.IntegerField()
+    solvent_capacity_unit = models.CharField(max_length=30)
+    fugitive_recharge = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='溶劑、噴霧劑/%Y/%m', null=True, default=None)
+    image_path = models.FileField(upload_to='用電量/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
+class additive_section(models.Model):
+    id = models.AutoField(primary_key=True)
+    additive_name = models.CharField(max_length=100)
+    additive_amount = models.IntegerField()
+    additive_unit = models.CharField(max_length=30)
+    additive_ingredient = models.CharField(max_length=255)
+    additive_ratio = models.CharField(max_length=30)
+    additive_id = models.ForeignKey(solvent_aerosol_emission_sources, on_delete=models.CASCADE)
 
 class electricity(models.Model):
     id = models.AutoField(primary_key=True)
