@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 
-#限制文件
+# 限制文件
 from django.core import validators
 
 YEAR_CHOICES = []
@@ -434,7 +434,7 @@ class employee(models.Model):
     message_board = models.CharField(max_length=255, null=True)
 
 
-#廢水
+# 廢水
 class waste_water(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=16)
@@ -450,7 +450,7 @@ class waste_water(models.Model):
     message_board = models.CharField(max_length=255, null=True)
 
 
-#廢汙泥
+# 廢汙泥
 class waste_sludge(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=17)
@@ -465,29 +465,31 @@ class waste_sludge(models.Model):
     message_board = models.CharField(max_length=255, null=True)
 
 
-#溶劑、噴霧劑
+# 溶劑、噴霧劑
 class solvent_aerosol_emission_sources(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=18)
     years = models.IntegerField()
     solvent_name = models.CharField(max_length=100)
-    solvent_amount = models.IntegerField()
+    solvent_amount = models.FloatField()
     solvent_amount_unit = models.CharField(max_length=30)
-    solvent_capacity = models.IntegerField()
+    solvent_capacity = models.FloatField()
     solvent_capacity_unit = models.CharField(max_length=30)
     fugitive_recharge = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.FileField(upload_to='用電量/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class additive_section(models.Model):
     id = models.AutoField(primary_key=True)
     additive_name = models.CharField(max_length=100)
-    additive_amount = models.IntegerField()
+    additive_amount = models.FloatField()
     additive_unit = models.CharField(max_length=30)
     additive_ingredient = models.CharField(max_length=255)
     additive_ratio = models.CharField(max_length=30)
     additive_id = models.ForeignKey(solvent_aerosol_emission_sources, on_delete=models.CASCADE)
+
 
 class electricity(models.Model):
     id = models.AutoField(primary_key=True)
@@ -604,6 +606,7 @@ class downstream_transportation(models.Model):
     air_image_path = models.FileField(upload_to='下游運輸/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class employee_commute(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=24)
@@ -620,10 +623,12 @@ class employee_commute(models.Model):
     image_path = models.FileField(upload_to='員工通勤/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class transportation_way(models.Model):
     id = models.AutoField(primary_key=True)
     transportation = models.CharField(max_length=30)
     commute = models.ForeignKey(employee_commute, on_delete=models.CASCADE)
+
 
 class employee_business_trip(models.Model):
     id = models.AutoField(primary_key=True)
@@ -640,12 +645,14 @@ class employee_business_trip(models.Model):
     rtd_image_path = models.FileField(upload_to='員工出差/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
+
 class trip_section(models.Model):
     id = models.AutoField(primary_key=True)
     departure = models.CharField(max_length=50)
     transportation = models.CharField(max_length=30)
     distance = models.FloatField()
     trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE)
+
 
 class VOCs_one(models.Model):
     id = models.AutoField(primary_key=True)
@@ -654,6 +661,7 @@ class VOCs_one(models.Model):
     emission = models.FloatField()
     concentration_ch4 = models.FloatField()
     message_board = models.CharField(max_length=255, null=True)
+
 
 class VOCs_two(models.Model):
     id = models.AutoField(primary_key=True)
@@ -688,6 +696,7 @@ class waste(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.FileField(upload_to='廢棄物/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+
 
 class chemical_table(models.Model):
     chemical_add = models.CharField(primary_key=True, max_length=50)
