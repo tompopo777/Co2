@@ -364,10 +364,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
                 t_data = []
-                # 將要運算的值分別撈出(逸散率/填充量)
                 raw_data = solvent_aerosol_emission_sources.objects.values("id", "years", "solvent_name", "solvent_amount", "solvent_amount_unit", "solvent_capacity", "solvent_capacity_unit", "fugitive_recharge")
-
-                # 計算當月用電量
                 for i in range(raw_data.count()):
                     single_data = raw_data[i]
                     id = raw_data[i].get("id")
@@ -375,10 +372,10 @@ def load_table(request):
                     for a in additive:
                         if additive.count() > 1:
                             single_data.update(a)
-                            single_data["*"] = "*"
                             break
                         else:
                             single_data.update(a)
+                    single_data["count"] = additive.count()
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
@@ -1217,7 +1214,7 @@ def add_title(request):
             "18": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
-                "溶劑、噴霧劑添加物": ["添加物名稱", "添加量", "單位", "成份", "添加比例", ""],
+                "溶劑、噴霧劑添加物 (點擊修改可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
             },
 
             "19": {
