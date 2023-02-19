@@ -1,5 +1,6 @@
 import re
 from django import forms
+
 from .models import *
 from django.core.validators import RegexValidator, validate_slug
 from django.core.exceptions import ValidationError
@@ -223,19 +224,11 @@ class EGform(forms.ModelForm):
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
-    def clean_device_id(self):
-        # device_id_list = []
-        # for form in self.forms:
-        # device_id = form.cleaned_data['device_id']
-        device_id = self.cleaned_data.get('device_id')
-        # llist = emergency_generators.objects.get("device_id")
-        # print("llist::::::::::::;;", llist)
-        # llist = self.cleaned_data.get("device_id")
-        if '100-001-001' in device_id:
-            raise forms.ValidationError("設備編號重複!")
-            # self.add_error("設備編號重複!")
-        return device_id
-        # device_id_list.append(device_id)
+    # def clean_device_id(self):
+    #     device_id = self.cleaned_data.get('device_id')
+    #     if emergency_generators.objects.filter(device_id=device_id):
+    #         raise forms.ValidationError("設備編號重複!")
+    #     return device_id
 
 
 class CEform(forms.ModelForm):

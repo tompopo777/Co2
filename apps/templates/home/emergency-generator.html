@@ -37,23 +37,40 @@
                                                     {{ EG_add.years }}
                                                 </div>
                                             </div>
+{#                                        123#}
+                                            {% if EG_add.errors %}
+                                                <div class="col-4">
+                                                    <div class="col-6"><span class="alert-danger">
+                                                    {{ EG_add.errors }}
+                                                    </span></div>
+                                                    <div class="col-6">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ EG_add.device_id }}
+                                                        </div>
+                                                    </div>
+{#                                                    <div class="input-group input-group-static mb-4 alert-danger">#}
+{#                                                        <label>設備編號 {{ EG_add.errors }}<span style="color:red; font-size:16px;">* </span></label>#}
+{#                                                        {{ EG_add.device_id }}#}
+{#                                                    </div>#}
+                                                </div>
+{#                                                <div class=" alert-danger">#}
+{#                                                {{ EG_add.errors }}#}
+{#                                                </div>#}
+                                            {% else %}
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
 {#                                                    {{ EG_add.non_field_errors }}#}
-                                                    {% for a in device.errors %}
-                                                        {{ a }}
-                                                    {% endfor %}
+{#                                                    {% for a in device.errors %}#}
+{#                                                        {{ a }}#}
+{#                                                    {% endfor %}#}
 {#                                                    {{ device.errors }}#}
 {#                                                    {{ EG_add.as_ul }}#}
                                                     {{ EG_add.device_id }}
                                                 </div>
                                             </div>
-{#                                            {% if EG_add.errors %}#}
-{#                                                <div class=" alert-danger">#}
-{#                                                {{ EG_add.errors }}#}
-{#                                                </div>#}
-{#                                            {% endif %}#}
+                                            {% endif %}
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>發電機容量 <span style="color:red; font-size:16px;">* </span></label>

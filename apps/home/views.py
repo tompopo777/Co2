@@ -494,20 +494,18 @@ def load_table(request):
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
-    EG_add = EGform(request.POST, request.FILES)
+    context = {}
     if request.method == "POST":
-        # print("77777777777777777")
-        # print("EG_add", EG_add)
+        EG_add = EGform(request.POST, request.FILES)
         if EG_add.is_valid():
             EG_add.save()
             return redirect('/carbon-system/')
         else:
             print(EG_add.errors)
-            return redirect('/new_device/', {'device.errors': EG_add.errors})
-            # return render(request, new_device, {'EG_add.errors': EG_add.errors})
-
     else:
-        return render(request, 'home/emergency-generator.html', {'EG_add': EG_add})
+        EG_add = EGform()
+    context['EG_add'] = EG_add
+    return render(request, 'home/emergency-generator.html', context)
 
 
 @login_required(login_url="/login/")
@@ -845,11 +843,6 @@ def waste_add(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    # data = emergency_generators.objects.filter(id=5).values("image_path", "image_note")
-    # context ={
-    #     'data': data,
-    # }
-    # return render(request, "home/carbon-system.html", context)
     return render(request, "home/carbon-system.html", locals())
 
 
@@ -890,7 +883,6 @@ def add_page(request, ):
         }
         if function_dic.get(device_id):
             device_function = function_dic.get(device_id)
-        # print("device_function:", device_function)
         return device_function
 
 
@@ -1214,7 +1206,7 @@ def add_title(request):
             "18": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
-                "溶劑、噴霧劑添加物 (點擊修改可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
+                "溶劑、噴霧劑添加物 (點擊\"修改\"可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
             },
 
             "19": {
