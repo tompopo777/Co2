@@ -925,7 +925,7 @@ def edit_device(request):
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
-        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SAESform,
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
@@ -1022,7 +1022,7 @@ def update_device(request, datasheet_id, single_dataID):
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
-        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SAESform,
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
