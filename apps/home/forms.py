@@ -456,7 +456,7 @@ class RFform(forms.ModelForm):
     class Meta:
         model = refrigerator
         fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -469,7 +469,7 @@ class RFform(forms.ModelForm):
             'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
+            # 'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -480,7 +480,7 @@ class RFform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
+        # self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -893,13 +893,12 @@ class SAESform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 AdditiveFormSet = inlineformset_factory(solvent_aerosol_emission_sources, additive_section, fields=('additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio'), extra=1,
-                                           widgets={'additive_name': forms.TextInput(attrs={'class': 'form-control'}),
-                                                    'additive_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-                                                    'additive_unit': forms.TextInput(attrs={'class': 'form-control'}),
-                                                    'additive_ingredient': forms.TextInput(attrs={'class': 'form-control'}),
-                                                    'additive_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-                                                    })
-
+                                        widgets={'additive_name': forms.TextInput(attrs={'class': 'form-control'}),
+                                                 'additive_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+                                                 'additive_unit': forms.TextInput(attrs={'class': 'form-control'}),
+                                                 'additive_ingredient': forms.TextInput(attrs={'class': 'form-control'}),
+                                                 'additive_ratio': forms.TextInput(attrs={'class': 'form-control'}),
+                                                 })
 
 
 class ELECform(forms.ModelForm):

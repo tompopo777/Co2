@@ -242,7 +242,7 @@ class airconditioner(models.Model):
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='airconditioner/%Y/%m', validators=[validators.FileExtensionValidator(['jpg', 'png', 'pdf'])], null=True, default=None)
+    # image_path = models.FileField(upload_to='airconditioner/%Y/%m', validators=[validators.FileExtensionValidator(['jpg', 'png', 'pdf'])], null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -697,5 +697,7 @@ class chemical_table(models.Model):
 
 class image(models.Model):
     id = models.AutoField(primary_key=True)
-    ac = models.ForeignKey(airconditioner, on_delete=models.CASCADE)
-    image_path = models.FileField(upload_to='airconditioner/%Y/%m', validators=[validators.FileExtensionValidator(['jpg', 'png', 'pdf'])], null=True, default=None)
+    table_id = models.IntegerField()
+    single_id = models.IntegerField()
+    stage = models.CharField(max_length=30, null=True)
+    image_path = models.FileField(upload_to='images/%Y/%m', validators=[validators.FileExtensionValidator(['jpg', 'png', 'pdf'])], null=True, default=None)

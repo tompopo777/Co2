@@ -564,12 +564,13 @@ def airconditioner_add(request):
     AC_add = ACform(request.POST, request.FILES)
     if request.method == "POST":
         if AC_add.is_valid():
-            AC_add.save()
             image_path = request.FILES.getlist('file_field')
             last_id = airconditioner.objects.values("id").last().get("id")
+            table_id = airconditioner.objects.values("did").last().get("did")
             for img in image_path:
-                photo = image(image_path=img, ac_id=last_id)
+                photo = image(image_path=img, single_id=last_id, table_id=table_id)
                 photo.save()
+            AC_add.save()
             return redirect('/carbon-system/')
         else:
             return redirect('/new_device/', {'AC_add': AC_add})
@@ -717,6 +718,7 @@ def solvent_aerosol_emission_sources_add(request):
                 return render(request, 'home/employee-business-trip.html', {'SAES_add': SAES_add, 'TripSectionFormSet': TripSectionFormSet})
     else:
         return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'AdditiveFormSet': AdditiveFormSet})
+
 
 # VOCs1表單儲存
 @login_required(login_url="/login/")
@@ -913,7 +915,7 @@ def edit_device(request):
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
-        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SAESform,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
@@ -1010,7 +1012,7 @@ def update_device(request, datasheet_id, single_dataID):
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
-        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SAESform,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }

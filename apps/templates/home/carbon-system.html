@@ -128,6 +128,41 @@
         </div>
     </div>
 
+
+{#    <div class="modal fade" id="exampleModalCenter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">#}
+{#        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">#}
+{#            <div class="modal-content">#}
+{#                <div class="modal-header">#}
+{#                    <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="exampleModalLongTitle">照片</h5></div>#}
+{#                </div>#}
+{#                <div class="modal-body d-flex justify-content-center">#}
+{#                    <div class="container">#}
+{#                    <table class="table table-striped">#}
+{#                        <thead>#}
+{#                        <tr>#}
+{#                            <th>名稱</th>#}
+{#                            <th>照片</th>#}
+{#                        </tr>#}
+{#                        </thead>#}
+{#                        <tbody>#}
+{#                        {% for img in images %}#}
+{#                            <tr>#}
+{#                                <td>{{ img.title }}</td>#}
+{#                                <td><img src="/{{ BASIC_DIR }}/{{ img.image_path }}" width="120"/></td>#}
+{#                            </tr>#}
+{#                        {% endfor %}#}
+{#                        </tbody>#}
+{#                    </table>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="modal-footer d-flex justify-content-center">#}
+{#                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">返回</button>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+
+
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
@@ -376,6 +411,8 @@
                         pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
                         pencil.appendChild(pencil_i_tag)
                         {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
+                        {#pic.setAttribute('data-bs-toggle', 'modal')#}
+                        {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
                         {#pic.appendChild(pic_i_tag)#}
                         trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
                         pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
