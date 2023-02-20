@@ -195,7 +195,7 @@
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
@@ -234,6 +234,7 @@
             if (trip_count > 1) {
                 trip = deletbutton.closest("div.trip")
                 var delete_checkbox = document.getElementById("id_trip_section_set-" + trip.id + "-DELETE")
+                console.log(delete_checkbox)
                 delete_checkbox.checked = true;
                 trip.style.display = "none";
                 trip_count -= 1

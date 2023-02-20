@@ -1,5 +1,6 @@
 import re
 from django import forms
+
 from .models import *
 from django.core.validators import RegexValidator, validate_slug
 from django.core.exceptions import ValidationError
@@ -223,19 +224,11 @@ class EGform(forms.ModelForm):
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
-    def clean_device_id(self):
-        # device_id_list = []
-        # for form in self.forms:
-        # device_id = form.cleaned_data['device_id']
-        device_id = self.cleaned_data.get('device_id')
-        # llist = emergency_generators.objects.get("device_id")
-        # print("llist::::::::::::;;", llist)
-        # llist = self.cleaned_data.get("device_id")
-        if '100-001-001' in device_id:
-            raise forms.ValidationError("設備編號重複!")
-            # self.add_error("設備編號重複!")
-        return device_id
-        # device_id_list.append(device_id)
+    # def clean_device_id(self):
+    #     device_id = self.cleaned_data.get('device_id')
+    #     if emergency_generators.objects.filter(device_id=device_id):
+    #         raise forms.ValidationError("設備編號重複!")
+    #     return device_id
 
 
 class CEform(forms.ModelForm):
@@ -868,7 +861,7 @@ class WasteSludgeForm(forms.ModelForm):
 
 
 # 溶劑、噴霧劑
-class SAESform(forms.ModelForm):
+class SolventAerosolEmissionSourcesForm(forms.ModelForm):
     class Meta:
         model = solvent_aerosol_emission_sources
         fields = ('years', 'solvent_name', 'solvent_amount', 'solvent_amount_unit', 'solvent_capacity',
@@ -876,26 +869,28 @@ class SAESform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'solvent_amount_unit': forms.TextInput(attrs={'class': 'form-control'}),
-            'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'solvent_capacity_unit': forms.TextInput(attrs={'class': 'form-control'}),
-            'fugitive_recharge': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'solvent_amount_unit': forms.Select(choices=(("瓶", "瓶"), ("罐", "罐"))),
+            'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'solvent_capacity_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
+            'fugitive_recharge': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
-        super(SAESform, self).__init__(*args, **kwargs)
+        super(SolventAerosolEmissionSourcesForm, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
-AdditiveFormSet = inlineformset_factory(solvent_aerosol_emission_sources, additive_section, fields=('additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio'), extra=1,
+
+AdditiveFormSet = inlineformset_factory(solvent_aerosol_emission_sources, additive_section,
+                                        fields=('additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio'), extra=1,
                                         widgets={'additive_name': forms.TextInput(attrs={'class': 'form-control'}),
-                                                 'additive_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-                                                 'additive_unit': forms.TextInput(attrs={'class': 'form-control'}),
+                                                 'additive_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+                                                 'additive_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("公克", "公克"), ("oz", "oz"))),
                                                  'additive_ingredient': forms.TextInput(attrs={'class': 'form-control'}),
                                                  'additive_ratio': forms.TextInput(attrs={'class': 'form-control'}),
                                                  })
@@ -1180,7 +1175,7 @@ class EBTform(forms.ModelForm):
 TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1,
                                            widgets={'departure': forms.TextInput(attrs={'class': 'form-control'}),
                                                     'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
-                                                    'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}), })
+                                                    'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'})})
 
 
 class WASTEform(forms.ModelForm):
@@ -1233,6 +1228,7 @@ class VOCsOneForm(forms.ModelForm):
 class VOCsTwoForm(forms.ModelForm):
     class Meta:
         model = VOCs_two
+        model = VOCs_two
         fields = ('years', 'disposal_volume', 'concentration_entrance', 'concentration_exit', 'builtIn_rate', 'custom_rate', 'concentration_ch4', 'voc_capture_rate', 'combustion_equipment_rate', 'radio_VOCs', 'radio_concentration', 'radio_co2_emission', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -1245,6 +1241,9 @@ class VOCsTwoForm(forms.ModelForm):
             'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'voc_capture_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'combustion_equipment_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'radio_VOCs': forms.RadioSelect(choices=((1, "已知VOCs濃度"), (2, "未知VOCs濃度或已知CO\u2082濃度'排放係數")), attrs={'class': 'form-check-input', 'id': 'radio_VOCs'}),
+            'radio_concentration': forms.RadioSelect(choices=((1, "入口濃度"), (2, "出口濃度")), attrs={'class': 'form-check-input m-0', 'id': 'radio_concentration', "disabled": ""}),
+            'radio_co2_emission': forms.RadioSelect(choices=((1, "內設值"), (2, "自訂值")), attrs={'class': 'form-check-input m-0', 'id': 'radio_co2_emission', "disabled": ""}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -1254,4 +1253,6 @@ class VOCsTwoForm(forms.ModelForm):
         self.fields['concentration_exit'].required = False
         self.fields['builtIn_rate'].required = False
         self.fields['custom_rate'].required = False
+        self.fields['radio_co2_emission'].required = False
+        self.fields['radio_concentration'].required = False
         self.fields['message_board'].required = False

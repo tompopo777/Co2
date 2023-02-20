@@ -363,8 +363,20 @@ def load_table(request):
                                                 "CH4_capture_system_rate", "combustion_equipment_efficiency"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
-                t_data = list(
-                    solvent_aerosol_emission_sources.objects.values("id", "years", "species_used", "fugitive_recharge", "global_warming_potential"))
+                t_data = []
+                raw_data = solvent_aerosol_emission_sources.objects.values("id", "years", "solvent_name", "solvent_amount", "solvent_amount_unit", "solvent_capacity", "solvent_capacity_unit", "fugitive_recharge")
+                for i in range(raw_data.count()):
+                    single_data = raw_data[i]
+                    id = raw_data[i].get("id")
+                    additive = additive_section.objects.filter(additive_id=id).values("additive_name", "additive_amount", "additive_unit", "additive_ingredient", "additive_ratio")
+                    for a in additive:
+                        if additive.count() > 1:
+                            single_data.update(a)
+                            break
+                        else:
+                            single_data.update(a)
+                    single_data["count"] = additive.count()
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
@@ -482,20 +494,18 @@ def load_table(request):
 
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
-    EG_add = EGform(request.POST, request.FILES)
+    context = {}
     if request.method == "POST":
-        # print("77777777777777777")
-        # print("EG_add", EG_add)
+        EG_add = EGform(request.POST, request.FILES)
         if EG_add.is_valid():
             EG_add.save()
             return redirect('/carbon-system/')
         else:
             print(EG_add.errors)
-            return redirect('/new_device/', {'device.errors': EG_add.errors})
-            # return render(request, new_device, {'EG_add.errors': EG_add.errors})
-
     else:
-        return render(request, 'home/emergency-generator.html', {'EG_add': EG_add})
+        EG_add = EGform()
+    context['EG_add'] = EG_add
+    return render(request, 'home/emergency-generator.html', context)
 
 
 @login_required(login_url="/login/")
@@ -703,19 +713,22 @@ def waste_sludge_add(request):
 # 溶劑、噴霧劑
 @login_required(login_url="/login/")
 def solvent_aerosol_emission_sources_add(request):
-    SAES_add = SAESform(request.POST, request.FILES)
+    SAES_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
     if request.method == "POST":
         if SAES_add.is_valid():
             solvent = SAES_add.save()
-            additivesection_formSet = AdditiveFormSet(request.POST, request.FILES, instance=solvent)
-            if additivesection_formSet.is_valid():
-                additivesection_formSet.save()
+            Additive_formSet = AdditiveFormSet(request.POST, request.FILES, instance=solvent)
+            if Additive_formSet.is_valid():
+                Additive_formSet.save()
                 return redirect('/carbon-system/')
             else:
                 last_data = solvent_aerosol_emission_sources.objects.last()
                 last_data.delete()
-                print("additivesection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", additivesection_formSet)
+                print("Additive_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", Additive_formSet)
                 return render(request, 'home/employee-business-trip.html', {'SAES_add': SAES_add, 'TripSectionFormSet': TripSectionFormSet})
+        else:
+            print("SAES_add表單錯誤>>>>>>>>>>>>>>>>>>>>\n", SAES_add.errors)
+            return render(request, 'home/employee-business-trip.html', {'SAES_add': SAES_add, 'TripSectionFormSet': TripSectionFormSet})
     else:
         return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'AdditiveFormSet': AdditiveFormSet})
 
@@ -740,6 +753,9 @@ def VOCs_two_add(request):
         if VOCs_two_add.is_valid():
             VOCs_two_add.save()
             return redirect('/carbon-system/')
+        else:
+            print("\n", VOCs_two_add.errors)
+            return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add})
     else:
         return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add})
 
@@ -829,11 +845,6 @@ def waste_add(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
-    # data = emergency_generators.objects.filter(id=5).values("image_path", "image_note")
-    # context ={
-    #     'data': data,
-    # }
-    # return render(request, "home/carbon-system.html", context)
     return render(request, "home/carbon-system.html", locals())
 
 
@@ -874,7 +885,6 @@ def add_page(request, ):
         }
         if function_dic.get(device_id):
             device_function = function_dic.get(device_id)
-        # print("device_function:", device_function)
         return device_function
 
 
@@ -920,7 +930,7 @@ def edit_device(request):
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
     formsetName = {
-        "24": CommuteFormSet, "25": TripSectionFormSet
+        "18": AdditiveFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -1017,7 +1027,7 @@ def update_device(request, datasheet_id, single_dataID):
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
     }
     formsetName = {
-        "24": CommuteFormSet, "25": TripSectionFormSet
+        "18": AdditiveFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
     }
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -1197,7 +1207,8 @@ def add_title(request):
 
             "18": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "使用物種", "逸散 / 補充量(公噸/年)", "全球暖化潛勢(GWP-AR6)"],
+                "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
+                "溶劑、噴霧劑添加物 (點擊\"修改\"可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
             },
 
             "19": {

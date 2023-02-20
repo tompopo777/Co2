@@ -31,95 +31,101 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-5">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年度 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.years }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-7">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>溶劑、噴霧劑名稱  <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>溶劑、噴霧劑名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.solvent_name }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>溶劑數量<span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>溶劑、噴霧劑數量(單位: {{ SAES_add.solvent_amount_unit }})<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.solvent_amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+{#                                            <div class="col-1">#}
+{#                                                <div class="input-group input-group-static mb-4">#}
+{#                                                    <label>單位<span style="color:red; font-size:16px;">* </span></label>#}
+{#                                                    #}
+{#                                                </div>#}
+{#                                            </div>#}
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>溶劑數量單位<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.solvent_amount_unit }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>溶劑容量<span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>溶劑、噴霧劑容量(單位: {{ SAES_add.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.solvent_capacity }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+{#                                            <div class="col-1">#}
+{#                                                <div class="input-group input-group-static mb-4">#}
+{#                                                    <label>單位<span style="color:red; font-size:16px;">* </span></label>#}
+{#                                                    #}
+{#                                                </div>#}
+{#                                            </div>#}
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>溶劑容量的單位<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.solvent_capacity_unit }}
+                                                    <label>逸散 / 補充量(公噸/年)<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ SAES_add.fugitive_recharge }}
                                                 </div>
                                             </div>
                                         </div>
                                         <br>
                                         <div class="row mb-4">
                                             <div class="col">
-                                                添加物段數
+                                                溶劑、噴霧劑添加物
                                             </div>
                                         </div>
                                         {{ AdditiveFormSet.management_form }}
                                         {{ AdditiveFormSet.non_form_errors }}
                                         {% for a in AdditiveFormSet %}
                                             <div id="additive_section">
-                                                <div class="row mb-4 trip" id="0">
+                                                <div class="row mb-4 additive" id="0">
                                                     {% for hidden in a.hidden_fields %}
                                                         {{ hidden }}
                                                     {% endfor %}
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>添加物名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                             {{ a.additive_name.errors }}
                                                             {{ a.additive_name }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
-                                                            <label>添加量 <span style="color:red; font-size:16px;">* </span></label>
+                                                            <label>添加量(單位: {{ a.additive_unit }}) <span style="color:red; font-size:16px;">* </span></label>
                                                             {{ a.additive_amount.errors }}
                                                             {{ a.additive_amount }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+{#                                                    <div class="col-1">#}
+{#                                                        <div class="input-group input-group-static mb-4">#}
+{#                                                            <label>單位 <span style="color:red; font-size:16px;">* </span></label>#}
+{#                                                            {{ a.additive_unit.errors }}#}
+{#                                                            {{ a.additive_unit }}#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
-                                                            <label>添加單位 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.additive_unit.errors }}
-                                                            {{ a.additive_unit }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>添加成分 <span style="color:red; font-size:16px;">* </span></label>
+                                                            <label>添加成份 <span style="color:red; font-size:16px;">* </span></label>
                                                             {{ a.additive_ingredient.errors }}
                                                             {{ a.additive_ingredient }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-2">
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>添加比例 <span style="color:red; font-size:16px;">* </span></label>
                                                             {{ a.additive_ratio.errors }}
                                                             {{ a.additive_ratio }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4 d-flex align-items-center">
+                                                    <div class="col-1 d-flex align-items-center">
                                                         <div class="input-group input-group-static mb-4">
                                                             <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
                                                             <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
@@ -129,14 +135,6 @@
                                             </div>
                                         {% endfor %}
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>逸散 / 補充量(公噸/年)<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.fugitive_recharge }}
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div class="d-flex">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
@@ -218,45 +216,55 @@
 
     {#    新增/刪除出差段數#}
     <script>
-        var trip_count = 0;
+        var additive_count = 0;
 
         function DuplicateTrip() {
-            trip_count += 1;
-            document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (trip_count + 1).toString()
-            var trip_section = document.getElementById("trip_section")
-            var first_trip = document.getElementsByClassName("trip")[0]
+            additive_count += 1;
+            document.getElementById("id_additive_section_set-TOTAL_FORMS").value = (additive_count + 1).toString()
+            var additive_section = document.getElementById("additive_section")
+            var first_trip = document.getElementsByClassName("additive")[0]
             var clone = first_trip.cloneNode(true);
-            trip_section.appendChild(clone)
-            clone.id = (trip_count)
-            var input = document.querySelectorAll(".trip:last-child > div > div > input")
-            input[0].id = "id_trip_section_set-" + trip_count + "-departure"
-            input[0].name = "trip_section_set-" + trip_count + "-departure"
-            input[1].id = "id_trip_section_set-" + trip_count + "-distance"
-            input[1].name = "trip_section_set-" + trip_count + "-distance"
+            additive_section.appendChild(clone)
+            clone.id = (additive_count)
+            var input = document.querySelectorAll(".additive:last-child > div > div > input")
+            input[0].id = "id_additive_section_set-" + additive_count + "-additive_name"
+            input[0].name = "additive_section_set-" + additive_count + "-additive_name"
+            input[1].id = "id_additive_section_set-" + additive_count + "-additive_amount"
+            input[1].name = "additive_section_set-" + additive_count + "-additive_amount"
+            input[2].id = "id_additive_section_set-" + additive_count + "-additive_ingredient"
+            input[2].name = "additive_section_set-" + additive_count + "-additive_ingredient"
+            input[3].id = "id_additive_section_set-" + additive_count + "-additive_ratio"
+            input[3].name = "additive_section_set-" + additive_count + "-additive_ratio"
             input[0].value = ""
             input[1].value = ""
-            var select = document.querySelectorAll(".trip:last-child > div > div > select")
-            select[0].id = "id_trip_section_set-" + trip_count + "-transportation"
-            select[0].name = "trip_section_set-" + trip_count + "-transportation"
+            input[2].value = ""
+            input[3].value = ""
+            var select = document.querySelectorAll(".additive:last-child > div > div > label > select")
+            select[0].id = "id_additive_section_set-" + additive_count + "-additive_unit"
+            select[0].name = "additive_section_set-" + additive_count + "-additive_unit"
             select[0].value = ""
         }
 
         function DeleteTrip(deletbutton) {
-            if (trip_count > 0) {
-                trip_count -= 1;
-                deletbutton.closest("div.trip").remove()
-                document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (trip_count + 1).toString()
-                var trip = document.getElementsByClassName("trip")
-                for (let i = 0; i <= trip_count; i++) {
-                    trip[i].id = i.toString()
-                    let input = document.querySelectorAll(".trip:nth-child(" + (i + 1) + ") > div > div > input")
-                    input[0].id = ("id_trip_section_set-" + i + "-departure").toString()
-                    input[0].name = ("trip_section_set-" + i + "-departure").toString()
-                    input[1].id = ("id_trip_section_set-" + i + "-distance").toString()
-                    input[1].name = ("trip_section_set-" + i + "-distance").toString()
-                    let select = document.querySelectorAll(".trip:nth-child(" + (i + 1) + ") > div > div > select")
-                    select[0].id = ("id_trip_section_set-" + i + "-transportation").toString()
-                    select[0].name = ("trip_section_set-" + i + "-transportation").toString()
+            if (additive_count > 0) {
+                additive_count -= 1;
+                deletbutton.closest("div.additive").remove()
+                document.getElementById("id_additive_section_set-TOTAL_FORMS").value = (additive_count + 1).toString()
+                var additive = document.getElementsByClassName("additive")
+                for (let i = 0; i <= additive_count; i++) {
+                    additive[i].id = i.toString()
+                    let input = document.querySelectorAll(".additive:nth-child(" + (i + 1) + ") > div > div > input")
+                    input[0].id = ("id_additive_section_set-" + i + "-additive_name").toString()
+                    input[0].name = ("additive_section_set-" + i + "-additive_name").toString()
+                    input[1].id = ("id_additive_section_set-" + i + "-additive_amount").toString()
+                    input[1].name = ("additive_section_set-" + i + "-additive_amount").toString()
+                    input[2].id = ("id_additive_section_set-" + i + "-additive_ingredient").toString()
+                    input[2].name = ("additive_section_set-" + i + "-additive_ingredient").toString()
+                    input[3].id = ("id_additive_section_set-" + i + "-additive_ratio").toString()
+                    input[3].name = ("additive_section_set-" + i + "-additive_ratio").toString()
+                    let select = document.querySelectorAll(".additive:nth-child(" + (i + 1) + ") > div > div > label > select")
+                    select[0].id = ("id_additive_section_set-" + i + "-additive_unit").toString()
+                    select[0].name = ("additive_section_set-" + i + "-additive_unit").toString()
                 }
             }
         }
