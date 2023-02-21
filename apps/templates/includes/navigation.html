@@ -28,7 +28,8 @@
                             </li>
                             {% if request.user.is_authenticated %}
                                 <li class="nav-item ms-lg-auto nav-link nav-link-icon me-2">
-                                        <p class="d-inline text-sm z-index-1 font-weight-bold">{{ request.user.username }}</p>
+                                    <i class="fa-solid fa-user me-2"></i>
+                                    <p class="d-inline text-sm z-index-1 font-weight-bold">{{ request.user.username }}</p>
                                 </li>
                                 <li class="nav-item ms-lg-auto">
                                     <a class="nav-link nav-link-icon me-2"
@@ -47,3 +48,9 @@
         </div>
     </div>
 </div>
+
+{% block javascripts %}
+    {#    icon#}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+{% endblock javascripts %}
