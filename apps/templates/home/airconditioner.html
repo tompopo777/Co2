@@ -129,6 +129,7 @@
                                     <div class="d-flex">
                                         <div class="ps-md-2 align-self-center">
                                             <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="冷氣">
                                                 <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
                                         </div>
@@ -154,7 +155,7 @@
                                             </button>
                                         </div>
                                         <div class="col-1">
-                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
                                                 取消
                                             </button>
                                         </div>
@@ -188,7 +189,7 @@
         });
     </script>
 
-        {#    日期篩選器#}
+    {#    日期篩選器#}
     <script>
         $("#datepicker").datepicker({
             format: "yyyy",
@@ -199,6 +200,7 @@
         }).datepicker("setDate", 'now');
     </script>
 
+    {#    照片顯示檔名+可刪除#}
     <script>
         const dt = new DataTransfer(); // Permet de manipuler les fichiers de l'input file
         $("#attachment").on('change', function(e){

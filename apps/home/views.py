@@ -821,6 +821,7 @@ def upstream_transportation_add(request):
     UT_add = UTform(request.POST, request.FILES)
     if request.method == "POST":
         if UT_add.is_valid():
+            # stage = request.GET.get("stage")
             image_path = request.FILES.getlist('file_field')
             last_id = airconditioner.objects.values("id").last().get("id")
             table_id = airconditioner.objects.values("did").last().get("did")
