@@ -26,7 +26,7 @@ class section_two(models.Model):
     did = models.AutoField(primary_key=True)
     d_name = models.CharField(max_length=30)
     cpid = models.ForeignKey(section_one, on_delete=models.CASCADE)
-    t_name = models.CharField(max_length=30)
+    t_name = models.CharField(max_length=50)
 
 
 class emergency_generators(models.Model):
@@ -50,7 +50,6 @@ class emergency_generators(models.Model):
     november = models.FloatField(default=0)
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='緊急發電機/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -86,7 +85,6 @@ class combustion_equipment(models.Model):
     heat_november = models.FloatField(default=0)
     heat_december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='燃燒設備/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -148,7 +146,6 @@ class official_car(models.Model):
     km_november = models.FloatField(default=0)
     km_december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='公務車/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -176,7 +173,6 @@ class material(models.Model):
     november = models.FloatField(default=0)
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='原物料使用/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -206,7 +202,6 @@ class process(models.Model):
     november = models.FloatField(default=0)
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='製程添加化學品/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -224,7 +219,6 @@ class refrigerator(models.Model):
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='冰箱清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -242,7 +236,6 @@ class airconditioner(models.Model):
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    # image_path = models.FileField(upload_to='airconditioner/%Y/%m', validators=[validators.FileExtensionValidator(['jpg', 'png', 'pdf'])], null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -260,7 +253,6 @@ class vehicle(models.Model):
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='車輛清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -278,7 +270,6 @@ class water_dispenser(models.Model):
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='飲水機清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -296,7 +287,6 @@ class ice_water_dispenser(models.Model):
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='冰水機清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -314,7 +304,6 @@ class ice_maker(models.Model):
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='製冰機清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -332,7 +321,6 @@ class other_device(models.Model):
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='其他設備清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -351,7 +339,6 @@ class extinguisher(models.Model):
     replace_filling_amount = models.FloatField()
     replace_filling_date = models.CharField(max_length=20)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='滅火器/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -384,7 +371,6 @@ class personnel_inventory(models.Model):
     WKnum_november = models.IntegerField(default=0)
     WKnum_december = models.IntegerField(default=0)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='人天清冊/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -430,7 +416,6 @@ class employee(models.Model):
     WKhours_november = models.FloatField(default=0)
     WKhours_december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='委外人員清單/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -446,7 +431,6 @@ class waste_water(models.Model):
     CH4_capture_system_rate = models.FloatField()
     combustion_equipment_efficiency = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='廢水/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -461,7 +445,6 @@ class waste_sludge(models.Model):
     CH4_capture_system_rate = models.FloatField()
     combustion_equipment_efficiency = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='廢汙泥/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -477,7 +460,6 @@ class solvent_aerosol_emission_sources(models.Model):
     solvent_capacity_unit = models.CharField(max_length=30)
     fugitive_recharge = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='用電量/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -510,7 +492,6 @@ class electricity(models.Model):
     november = models.FloatField(default=0)
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='用電量/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -535,14 +516,12 @@ class upstream_transportation(models.Model):
     transport_fuel = models.CharField(max_length=20, null=True)
     trips = models.IntegerField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='上游運輸/%Y/%m', null=True, default=None)
     overseas_transport_distance = models.FloatField(null=True)
     overseas_paid = models.CharField(max_length=10, null=True)
     overseas_delivery = models.CharField(max_length=50, null=True)
     overseas_arrive = models.CharField(max_length=50, null=True)
     overseas_trips = models.IntegerField(null=True)
     overseas_image_note = models.CharField(max_length=30, null=True)
-    overseas_image_path = models.FileField(upload_to='上游運輸/%Y/%m', null=True, default=None)
     special_transport_distance = models.FloatField(null=True)
     special_transport_country = models.CharField(max_length=20, null=True)
     special_paid = models.CharField(max_length=10, null=True)
@@ -550,14 +529,12 @@ class upstream_transportation(models.Model):
     special_transport_fuel = models.CharField(max_length=20, null=True)
     special_trips = models.IntegerField(null=True)
     special_image_note = models.CharField(max_length=30, null=True)
-    special_image_path = models.FileField(upload_to='上游運輸/%Y/%m', null=True, default=None)
     air_transport_distance = models.FloatField(null=True)
     air_delivery = models.CharField(max_length=50, null=True)
     air_arrive = models.CharField(max_length=50, null=True)
     air_trips = models.IntegerField(null=True)
     air_paid = models.CharField(max_length=10, null=True)
     air_image_note = models.CharField(max_length=30, null=True)
-    air_image_path = models.FileField(upload_to='上游運輸/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -581,14 +558,12 @@ class downstream_transportation(models.Model):
     transport_fuel = models.CharField(max_length=20, null=True)
     trips = models.IntegerField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='下游運輸/%Y/%m', null=True, default=None)
     overseas_transport_distance = models.FloatField(null=True)
     overseas_paid = models.CharField(max_length=10)
     overseas_delivery = models.CharField(max_length=50, null=True)
     overseas_arrive = models.CharField(max_length=50, null=True)
     overseas_trips = models.IntegerField(null=True)
     overseas_image_note = models.CharField(max_length=30, null=True)
-    overseas_image_path = models.FileField(upload_to='下游運輸/%Y/%m', null=True, default=None)
     special_transport_distance = models.FloatField(null=True)
     special_transport_country = models.CharField(max_length=20, null=True)
     special_paid = models.CharField(max_length=10)
@@ -596,14 +571,12 @@ class downstream_transportation(models.Model):
     special_transport_fuel = models.CharField(max_length=20, null=True)
     special_trips = models.IntegerField(null=True)
     special_image_note = models.CharField(max_length=30, null=True)
-    special_image_path = models.FileField(upload_to='下游運輸/%Y/%m', null=True, default=None)
     air_transport_distance = models.FloatField(null=True)
     air_delivery = models.CharField(max_length=50, null=True)
     air_arrive = models.CharField(max_length=50, null=True)
     air_trips = models.IntegerField(null=True)
     air_paid = models.CharField(max_length=10)
     air_image_note = models.CharField(max_length=30, null=True)
-    air_image_path = models.FileField(upload_to='下游運輸/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -620,7 +593,6 @@ class employee_commute(models.Model):
     address = models.CharField(max_length=100)
     commute_distance = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='員工通勤/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -640,9 +612,7 @@ class employee_business_trip(models.Model):
     employee_name = models.CharField(max_length=10)
     department = models.CharField(max_length=100)
     bt_image_note = models.CharField(max_length=30, null=True)
-    bt_image_path = models.FileField(upload_to='員工出差/%Y/%m', null=True, default=None)
     rtd_image_note = models.CharField(max_length=30, null=True)
-    rtd_image_path = models.FileField(upload_to='員工出差/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -694,7 +664,6 @@ class waste(models.Model):
     transport_fuel = models.CharField(max_length=10, null=True)
     transport_distance = models.IntegerField(null=True)
     image_note = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='廢棄物/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
 
 
@@ -710,3 +679,73 @@ class image(models.Model):
     single_id = models.IntegerField()
     stage = models.CharField(max_length=30, null=True)
     image_path = models.FileField(upload_to='images/%Y/%m', validators=[validators.FileExtensionValidator(['jpg', 'png', 'pdf'])], null=True, default=None)
+
+
+# 納管廢水
+class pipe_wastewater(models.Model):
+    id = models.AutoField(primary_key=True)
+    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=27)
+    years = models.IntegerField()
+    pipe_id = models.CharField(max_length=225)
+    address = models.CharField(max_length=225)
+    factory = models.CharField(max_length=50)
+    january = models.FloatField(default=0)
+    february = models.FloatField(default=0)
+    march = models.FloatField(default=0)
+    april = models.FloatField(default=0)
+    may = models.FloatField(default=0)
+    june = models.FloatField(default=0)
+    july = models.FloatField(default=0)
+    august = models.FloatField(default=0)
+    september = models.FloatField(default=0)
+    october = models.FloatField(default=0)
+    november = models.FloatField(default=0)
+    december = models.FloatField(default=0)
+    image_note = models.CharField(max_length=30, null=True)
+    message_board = models.CharField(max_length=255, null=True)
+
+
+# 採購原物料
+class purchase_material(models.Model):
+    id = models.AutoField(primary_key=True)
+    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=28)
+    years = models.IntegerField()
+    product_id = models.CharField(max_length=50)
+    product_name = models.CharField(max_length=50)
+    january = models.FloatField(default=0)
+    february = models.FloatField(default=0)
+    march = models.FloatField(default=0)
+    april = models.FloatField(default=0)
+    may = models.FloatField(default=0)
+    june = models.FloatField(default=0)
+    july = models.FloatField(default=0)
+    august = models.FloatField(default=0)
+    september = models.FloatField(default=0)
+    october = models.FloatField(default=0)
+    november = models.FloatField(default=0)
+    december = models.FloatField(default=0)
+    image_note = models.CharField(max_length=30, null=True)
+    message_board = models.CharField(max_length=255, null=True)
+
+
+# 使用產品間接排放
+class product_indirect_emissions(models.Model):
+    id = models.AutoField(primary_key=True)
+    did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=29)
+    years = models.IntegerField()
+    product_id = models.CharField(max_length=50)
+    product_name = models.CharField(max_length=50)
+    january = models.FloatField(default=0)
+    february = models.FloatField(default=0)
+    march = models.FloatField(default=0)
+    april = models.FloatField(default=0)
+    may = models.FloatField(default=0)
+    june = models.FloatField(default=0)
+    july = models.FloatField(default=0)
+    august = models.FloatField(default=0)
+    september = models.FloatField(default=0)
+    october = models.FloatField(default=0)
+    november = models.FloatField(default=0)
+    december = models.FloatField(default=0)
+    image_note = models.CharField(max_length=30, null=True)
+    message_board = models.CharField(max_length=255, null=True)

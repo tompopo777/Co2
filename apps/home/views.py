@@ -490,6 +490,51 @@ def load_table(request):
                 t_data = list(VOCs_two.objects.values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
                                                       "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
                 return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "納管廢水排放量":
+                t_data = []
+                raw_data = pipe_wastewater.objects.values("id", "years", "pipe_id", "address", "factory", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                          "september", "october", "november", "december")
+                # 計算當月排放量
+                for i in range(raw_data.count()):
+                    Total_Emission = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                     raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                     raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的逸散量丟回字典
+                    single_data["Total_Emission"] = Total_Emission
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "採購原物料":
+                t_data = []
+                raw_data = purchase_material.objects.values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                          "september", "october", "november", "december")
+                # 計算當月排放量
+                for i in range(raw_data.count()):
+                    Total_Purchase = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                     raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                     raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的逸散量丟回字典
+                    single_data["Total_Purchase"] = Total_Purchase
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "產品間接排放":
+                t_data = []
+                raw_data = product_indirect_emissions.objects.values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                          "september", "october", "november", "december")
+                # 計算當月排放量
+                for i in range(raw_data.count()):
+                    Total_Deliver = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                    raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                    raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的逸散量丟回字典
+                    single_data["Total_Deliver"] = Total_Deliver
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
 
 
 @login_required(login_url="/login/")
@@ -776,6 +821,13 @@ def upstream_transportation_add(request):
     UT_add = UTform(request.POST, request.FILES)
     if request.method == "POST":
         if UT_add.is_valid():
+            image_path = request.FILES.getlist('file_field')
+            last_id = airconditioner.objects.values("id").last().get("id")
+            table_id = airconditioner.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id)
+                photo.save()
+
             UT_add.save()
             return redirect('/carbon-system/')
     else:
@@ -843,6 +895,42 @@ def waste_add(request):
         return render(request, 'home/waste.html', {'WASTE_add': WASTE_add})
 
 
+# 納管廢水
+@login_required(login_url="/login/")
+def pipe_wastewater_add(request):
+    PW_add = PWform(request.POST, request.FILES)
+    if request.method == "POST":
+        if PW_add.is_valid():
+            PW_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return render(request, 'home/pipe-wastewater.html', {'PW_add': PW_add})
+
+
+# 採購原物料
+@login_required(login_url="/login/")
+def purchase_material_add(request):
+    PM_add = PMform(request.POST, request.FILES)
+    if request.method == "POST":
+        if PM_add.is_valid():
+            PM_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return render(request, 'home/purchase-material.html', {'PM_add': PM_add})
+
+
+# 產品間接排放
+@login_required(login_url="/login/")
+def product_indirect_emissions_add(request):
+    PIE_add = PIEform(request.POST, request.FILES)
+    if request.method == "POST":
+        if PIE_add.is_valid():
+            PIE_add.save()
+            return redirect('/carbon-system/')
+    else:
+        return render(request, 'home/product-indirect-emissions.html', {'PIE_add': PIE_add})
+
+
 @login_required(login_url="/login/")
 def carbon_system(request):
     return render(request, "home/carbon-system.html", locals())
@@ -882,6 +970,9 @@ def add_page(request, ):
             "24": employee_commute_add(request),
             "25": employee_business_trip_add(request),
             "26": waste_add(request),
+            "27": pipe_wastewater_add(request),
+            "28": purchase_material_add(request),
+            "29": product_indirect_emissions_add(request)
         }
         if function_dic.get(device_id):
             device_function = function_dic.get(device_id)
@@ -920,6 +1011,9 @@ def edit_device(request):
         "24": employee_commute,
         "25": employee_business_trip,
         "26": waste,
+        "27": pipe_wastewater,
+        "28": purchase_material,
+        "29": product_indirect_emissions
     }
     formlName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
@@ -927,7 +1021,7 @@ def edit_device(request):
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
         "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
-        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
     }
     formsetName = {
         "18": AdditiveFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
@@ -981,6 +1075,9 @@ def edit_device(request):
                 "24": "home/employee-commute-edit.html",
                 "25": "home/employee-business-trip-edit.html",
                 "26": "home/waste-edit.html",
+                "27": "home/pipe-wastewater-edit.html",
+                "28": "home/purchase-material-edit.html",
+                "29": "home/product-indirect-emissions-edit.html",
             }
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
@@ -1017,6 +1114,9 @@ def update_device(request, datasheet_id, single_dataID):
         "24": employee_commute,
         "25": employee_business_trip,
         "26": waste,
+        "27": pipe_wastewater,
+        "28": purchase_material,
+        "29": product_indirect_emissions
     }
     formName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
@@ -1024,7 +1124,7 @@ def update_device(request, datasheet_id, single_dataID):
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
         "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
-        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
     }
     formsetName = {
         "18": AdditiveFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
@@ -1091,6 +1191,9 @@ def delete_device(request):
             "24": employee_commute,
             "25": employee_business_trip,
             "26": waste,
+            "27": pipe_wastewater,
+            "28": purchase_material,
+            "29": product_indirect_emissions
         }
         if modelName.get(datasheet_id):
             dbName = modelName.get(datasheet_id)
@@ -1261,6 +1364,27 @@ def add_title(request):
             "26": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+            },
+
+            # 納管廢水
+            "27": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "納管編號", "廠別", "地址"],
+                "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+            },
+
+            # 原物料採購
+            "28": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "產品編號", "產品名稱"],
+                "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+            },
+
+            # 原物料採購
+            "29": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "產品編號", "產品名稱"],
+                "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
             },
         }
         title = [htmlName.get(device_id)]
