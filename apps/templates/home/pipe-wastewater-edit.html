@@ -28,28 +28,29 @@
                             <div class="card-body">
                                 <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-4">
+                                    <div class="card-body p-0 mx-3 my-3">
+                                        <div class="row my-3">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.years }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>納管編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.pipe_id }}
                                                 </div>
                                             </div>
-
-                                            <div class="col-4">
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廠別 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.factory }}
                                                 </div>
                                             </div>
-                                            <div class="col">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>地址 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.address }}

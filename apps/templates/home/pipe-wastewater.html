@@ -28,35 +28,35 @@
                             <div class="card-body">
                                 <form action="/pipe_wastewater_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-4">
+                                    <div class="card-body p-0 my-3 my-3">
+                                        <div class="row my-2">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PW_add.years }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>納管編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PW_add.pipe_id }}
                                                 </div>
                                             </div>
-
-                                            <div class="col-4">
+                                        </div>
+                                        <div class="row my-2">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廠別 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PW_add.factory }}
                                                 </div>
                                             </div>
-                                            <div class="col">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>地址 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PW_add.address }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <br>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <br>
                                         <div class="d-flex flex-nowrap">
