@@ -451,7 +451,7 @@ def load_table(request):
                     single_data = raw_data[i]
                     id = raw_data[i].get("id")
                     section = trip_section.objects.filter(trip_id=id).values("transportation", "distance")
-                    transportation_dic = {"自駕汽車": 0.0, "高鐵": 0.0, "火車": 0.0, "計程車": 0.0, "機車": 0.0, "捷運": 0.0, "飛機": 0.0, "船舶": 0.0}
+                    transportation_dic = {"自駕汽車": 0.0, "高鐵": 0.0,  "火車(電聯)": 0.0, "火車(柴聯)": 0.0, "計程車": 0.0, "機車": 0.0, "捷運": 0.0, "飛機": 0.0, "船舶": 0.0}
                     for s in section:
                         way = s.get("transportation")
                         if way in transportation_dic:
@@ -508,7 +508,7 @@ def load_table(request):
             elif a["d_name"] == "採購原物料":
                 t_data = []
                 raw_data = purchase_material.objects.values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
-                                                          "september", "october", "november", "december")
+                                                            "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
                     Total_Purchase = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -523,7 +523,7 @@ def load_table(request):
             elif a["d_name"] == "產品間接排放":
                 t_data = []
                 raw_data = product_indirect_emissions.objects.values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
-                                                          "september", "october", "november", "december")
+                                                                     "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
                     Total_Deliver = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -619,13 +619,15 @@ def airconditioner_add(request):
     AC_add = ACform(request.POST, request.FILES)
     if request.method == "POST":
         if AC_add.is_valid():
+            AC_add.save()
+            stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
             last_id = airconditioner.objects.values("id").last().get("id")
             table_id = airconditioner.objects.values("did").last().get("did")
             for img in image_path:
-                photo = image(image_path=img, single_id=last_id, table_id=table_id)
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
                 photo.save()
-            AC_add.save()
             return redirect('/carbon-system/')
         else:
             return redirect('/new_device/', {'AC_add': AC_add})
@@ -821,15 +823,15 @@ def upstream_transportation_add(request):
     UT_add = UTform(request.POST, request.FILES)
     if request.method == "POST":
         if UT_add.is_valid():
-            # stage = request.GET.get("stage")
-            image_path = request.FILES.getlist('file_field')
-            last_id = airconditioner.objects.values("id").last().get("id")
-            table_id = airconditioner.objects.values("did").last().get("did")
-            for img in image_path:
-                photo = image(image_path=img, single_id=last_id, table_id=table_id)
-                photo.save()
-
             UT_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = upstream_transportation.objects.values("id").last().get("id")
+            table_id = upstream_transportation.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         return render(request, 'home/upstream-transportation.html', {'UT_add': UT_add})
@@ -1359,7 +1361,7 @@ def add_title(request):
             "25": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
-                "距離(pkm)": ["自駕汽車", "高鐵", "火車", "計程車", "機車", "捷運", "飛機", "船舶"],
+                "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
             },
 
             "26": {
