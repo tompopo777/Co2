@@ -193,7 +193,7 @@ class EGform(forms.ModelForm):
         model = emergency_generators
         fields = ('years', 'device_id', 'device_capacity', 'position', 'department',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
-                  'november', 'december', 'image_note', 'image_path', 'message_board')
+                  'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -213,7 +213,6 @@ class EGform(forms.ModelForm):
             'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -221,7 +220,6 @@ class EGform(forms.ModelForm):
         super(EGform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
     # def clean_device_id(self):
@@ -238,7 +236,7 @@ class CEform(forms.ModelForm):
                   'fuel_february', 'fuel_march', 'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august',
                   'fuel_september', 'fuel_october', 'fuel_november', 'fuel_december', 'heat_january', 'heat_february',
                   'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
-                  'heat_october', 'heat_november', 'heat_december', 'image_note', 'image_path', 'message_board')
+                  'heat_october', 'heat_november', 'heat_december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -269,14 +267,12 @@ class CEform(forms.ModelForm):
             'heat_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'heat_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '熱值註解!'})
         }
 
     def __init__(self, *args, **kwargs):
         super(CEform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -290,7 +286,7 @@ class OFform(forms.ModelForm):
                   'elec_october', 'elec_november', 'elec_december', 'km_january', 'km_february', 'km_march', 'km_april',
                   'km_may', 'km_june', 'km_july', 'km_august', 'km_september', 'km_october', 'km_november', 'km_december',
                   'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july',
-                  'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december', 'image_note', 'image_path', 'message_board')
+                  'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
@@ -346,9 +342,6 @@ class OFform(forms.ModelForm):
             'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
-            'urea_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入尿素單據名稱'}),
-            'urea_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -356,7 +349,6 @@ class OFform(forms.ModelForm):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -364,7 +356,7 @@ class MTform(forms.ModelForm):
     class Meta:
         model = material
         fields = ('years', 'material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
-                  'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
+                  'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -387,7 +379,6 @@ class MTform(forms.ModelForm):
             'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -397,7 +388,6 @@ class MTform(forms.ModelForm):
         self.fields['chemical_name'].required = False
         self.fields['chemical_formula'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
         # self.fields['material_id'].validators[]
 
@@ -407,7 +397,7 @@ class PCform(forms.ModelForm):
         model = process
         fields = ('years', 'process_add_name', 'chemical_name', 'chemical_formula', 'process_stage', 'material_id', 'CAS_NO',
                   'burn', 'VOCs', 'unit', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
-                  'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
+                  'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
@@ -432,7 +422,6 @@ class PCform(forms.ModelForm):
             'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
 
         }
@@ -441,7 +430,6 @@ class PCform(forms.ModelForm):
         super(PCform, self).__init__(*args, **kwargs)
         self.fields['chemical_formula'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -473,7 +461,6 @@ class RFform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        # self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -505,7 +492,6 @@ class ACform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        # self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -513,7 +499,7 @@ class VCform(forms.ModelForm):
     class Meta:
         model = vehicle
         fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -526,7 +512,6 @@ class VCform(forms.ModelForm):
             'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -537,7 +522,6 @@ class VCform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -545,7 +529,7 @@ class WDform(forms.ModelForm):
     class Meta:
         model = water_dispenser
         fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -558,7 +542,6 @@ class WDform(forms.ModelForm):
             'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -569,7 +552,6 @@ class WDform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -577,7 +559,7 @@ class IWDform(forms.ModelForm):
     class Meta:
         model = ice_water_dispenser
         fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -590,7 +572,6 @@ class IWDform(forms.ModelForm):
             'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -601,7 +582,6 @@ class IWDform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -609,7 +589,7 @@ class IMform(forms.ModelForm):
     class Meta:
         model = ice_maker
         fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -622,7 +602,6 @@ class IMform(forms.ModelForm):
             'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -633,7 +612,6 @@ class IMform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -641,7 +619,7 @@ class ODform(forms.ModelForm):
     class Meta:
         model = other_device
         fields = ('years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'image_path', 'message_board')
+                  'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -654,7 +632,6 @@ class ODform(forms.ModelForm):
             'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -665,7 +642,6 @@ class ODform(forms.ModelForm):
         self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -674,7 +650,7 @@ class EXform(forms.ModelForm):
         model = extinguisher
         fields = ('years', 'extinguisher_type', 'device_id', 'position', 'extinguisher_vendor', 'chemical_weight',
                   'inventory', 'using_amount', 'monthly', 'replace_filling_amount',
-                  'replace_filling_date', 'image_note', 'image_path', 'message_board')
+                  'replace_filling_date', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'extinguisher_type': forms.Select(choices=EXTINGUISHER_TYPE_CHOICES),
@@ -688,7 +664,6 @@ class EXform(forms.ModelForm):
             'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
             'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker3'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -697,7 +672,6 @@ class EXform(forms.ModelForm):
         self.fields['device_id'].required = False
         self.fields['extinguisher_vendor'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -707,7 +681,7 @@ class PIform(forms.ModelForm):
         fields = ('years', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
                   'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november',
                   'WKhours_december', 'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june',
-                  'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'image_path', 'message_board')
+                  'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -735,14 +709,12 @@ class PIform(forms.ModelForm):
             'WKnum_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKnum_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(PIform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -756,7 +728,7 @@ class EMPform(forms.ModelForm):
                   'WKdays_september', 'WKdays_october', 'WKdays_november', 'WKdays_december',
                   'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august',
                   'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
-                  'image_note', 'image_path', 'message_board')
+                  'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'career': forms.Select(choices=CAREER_CHOICES),
@@ -797,14 +769,12 @@ class EMPform(forms.ModelForm):
             'WKhours_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(EMPform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -814,24 +784,22 @@ class WASTEWATERform(forms.ModelForm):
         model = waste_water
         fields = ('years', 'waste_water_treatment_name', 'waste_water_inflow_rate', 'average_inlet_COD_concentration',
                   'average_COD_removal_rate', 'CH4_capture_system_rate', 'combustion_equipment_efficiency',
-                  'image_note', 'image_path', 'message_board')
+                  'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'waste_water_treatment_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_water_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'average_inlet_COD_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'average_COD_removal_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9].[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9].[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(WASTEWATERform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -840,23 +808,21 @@ class WasteSludgeForm(forms.ModelForm):
     class Meta:
         model = waste_sludge
         fields = ('years', 'waste_sludge_treatment_name', 'waste_sludge_inflow_rate', 'average_inlet_MLSS_concentration',
-                  'CH4_capture_system_rate', 'combustion_equipment_efficiency', 'image_note', 'image_path', 'message_board')
+                  'CH4_capture_system_rate', 'combustion_equipment_efficiency', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'waste_sludge_treatment_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_sludge_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'average_inlet_MLSS_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+\.[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9].[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9].[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(WasteSludgeForm, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -865,7 +831,7 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
     class Meta:
         model = solvent_aerosol_emission_sources
         fields = ('years', 'solvent_name', 'solvent_amount', 'solvent_amount_unit', 'solvent_capacity',
-                  'solvent_capacity_unit', 'fugitive_recharge', 'image_note', 'image_path', 'message_board')
+                  'solvent_capacity_unit', 'fugitive_recharge', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -875,14 +841,12 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
             'solvent_capacity_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
             'fugitive_recharge': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(SolventAerosolEmissionSourcesForm, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -900,7 +864,7 @@ class ELECform(forms.ModelForm):
     class Meta:
         model = electricity
         fields = ('years', 'EMI_id', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
-                  'september', 'october', 'november', 'december', 'image_note', 'image_path', 'message_board')
+                  'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'EMI_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -918,14 +882,12 @@ class ELECform(forms.ModelForm):
             'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(ELECform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -934,12 +896,12 @@ class UTform(forms.ModelForm):
         model = upstream_transportation
         fields = ('acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW', 'organizational_use_products', 'customer', 'supplier',
                   'supplier_address', 'trade_term', 'receiving_address', 'delivery_address',
-                  'transport_distance', 'transport_country', 'paid', 'transport_type', 'transport_fuel', 'trips', 'image_note', 'image_path',
+                  'transport_distance', 'transport_country', 'paid', 'transport_type', 'transport_fuel', 'trips', 'image_note',
                   'overseas_transport_distance', 'overseas_paid', 'overseas_delivery', 'overseas_arrive',
-                  'overseas_trips', 'overseas_image_note', 'overseas_image_path',
+                  'overseas_trips', 'overseas_image_note',
                   'special_transport_distance', 'special_transport_country', 'special_paid', 'special_transport_type', 'special_transport_fuel',
-                  'special_trips', 'special_image_note', 'special_image_path',
-                  'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'air_image_note', 'air_image_path', 'message_board')
+                  'special_trips', 'special_image_note',
+                  'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'air_image_note', 'message_board')
 
         widgets = {
             'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '無單號請輸入: 0'}),
@@ -960,14 +922,12 @@ class UTform(forms.ModelForm):
             'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
             'overseas_paid': forms.RadioSelect(choices=PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'overseas_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'overseas_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'special_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'special_transport_country': forms.TextInput(attrs={'class': 'form-control'}),
             'special_paid': forms.RadioSelect(choices=PAID_CHOICES),
@@ -975,14 +935,12 @@ class UTform(forms.ModelForm):
             'special_transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'air_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'air_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'air_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'air_paid': forms.RadioSelect(choices=PAID_CHOICES),
             'air_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'air_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -995,14 +953,12 @@ class UTform(forms.ModelForm):
         self.fields['transport_fuel'].required = False
         self.fields['trips'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['overseas_transport_distance'].required = False
         self.fields['overseas_paid'].required = False
         self.fields['overseas_delivery'].required = False
         self.fields['overseas_arrive'].required = False
         self.fields['overseas_trips'].required = False
         self.fields['overseas_image_note'].required = False
-        self.fields['overseas_image_path'].required = False
         self.fields['special_transport_distance'].required = False
         self.fields['special_transport_country'].required = False
         self.fields['special_paid'].required = False
@@ -1010,14 +966,12 @@ class UTform(forms.ModelForm):
         self.fields['special_transport_fuel'].required = False
         self.fields['special_trips'].required = False
         self.fields['special_image_note'].required = False
-        self.fields['special_image_path'].required = False
         self.fields['air_transport_distance'].required = False
         self.fields['air_delivery'].required = False
         self.fields['air_arrive'].required = False
         self.fields['air_trips'].required = False
         self.fields['air_paid'].required = False
         self.fields['air_image_note'].required = False
-        self.fields['air_image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -1026,12 +980,12 @@ class DTform(forms.ModelForm):
         model = downstream_transportation
         fields = ('acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW', 'customer', 'supplier',
                   'supplier_address', 'trade_term', 'receiving_address', 'delivery_address',
-                  'transport_distance', 'transport_country', 'paid', 'transport_type', 'transport_fuel', 'trips', 'image_note', 'image_path',
+                  'transport_distance', 'transport_country', 'paid', 'transport_type', 'transport_fuel', 'trips', 'image_note',
                   'overseas_transport_distance', 'overseas_paid', 'overseas_delivery', 'overseas_arrive',
-                  'overseas_trips', 'overseas_image_note', 'overseas_image_path',
+                  'overseas_trips', 'overseas_image_note',
                   'special_transport_distance', 'special_transport_country', 'special_paid', 'special_transport_type', 'special_transport_fuel',
-                  'special_trips', 'special_image_note', 'special_image_path',
-                  'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'air_image_note', 'air_image_path', 'message_board')
+                  'special_trips', 'special_image_note',
+                  'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'air_image_note', 'message_board')
         widgets = {
             'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '無單號請輸入: 0'}),
             'commodity_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1050,14 +1004,12 @@ class DTform(forms.ModelForm):
             'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
             'overseas_paid': forms.RadioSelect(choices=PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'overseas_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'overseas_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'special_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'special_transport_country': forms.TextInput(attrs={'class': 'form-control'}),
             'special_paid': forms.RadioSelect(choices=PAID_CHOICES),
@@ -1065,14 +1017,12 @@ class DTform(forms.ModelForm):
             'special_transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'special_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'air_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'air_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'air_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'air_paid': forms.RadioSelect(choices=PAID_CHOICES),
             'air_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'air_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -1085,14 +1035,12 @@ class DTform(forms.ModelForm):
         self.fields['transport_fuel'].required = False
         self.fields['trips'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['overseas_transport_distance'].required = False
         self.fields['overseas_paid'].required = False
         self.fields['overseas_delivery'].required = False
         self.fields['overseas_arrive'].required = False
         self.fields['overseas_trips'].required = False
         self.fields['overseas_image_note'].required = False
-        self.fields['overseas_image_path'].required = False
         self.fields['special_transport_distance'].required = False
         self.fields['special_transport_country'].required = False
         self.fields['special_paid'].required = False
@@ -1100,14 +1048,12 @@ class DTform(forms.ModelForm):
         self.fields['special_transport_fuel'].required = False
         self.fields['special_trips'].required = False
         self.fields['special_image_note'].required = False
-        self.fields['special_image_path'].required = False
         self.fields['air_transport_distance'].required = False
         self.fields['air_delivery'].required = False
         self.fields['air_arrive'].required = False
         self.fields['air_trips'].required = False
         self.fields['air_paid'].required = False
         self.fields['air_image_note'].required = False
-        self.fields['air_image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -1115,7 +1061,7 @@ class ECform(forms.ModelForm):
     class Meta:
         model = employee_commute
         fields = ('years', 'employee_id', 'employee_name', 'department', 'work_days', 'city',
-                  'township', 'address', 'commute_distance', 'image_note', 'image_path', 'message_board')
+                  'township', 'address', 'commute_distance', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -1127,14 +1073,12 @@ class ECform(forms.ModelForm):
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'commute_distance': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9.]*$', 'title': "只能輸入數字", 'placeholder': "只能輸入數字"}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
     def __init__(self, *args, **kwargs):
         super(ECform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -1146,8 +1090,7 @@ class EBTform(forms.ModelForm):
     class Meta:
         model = employee_business_trip
         fields = ('business_trip_location', 'business_trip_date', 'business_trip_number', 'employee_id', 'employee_name',
-                  'department', 'bt_image_note', 'bt_image_path',
-                  'rtd_image_note', 'rtd_image_path', 'message_board')
+                  'department', 'bt_image_note', 'rtd_image_note', 'message_board')
         widgets = {
             'business_trip_location': forms.TextInput(attrs={'class': 'form-control'}),
             'business_trip_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
@@ -1156,9 +1099,7 @@ class EBTform(forms.ModelForm):
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'bt_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'bt_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'rtd_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'rtd_image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -1166,9 +1107,7 @@ class EBTform(forms.ModelForm):
         super(EBTform, self).__init__(*args, **kwargs)
         self.fields['employee_id'].required = False
         self.fields['bt_image_note'].required = False
-        self.fields['bt_image_path'].required = False
         self.fields['rtd_image_note'].required = False
-        self.fields['rtd_image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -1181,9 +1120,8 @@ TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section,
 class WASTEform(forms.ModelForm):
     class Meta:
         model = waste
-        fields = ('waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal',
-                  'waste_disposal_vendor', 'transport_type', 'transport_fuel', 'transport_distance', 'image_note',
-                  'image_path', 'message_board')
+        fields = ('waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
+                  'transport_type', 'transport_fuel', 'transport_distance', 'image_note', 'message_board')
         widgets = {
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_weigh': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1195,7 +1133,6 @@ class WASTEform(forms.ModelForm):
             'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'image_path': forms.FileInput(attrs={'class': 'form-control-file'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
 
@@ -1205,7 +1142,6 @@ class WASTEform(forms.ModelForm):
         self.fields['transport_fuel'].required = False
         self.fields['transport_distance'].required = False
         self.fields['image_note'].required = False
-        self.fields['image_path'].required = False
         self.fields['message_board'].required = False
 
 
@@ -1227,7 +1163,6 @@ class VOCsOneForm(forms.ModelForm):
 
 class VOCsTwoForm(forms.ModelForm):
     class Meta:
-        model = VOCs_two
         model = VOCs_two
         fields = ('years', 'disposal_volume', 'concentration_entrance', 'concentration_exit', 'builtIn_rate', 'custom_rate', 'concentration_ch4', 'voc_capture_rate', 'combustion_equipment_rate', 'radio_VOCs', 'radio_concentration', 'radio_co2_emission', 'message_board')
         widgets = {
@@ -1255,4 +1190,101 @@ class VOCsTwoForm(forms.ModelForm):
         self.fields['custom_rate'].required = False
         self.fields['radio_co2_emission'].required = False
         self.fields['radio_concentration'].required = False
+        self.fields['message_board'].required = False
+
+
+# 納管廢水
+class PWform(forms.ModelForm):
+    class Meta:
+        model = pipe_wastewater
+        fields = ('years', 'pipe_id', 'address', 'factory', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
+                  'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'pipe_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+            'factory': forms.TextInput(attrs={'class': 'form-control'}),
+            'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(PWform, self).__init__(*args, **kwargs)
+        self.fields['image_note'].required = False
+        self.fields['message_board'].required = False
+
+
+# 採購原物料
+class PMform(forms.ModelForm):
+    class Meta:
+        model = purchase_material
+        fields = ('years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
+                  'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'product_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'product_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(PMform, self).__init__(*args, **kwargs)
+        self.fields['image_note'].required = False
+        self.fields['message_board'].required = False
+
+
+# 產品間接排放
+class PIEform(forms.ModelForm):
+    class Meta:
+        model = product_indirect_emissions
+        fields = ('years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
+                  'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
+        widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
+            'product_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'product_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(PIEform, self).__init__(*args, **kwargs)
+        self.fields['image_note'].required = False
         self.fields['message_board'].required = False
