@@ -88,24 +88,29 @@ def load_table(request):
         # 從db撈每張表要顯示的值
         for a in t_name:
             if a["d_name"] == "緊急發電機":
-                t_data = []
-                raw_data = emergency_generators.objects.values("id", "years", "device_id",
-                                                               "device_capacity", "position", "department",
-                                                               "january", "february", "march", "april",
-                                                               "may", "june", "july", "august",
-                                                               "september", "october", "november", "december")
-                # 計算加油量合計
-                for i in range(raw_data.count()):
-                    consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                                        raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                                        raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的加油量丟回字典
-                    single_data["total"] = consumption_total
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
+                # username = request.user.username
+                # print("username: ", username)
+                groups_query = request.user.groups.values("id")
+                for groups in groups_query:
+                    company_id = groups["id"]
+                    t_data = []
+                    raw_data = emergency_generators.objects.filter(company=company_id).values("id", "years", "device_id",
+                                                                                              "device_capacity", "position", "department",
+                                                                                              "january", "february", "march", "april",
+                                                                                              "may", "june", "july", "august",
+                                                                                              "september", "october", "november", "december")
+                    # 計算加油量合計
+                    for i in range(raw_data.count()):
+                        consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                            raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                            raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                        # print("total::::::::::::::::::::::::::::::::::::::::", total)
+                        # 抓單筆資料
+                        single_data = raw_data[i]
+                        # 將計算後的加油量丟回字典
+                        single_data["total"] = consumption_total
+                        t_data.append(single_data)
+                    return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
                 t_data = []
                 # 「合計」前後的資料分開抓
@@ -960,6 +965,9 @@ def product_indirect_emissions_add(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
+    if request.user.is_authenticated:
+        username = request.user.username
+        print("username: ", username)
     return render(request, "home/carbon-system.html", locals())
 
 

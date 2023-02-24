@@ -8,4 +8,5 @@ from .models import *
 
 # Register your models here.
 # admin.site.register(material)
+admin.site.register(company)
 
