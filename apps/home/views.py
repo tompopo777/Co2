@@ -905,6 +905,14 @@ def pipe_wastewater_add(request):
     if request.method == "POST":
         if PW_add.is_valid():
             PW_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = pipe_wastewater.objects.values("id").last().get("id")
+            table_id = pipe_wastewater.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         return render(request, 'home/pipe-wastewater.html', {'PW_add': PW_add})
@@ -917,6 +925,14 @@ def purchase_material_add(request):
     if request.method == "POST":
         if PM_add.is_valid():
             PM_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = purchase_material.objects.values("id").last().get("id")
+            table_id = purchase_material.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         return render(request, 'home/purchase-material.html', {'PM_add': PM_add})
@@ -929,6 +945,14 @@ def product_indirect_emissions_add(request):
     if request.method == "POST":
         if PIE_add.is_valid():
             PIE_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = product_indirect_emissions.objects.values("id").last().get("id")
+            table_id = product_indirect_emissions.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         return render(request, 'home/product-indirect-emissions.html', {'PIE_add': PIE_add})

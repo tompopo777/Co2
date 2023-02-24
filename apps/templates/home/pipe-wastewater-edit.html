@@ -158,10 +158,18 @@
                                                 {{ form.image_note }}
                                             </div>
                                         </div>
-                                        <div class=" ps-md-2 align-self-center">
-                                            <div class="col-1 ">
-                                                {{ form.image_path }}
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="ps-md-2 align-self-center">
+                                            <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="納管廢水">
+                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
+                                        </div>
+                                        <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -228,6 +236,43 @@
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
+    </script>
+
+
+    {#    照片顯示檔名+可刪除#}
+    <script>
+        const dt = new DataTransfer(); // Permet de manipuler les fichiers de l'input file
+        $("#attachment").on('change', function(e){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc = $('<span/>', {class: 'file-block'}),
+                     fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName);
+                $("#filesList > #files-names").append(fileBloc);
+            }
+            // Ajout des fichiers dans l'objet DataTransfer
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // Mise à jour des fichiers de l'input file après ajout
+            this.files = dt.files;
+
+            // EventListener pour le bouton de suppression créé
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // Supprimer l'affichage du nom de fichier
+                $(this).parent().remove();
+                for(let i = 0; i < dt.items.length; i++){
+                    // Correspondance du fichier et du nom
+                    if(name === dt.items[i].getAsFile().name){
+                        // Suppression du fichier dans l'objet DataTransfer
+                        dt.items.remove(i);
+                    }
+                }
+                // Mise à jour des fichiers de l'input file après suppression
+                document.getElementById('attachment').files = dt.files;
+            });
+        });
     </script>
 
 {% endblock javascripts %}
