@@ -155,10 +155,18 @@
                                                                     {{ UT_add.image_note }}
                                                                 </div>
                                                             </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ UT_add.image_path }}
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="ps-md-2 align-self-center">
+                                                                <div class="col-2" multiple="multiple">
+                                                                    <input type="hidden" id="stage1" name="stage" value="陸運">
+                                                                    <input class="form-control-file" type="file" id="attachment1" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                                                 </div>
+                                                            </div>
+                                                            <div id="files-area">
+                                                                <span id="filesList1">
+                                                                    <span id="files-names1"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -214,10 +222,18 @@
                                                                     {{ UT_add.overseas_image_note }}
                                                                 </div>
                                                             </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ UT_add.overseas_image_path }}
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="ps-md-2 align-self-center">
+                                                                <div class="col-2" multiple="multiple">
+                                                                    <input type="hidden" id="stage2" name="stage" value="海運">
+                                                                    <input class="form-control-file" type="file" id="attachment2" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                                                 </div>
+                                                            </div>
+                                                            <div id="files-area">
+                                                                <span id="filesList2">
+                                                                    <span id="files-names2"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -279,10 +295,18 @@
                                                                     {{ UT_add.special_image_note }}
                                                                 </div>
                                                             </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ UT_add.special_image_path }}
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="ps-md-2 align-self-center">
+                                                                <div class="col-2" multiple="multiple">
+                                                                    <input type="hidden" id="stage3" name="stage" value="特殊陸運">
+                                                                    <input class="form-control-file" type="file" id="attachment3" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                                                 </div>
+                                                            </div>
+                                                            <div id="files-area">
+                                                                <span id="filesList3">
+                                                                    <span id="files-names3"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -338,10 +362,18 @@
                                                                     {{ UT_add.air_image_note }}
                                                                 </div>
                                                             </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ UT_add.air_image_path }}
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="ps-md-2 align-self-center">
+                                                                <div class="col-2" multiple="multiple">
+                                                                    <input type="hidden" id="stage4" name="stage" value="空運">
+                                                                    <input class="form-control-file" type="file" id="attachment4" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                                                 </div>
+                                                            </div>
+                                                            <div id="files-area">
+                                                                <span id="filesList4">
+                                                                    <span id="files-names4"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -364,7 +396,7 @@
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0"
                                                         onclick="history.back()">
                                                     取消
                                                 </button>
@@ -414,4 +446,150 @@
             });
         });
     </script>
+
+
+    {#    陸運照片顯示檔名+可刪除#}
+    <script>
+        const dt = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment1").on('change', function(){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc1 = $('<span/>', {class: 'file-block'}),
+                     fileName1 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc1.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName1);
+                $("#attachment1 > #filesList1 > #files-names1").append(fileBloc1);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for(let i = 0; i < dt.items.length; i++){
+                    // 文件和名稱匹配
+                    if(name === dt.items[i].getAsFile().name){
+                        // 在DataTransfer對像中刪除該文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment1').files = dt.files;
+            });
+        });
+    </script>
+
+    {#    海運照片顯示檔名+可刪除#}
+    <script>
+        const dt = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment2").on('change', function(){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc2 = $('<span/>', {class: 'file-block'}),
+                     fileName2 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc2.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName2);
+                $("#attachment2 > #filesList2 > #files-names2").append(fileBloc2);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for(let i = 0; i < dt.items.length; i++){
+                    // 文件和名稱匹配
+                    if(name === dt.items[i].getAsFile().name){
+                        // 在DataTransfer對像中刪除該文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment2').files = dt.files;
+            });
+        });
+    </script>
+
+    {#    特殊陸運照片顯示檔名+可刪除#}
+    <script>
+        const dt = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment3").on('change', function(){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc3 = $('<span/>', {class: 'file-block'}),
+                     fileName3 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc3.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName3);
+                $("#attachment3 > #filesList3 > #files-names3").append(fileBloc3);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for(let i = 0; i < dt.items.length; i++){
+                    // 文件和名稱匹配
+                    if(name === dt.items[i].getAsFile().name){
+                        // 在DataTransfer對像中刪除該文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment3').files = dt.files;
+            });
+        });
+    </script>
+
+    {#    空運照片顯示檔名+可刪除#}
+    <script>
+        const dt = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment4").on('change', function(){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc4 = $('<span/>', {class: 'file-block'}),
+                     fileName4 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc4.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName4);
+                $("#attachment4 > #filesList4 > #files-names4").append(fileBloc4);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for(let i = 0; i < dt.items.length; i++){
+                    // 文件和名稱匹配
+                    if(name === dt.items[i].getAsFile().name){
+                        // 在DataTransfer對像中刪除該文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment4').files = dt.files;
+            });
+        });
+    </script>
+
 {% endblock javascripts %}
