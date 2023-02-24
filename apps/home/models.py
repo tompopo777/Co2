@@ -16,6 +16,21 @@ for r in range(1980, (datetime.datetime.now().year + 1)):
 
 
 # Create your models here.
+class company(models.Model):
+    id = models.AutoField(primary_key=True)
+    company_name = models.CharField(max_length=255)
+    tax_id = models.IntegerField()
+    address = models.CharField(max_length=255)
+    headcount = models.IntegerField()
+    superintendent = models.CharField(max_length=30)
+    contact_person = models.CharField(max_length=30)
+    contact_telephone = models.CharField(max_length=60)
+    contact_email = models.CharField(max_length=50)
+    industry_classification = models.CharField(max_length=30)
+    corporation = models.CharField(max_length=30)
+    type = models.CharField(max_length=30)
+
+
 class section_one(models.Model):
     cpid = models.AutoField(primary_key=True)
     c_name = models.IntegerField()
@@ -52,6 +67,7 @@ class emergency_generators(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     image_path = models.FileField(upload_to='緊急發電機/%Y/%m', null=True, default=None)
     message_board = models.CharField(max_length=255, null=True)
+    company = models.ForeignKey(company, on_delete=models.CASCADE)
 
 
 class combustion_equipment(models.Model):
