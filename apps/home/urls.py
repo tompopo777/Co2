@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.conf.urls import url
 from django.urls import path, re_path
-from apps.home import views,csv
+from apps.home import views, csv
 from django.conf import settings
 from django.conf.urls.static import static
 

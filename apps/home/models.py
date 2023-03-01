@@ -67,6 +67,8 @@ class emergency_generators(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
+    # company_id = models.IntegerField(null=True)
+
 
 
 class combustion_equipment(models.Model):

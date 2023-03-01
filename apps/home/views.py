@@ -78,12 +78,14 @@ def load_device(request):
             d_data = list(section_two.objects.filter(cpid=current_process).values("d_name", "did"))
             return JsonResponse(d_data, safe=False)
 
+
 # 判斷目前使用者在哪個group
-def who_use_now(request):
+def current_user_group_id(request):
     groups_query = request.user.groups.values("id")
     for groups in groups_query:
         company_id = groups["id"]
         return company_id
+
 
 # 抓欄位(
 @login_required(login_url="/login/")
@@ -96,25 +98,25 @@ def load_table(request):
         for a in t_name:
             if a["d_name"] == "緊急發電機":
                 t_data = []
-                single_data = {}
-                if who_use_now(request) == 1:
+                if current_user_group_id(request) == 1:
                     raw_data = emergency_generators.objects.values("id", "years", "device_id",
                                                                    "device_capacity", "position", "department",
                                                                    "january", "february", "march", "april",
                                                                    "may", "june", "july", "august",
                                                                    "september", "october", "november", "december")
                 else:
-                    raw_data = emergency_generators.objects.filter(company_id=who_use_now(request)).values("id", "years", "device_id",
-                                                                                             "device_capacity", "position", "department",
-                                                                                             "january", "february", "march", "april",
-                                                                                             "may", "june", "july", "august",
-                                                                                             "september", "october", "november", "december")
+                    raw_data = emergency_generators.objects.filter(company_id=current_user_group_id(request)).values("id", "years", "device_id",
+                                                                                                                     "device_capacity", "position", "department",
+                                                                                                                     "january", "february", "march", "april",
+                                                                                                                     "may", "june", "july", "august",
+                                                                                                                     "september", "october", "november", "december")
                     # 計算加油量合計
                 for i in range(raw_data.count()):
+                    single_data = {}
                     consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
                                         raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
                                         raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    if who_use_now(request) == 1:
+                    if current_user_group_id(request) == 1:
                         try:
                             company_in_group = emergency_generators.objects.values("company_id")
                             company_number = company_in_group[i].get("company_id")
@@ -565,6 +567,8 @@ def emergency_generators_add(request):
     if request.method == "POST":
         EG_add = EGform(request.POST, request.FILES)
         if EG_add.is_valid():
+            EG_add = EG_add.save(commit=False)
+            EG_add.company_id = current_user_group_id(request)
             EG_add.save()
             return redirect('/carbon-system/')
         else:
@@ -1622,7 +1626,7 @@ def add_title(request):
                 "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
             },
         }
-        if who_use_now(request) == 1:
+        if current_user_group_id(request) == 1:
             title = [center_htmlName.get(device_id)]
         else:
             title = [htmlName.get(device_id)]
