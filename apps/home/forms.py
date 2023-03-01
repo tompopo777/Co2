@@ -221,7 +221,6 @@ class EGform(forms.ModelForm):
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'}),
-            # 'company_id': forms.Select(choices=COMPANY_CHOICES),
         }
 
     def __init__(self, *args, **kwargs):
