@@ -986,7 +986,9 @@ def carbon_system(request):
     if request.user.is_authenticated:
         username = request.user.username
         print("username: ", username)
+    # groups_query = request.user.groups.values("id")
     groups_query = request.user.groups.values("name").first()
+    # print("groups_query: ", groups_query)
     context.update(groups_query)
     return render(request, "home/carbon-system.html", context)
 
