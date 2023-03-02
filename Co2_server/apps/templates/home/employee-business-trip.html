@@ -1,0 +1,199 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} employee-business-trip {% endblock %}
+
+{% block body_class %} employee-business-trip {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 員工出差</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/employee_business_trip_add/" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row mb-4 d-flex align-items-center">
+                                            <div class="col-4 ">
+                                                <div class="input-group input-group-static">
+                                                    <label>出差地點 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EBT_add.business_trip_location }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>啟程日期 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ EBT_add.business_trip_date }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>出差單號 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ EBT_add.business_trip_number }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>員工編號</label>
+                                                    {{ EBT_add.employee_id }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EBT_add.employee_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EBT_add.department }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4">
+                                            出差段數
+                                        </div>
+                                        <div class="row mb-4" id="trip_section">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EBT_add.departure }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>目的地 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EBT_add.destination }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EBT_add.round_trip_distance }}
+                                                </div>
+                                            </div>
+                                            <a class="col"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                            <a class="col"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="d-flex mb-4">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static">
+                                                    <label>上傳員工出差引用單據</label>
+                                                    {{ EBT_add.bt_image_note }}
+                                                </div>
+                                            </div>
+                                            <div class=" ps-md-2 align-self-center">
+                                                <div class="col-1 ">
+                                                    {{ EBT_add.bt_image_path }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>上傳距離引用單據</label>
+                                                    {{ EBT_add.rtd_image_note }}
+                                                </div>
+                                            </div>
+                                            <div class=" ps-md-2 align-self-center">
+                                                <div class="col-1">
+                                                    {{ EBT_add.rtd_image_path }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-control">
+                                                    <label>備註欄</label>
+                                                    {{ EBT_add.message_board }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-1">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認
+                                                </button>
+                                            </div>
+                                            <div class="col-1">
+                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                        onclick="history.back()">
+                                                    取消
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    icon#}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy-mm-dd",
+            viewMode: "days",
+            minViewMode: "days",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+    {#    新增出差段數#}
+    <script>
+        var row = document.getElementById("trip_section")
+        $(".fa-circle-plus").on('click', function () {
+            row.insertRow(-1)//加入"第一筆資料"列
+
+        })
+    </script>
+{% endblock javascripts %}

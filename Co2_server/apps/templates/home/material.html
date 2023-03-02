@@ -1,0 +1,342 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} material {% endblock %}
+
+{% block body_class %} material {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 原物料使用</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/material_add/" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <select class="form-select" id="single-select-field" data-placeholder="請輸入化學品名稱">
+                                                <option></option>
+                                            </select>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ MT_add.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>原物料名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ MT_add.material_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>原物料料號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ MT_add.material_id }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ MT_add.material_type }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-check ps-1">
+                                                <label>
+                                                    {{ MT_add.chemical }}
+                                                    是否為化學品
+                                                </label>
+                                            </div>
+                                            <div class="collapse" id="collapsePee">
+                                                <div class="row mt-3">
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static">
+                                                            <label>化學名稱</label>
+                                                            {{ MT_add.process_add_name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>化學品名</label>
+                                                            {{ MT_add.chemical_name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>化學式</label>
+                                                            {{ MT_add.chemical_formula }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <br>
+                                        <div class="d-flex flex-nowrap">
+                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
+                                                月用量(單位:公噸) <span style="color:red; font-size:16px;">* </span>
+                                            </h5>
+                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>一月</th>
+                                                <th>二月</th>
+                                                <th>三月</th>
+                                                <th>四月</th>
+                                                <th>五月</th>
+                                                <th>六月</th>
+                                                <th>七月</th>
+                                                <th>八月</th>
+                                                <th>九月</th>
+                                                <th>十月</th>
+                                                <th>十一月</th>
+                                                <th>十二月</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.january }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.february }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.march }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.april }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.may }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.june }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.july }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.august }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.september }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.october }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.november }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ MT_add.december }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                {{ MT_add.image_note }}
+                                            </div>
+                                        </div>
+                                        <div class=" ps-md-2 align-self-center">
+                                            <div class="col-1 ">
+                                                {{ MT_add.image_path }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-control">
+                                                <label>備註欄</label>
+                                                {{ MT_add.message_board }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    select2#}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+    {# select2#}
+    <script>
+        $('#single-select-field').select2({
+            theme: "bootstrap-5",
+            {#width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',#}
+            {#placeholder: $(this).data('placeholder'),#}
+            width: 300
+        });
+    </script>
+
+    {# 帶入下拉選單資料#}
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: "{% url 'chemical_dropdowm' %}",
+                data: {},
+                type: 'GET',
+                dataType: 'json',
+                success: function (chemical_add) {
+                    chemical_add.forEach((item) => {
+                        for (const [key, value] of Object.entries((item))) {
+                            $("#single-select-field").append("<option>" + value + "</option>");
+                        }
+                    })
+                }
+            });
+        })
+    </script>
+
+    {# 自動帶入化學品名稱、化學式#}
+    <script>
+        var chemical_name = $(".chemical_name")
+        var chemical_formula = $(".chemical_formula")
+        $(".process_add_name").on('change', function () {
+            chemical_name.val("")
+            chemical_formula.val("")
+            var add_ch_name = $(this).val();
+            $.ajax({
+                url: "{% url 'loadchemical' %}",
+                data: {
+                    'add_ch_name': add_ch_name
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (chemical_data) {
+                    console.warn(chemical_data);
+                    var list = [];
+                    chemical_data.forEach((item) => {
+                        for (const [key, value] of Object.entries((item))) {
+                            list.push(value)
+                        }
+                        chemical_name.val(list[0])
+                        chemical_formula.val(list[1])
+                    })
+                },
+            });
+        });
+    </script>
+
+    {# 當checkbox勾選，下方摺疊展開#}
+    <script>
+        var process_add_name = $(".process_add_name")
+        var checkbox = document.getElementById("chemical")
+        var collapse = document.getElementById("collapsePee")
+        if (checkbox.checked === true) {
+            collapse.classList.add("show")
+        }
+        $(document).on('click', ".chemical", function () {
+            if (checkbox.checked !== true) {
+                process_add_name.val("")
+                chemical_name.val("")
+                chemical_formula.val("")
+            }
+        });
+    </script>
+
+{% endblock javascripts %}

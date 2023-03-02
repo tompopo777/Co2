@@ -1,0 +1,500 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} carbon-system {% endblock %}
+
+{% block body_class %} carbon-system {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+{% endblock stylesheets %}
+
+{% block content %}
+
+    {% include 'includes/navigation-transparent.html' %}
+
+    <header class="bg-gradient-dark">
+        <div class="page-header min-vh-50"
+             style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
+            <span class="mask bg-gradient-dark opacity-6"></span>
+            <div class="container">
+                <div class="card-body">
+                    <div class="d-flex">
+                        <div class="col-5">
+                            <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
+                            <select class="" id="dropdownmenu1" name="dropdown1name">
+                                <option class="" id="question-subject" value="0" name="" selected>
+                                    <---請選擇類別--->
+                                </option>
+                                <option class="" id="question-subject" value="1">
+                                    直接溫室氣體排放(類別一)
+                                </option>
+                                <option class="" id="question-subject" value="2">
+                                    輸入能源之間接溫室氣體排放(類別二)
+                                </option>
+                                <option class="" id="question-subject" value="3">
+                                    運輸之間接溫室氣體排放(類別三)
+                                </option>
+                                <option class="" id="question-subject" value="4">
+                                    組織使用的產品之間接溫室氣體排放(類別四)
+                                </option>
+                                <option class="" id="question-subject" value="">
+                                    使用組織產品之間接溫室氣體排放(類別五)
+                                </option>
+                                <option class="" id="question-subject" value="">
+                                    其他來源之間接溫室氣體排放(類別六)
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
+                            <select class="" id="dropdownmenu2" name="dropdown2name"></select>
+                        </div>
+                        <div class="col-3">
+                            <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
+                            <select class="" id="dropdownmenu3" name="dropdown3name"></select>
+                        </div>
+                        <div class="col-1">
+                            <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
+                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-center">
+                                <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
+                                    新增
+                                </a>
+                                <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
+                                    匯出Excel
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
+        <div class="table-responsive">
+            <table class="table table-sm" id="table">
+                <thead class="text-center" id="table_head">
+
+                </thead>
+                <tbody class="text-center" id="table_body">
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {#    <div>#}
+    {#                <img src="static/assets/img/bg9.jpg" alt="errro">#}
+    {#                <img src="{% static 'static/assets/img/bg9.jpg' %}" alt="errro">#}
+    {##}
+    {#        {% load static %}#}
+    {#        {% for a in data %}#}
+    {#            <h2>{{ a.image_note }}</h2>#}
+    {#            <img src="url('{{ MEDIA_ROOT }}{{ a.image_path }}')" alt="errro">#}
+    {#            url('{{ ASSETS_ROOT }}0008020206520995_b.jpng')#}
+    {#            <h2>{{ a.image_path }}"</h2>#}
+    {#            <img src="{% static 'image/ivana-squares.jpg' %}" alt="errro">#}
+    {#            <img src="{% core '12/{{ a.image_path }}' %}" alt="errro">#}
+    {#            <a href="{{ a.image_path }}">#}
+    {#                <img src="/12/{{ a.image_path.url }}">#}
+    {#            </a>#}
+    {#        {% endfor %}#}
+    {##}
+    {#    </div>#}
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="staticBackdropLabel">注意!!!</h5></div>
+                </div>
+                <div class="modal-body d-flex justify-content-center">
+                    <h6>是否刪除此筆資料</h6>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger delete_btn" data-bs-dismiss="modal">確認刪除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    {#    icon#}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+
+    <script>
+        // get the element to animate
+        var element = document.getElementById('count-stats');
+        var elementHeight = element.clientHeight;
+
+        // listen for scroll event and call animate function
+
+        document.addEventListener('scroll', animate);
+
+        // check if element is in view
+        function inView() {
+            // get window height
+            var windowHeight = window.innerHeight;
+            // get number of pixels that the document is scrolled
+            var scrollY = window.scrollY || window.pageYOffset;
+            // get current scroll position (distance from the top of the page to the bottom of the current viewport)
+            var scrollPosition = scrollY + windowHeight;
+            // get element position (distance from the top of the page to the bottom of the element)
+            var elementPosition = element.getBoundingClientRect().top + scrollY + elementHeight;
+
+            // is scroll position greater than element position? (is element in view?)
+            if (scrollPosition > elementPosition) {
+                return true;
+            }
+
+            return false;
+        }
+
+        var animateComplete = true;
+
+        // animate element when it is in view
+        function animate() {
+
+            // is element in view?
+            if (inView()) {
+                if (animateComplete) {
+                    if (document.getElementById('state1')) {
+                        const countUp = new CountUp('state1', document.getElementById("state1").getAttribute("countTo"));
+                        if (!countUp.error) {
+                            countUp.start();
+                        } else {
+                            console.error(countUp.error);
+                        }
+                    }
+                    if (document.getElementById('state2')) {
+                        const countUp1 = new CountUp('state2', document.getElementById("state2").getAttribute("countTo"));
+                        if (!countUp1.error) {
+                            countUp1.start();
+                        } else {
+                            console.error(countUp1.error);
+                        }
+                    }
+                    if (document.getElementById('state3')) {
+                        const countUp2 = new CountUp('state3', document.getElementById("state3").getAttribute("countTo"));
+                        if (!countUp2.error) {
+                            countUp2.start();
+                        } else {
+                            console.error(countUp2.error);
+                        }
+
+                    }
+                    animateComplete = false;
+                }
+            }
+        }
+
+        if (document.getElementById('typed')) {
+            var typed = new Typed("#typed", {
+                stringsElement: '#typed-strings',
+                typeSpeed: 90,
+                backSpeed: 90,
+                backDelay: 200,
+                startDelay: 500,
+                loop: true
+            });
+        }
+    </script>
+
+    <script>
+        if (document.getElementsByClassName('page-header')) {
+            window.onscroll = debounce(function () {
+                var scrollPosition = window.pageYOffset;
+                var bgParallax = document.querySelector('.page-header');
+                var oVal = (window.scrollY / 3);
+                bgParallax.style.transform = 'translate3d(0,' + oVal + 'px,0)';
+            }, 6);
+        }
+    </script>
+
+    <!--/*類別>>>選擇過程區域*/-->
+    <script>
+        var dr1 = document.getElementById("dr1");
+        var dropdownmenu2 = document.getElementById("dropdownmenu2")
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var dropdownmenu1 = document.getElementById("dropdownmenu1")
+        $("#dropdownmenu1").on('change', function () {
+            var currentClass = $(this).val();
+            $.ajax({
+                url: "{% url 'loadprocess' %}",
+                data: {
+                    'currentClass': currentClass
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    {#console.warn(data);#}
+                    dropdownmenu2.innerHTML = ""
+                    dropdownmenu3.innerHTML = ""
+                    data.forEach((item, index) => {
+                        if (index == 0) {
+                            dropdownmenu2.options.add(new Option('<---請選擇過程區域--->', 0));
+                        }
+                        dropdownmenu2.options.add(new Option(item.p_name, item.cpid));
+                    })
+                },
+            });
+        });
+    </script>
+
+    <!--/*選擇過程區域>>>設備*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var table = document.getElementById("table")
+        $("#dropdownmenu2").on('change', function () {
+            var currentProcess = $(this).val();
+            $.ajax({
+                url: "{% url 'loaddevice' %}",
+                data: {
+                    'currentProcess': currentProcess
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (d_data) {
+                    dropdownmenu3.innerHTML = ""
+                    d_data.forEach((item, index) => {
+                        if (index == 0) {
+                            dropdownmenu3.options.add(new Option('<---請選擇設備名稱--->', 0));
+                        }
+                        dropdownmenu3.options.add(new Option(item.d_name, item.did));
+                    })
+                },
+
+            });
+        })
+    </script>
+
+    <!--/*顯示tableTitle*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        //select thead
+        var thead = document.getElementById("table").getElementsByTagName('thead')[0]
+        var tr = document.getElementById("table").getElementsByTagName('tr')[0]
+        var style = document.createElement('style');
+        $("#submit").on('click', function () {
+            var deviceId = dropdownmenu3.value;
+            $.ajax({
+                url: "{% url 'loadtitle' %}",
+                data: {
+                    'deviceId': deviceId
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (title) {
+                    thead.innerHTML = ""
+                    var thead_row_category = thead.insertRow(-1)//加入"分類"列
+                    var thead_row_name = thead.insertRow(-1)//加入"標題"列
+                    title.forEach((item, index) => {
+                        var i = 0;
+                        for (const [key, value] of Object.entries((item))) {
+                            console.warn(">>>>>")
+                            var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
+                            var a = thead_row_category.appendChild(tr_c)
+                            tr_c.innerHTML = key//"分類"框框填質
+                            if (i === 0) {
+                                tr_c.setAttribute('class', 'table-dark');
+                            } else if (i % 2 === 0) {
+                                tr_c.setAttribute('class', 'table-light');
+                            } else {
+                                tr_c.setAttribute('class', 'table-secondary');
+                            }
+                            tr_c.setAttribute('style', 'border-color: black')
+                            value.forEach((item, index) => {
+                                var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框
+                                thead_row_name.appendChild(cr_n)
+                                cr_n.innerHTML = item;//"標題"框框填質
+                                if (i === 0) {
+                                    cr_n.setAttribute('class', 'table-active')
+                                    a.colSpan = index + 1//"分類"列第一個框框空間+1，因為"序號"欄位
+                                } else {
+                                    a.colSpan = index + 1//"分類"列第一個框框空間+1
+                                }
+                            })
+                            i++;
+                        }
+                    })
+                },
+            });
+        })
+    </script>
+
+    <!--/*顯示table資料*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var tbody = document.getElementById("table").getElementsByTagName('tbody')[0]
+        var table_head = document.getElementById("table_head")
+        var table_body = document.getElementById("table_body")
+        $("#submit").on('click', function () {
+            var deviceId = dropdownmenu3.value;
+            $.ajax({
+                url: "{% url 'loadtable' %}",
+                data: {
+                    'deviceId': deviceId
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (t_data,) {
+                    console.warn(t_data);
+                    tbody.innerHTML = ""
+                    var id = 1;
+                    t_data.forEach((item, index) => {
+                        var trash = document.createElement('a')//加入"trash button"tag
+                        var trash_i_tag = document.createElement('i')//加入"i"tag
+                        var pencil = document.createElement('a')//加入"pencil button"tag
+                        var pencil_i_tag = document.createElement('i')//加入"i"tag
+                        {#var pic = document.createElement('a')//加入"picture button"tag#}
+                        {#var pic_i_tag = document.createElement('i')//加入"i"tag#}
+                        var row = tbody.insertRow(-1)//加入"第一筆資料"列
+                        var delete_squ = row.insertCell(-1)//加入刪除鈕框框
+                        var edit_squ = row.insertCell(-1)//加入編輯鈕框框
+                        {#var pic_squ = row.insertCell(-1)//加入照片鈕框框#}
+                        delete_squ.appendChild(trash)
+                        edit_squ.appendChild(pencil)
+                        {#pic_squ.appendChild(pic)#}
+                        trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
+                        trash.setAttribute('data-bs-toggle', 'modal')
+                        trash.setAttribute('data-bs-target', '#staticBackdrop')
+                        trash.appendChild(trash_i_tag)
+                        pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
+                        pencil.appendChild(pencil_i_tag)
+                        {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
+                        {#pic.appendChild(pic_i_tag)#}
+                        trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
+                        pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
+                        {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
+                        var cr_id = row.insertCell(-1)//加入"序號"框框
+                        cr_id.innerHTML = id
+                        var datasheet_id = dropdownmenu3.value;
+                        for (const [key, value] of Object.entries((item))) {
+                            if (key == "id") {
+                                pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端
+                                pencil.setAttribute('id', value)//設定按鈕的id為設備id
+                                trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
+                                {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
+                                continue;
+                            }
+                            var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
+                            nuLL = value
+                            if (value == null) {
+                                nuLL = '-'
+                            }
+                            cr_c2.innerHTML = nuLL
+                        }
+                        id++;
+                    })
+                },
+            });
+        })
+    </script>
+
+    <!--/*新增跳轉*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        //add
+        var addNewPage = document.getElementById("addNewPage")
+        $("#submit").on('click', function () {
+            var deviceId = dropdownmenu3.value;
+            {#console.warn("新增跳轉", deviceId);#}
+            $.ajax({
+                url: "{% url 'loadadd' %}",
+                data: {
+                    'deviceId': deviceId
+                },
+                type: 'GET',
+                dataType: 'json',
+            });
+        })
+    </script>
+
+    <!--/*刪除該筆設備*/-->
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        $(document).on('click', ".trash_btn", function () {
+            var single_dataID = this.id;
+            console.warn(single_dataID)
+            var deviceID = dropdownmenu3.value
+            delete_device(single_dataID, deviceID)
+        })
+    </script>
+
+    <!--/*刪除function*/-->
+    <script>
+        function delete_device(id, datasheet_id) {
+            $(document).on('click', ".delete_btn", function () {
+                console.warn("single_dataID", id)
+                $.ajax({
+                    url: "{% url 'delete_device' %}",
+                    data: {
+                        'datasheet_id': datasheet_id,
+                        'single_dataID': id
+                    },
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (single_dataID) {
+                        var single_data = document.getElementById(single_dataID)
+                        console.warn(">>>>>>>>>>>", single_data)
+                        single_data.closest("tr").remove()
+                    }
+                });
+            })
+        }
+    </script>
+
+    <script>
+        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        $('#exportExcel').on('click', e => {
+            // random data
+            data = {
+                did: dropdownmenu3.value,
+            }
+            $.ajax({
+                url: "{% url 'csv_view' %}",
+                type: "POST",
+                traditional: true,
+                data: data,
+                // xhrFields:{
+                //     responseType: 'blob'
+                // },
+                success: function (output, status, xhr) {
+                    let filename = "";
+                    let blob = output;
+                    var disposition = xhr.getResponseHeader('Content-Disposition'); //抓取檔案描述
+                    //切割抓取檔案名稱
+                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                        let filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        let matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                    }
+
+                    let downloadLink = window.document.createElement('a'); //製作可點擊字串
+                    let contentTypeHeader = xhr.getResponseHeader("Content-Type"); //檔案型態
+                    downloadLink.href = window.URL.createObjectURL(new Blob([blob], {type: contentTypeHeader})); //製作下載連結
+                    filename = decodeURI(filename);//名稱解碼
+                    downloadLink.download = filename;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                },
+            })
+        });
+    </script>
+
+{% endblock javascripts %}

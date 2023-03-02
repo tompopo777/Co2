@@ -1,0 +1,183 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} vehicle {% endblock %}
+
+{% block body_class %} vehicle {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 車輛清單</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/vehicle_add/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VC_add.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VC_add.device_id }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VC_add.device_name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備品牌</label>
+                                                    {{ VC_add.brand_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>型號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VC_add.model_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>放置位置</label>
+                                                    {{ VC_add.position }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VC_add.filling_volume }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VC_add.effusion_rate }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>冷媒類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ VC_add.refrigerant_type }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-check ps-1">
+                                                <label>
+                                                    <input class="form-check-input" id="fix" type="checkbox" data-bs-toggle="collapse" href="#collapsePee" aria-expanded="false" aria-controls="collapsePee">
+                                                    是否維修
+                                                </label>
+                                            </div>
+                                            <div class="collapse" id="collapsePee">
+                                                <div class="col-3">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label>維修填充量(單位:公斤)</label>
+                                                        {{ VC_add.filling_fix_volume }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                {{ VC_add.image_note }}
+                                            </div>
+                                        </div>
+                                        <div class=" ps-md-2 align-self-center">
+                                            <div class="col-1 ">
+                                                {{ VC_add.image_path }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-control">
+                                                <label>備註欄</label>
+                                                {{ VC_add.message_board }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+
+        {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+{% endblock javascripts %}

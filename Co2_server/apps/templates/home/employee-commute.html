@@ -1,0 +1,188 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} employee-commute {% endblock %}
+
+{% block body_class %} employee-commute {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 員工通勤</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/employee_commute_add/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.employee_id }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.employee_name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.department }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年工作天數 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.work_days }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-6 d-flex align-items-center">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ EC_add.transportation }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>汽/機車排氣量(CC數) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.displacement }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>居住縣市 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.city }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>鄉鎮市區 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.township }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>行政區公家機關地址 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.address }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>至公司距離(單位:公里) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.commute_distance }}
+                                                </div>
+                                            </div>
+                                            <div class="d-flex">
+                                                <div class="col-6">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label>上傳引用單據</label>
+                                                        {{ EC_add.image_note }}
+                                                    </div>
+                                                </div>
+                                                <div class=" ps-md-2 align-self-center">
+                                                    <div class="col-1 ">
+                                                        {{ EC_add.image_path }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-control">
+                                                    <label>備註欄</label>
+                                                    {{ EC_add.message_board }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-1">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認
+                                                </button>
+                                            </div>
+                                            <div class="col-1">
+                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                        onclick="history.back()">
+                                                    取消
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+
+    <script>
+        $('#date1').datetimepicker({
+            date: null,
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-tw'),
+            disabledDates: [
+                moment().add(1, 'days'),
+                moment().add(2, 'days'),
+                '2021-10-10',
+                '2021-12-25'
+            ]
+        });
+
+        $("#datepicker").datepicker({
+            format: "mm-yyyy",
+            startView: "months",
+            minViewMode: "months"
+        });
+    </script>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+{% endblock javascripts %}

@@ -1,0 +1,285 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} personnel-inventory {% endblock %}
+
+{% block body_class %} personnel-inventory {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 人天清冊</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>員工總人數 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.employee_number }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex flex-nowrap">
+                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
+                                                當月總工作時數/人數 <span style="color:red; font-size:16px;">* </span>
+                                            </h5>
+                                        </div>
+                                        <div class="d-flex flex-nowrap">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>一月</th>
+                                                    <th>二月</th>
+                                                    <th>三月</th>
+                                                    <th>四月</th>
+                                                    <th>五月</th>
+                                                    <th>六月</th>
+                                                    <th>七月</th>
+                                                    <th>八月</th>
+                                                    <th>九月</th>
+                                                    <th>十月</th>
+                                                    <th>十一月</th>
+                                                    <th>十二月</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <th>
+                                                        當月總時數
+                                                    </th>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_january }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_february }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_march }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_april }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_may }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_june }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_july }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_august }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_september }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_october }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_november }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKhours_december }}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>
+                                                        當月總人數
+                                                    </th>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_january }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_february }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_march }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_april }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_may }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_june }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_july }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_august }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_september }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_october }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_november }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            {{ form.WKnum_december }}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr></tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <br>
+                                        <div class="d-flex">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>上傳引用單據</label>
+                                                    {{ form.image_note }}
+                                                </div>
+                                            </div>
+                                            <div class=" ps-md-2 align-self-center">
+                                                <div class="col-1 ">
+                                                    {{ form.image_path }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-control">
+                                                    <label>備註欄</label>
+                                                    {{ form.message_board }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-1">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認
+                                                </button>
+                                            </div>
+                                            <div class="col-1">
+                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                        onclick="history.back()">
+                                                    取消
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+{% endblock javascripts %}
