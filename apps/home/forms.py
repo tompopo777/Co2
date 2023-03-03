@@ -1289,3 +1289,5 @@ class PIEform(forms.ModelForm):
         super(PIEform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
+
+
