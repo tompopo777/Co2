@@ -66,6 +66,9 @@ class emergency_generators(models.Model):
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
+    # company_id = models.IntegerField(null=True)
+
 
 
 class combustion_equipment(models.Model):
@@ -101,6 +104,8 @@ class combustion_equipment(models.Model):
     heat_december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
+
 
 
 class official_car(models.Model):
@@ -162,6 +167,7 @@ class official_car(models.Model):
     km_december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class material(models.Model):
@@ -189,6 +195,7 @@ class material(models.Model):
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class process(models.Model):
@@ -218,6 +225,7 @@ class process(models.Model):
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class refrigerator(models.Model):
@@ -235,6 +243,7 @@ class refrigerator(models.Model):
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class airconditioner(models.Model):
@@ -252,6 +261,7 @@ class airconditioner(models.Model):
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class vehicle(models.Model):
@@ -269,6 +279,7 @@ class vehicle(models.Model):
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class water_dispenser(models.Model):
@@ -286,6 +297,7 @@ class water_dispenser(models.Model):
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class ice_water_dispenser(models.Model):
@@ -303,6 +315,7 @@ class ice_water_dispenser(models.Model):
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class ice_maker(models.Model):
@@ -320,6 +333,7 @@ class ice_maker(models.Model):
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class other_device(models.Model):
@@ -337,6 +351,7 @@ class other_device(models.Model):
     filling_fix_volume = models.FloatField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class extinguisher(models.Model):
@@ -355,6 +370,7 @@ class extinguisher(models.Model):
     replace_filling_date = models.CharField(max_length=20)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class personnel_inventory(models.Model):
@@ -387,6 +403,7 @@ class personnel_inventory(models.Model):
     WKnum_december = models.IntegerField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class employee(models.Model):
@@ -432,6 +449,7 @@ class employee(models.Model):
     WKhours_december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 # 廢水
@@ -447,6 +465,7 @@ class waste_water(models.Model):
     combustion_equipment_efficiency = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 # 廢汙泥
@@ -461,6 +480,7 @@ class waste_sludge(models.Model):
     combustion_equipment_efficiency = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 # 溶劑、噴霧劑
@@ -476,6 +496,7 @@ class solvent_aerosol_emission_sources(models.Model):
     fugitive_recharge = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class additive_section(models.Model):
@@ -508,6 +529,7 @@ class electricity(models.Model):
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class upstream_transportation(models.Model):
@@ -551,6 +573,7 @@ class upstream_transportation(models.Model):
     air_paid = models.CharField(max_length=10, null=True)
     air_image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class downstream_transportation(models.Model):
@@ -593,6 +616,7 @@ class downstream_transportation(models.Model):
     air_paid = models.CharField(max_length=10)
     air_image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class employee_commute(models.Model):
@@ -609,6 +633,7 @@ class employee_commute(models.Model):
     commute_distance = models.FloatField()
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class transportation_way(models.Model):
@@ -629,6 +654,7 @@ class employee_business_trip(models.Model):
     bt_image_note = models.CharField(max_length=30, null=True)
     rtd_image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class trip_section(models.Model):
@@ -646,6 +672,7 @@ class VOCs_one(models.Model):
     emission = models.FloatField()
     concentration_ch4 = models.FloatField()
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class VOCs_two(models.Model):
@@ -664,6 +691,7 @@ class VOCs_two(models.Model):
     radio_concentration = models.CharField(max_length=20, null=True)
     radio_co2_emission = models.CharField(max_length=20, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class waste(models.Model):
@@ -680,6 +708,7 @@ class waste(models.Model):
     transport_distance = models.IntegerField(null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 class chemical_table(models.Model):
@@ -718,6 +747,7 @@ class pipe_wastewater(models.Model):
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 # 採購原物料
@@ -741,6 +771,7 @@ class purchase_material(models.Model):
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()
 
 
 # 使用產品間接排放
@@ -764,3 +795,4 @@ class product_indirect_emissions(models.Model):
     december = models.FloatField(default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
+    company_id = models.IntegerField()

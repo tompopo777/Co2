@@ -1,4 +1,6 @@
 import re
+
+import django.contrib.auth.models
 from django import forms
 
 from .models import *
@@ -183,11 +185,15 @@ BUSINESS_TRANSPORTATION_CHOICES = [
 
 
 # 前面: 存DB，後面: 顯示
-# CHEMICAL_CHOICES = []
-# chemical = chemical_table.objects.values("chemical_add")
-# for add in chemical:
-#     chemical_add = add.get('chemical_add')
-#     CHEMICAL_CHOICES.append((chemical_add, chemical_add))
+# COMPANY_CHOICES = []
+# company_name = company.objects.values("company_name")
+# for name in company_name:
+#     value = name.get('company_name')
+#     id_query = django.contrib.auth.models.Group.objects.filter(name=value).values("id")
+#     for a in id_query:
+#         key = a.get("id")
+#         COMPANY_CHOICES.append((key, value))
+# print("COMPANY_CHOICES:", COMPANY_CHOICES)
 
 class EGform(forms.ModelForm):
     class Meta:
@@ -214,7 +220,7 @@ class EGform(forms.ModelForm):
             'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
+            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'}),
         }
 
     def __init__(self, *args, **kwargs):
