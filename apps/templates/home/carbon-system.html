@@ -72,6 +72,13 @@
                                 <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
                                     匯出Excel
                                 </a>
+                                <form method="post" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <label for="importExcel" class="btn btn-outline-light me-1">
+                                        匯入Excel
+                                    </label>
+                                    <input type="file" id="importExcel" name="importExcel" style="display:none">
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -129,38 +136,38 @@
     </div>
 
 
-{#    <div class="modal fade" id="exampleModalCenter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">#}
-{#        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">#}
-{#            <div class="modal-content">#}
-{#                <div class="modal-header">#}
-{#                    <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="exampleModalLongTitle">照片</h5></div>#}
-{#                </div>#}
-{#                <div class="modal-body d-flex justify-content-center">#}
-{#                    <div class="container">#}
-{#                    <table class="table table-striped">#}
-{#                        <thead>#}
-{#                        <tr>#}
-{#                            <th>名稱</th>#}
-{#                            <th>照片</th>#}
-{#                        </tr>#}
-{#                        </thead>#}
-{#                        <tbody>#}
-{#                        {% for img in images %}#}
-{#                            <tr>#}
-{#                                <td>{{ img.title }}</td>#}
-{#                                <td><img src="/{{ BASIC_DIR }}/{{ img.image_path }}" width="120"/></td>#}
-{#                            </tr>#}
-{#                        {% endfor %}#}
-{#                        </tbody>#}
-{#                    </table>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="modal-footer d-flex justify-content-center">#}
-{#                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">返回</button>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
+    <div class="modal fade" id="exampleModalCenter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="exampleModalLongTitle">照片</h5></div>
+                </div>
+                <div class="modal-body d-flex justify-content-center">
+                    <div class="container">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>名稱</th>
+                            <th>照片</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for img in images %}
+                            <tr>
+                                <td>{{ img.title }}</td>
+                                <td><img src="{{ ASSETS_ROOT }}/img/team-1.jpg" alt="My Photo" /></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">返回</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 {% endblock content %}
@@ -170,6 +177,8 @@
     {#    icon#}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 
     <script>
         // get the element to animate
@@ -421,7 +430,7 @@
                         cr_id.innerHTML = id
                         var datasheet_id = dropdownmenu3.value;
                         for (const [key, value] of Object.entries((item))) {
-                            if (key == "id") {
+                            if (key === "id") {
                                 pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端
                                 pencil.setAttribute('id', value)//設定按鈕的id為設備id
                                 trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
@@ -495,43 +504,83 @@
         }
     </script>
 
-    <script>
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
-        $('#exportExcel').on('click', e => {
-            // random data
-            data = {
-                did: dropdownmenu3.value,
-            }
-            $.ajax({
-                url: "{% url 'csv_view' %}",
-                type: "POST",
-                traditional: true,
-                data: data,
-                // xhrFields:{
-                //     responseType: 'blob'
-                // },
-                success: function (output, status, xhr) {
-                    let filename = "";
-                    let blob = output;
-                    var disposition = xhr.getResponseHeader('Content-Disposition'); //抓取檔案描述
-                    //切割抓取檔案名稱
-                    if (disposition && disposition.indexOf('attachment') !== -1) {
-                        let filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                        let matches = filenameRegex.exec(disposition);
-                        if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
-                    }
 
-                    let downloadLink = window.document.createElement('a'); //製作可點擊字串
-                    let contentTypeHeader = xhr.getResponseHeader("Content-Type"); //檔案型態
-                    downloadLink.href = window.URL.createObjectURL(new Blob([blob], {type: contentTypeHeader})); //製作下載連結
-                    filename = decodeURI(filename);//名稱解碼
-                    downloadLink.download = filename;
-                    document.body.appendChild(downloadLink);
-                    downloadLink.click();
-                    document.body.removeChild(downloadLink);
-                },
-            })
+    <!-- Excel -->
+    <script>
+        $(document).ready(function() {
+            // 匯出 Excel 按鈕
+            $('#exportExcel').on('click', function() {
+                let dropdownmenu3 = document.getElementById('dropdownmenu3');
+                let selectedValue = dropdownmenu3.value;
+
+                let data = {did: selectedValue};
+                console.log(data)
+
+                $.ajax({
+                    url: "{% url 'export_excel' %}",
+                    type: "POST",
+                    data: data,
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function(blob, status, xhr) {
+                        var filename = '';
+                        var contentDisposition = xhr.getResponseHeader('Content-Disposition');
+                        if (contentDisposition && contentDisposition.indexOf('attachment') !== -1) {
+                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                            var matches = filenameRegex.exec(contentDisposition);
+                            if (matches != null && matches[1]) {
+                                filename = decodeURI(matches[1].replace(/['"]/g, ''));
+                            }
+                        }
+
+                        var downloadLink = document.createElement('a');
+                        downloadLink.href = window.URL.createObjectURL(blob);
+                        downloadLink.download = filename || 'download.xlsx';
+                        downloadLink.style.display = 'none';
+                        document.body.appendChild(downloadLink);
+                        downloadLink.click();
+                        document.body.removeChild(downloadLink);
+                    },
+                    error: function(xhr, status, error) {
+                        alert('匯出 Excel 失敗');
+                        console.error(xhr.responseText);
+                    },
+                    contentType: 'application/x-www-form-urlencoded',
+                    processData: true,
+                    cache: false
+                });
+            });
+
+            // 匯入 Excel 按鈕
+            $('#importExcel').on('change', function() {
+                let dropdownmenu3 = document.getElementById('dropdownmenu3');
+                let selectedValue = dropdownmenu3.value;
+
+                let formData = new FormData();
+                formData.append('did', selectedValue);
+                formData.append('excel_file', $('#importExcel')[0].files[0]);
+
+                $.ajax({
+                    url: "{% url 'import_excel' %}",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(data) {
+                        alert('匯入 Excel 成功');
+                        console.log(data);
+                        // 在此處執行其他的操作，例如更新頁面資料等
+                    },
+                    error: function(xhr, status, error) {
+                        alert('匯入 Excel 失敗');
+                        console.error(xhr.responseText);
+                    },
+                });
+            });
         });
     </script>
+
+
 
 {% endblock javascripts %}
