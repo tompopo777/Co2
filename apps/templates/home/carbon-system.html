@@ -13,7 +13,7 @@
 
 {% block content %}
 
-    {% include 'includes/navigation-transparent.html' %}
+    {#    {% include 'includes/navigation-transparent.html' %}#}
 
     <header class="bg-gradient-dark">
         <div class="page-header min-vh-50"
@@ -21,45 +21,60 @@
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
                 <div class="card-body">
-                    <div class="d-flex">
-                        <div class="col-5">
-                            <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
-                            <select class="" id="dropdownmenu1" name="dropdown1name">
-                                <option class="" id="question-subject" value="0" name="" selected>
-                                    <---請選擇類別--->
-                                </option>
-                                <option class="" id="question-subject" value="1">
-                                    直接溫室氣體排放(類別一)
-                                </option>
-                                <option class="" id="question-subject" value="2">
-                                    輸入能源之間接溫室氣體排放(類別二)
-                                </option>
-                                <option class="" id="question-subject" value="3">
-                                    運輸之間接溫室氣體排放(類別三)
-                                </option>
-                                <option class="" id="question-subject" value="4">
-                                    組織使用的產品之間接溫室氣體排放(類別四)
-                                </option>
-                                <option class="" id="question-subject" value="5">
-                                    使用組織產品之間接溫室氣體排放(類別五)
-                                </option>
-                                <option class="" id="question-subject" value="6">
-                                    其他來源之間接溫室氣體排放(類別六)
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-3">
-                            <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
-                            <select class="" id="dropdownmenu2" name="dropdown2name"></select>
-                        </div>
-                        <div class="col-3">
-                            <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
-                            <select class="" id="dropdownmenu3" name="dropdown3name"></select>
-                        </div>
-                            <div class="col-1">
-                                <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex">
+                            <div class="col-5">
+                                <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
+                                {% if dropdown_one %}
+                                    <script>
+                                        DropdownOne(1)
+                                        var a = document.getElementById("dropdown_one")
+                                        console.warn("A", a)
+                                        DropdownOne({{a}})
+                                    </script>
+                                    {{ dropdown_one }}
+                                {% endif %}
+                                <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)">
+                                    <option class="question-subject" value="0" name="" selected>
+                                        <---請選擇類別--->
+                                    </option>
+                                    <option class="question-subject" value="1">
+                                        直接溫室氣體排放(類別一)
+                                    </option>
+                                    <option class="question-subject" value="2">
+                                        輸入能源之間接溫室氣體排放(類別二)
+                                    </option>
+                                    <option class="question-subject" value="3">
+                                        運輸之間接溫室氣體排放(類別三)
+                                    </option>
+                                    <option class="question-subject" value="4">
+                                        組織使用的產品之間接溫室氣體排放(類別四)
+                                    </option>
+                                    <option class="question-subject" value="5">
+                                        使用組織產品之間接溫室氣體排放(類別五)
+                                    </option>
+                                    <option class="question-subject" value="6">
+                                        其他來源之間接溫室氣體排放(類別六)
+                                    </option>
+                                </select>
                             </div>
-                    </div>
+                            <div class="col-3">
+                                <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
+                                <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)"></select>
+                            </div>
+                            <div class="col-3">
+                                <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
+                                <select class="" id="dropdown_three" name="dropdown_three"></select>
+                            </div>
+                            <div class="col-1">
+                                {#                                <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">#}
+                                <button id="submit" class="btn btn-outline-light ms-1" type="submit" name="test" value="">查詢</button>
+                            </div>
+                            {{ dropdown_three }}
+                            {#                            <script>console.log(typeof({{ dropdown_three }}))</script>#}
+                        </div>
+                    </form>
                 </div>
                 <div class="d-flex">
                     <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
@@ -83,6 +98,18 @@
     </header>
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
         <div class="table-responsive">
+            {% for key in single_data_0.keys %}
+                {{ key|title }}
+            {% endfor %}
+            <br>
+            {% for attribute in single_data_0.values %}
+                {{ attribute }}
+            {% endfor %}
+            <br>
+            {% for attribute in single_data_1.values %}
+                {{ attribute }}
+            {% endfor %}
+            {{ company_name }}
             <table class="table table-sm" id="table">
                 <thead class="text-center" id="table_head">
 
@@ -131,38 +158,38 @@
     </div>
 
 
-{#    <div class="modal fade" id="exampleModalCenter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">#}
-{#        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">#}
-{#            <div class="modal-content">#}
-{#                <div class="modal-header">#}
-{#                    <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="exampleModalLongTitle">照片</h5></div>#}
-{#                </div>#}
-{#                <div class="modal-body d-flex justify-content-center">#}
-{#                    <div class="container">#}
-{#                    <table class="table table-striped">#}
-{#                        <thead>#}
-{#                        <tr>#}
-{#                            <th>名稱</th>#}
-{#                            <th>照片</th>#}
-{#                        </tr>#}
-{#                        </thead>#}
-{#                        <tbody>#}
-{#                        {% for img in images %}#}
-{#                            <tr>#}
-{#                                <td>{{ img.title }}</td>#}
-{#                                <td><img src="/{{ BASIC_DIR }}/{{ img.image_path }}" width="120"/></td>#}
-{#                            </tr>#}
-{#                        {% endfor %}#}
-{#                        </tbody>#}
-{#                    </table>#}
-{#                    </div>#}
-{#                </div>#}
-{#                <div class="modal-footer d-flex justify-content-center">#}
-{#                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">返回</button>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
+    {#    <div class="modal fade" id="exampleModalCenter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">#}
+    {#        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">#}
+    {#            <div class="modal-content">#}
+    {#                <div class="modal-header">#}
+    {#                    <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="exampleModalLongTitle">照片</h5></div>#}
+    {#                </div>#}
+    {#                <div class="modal-body d-flex justify-content-center">#}
+    {#                    <div class="container">#}
+    {#                    <table class="table table-striped">#}
+    {#                        <thead>#}
+    {#                        <tr>#}
+    {#                            <th>名稱</th>#}
+    {#                            <th>照片</th>#}
+    {#                        </tr>#}
+    {#                        </thead>#}
+    {#                        <tbody>#}
+    {#                        {% for img in images %}#}
+    {#                            <tr>#}
+    {#                                <td>{{ img.title }}</td>#}
+    {#                                <td><img src="/{{ BASIC_DIR }}/{{ img.image_path }}" width="120"/></td>#}
+    {#                            </tr>#}
+    {#                        {% endfor %}#}
+    {#                        </tbody>#}
+    {#                    </table>#}
+    {#                    </div>#}
+    {#                </div>#}
+    {#                <div class="modal-footer d-flex justify-content-center">#}
+    {#                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">返回</button>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        </div>#}
+    {#    </div>#}
 
 
 {% endblock content %}
@@ -264,12 +291,29 @@
 
     <!--/*類別>>>選擇過程區域*/-->
     <script>
-        var dr1 = document.getElementById("dr1");
-        var dropdownmenu2 = document.getElementById("dropdownmenu2")
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
-        var dropdownmenu1 = document.getElementById("dropdownmenu1")
-        $("#dropdownmenu1").on('change', function () {
-            var currentClass = $(this).val();
+        function isInerger(obj) {
+            return typeof obj === 'number' && obj % 1 === 0;
+        }
+
+        function DropdownOne(param) {
+            console.log("in")
+            var dropdown_two = document.getElementById("dropdown_two")
+            var dropdown_three = document.getElementById("dropdown_three")
+            if (isInerger(param)) {
+                var currentClass = param;
+                console.log("number")
+            } else {
+                console.warn("param", param)
+                currentClass = param.value;
+                console.log("obj")
+            }
+
+            console.warn("param", param)
+            {#var currentClass = param.value;#}
+            {#var currentClass = param.value;#}
+            {#console.warn("currentClass", currentClass)#}
+            {#aa = {{ dropdown_one }} / 3#}
+            console.warn("dropdown_one", {{dropdown_one}})
             $.ajax({
                 url: "{% url 'loadprocess' %}",
                 data: {
@@ -279,25 +323,26 @@
                 dataType: 'json',
                 success: function (data) {
                     {#console.warn(data);#}
-                    dropdownmenu2.innerHTML = ""
-                    dropdownmenu3.innerHTML = ""
+                    dropdown_two.innerHTML = ""
+                    dropdown_three.innerHTML = ""
                     data.forEach((item, index) => {
-                        if (index == 0) {
-                            dropdownmenu2.options.add(new Option('<---請選擇過程區域--->', 0));
+                        if (index === 0) {
+                            dropdown_two.options.add(new Option('<---請選擇過程區域--->', 0));
                         }
-                        dropdownmenu2.options.add(new Option(item.p_name, item.cpid));
+                        dropdown_two.options.add(new Option(item.p_name, item.cpid));
                     })
                 },
             });
-        });
+        }
     </script>
 
     <!--/*選擇過程區域>>>設備*/-->
     <script>
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var dropdown_three = document.getElementById("dropdown_three")
         var table = document.getElementById("table")
-        $("#dropdownmenu2").on('change', function () {
-            var currentProcess = $(this).val();
+
+        function DropdownTwo(param) {
+            var currentProcess = param.value;
             $.ajax({
                 url: "{% url 'loaddevice' %}",
                 data: {
@@ -306,28 +351,29 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (d_data) {
-                    dropdownmenu3.innerHTML = ""
+                    dropdown_three.innerHTML = ""
                     d_data.forEach((item, index) => {
-                        if (index == 0) {
-                            dropdownmenu3.options.add(new Option('<---請選擇設備名稱--->', 0));
+                        if (index === 0) {
+                            dropdown_three.options.add(new Option('<---請選擇設備名稱--->', 0));
                         }
-                        dropdownmenu3.options.add(new Option(item.d_name, item.did));
+                        dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
                 },
 
             });
-        })
+        }
     </script>
 
     <!--/*顯示tableTitle*/-->
     <script>
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var dropdown_three = document.getElementById("dropdown_three")
         //select thead
         var thead = document.getElementById("table").getElementsByTagName('thead')[0]
         var tr = document.getElementById("table").getElementsByTagName('tr')[0]
         var style = document.createElement('style');
         $("#submit").on('click', function () {
-            var deviceId = dropdownmenu3.value;
+            var deviceId = dropdown_three.value;
+            console.log("deviceId", deviceId)
             $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
@@ -342,7 +388,7 @@
                     title.forEach((item, index) => {
                         var i = 0;
                         for (const [key, value] of Object.entries((item))) {
-                            console.warn(">>>>>")
+                            {#console.warn(">>>>>")#}
                             var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
                             var a = thead_row_category.appendChild(tr_c)
                             tr_c.innerHTML = key//"分類"框框填質
@@ -375,12 +421,12 @@
 
     <!--/*顯示table資料*/-->
     <script>
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var dropdown_three = document.getElementById("dropdown_three")
         var tbody = document.getElementById("table").getElementsByTagName('tbody')[0]
         var table_head = document.getElementById("table_head")
         var table_body = document.getElementById("table_body")
         $("#submit").on('click', function () {
-            var deviceId = dropdownmenu3.value;
+            {#var deviceId = dropdown_three.value;#}
             $.ajax({
                 url: "{% url 'loadtable' %}",
                 data: {
@@ -421,9 +467,9 @@
                         {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
                         var cr_id = row.insertCell(-1)//加入"序號"框框
                         cr_id.innerHTML = id
-                        var datasheet_id = dropdownmenu3.value;
+                        var datasheet_id = dropdown_three.value;
                         for (const [key, value] of Object.entries((item))) {
-                            if (key == "id") {
+                            if (key === "id") {
                                 pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端
                                 pencil.setAttribute('id', value)//設定按鈕的id為設備id
                                 trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
@@ -446,11 +492,11 @@
 
     <!--/*新增跳轉*/-->
     <script>
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var dropdown_three = document.getElementById("dropdown_three")
         //add
         var addNewPage = document.getElementById("addNewPage")
         $("#submit").on('click', function () {
-            var deviceId = dropdownmenu3.value;
+            var deviceId = dropdown_three.value;
             {#console.warn("新增跳轉", deviceId);#}
             $.ajax({
                 url: "{% url 'loadadd' %}",
@@ -465,11 +511,11 @@
 
     <!--/*刪除該筆設備*/-->
     <script>
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var dropdown_three = document.getElementById("dropdown_three")
         $(document).on('click', ".trash_btn", function () {
             var single_dataID = this.id;
-            console.warn(single_dataID)
-            var deviceID = dropdownmenu3.value
+            {#console.warn(single_dataID)#}
+            var deviceID = dropdown_three.value
             delete_device(single_dataID, deviceID)
         })
     </script>
@@ -478,7 +524,7 @@
     <script>
         function delete_device(id, datasheet_id) {
             $(document).on('click', ".delete_btn", function () {
-                console.warn("single_dataID", id)
+                {#console.warn("single_dataID", id)#}
                 $.ajax({
                     url: "{% url 'delete_device' %}",
                     data: {
@@ -489,7 +535,7 @@
                     dataType: 'json',
                     success: function (single_dataID) {
                         var single_data = document.getElementById(single_dataID)
-                        console.warn(">>>>>>>>>>>", single_data)
+                        {#console.warn(">>>>>>>>>>>", single_data)#}
                         single_data.closest("tr").remove()
                     }
                 });
@@ -498,11 +544,11 @@
     </script>
 
     <script>
-        var dropdownmenu3 = document.getElementById("dropdownmenu3")
+        var dropdown_three = document.getElementById("dropdown_three")
         $('#exportExcel').on('click', e => {
             // random data
             data = {
-                did: dropdownmenu3.value,
+                did: dropdown_three.value,
             }
             $.ajax({
                 url: "{% url 'csv_view' %}",

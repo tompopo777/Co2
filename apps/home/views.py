@@ -61,10 +61,7 @@ def pages(request):
 def load_process(request):
     if request.method == 'GET':
         current_class = request.GET.get('currentClass', None)
-        # print("000000000000000000000000000000000000000000000000000000")
         if current_class:
-            # all = list(section_one.objects.all())
-            # print("777777777777777777777777777777777777777777777",all)
             data = list(section_one.objects.filter(c_name=current_class).values("p_name", "cpid"))
             return JsonResponse(data, safe=False)
 
@@ -89,15 +86,16 @@ def current_user_group_id(request):
 
 # 抓欄位(
 @login_required(login_url="/login/")
-def load_table(request):
-    if request.method == 'GET':
-        device_id = request.GET.get('deviceId', None)
+def load_table(request, device_id):
+    # if request.method == 'GET':
+    #     device_id = request.GET.get('deviceId', None)
+        device_id = device_id
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
             if a["d_name"] == "柴油發電機":
-                t_data = []
+                context = {}
                 if current_user_group_id(request) == 1:
                     raw_data = emergency_generators.objects.values("id", "years", "device_id",
                                                                    "device_capacity", "position", "department",
@@ -125,11 +123,21 @@ def load_table(request):
                         except:
                             pass
                     # 抓單筆資料
+                    # single_data.update(raw_data[i])
                     single_data.update(raw_data[i])
                     # 將計算後的加油量丟回字典
                     single_data["total"] = consumption_total
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
+                    # t_data.append(single_data)
+                    # context = {"single_data": single_data}
+                    # print("single_data", single_data)
+                    name = "single_data_" + str(i)
+                    context[name] = single_data
+                    # print("context", context)
+                print("context", context)
+                    # return redirect('/carbon_system/', context)
+                # return render(request, "home/carbon-system.html", context)
+                return context
+                # return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
                 t_data = []
                 # 「合計」前後的資料分開
@@ -1112,6 +1120,30 @@ def product_indirect_emissions_add(request):
 @login_required(login_url="/login/")
 def carbon_system(request):
     context = {}
+    if request.method == 'POST':
+        test = request.POST.get("test")
+        print("test:", test)
+        dropdown_one = request.POST.get("dropdown_one")
+        print("dropdown_one:", dropdown_one)
+        dropdown_two = request.POST.get("dropdown_two")
+        print("dropdown_two:", dropdown_two)
+        dropdown_three = request.POST.get("dropdown_three")
+        print("dropdown_three:", dropdown_three)
+        if dropdown_three:
+            # print("in_dropdown_three:")
+            # return load_table(request, dropdown_three)
+            context = load_table(request, dropdown_three)
+        # else:
+            aaa = {
+                "dropdown_one": dropdown_one,
+                "dropdown_two": dropdown_two,
+                "dropdown_three": dropdown_three,
+                # "single_data": "123"
+
+            }
+            context.update(aaa)
+            print("context:", context)
+            return render(request, "home/carbon-system.html", context)
     if request.user.is_authenticated:
         username = request.user.username
         print("username: ", username)
