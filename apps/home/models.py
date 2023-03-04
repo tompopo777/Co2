@@ -662,7 +662,7 @@ class trip_section(models.Model):
     departure = models.CharField(max_length=50)
     transportation = models.CharField(max_length=30)
     distance = models.FloatField()
-    trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE)
+    trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE, related_name='trip_sections')
 
 
 class VOCs_one(models.Model):

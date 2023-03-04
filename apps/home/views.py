@@ -947,14 +947,24 @@ def upstream_transportation_add(request):
             UT_add = UT_add.save(commit=False)
             UT_add.company_id = current_user_group_id(request)
             UT_add.save()
-            stage = request.POST.get('stage')
-            image_path = request.FILES.getlist('file_field')
+            stages = request.POST.getlist('stage')
             last_id = upstream_transportation.objects.values("id").last().get("id")
             table_id = upstream_transportation.objects.values("did").last().get("did")
-            for img in image_path:
-                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
-                print(stage)
-                photo.save()
+            for stage in stages:
+                if stage == "陸運":
+                    image_paths = request.FILES.getlist('file_field1')
+                elif stage == "海運":
+                    image_paths = request.FILES.getlist('file_field2')
+                elif stage == "特殊陸運":
+                    image_paths = request.FILES.getlist('file_field3')
+                elif stage == "空運":
+                    image_paths = request.FILES.getlist('file_field4')
+                else:
+                    image_paths = []
+                for img in image_paths:
+                    photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                    print(stage)
+                    photo.save()
             return redirect('/carbon-system/')
     else:
         UT_add = UTform()
@@ -1467,7 +1477,7 @@ def add_title(request):
             },
 
             "7": {
-                "編輯區": ["刪除", "修改"],
+                "編輯區": ["刪除", "修改", "照片"],
                 "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
@@ -1799,24 +1809,3 @@ def load_chemical(request):
     chemical_add = request.GET.get("add_ch_name")
     chemical_data = list(chemical_table.objects.filter(chemical_add=chemical_add).values("chemical_name", "chemical_formula"))
     return JsonResponse(chemical_data, safe=False)
-
-# def export_data(request):
-#     if request.method == 'POST':
-#         # Get selected option from form
-#         file_format = request.POST['file-format']
-#         emergency_generators_resource = EGResource()
-#         dataset = emergency_generators_resource.export()
-#         if file_format == 'CSV':
-#             response = HttpResponse(dataset.csv, content_type='text/csv')
-#             response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
-#             return response
-#         elif file_format == 'JSON':
-#             response = HttpResponse(dataset.json, content_type='application/json')
-#             response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
-#             return response
-#         elif file_format == 'XLS (Excel)':
-#             response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-#             response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
-#             return response
-#
-#     return redirect('/carbon-system/')
