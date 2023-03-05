@@ -13,7 +13,7 @@
 
 {% block content %}
 
-    {#    {% include 'includes/navigation-transparent.html' %}#}
+        {% include 'includes/navigation-transparent.html' %}
 
     <header class="bg-gradient-dark">
         <div class="page-header min-vh-50"
@@ -26,16 +26,7 @@
                         <div class="d-flex">
                             <div class="col-5">
                                 <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
-                                {% if dropdown_one %}
-                                    <script>
-                                        DropdownOne(1)
-                                        var a = document.getElementById("dropdown_one")
-                                        console.warn("A", a)
-                                        DropdownOne({{a}})
-                                    </script>
-                                    {{ dropdown_one }}
-                                {% endif %}
-                                <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)">
+                                <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this.value)">
                                     <option class="question-subject" value="0" name="" selected>
                                         <---請選擇類別--->
                                     </option>
@@ -68,11 +59,8 @@
                                 <select class="" id="dropdown_three" name="dropdown_three"></select>
                             </div>
                             <div class="col-1">
-                                {#                                <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">#}
                                 <button id="submit" class="btn btn-outline-light ms-1" type="submit" name="test" value="">查詢</button>
                             </div>
-                            {{ dropdown_three }}
-                            {#                            <script>console.log(typeof({{ dropdown_three }}))</script>#}
                         </div>
                     </form>
                 </div>
@@ -82,9 +70,10 @@
                         <div class="mb-4">
                             <div class="d-flex justify-content-center">
                                 {% if "_inquire" not in user.username %}
-                                    <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
-                                        新增
-                                    </a>
+                                    <form action="/new_device/" method="GET" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <button id="submit" class="btn btn-outline-light ms-1" type="submit" name="device_id" value={{ dropdown_three }}>新增</button>
+                                    </form>
                                 {% endif %}
                                 <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
                                     匯出Excel
@@ -103,31 +92,73 @@
             </div>
         </div>
     </header>
-    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
-        <div class="table-responsive">
-            {% for key in single_data_0.keys %}
-                {{ key|title }}
+    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6 table-responsive">
+        <table class="table-sm table-light">
+            <thead class="text-center">
+            <tr class="">
+                <th colspan="">編輯區</th>
+                {% for key in title.keys %}
+                    <th colspan="{{ title.values|length }}">{{ key }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                <th class="table-active">刪除</th>
+                <th class="table-active">修改</th>
+                <th class="table-active">序號</th>
+                {% for array in title.values %}
+                    {% for values in array %}
+                        <td class="">{{ values }}</td>
+                    {% endfor %}
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody class="text-center">
+            {% for single_data in data.values %}
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>{{ forloop.counter }}</th>
+                    {% for values in single_data.values %}
+{#                        {{ values.count }}#}
+                        <th>{{ values }}</th>
+                    {% endfor %}
+                </tr>
             {% endfor %}
-            <br>
-            {% for attribute in single_data_0.values %}
-                {{ attribute }}
-            {% endfor %}
-            <br>
-            {% for attribute in single_data_1.values %}
-                {{ attribute }}
-            {% endfor %}
-            {{ company_name }}
-            <table class="table table-sm" id="table">
-                <thead class="text-center" id="table_head">
 
-                </thead>
-                <tbody class="text-center" id="table_body">
+            </tbody>
+        </table>
 
-                </tbody>
-            </table>
-        </div>
+{#        <div class="table-responsive">#}
+{#            {{ data.values }}#}
+{#            {{ title }}#}
+{#            {{ title.keys }}#}
+{#            {{ title.items }}#}
+{#            <br>#}
+{#            <br>#}
+{#            {% for key in single_data_0.keys %}#}
+{#                {{ key|title }}#}
+{#            {% endfor %}#}
+{#            <br>#}
+{#            {% for attribute in single_data_0.values %}#}
+{#                {{ attribute }}#}
+{#            {% endfor %}#}
+{#            <br>#}
+{#            {% for attribute in single_data_1.values %}#}
+{#                {{ attribute }}#}
+{#            {% endfor %}#}
+{#            {{ company_name }}#}
+{##}
+            {#                <table class="table table-sm" id="table">#}
+            {#                    <thead class="text-center" id="table_head">#}
+            {##}
+            {#                    </thead>#}
+            {#                    <tbody class="text-center" id="table_body">#}
+            {##}
+            {#                    </tbody>#}
+            {#                </table>#}
+{##}
+{#        </div>#}
     </div>
-    {#    <div>#}
     {#                <img src="static/assets/img/bg9.jpg" alt="errro">#}
     {#                <img src="{% static 'static/assets/img/bg9.jpg' %}" alt="errro">#}
     {##}
@@ -173,22 +204,22 @@
                 </div>
                 <div class="modal-body d-flex justify-content-center">
                     <div class="container">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>名稱</th>
-                            <th>照片</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for img in images %}
+                        <table class="table table-striped">
+                            <thead>
                             <tr>
-                                <td>{{ img.title }}</td>
-                                <td><img src="{{ ASSETS_ROOT }}/img/team-1.jpg" alt="My Photo" /></td>
+                                <th>名稱</th>
+                                <th>照片</th>
                             </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            {% for img in images %}
+                                <tr>
+                                    <td>{{ img.title }}</td>
+                                    <td><img src="{{ ASSETS_ROOT }}/img/team-1.jpg" alt="My Photo"/></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
@@ -268,7 +299,6 @@
                         } else {
                             console.error(countUp2.error);
                         }
-
                     }
                     animateComplete = false;
                 }
@@ -298,31 +328,44 @@
         }
     </script>
 
+    <script>
+
+        try {
+            var dropdown_one_val =
+            {{ dropdown_one }}
+            var dropdown_two_val =
+            {{ dropdown_two }}
+            var dropdown_three_val = {{ dropdown_three }}
+                $(document).ready(function () {
+                    var dropdown_one = document.getElementById("dropdown_one")
+                    dropdown_one.value = dropdown_one_val
+                    DropdownOne(dropdown_one_val)
+                    DropdownTwo(dropdown_two_val)
+                })
+        } catch (err) {
+        }
+    </script>
+
     <!--/*類別>>>選擇過程區域*/-->
     <script>
         function isInerger(obj) {
             return typeof obj === 'number' && obj % 1 === 0;
         }
 
+        {#var dropdown_one = document.getElementById("dropdown_one").value#}
+        var dropdown_one = document.getElementById("dropdown_one")
+        var dropdown_two = document.getElementById("dropdown_two")
+
         function DropdownOne(param) {
-            console.log("in")
-            var dropdown_two = document.getElementById("dropdown_two")
-            var dropdown_three = document.getElementById("dropdown_three")
+            console.warn(dropdown_one.value)
+            {#if (dropdown_one){#}
             if (isInerger(param)) {
                 var currentClass = param;
-                console.log("number")
+            } else if (typeof param === 'string') {
+                currentClass = parseInt(param)
             } else {
-                console.warn("param", param)
                 currentClass = param.value;
-                console.log("obj")
             }
-
-            console.warn("param", param)
-            {#var currentClass = param.value;#}
-            {#var currentClass = param.value;#}
-            {#console.warn("currentClass", currentClass)#}
-            {#aa = {{ dropdown_one }} / 3#}
-            console.warn("dropdown_one", {{dropdown_one}})
             $.ajax({
                 url: "{% url 'loadprocess' %}",
                 data: {
@@ -336,10 +379,14 @@
                     dropdown_three.innerHTML = ""
                     data.forEach((item, index) => {
                         if (index === 0) {
-                            dropdown_two.options.add(new Option('<---請選擇過程區域--->', 0));
+                            dropdown_two.options.add(new Option('<---請選擇過程區域--->', '0'));
                         }
                         dropdown_two.options.add(new Option(item.p_name, item.cpid));
                     })
+                    try {
+                        dropdown_two[dropdown_two_val].setAttribute("selected", "")
+                    } catch (err) {
+                    }
                 },
             });
         }
@@ -348,10 +395,13 @@
     <!--/*選擇過程區域>>>設備*/-->
     <script>
         var dropdown_three = document.getElementById("dropdown_three")
-        var table = document.getElementById("table")
 
         function DropdownTwo(param) {
-            var currentProcess = param.value;
+            if (isInerger(param)) {
+                var currentProcess = param;
+            } else {
+                currentProcess = param.value;
+            }
             $.ajax({
                 url: "{% url 'loaddevice' %}",
                 data: {
@@ -363,70 +413,120 @@
                     dropdown_three.innerHTML = ""
                     d_data.forEach((item, index) => {
                         if (index === 0) {
-                            dropdown_three.options.add(new Option('<---請選擇設備名稱--->', 0));
+                            dropdown_three.options.add(new Option('<---請選擇設備名稱--->', '0'));
                         }
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
+                    try {
+                        dropdown_three[dropdown_three_val].setAttribute("selected", "")
+                    } catch (err) {
+                    }
                 },
-
             });
         }
     </script>
 
     <!--/*顯示tableTitle*/-->
-    <script>
-        var dropdown_three = document.getElementById("dropdown_three")
-        //select thead
-        var thead = document.getElementById("table").getElementsByTagName('thead')[0]
-        var tr = document.getElementById("table").getElementsByTagName('tr')[0]
-        var style = document.createElement('style');
-        $("#submit").on('click', function () {
-            var deviceId = dropdown_three.value;
-            console.log("deviceId", deviceId)
-            $.ajax({
-                url: "{% url 'loadtitle' %}",
-                data: {
-                    'deviceId': deviceId
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function (title) {
-                    thead.innerHTML = ""
-                    var thead_row_category = thead.insertRow(-1)//加入"分類"列
-                    var thead_row_name = thead.insertRow(-1)//加入"標題"列
-                    title.forEach((item, index) => {
-                        var i = 0;
-                        for (const [key, value] of Object.entries((item))) {
-                            {#console.warn(">>>>>")#}
-                            var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
-                            var a = thead_row_category.appendChild(tr_c)
-                            tr_c.innerHTML = key//"分類"框框填質
-                            if (i === 0) {
-                                tr_c.setAttribute('class', 'table-dark');
-                            } else if (i % 2 === 0) {
-                                tr_c.setAttribute('class', 'table-light');
-                            } else {
-                                tr_c.setAttribute('class', 'table-secondary');
-                            }
-                            tr_c.setAttribute('style', 'border-color: black')
-                            value.forEach((item, index) => {
-                                var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框
-                                thead_row_name.appendChild(cr_n)
-                                cr_n.innerHTML = item;//"標題"框框填質
-                                if (i === 0) {
-                                    cr_n.setAttribute('class', 'table-active')
-                                    a.colSpan = index + 1//"分類"列第一個框框空間+1，因為"序號"欄位
-                                } else {
-                                    a.colSpan = index + 1//"分類"列第一個框框空間+1
-                                }
-                            })
-                            i++;
-                        }
-                    })
-                },
-            });
-        })
-    </script>
+    {#    <script>#}
+    {#        var dropdown_three = document.getElementById("dropdown_three")#}
+    {#        $(document).ready(function () {#}
+    {#            try {#}
+    {#alert("Hello! I am an alert box!!");#}
+    {#                //select thead#}
+    {#                var thead = document.getElementById("table").getElementsByTagName('thead')[0]#}
+    {#                var tr = document.getElementById("table").getElementsByTagName('tr')[0]#}
+    {#                var style = document.createElement('style');#}
+    {#                thead.innerHTML = ""#}
+    {#                var thead_row_category = thead.insertRow(-1)//加入"分類"列#}
+    {#                var thead_row_name = thead.insertRow(-1)//加入"標題"列#}
+    {#                title.forEach((item, index) => {#}
+    {#                    var i = 0;#}
+    {#                    for (const [key, value] of Object.entries((item))) {#}
+    {#                        console.warn(">>>>>")#}
+    {#                        var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框#}
+    {#                        var a = thead_row_category.appendChild(tr_c)#}
+    {#                        tr_c.innerHTML = key//"分類"框框填質#}
+    {#                        if (i === 0) {#}
+    {#                            tr_c.setAttribute('class', 'table-dark');#}
+    {#                        } else if (i % 2 === 0) {#}
+    {#                            tr_c.setAttribute('class', 'table-light');#}
+    {#                        } else {#}
+    {#                            tr_c.setAttribute('class', 'table-secondary');#}
+    {#                        }#}
+    {#                        tr_c.setAttribute('style', 'border-color: black')#}
+    {#                        value.forEach((item, index) => {#}
+    {#                            var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框#}
+    {#                            thead_row_name.appendChild(cr_n)#}
+    {#                            cr_n.innerHTML = item;//"標題"框框填質#}
+    {#                            if (i === 0) {#}
+    {#                                cr_n.setAttribute('class', 'table-active')#}
+    {#                                a.colSpan = index + 1//"分類"列第一個框框空間+1，因為"序號"欄位#}
+    {#                            } else {#}
+    {#                                a.colSpan = index + 1//"分類"列第一個框框空間+1#}
+    {#                            }#}
+    {#                        })#}
+    {#                        i++;#}
+    {#                    }#}
+    {#                })#}
+    {#            } catch (e) {#}
+    {##}
+    {#            }#}
+    {#        })#}
+    {#    </script>#}
+
+    {#    <script>#}
+    {#        var dropdown_three = document.getElementById("dropdown_three")#}
+    {#        //select thead#}
+    {#        var thead = document.getElementById("table").getElementsByTagName('thead')[0]#}
+    {#        var tr = document.getElementById("table").getElementsByTagName('tr')[0]#}
+    {#        var style = document.createElement('style');#}
+    {#        $("#submit").on('click', function () {#}
+    {#            var deviceId = dropdown_three.value;#}
+    {#            console.log("deviceId", deviceId)#}
+    {#            $.ajax({#}
+    {#                url: "{% url 'loadtitle' %}",#}
+    {#                data: {#}
+    {#                    'deviceId': deviceId#}
+    {#                },#}
+    {#                type: 'GET',#}
+    {#                dataType: 'json',#}
+    {#                success: function (title) {#}
+    {#                    thead.innerHTML = ""#}
+    {#                    var thead_row_category = thead.insertRow(-1)//加入"分類"列#}
+    {#                    var thead_row_name = thead.insertRow(-1)//加入"標題"列#}
+    {#                    title.forEach((item, index) => {#}
+    {#                        var i = 0;#}
+    {#                        for (const [key, value] of Object.entries((item))) {#}
+    {#console.warn(">>>>>")#}
+    {#                            var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框#}
+    {#                            var a = thead_row_category.appendChild(tr_c)#}
+    {#                            tr_c.innerHTML = key//"分類"框框填質#}
+    {#                            if (i === 0) {#}
+    {#                                tr_c.setAttribute('class', 'table-dark');#}
+    {#                            } else if (i % 2 === 0) {#}
+    {#                                tr_c.setAttribute('class', 'table-light');#}
+    {#                            } else {#}
+    {#                                tr_c.setAttribute('class', 'table-secondary');#}
+    {#                            }#}
+    {#                            tr_c.setAttribute('style', 'border-color: black')#}
+    {#                            value.forEach((item, index) => {#}
+    {#                                var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框#}
+    {#                                thead_row_name.appendChild(cr_n)#}
+    {#                                cr_n.innerHTML = item;//"標題"框框填質#}
+    {#                                if (i === 0) {#}
+    {#                                    cr_n.setAttribute('class', 'table-active')#}
+    {#                                    a.colSpan = index + 1//"分類"列第一個框框空間+1，因為"序號"欄位#}
+    {#                                } else {#}
+    {#                                    a.colSpan = index + 1//"分類"列第一個框框空間+1#}
+    {#                                }#}
+    {#                            })#}
+    {#                            i++;#}
+    {#                        }#}
+    {#                    })#}
+    {#                },#}
+    {#            });#}
+    {#        })#}
+    {#    </script>#}
 
     <!--/*顯示table資料*/-->
     <script>
@@ -555,9 +655,9 @@
 
     <!-- Excel -->
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // 匯出 Excel 按鈕
-            $('#exportExcel').on('click', function() {
+            $('#exportExcel').on('click', function () {
                 let dropdownmenu3 = document.getElementById('dropdownmenu3');
                 let selectedValue = dropdownmenu3.value;
 
@@ -571,7 +671,7 @@
                     xhrFields: {
                         responseType: 'blob'
                     },
-                    success: function(blob, status, xhr) {
+                    success: function (blob, status, xhr) {
                         var filename = '';
                         var contentDisposition = xhr.getResponseHeader('Content-Disposition');
                         if (contentDisposition && contentDisposition.indexOf('attachment') !== -1) {
@@ -590,7 +690,7 @@
                         downloadLink.click();
                         document.body.removeChild(downloadLink);
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         alert('匯出 Excel 失敗');
                         console.error(xhr.responseText);
                     },
@@ -601,7 +701,7 @@
             });
 
             // 匯入 Excel 按鈕
-            $('#importExcel').on('change', function() {
+            $('#importExcel').on('change', function () {
                 let dropdownmenu3 = document.getElementById('dropdownmenu3');
                 let selectedValue = dropdownmenu3.value;
 
@@ -615,12 +715,12 @@
                     data: formData,
                     contentType: false,
                     processData: false,
-                    success: function(data) {
+                    success: function (data) {
                         alert('匯入 Excel 成功');
                         console.log(data);
                         // 在此處執行其他的操作，例如更新頁面資料等
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         alert('匯入 Excel 失敗');
                         console.error(xhr.responseText);
                     },
