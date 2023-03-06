@@ -13,7 +13,7 @@
 
 {% block content %}
 
-        {% include 'includes/navigation-transparent.html' %}
+    {% include 'includes/navigation-transparent.html' %}
 
     <header class="bg-gradient-dark">
         <div class="page-header min-vh-50"
@@ -92,62 +92,61 @@
             </div>
         </div>
     </header>
-    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6 table-responsive">
-        <table class="table-sm table-light">
-            <thead class="text-center">
-            <tr class="">
-                <th colspan="">編輯區</th>
-                {% for key in title.keys %}
-                    <th colspan="{{ title.values|length }}">{{ key }}</th>
-                {% endfor %}
-            </tr>
-            <tr>
-                <th class="table-active">刪除</th>
-                <th class="table-active">修改</th>
-                <th class="table-active">序號</th>
-                {% for array in title.values %}
-                    {% for values in array %}
-                        <td class="">{{ values }}</td>
-                    {% endfor %}
-                {% endfor %}
-            </tr>
-            </thead>
-            <tbody class="text-center">
-            {% for single_data in data.values %}
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th>{{ forloop.counter }}</th>
-                    {% for values in single_data.values %}
-{#                        {{ values.count }}#}
-                        <th>{{ values }}</th>
+    {% if request.method == 'POST' %}
+        <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6 table-responsive">
+            <table class="table-sm table-light">
+                <thead class="text-center">
+                <tr class="">
+                    <th colspan="">編輯區</th>
+                    {% for key in title.keys %}
+                        <th colspan="{{ title.values|length }}">{{ key }}</th>
                     {% endfor %}
                 </tr>
-            {% endfor %}
+                <tr>
+                    <th class="table-active">刪除</th>
+                    <th class="table-active">修改</th>
+                    <th class="table-active">序號</th>
+                    {% for array in title.values %}
+                        {% for values in array %}
+                            <td class="">{{ values }}</td>
+                        {% endfor %}
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody class="text-center">
+                {% for single_data in data.values %}
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>{{ forloop.counter }}</th>
+                        {% for values in single_data.values %}
+                            <th>{{ values }}</th>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
 
-            </tbody>
-        </table>
-
-{#        <div class="table-responsive">#}
-{#            {{ data.values }}#}
-{#            {{ title }}#}
-{#            {{ title.keys }}#}
-{#            {{ title.items }}#}
-{#            <br>#}
-{#            <br>#}
-{#            {% for key in single_data_0.keys %}#}
-{#                {{ key|title }}#}
-{#            {% endfor %}#}
-{#            <br>#}
-{#            {% for attribute in single_data_0.values %}#}
-{#                {{ attribute }}#}
-{#            {% endfor %}#}
-{#            <br>#}
-{#            {% for attribute in single_data_1.values %}#}
-{#                {{ attribute }}#}
-{#            {% endfor %}#}
-{#            {{ company_name }}#}
-{##}
+            {#        <div class="table-responsive">#}
+            {#            {{ data.values }}#}
+            {#            {{ title }}#}
+            {#            {{ title.keys }}#}
+            {#            {{ title.items }}#}
+            {#            <br>#}
+            {#            <br>#}
+            {#            {% for key in single_data_0.keys %}#}
+            {#                {{ key|title }}#}
+            {#            {% endfor %}#}
+            {#            <br>#}
+            {#            {% for attribute in single_data_0.values %}#}
+            {#                {{ attribute }}#}
+            {#            {% endfor %}#}
+            {#            <br>#}
+            {#            {% for attribute in single_data_1.values %}#}
+            {#                {{ attribute }}#}
+            {#            {% endfor %}#}
+            {#            {{ company_name }}#}
+            {##}
             {#                <table class="table table-sm" id="table">#}
             {#                    <thead class="text-center" id="table_head">#}
             {##}
@@ -156,9 +155,10 @@
             {##}
             {#                    </tbody>#}
             {#                </table>#}
-{##}
-{#        </div>#}
-    </div>
+            {##}
+            {#        </div>#}
+        </div>
+    {% endif %}
     {#                <img src="static/assets/img/bg9.jpg" alt="errro">#}
     {#                <img src="{% static 'static/assets/img/bg9.jpg' %}" alt="errro">#}
     {##}
@@ -331,10 +331,8 @@
     <script>
 
         try {
-            var dropdown_one_val =
-            {{ dropdown_one }}
-            var dropdown_two_val =
-            {{ dropdown_two }}
+            var dropdown_one_val = {{ dropdown_one }}
+            var dropdown_two_val = {{ dropdown_two }}
             var dropdown_three_val = {{ dropdown_three }}
                 $(document).ready(function () {
                     var dropdown_one = document.getElementById("dropdown_one")
