@@ -61,10 +61,7 @@ def pages(request):
 def load_process(request):
     if request.method == 'GET':
         current_class = request.GET.get('currentClass', None)
-        # print("000000000000000000000000000000000000000000000000000000")
         if current_class:
-            # all = list(section_one.objects.all())
-            # print("777777777777777777777777777777777777777777777",all)
             data = list(section_one.objects.filter(c_name=current_class).values("p_name", "cpid"))
             return JsonResponse(data, safe=False)
 
@@ -89,476 +86,497 @@ def current_user_group_id(request):
 
 # 抓欄位(
 @login_required(login_url="/login/")
-def load_table(request):
-    if request.method == 'GET':
-        device_id = request.GET.get('deviceId', None)
-        t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
-        # print("888888888", t_name)
-        # 從db撈每張表要顯示的值
-        for a in t_name:
-            if a["d_name"] == "柴油發電機":
-                t_data = []
+def load_table(request, device_id):
+    # if request.method == 'GET':
+    #     device_id = request.GET.get('deviceId', None)
+    device_id = device_id
+    t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+    # print("888888888", t_name)
+    # 從db撈每張表要顯示的值
+    context = {}
+    data = {}
+    for a in t_name:
+        if a["d_name"] == "柴油發電機":
+            if current_user_group_id(request) == 1:
+                raw_data = emergency_generators.objects.values("id", "years", "device_id",
+                                                               "device_capacity", "position", "department",
+                                                               "january", "february", "march", "april",
+                                                               "may", "june", "july", "august",
+                                                               "september", "october", "november", "december")
+            else:
+                raw_data = emergency_generators.objects.filter(company_id=current_user_group_id(request)).values("id", "years", "device_id",
+                                                                                                                 "device_capacity", "position", "department",
+                                                                                                                 "january", "february", "march", "april",
+                                                                                                                 "may", "june", "july", "august",
+                                                                                                                 "september", "october", "november", "december")
+            # 計算加油量合計
+            for i in range(raw_data.count()):
+                single_data = {}
+                consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                    raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                    raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
                 if current_user_group_id(request) == 1:
-                    raw_data = emergency_generators.objects.values("id", "years", "device_id",
-                                                                   "device_capacity", "position", "department",
-                                                                   "january", "february", "march", "april",
-                                                                   "may", "june", "july", "august",
-                                                                   "september", "october", "november", "december")
-                else:
-                    raw_data = emergency_generators.objects.filter(company_id=current_user_group_id(request)).values("id", "years", "device_id",
-                                                                                                                     "device_capacity", "position", "department",
-                                                                                                                     "january", "february", "march", "april",
-                                                                                                                     "may", "june", "july", "august",
-                                                                                                                     "september", "october", "november", "december")
-                    # 計算加油量合計
-                for i in range(raw_data.count()):
-                    single_data = {}
-                    consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                                        raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                                        raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    if current_user_group_id(request) == 1:
-                        try:
-                            company_in_group = emergency_generators.objects.values("company_id")
-                            company_number = company_in_group[i].get("company_id")
-                            company_name = django.contrib.auth.models.Group.objects.filter(id=company_number).values("name")
-                            single_data = {'company_name': company_name[0].get("name")}
-                        except:
-                            pass
-                    # 抓單筆資料
-                    single_data.update(raw_data[i])
-                    # 將計算後的加油量丟回字典
-                    single_data["total"] = consumption_total
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "燃燒設備":
-                t_data = []
+                    try:
+                        company_in_group = emergency_generators.objects.values("company_id")
+                        company_number = company_in_group[i].get("company_id")
+                        company_name = django.contrib.auth.models.Group.objects.filter(id=company_number).values("name")
+                        single_data = {'company_name': company_name[0].get("name")}
+                    except:
+                        pass
+                # 抓單筆資料
+                single_data.update(raw_data[i])
+                # 將計算後的加油量丟回字典
+                single_data["total"] = consumption_total
+                name = "single_data_" + str(i)
+                data[name] = single_data
+                context["data"] = data
+            return context
+        elif a["d_name"] == "燃燒設備":
+            context = {}
+            if current_user_group_id(request) == 1:
                 # 「合計」前後的資料分開
                 raw_data = combustion_equipment.objects.values("id", "years", "device_name", "device_id", "fuel_type",
                                                                "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
                                                                "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
                 heat_data = combustion_equipment.objects.values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
                                                                 "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
-                # 計算使用量合計/熱值平均
-                for i in range(raw_data.count()):
-                    Total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
-                                 raw_data[i].get("fuel_may") + raw_data[i].get("fuel_june") + raw_data[i].get("fuel_july") + raw_data[i].get("fuel_august") + \
-                                 raw_data[i].get("fuel_september") + raw_data[i].get("fuel_october") + raw_data[i].get("fuel_november") + raw_data[i].get("fuel_december")
+            else:
+                raw_data = combustion_equipment.objects.filter(company_id=current_user_group_id(request)).values("id", "years", "device_name", "device_id", "fuel_type",
+                                                                                                                 "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
+                                                                                                                 "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
+                heat_data = combustion_equipment.objects.filter(company_id=current_user_group_id(request)).values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
+                                                                                                                  "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
+            # 計算使用量合計/熱值平均
+            for i in range(raw_data.count()):
+                single_data = {}
+                Total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
+                             raw_data[i].get("fuel_may") + raw_data[i].get("fuel_june") + raw_data[i].get("fuel_july") + raw_data[i].get("fuel_august") + \
+                             raw_data[i].get("fuel_september") + raw_data[i].get("fuel_october") + raw_data[i].get("fuel_november") + raw_data[i].get("fuel_december")
 
-                    Total_heat = heat_data[i].get("heat_january") + heat_data[i].get("heat_february") + heat_data[i].get("heat_march") + heat_data[i].get("heat_april") + \
-                                 heat_data[i].get("heat_may") + heat_data[i].get("heat_june") + heat_data[i].get("heat_july") + heat_data[i].get("heat_august") + \
-                                 heat_data[i].get("heat_september") + heat_data[i].get("heat_october") + heat_data[i].get("heat_november") + heat_data[i].get("heat_december")
-                    avg_heat = Total_heat / 12
-                    # print("fuel::::::::::::::::::::::::::::::::::::::::", Total_fuel)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的「合計」丟回字典
-                    single_data["Total_fuel"] = Total_fuel
-                    for j in heat_data[i]:
-                        # 「合計」後的資料(每月熱值)丟回字典
-                        single_data[j] = heat_data[i].get(j)
-                    # 將計算後的「平均熱值」丟回字典
-                    single_data["avg_heat"] = round(avg_heat, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "公務車":
-                t_data = []
-                # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                oil = official_car.objects.values("oil_january", "oil_february", "oil_march", "oil_april",
-                                                  "oil_may", "oil_june", "oil_july", "oil_august",
-                                                  "oil_september", "oil_october", "oil_november", "oil_december")
-                elec = official_car.objects.values("elec_january", "elec_february", "elec_march", "elec_april",
-                                                   "elec_may", "elec_june", "elec_july", "elec_august",
-                                                   "elec_september", "elec_october", "elec_november", "elec_december")
-                km = official_car.objects.values("km_january", "km_february", "km_march", "km_april",
-                                                 "km_may", "km_june", "km_july", "km_august",
-                                                 "km_september", "km_october", "km_november", "km_december")
-                urea_data = official_car.objects.values("urea_january", "urea_february", "urea_march", "urea_april",
-                                                        "urea_may", "urea_june", "urea_july", "urea_august",
-                                                        "urea_september", "urea_october", "urea_november", "urea_december")
-                # 計算耗用量合計
-                for i in range(raw_data.count()):
-                    # print("yes>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", official_car.objects.values("metering_method")[i].get("metering_method"))
-                    if official_car.objects.values("metering_method")[i].get("metering_method") == "油車":
-                        consumption_data = oil
-                    elif official_car.objects.values("metering_method")[i].get("metering_method") == "電動車":
-                        consumption_data = elec
-                    elif official_car.objects.values("metering_method")[i].get("metering_method") == "公里數":
-                        consumption_data = km
+                Total_heat = heat_data[i].get("heat_january") + heat_data[i].get("heat_february") + heat_data[i].get("heat_march") + heat_data[i].get("heat_april") + \
+                             heat_data[i].get("heat_may") + heat_data[i].get("heat_june") + heat_data[i].get("heat_july") + heat_data[i].get("heat_august") + \
+                             heat_data[i].get("heat_september") + heat_data[i].get("heat_october") + heat_data[i].get("heat_november") + heat_data[i].get("heat_december")
+                avg_heat = Total_heat / 12
+                # print("fuel::::::::::::::::::::::::::::::::::::::::", Total_fuel)
+                if current_user_group_id(request) == 1:
+                    try:
+                        company_in_group = combustion_equipment.objects.values("company_id")
+                        company_number = company_in_group[i].get("company_id")
+                        company_name = django.contrib.auth.models.Group.objects.filter(id=company_number).values("name")
+                        # print("company_name", company_name)
+                        single_data = {'company_name': company_name[0].get("name")}
+                    except:
+                        pass
+                # 抓單筆資料
+                single_data.update(raw_data[i])
+                # 將計算後的「合計」丟回字典
+                single_data["Total_fuel"] = Total_fuel
+                single_data.update(heat_data[i])
+                single_data["avg_heat"] = round(avg_heat, 4)
+                name = "single_data_" + str(i)
+                data[name] = single_data
+                context["data"] = data
+            # print("context\n", context)
+            return context
+        elif a["d_name"] == "公務車":
+            t_data = []
+            # 「合計」前後的資料分開抓
+            raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
+            oil = official_car.objects.values("oil_january", "oil_february", "oil_march", "oil_april",
+                                              "oil_may", "oil_june", "oil_july", "oil_august",
+                                              "oil_september", "oil_october", "oil_november", "oil_december")
+            elec = official_car.objects.values("elec_january", "elec_february", "elec_march", "elec_april",
+                                               "elec_may", "elec_june", "elec_july", "elec_august",
+                                               "elec_september", "elec_october", "elec_november", "elec_december")
+            km = official_car.objects.values("km_january", "km_february", "km_march", "km_april",
+                                             "km_may", "km_june", "km_july", "km_august",
+                                             "km_september", "km_october", "km_november", "km_december")
+            urea_data = official_car.objects.values("urea_january", "urea_february", "urea_march", "urea_april",
+                                                    "urea_may", "urea_june", "urea_july", "urea_august",
+                                                    "urea_september", "urea_october", "urea_november", "urea_december")
+            # 計算耗用量合計
+            for i in range(raw_data.count()):
+                # print("yes>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", official_car.objects.values("metering_method")[i].get("metering_method"))
+                if official_car.objects.values("metering_method")[i].get("metering_method") == "油車":
+                    consumption_data = oil
+                elif official_car.objects.values("metering_method")[i].get("metering_method") == "電動車":
+                    consumption_data = elec
+                elif official_car.objects.values("metering_method")[i].get("metering_method") == "公里數":
+                    consumption_data = km
 
-                    single_data = raw_data[i]
-                    consumption_total = 0
-                    for j in consumption_data[i]:
-                        # print("oil:::", consumption_data[i].get(j))
-                        # 「逐一」將資料(耗用量)丟回字典
-                        single_data[j] = consumption_data[i].get(j)
-                        consumption_total += consumption_data[i].get(j)
-                    # print("single_data11111", single_data)
-                    # 將計算後的耗用量丟回字典
-                    single_data["consumption_total"] = consumption_total
-                    urea_total = 0
-                    for k in urea_data[i]:
-                        urea_total += urea_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
+                single_data = raw_data[i]
+                consumption_total = 0
+                for j in consumption_data[i]:
+                    # print("oil:::", consumption_data[i].get(j))
+                    # 「逐一」將資料(耗用量)丟回字典
+                    single_data[j] = consumption_data[i].get(j)
+                    consumption_total += consumption_data[i].get(j)
+                # print("single_data11111", single_data)
+                # 將計算後的耗用量丟回字典
+                single_data["consumption_total"] = consumption_total
+                urea_total = 0
+                for k in urea_data[i]:
+                    urea_total += urea_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
 
-                    if urea_total == 0:
-                        for n in urea_data[i]:
-                            single_data[n] = None  # 「逐一」將資料(尿素)丟回字典
-                        single_data["urea_total"] = None  # 如果沒有(尿素)，設為空值
+                if urea_total == 0:
+                    for n in urea_data[i]:
+                        single_data[n] = None  # 「逐一」將資料(尿素)丟回字典
+                    single_data["urea_total"] = None  # 如果沒有(尿素)，設為空值
+                else:
+                    for e in urea_data[i]:
+                        single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
+                    single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "原物料使用":
+            t_data = list(
+                material.objects.values("id", "years", "material_id", "material_type", "material_name",
+                                        "process_add_name", "chemical_name", "chemical_formula",
+                                        "january", "february", "march", "april",
+                                        "may", "june", "july", "august",
+                                        "september", "october", "november", "december"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "製程添加化學品":
+            t_data = []
+            raw_data = process.objects.values("id", "years", "process_stage", "material_id", "process_add_name",
+                                              "chemical_name", "chemical_formula", "CAS_NO", "burn", "VOCs",
+                                              "january", "february", "march", "april",
+                                              "may", "june", "july", "august",
+                                              "september", "october", "november", "december")
+            unit = process.objects.values("unit")
+            # 計算使用量合計
+            for i in range(raw_data.count()):
+                consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                    raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                    raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                # print("total::::::::::::::::::::::::::::::::::::::::", total)
+
+                single_data = raw_data[i]
+                # 將計算後的使用量丟回字典
+                single_data["total"] = consumption_total
+                # 將單位丟回字典
+                for j in unit[i]:
+                    single_data[j] = unit[i].get(j)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "冰箱清單":
+            t_data = []
+            raw_data = refrigerator.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                   "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                   "effusion_rate")
+            # 取單筆逸散量計算
+            for i in range(raw_data.count()):
+                # 將要運算的值分別撈出(逸散率/填充量)
+                effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["effusion_volume"] = round(effusion_volume, 4)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "冷氣機清單":
+            t_data = []
+            raw_data = airconditioner.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                     "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                     "effusion_rate")
+            # 取單筆逸散量計算
+            for i in range(raw_data.count()):
+                # 將要運算的值分別撈出(逸散率/填充量)
+                effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["effusion_volume"] = round(effusion_volume, 4)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "車輛清單":
+            t_data = []
+            raw_data = vehicle.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                              "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                              "effusion_rate")
+            # 取單筆逸散量計算
+            for i in range(raw_data.count()):
+                # 將要運算的值分別撈出(逸散率/填充量)
+                effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["effusion_volume"] = round(effusion_volume, 4)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "飲水機清單":
+            t_data = []
+            raw_data = water_dispenser.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                      "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                      "effusion_rate")
+            # 取單筆逸散量計算
+            for i in range(raw_data.count()):
+                # 將要運算的值分別撈出(逸散率/填充量)
+                effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["effusion_volume"] = round(effusion_volume, 4)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "冰水機清單":
+            t_data = []
+            raw_data = ice_water_dispenser.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                          "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                          "effusion_rate")
+            # 取單筆逸散量計算
+            for i in range(raw_data.count()):
+                # 將要運算的值分別撈出(逸散率/填充量)
+                effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["effusion_volume"] = round(effusion_volume, 4)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "製冰機清單":
+            t_data = []
+            raw_data = ice_maker.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                "effusion_rate")
+            # 取單筆逸散量計算
+            for i in range(raw_data.count()):
+                # 將要運算的值分別撈出(逸散率/填充量)
+                effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["effusion_volume"] = round(effusion_volume, 4)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "其他設備清單":
+            t_data = []
+            raw_data = other_device.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                   "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                   "effusion_rate")
+            # 取單筆逸散量計算
+            for i in range(raw_data.count()):
+                # 將要運算的值分別撈出(逸散率/填充量)
+                effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["effusion_volume"] = round(effusion_volume, 4)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "滅火器":
+            t_data = list(
+                extinguisher.objects.values("id", "years", "extinguisher_name", "extinguisher_type", "device_id", "position", "extinguisher_vendor",
+                                            "chemical_weight", "inventory", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "人天清冊":
+            t_data = list(
+                personnel_inventory.objects.values("id", "years", "employee_number",
+                                                   "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
+                                                   "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
+                                                   "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
+                                                   "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "委外人員清冊":
+            t_data = list(
+                employee.objects.values("id", "years", "career",
+                                        "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
+                                        "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
+                                        "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
+                                        "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
+                                        "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
+                                        "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "廢水":
+            t_data = list(
+                waste_water.objects.values("id", "years", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
+                                           "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "廢汙泥":
+            t_data = list(
+                waste_sludge.objects.values("id", "years", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
+                                            "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "溶劑、噴霧劑":
+            t_data = []
+            raw_data = solvent_aerosol_emission_sources.objects.values("id", "years", "solvent_name", "solvent_amount", "solvent_amount_unit", "solvent_capacity", "solvent_capacity_unit", "fugitive_recharge")
+            for i in range(raw_data.count()):
+                single_data = raw_data[i]
+                id = raw_data[i].get("id")
+                additive = additive_section.objects.filter(additive_id=id).values("additive_name", "additive_amount", "additive_unit", "additive_ingredient", "additive_ratio")
+                for a in additive:
+                    if additive.count() > 1:
+                        single_data.update(a)
+                        break
                     else:
-                        for e in urea_data[i]:
-                            single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
-                        single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "原物料使用":
-                t_data = list(
-                    material.objects.values("id", "years", "material_id", "material_type", "material_name",
-                                            "process_add_name", "chemical_name", "chemical_formula",
-                                            "january", "february", "march", "april",
-                                            "may", "june", "july", "august",
-                                            "september", "october", "november", "december"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "製程添加化學品":
-                t_data = []
-                raw_data = process.objects.values("id", "years", "process_stage", "material_id", "process_add_name",
-                                                  "chemical_name", "chemical_formula", "CAS_NO", "burn", "VOCs",
+                        single_data.update(a)
+                single_data["count"] = additive.count()
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "用電量":
+            t_data = []
+            # 將要運算的值分別撈出(逸散率/填充量)
+            raw_data = electricity.objects.values("id", "years", "EMI_id", "address",
                                                   "january", "february", "march", "april",
                                                   "may", "june", "july", "august",
                                                   "september", "october", "november", "december")
-                unit = process.objects.values("unit")
-                # 計算使用量合計
-                for i in range(raw_data.count()):
-                    consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                                        raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                                        raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
-
-                    single_data = raw_data[i]
-                    # 將計算後的使用量丟回字典
-                    single_data["total"] = consumption_total
-                    # 將單位丟回字典
-                    for j in unit[i]:
-                        single_data[j] = unit[i].get(j)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "冰箱清單":
-                t_data = []
-                raw_data = refrigerator.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                       "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                       "effusion_rate")
-                # 取單筆逸散量計算
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "冷氣機清單":
-                t_data = []
-                raw_data = airconditioner.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                         "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                         "effusion_rate")
-                # 取單筆逸散量計算
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "車輛清單":
-                t_data = []
-                raw_data = vehicle.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                  "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                  "effusion_rate")
-                # 取單筆逸散量計算
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "飲水機清單":
-                t_data = []
-                raw_data = water_dispenser.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                          "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                          "effusion_rate")
-                # 取單筆逸散量計算
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "冰水機清單":
-                t_data = []
-                raw_data = ice_water_dispenser.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                              "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                              "effusion_rate")
-                # 取單筆逸散量計算
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "製冰機清單":
-                t_data = []
-                raw_data = ice_maker.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                    "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                    "effusion_rate")
-                # 取單筆逸散量計算
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "其他設備清單":
-                t_data = []
-                raw_data = other_device.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                       "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                       "effusion_rate")
-                # 取單筆逸散量計算
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "滅火器":
-                t_data = list(
-                    extinguisher.objects.values("id", "years", "extinguisher_name", "extinguisher_type", "device_id", "position", "extinguisher_vendor",
-                                                "chemical_weight", "inventory", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "人天清冊":
-                t_data = list(
-                    personnel_inventory.objects.values("id", "years", "employee_number",
-                                                       "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
-                                                       "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
-                                                       "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
-                                                       "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "委外人員清冊":
-                t_data = list(
-                    employee.objects.values("id", "years", "career",
-                                            "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
-                                            "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
-                                            "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
-                                            "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
-                                            "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
-                                            "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "廢水":
-                t_data = list(
-                    waste_water.objects.values("id", "years", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
-                                               "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "廢汙泥":
-                t_data = list(
-                    waste_sludge.objects.values("id", "years", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
-                                                "CH4_capture_system_rate", "combustion_equipment_efficiency"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "溶劑、噴霧劑":
-                t_data = []
-                raw_data = solvent_aerosol_emission_sources.objects.values("id", "years", "solvent_name", "solvent_amount", "solvent_amount_unit", "solvent_capacity", "solvent_capacity_unit", "fugitive_recharge")
-                for i in range(raw_data.count()):
-                    single_data = raw_data[i]
-                    id = raw_data[i].get("id")
-                    additive = additive_section.objects.filter(additive_id=id).values("additive_name", "additive_amount", "additive_unit", "additive_ingredient", "additive_ratio")
-                    for a in additive:
-                        if additive.count() > 1:
-                            single_data.update(a)
-                            break
+            # 計算當月用電量
+            for i in range(raw_data.count()):
+                kw_hr = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                        raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                        raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                kkw_hr = kw_hr / 1000
+                # print("kw_hr::::::::::::::::::::::::::::::::::::::::", kw_hr)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["kw_hr"] = kw_hr
+                single_data["kkw_hr"] = kkw_hr
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "上游運輸":
+            t_data = list(
+                upstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
+                                                       "organizational_use_products", "customer", "supplier", "supplier_address",
+                                                       "trade_term", "receiving_address", "delivery_address",
+                                                       "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                       "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                       "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                       "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "下游運輸":
+            t_data = list(
+                downstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
+                                                         "trade_term", "receiving_address", "delivery_address",
+                                                         "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                         "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                         "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                         "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "員工通勤":
+            t_data = []
+            # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
+            pre_data = employee_commute.objects.values("id", "years", "employee_id", "department", "employee_name")
+            post_data = employee_commute.objects.values("city", "township", "address", "commute_distance", "work_days")
+            for i in range(pre_data.count()):
+                single_data = pre_data[i]
+                id = pre_data[i].get("id")
+                transportation = transportation_way.objects.filter(commute=id).values("transportation")
+                if len(transportation) > 1:
+                    transportation_first = transportation_way.objects.filter(commute=id).values("transportation").first()
+                    single_data["transportation"] = transportation_first.get("transportation") + "*"
+                else:
+                    for t in transportation:
+                        single_data["transportation"] = t.get("transportation")
+                for j in post_data[i]:
+                    single_data[j] = post_data[i].get(j)
+                # 計算單筆距離合計
+                total_distance = post_data[i].get("commute_distance") * post_data[i].get("work_days") * 2
+                # print("total_distance::::::::::::::::::::::::::::::::::::::::", total_distance)
+                # 抓單筆資料
+                # 將計算後的逸散量丟回字典
+                single_data["total_distance"] = total_distance
+                # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "員工出差":
+            t_data = []
+            raw_data = employee_business_trip.objects.values("id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
+            for i in range(raw_data.count()):
+                single_data = raw_data[i]
+                id = raw_data[i].get("id")
+                section = trip_section.objects.filter(trip_id=id).values("transportation", "distance")
+                transportation_dic = {"自駕汽車": 0.0, "高鐵": 0.0, "火車(電聯)": 0.0, "火車(柴聯)": 0.0, "計程車": 0.0, "機車": 0.0, "捷運": 0.0, "飛機": 0.0, "船舶": 0.0}
+                for s in section:
+                    way = s.get("transportation")
+                    if way in transportation_dic:
+                        transportation_dic[way] += s.get("distance")
+                    for d in transportation_dic:
+                        if transportation_dic.get(d) == 0:
+                            single_data[d] = None
                         else:
-                            single_data.update(a)
-                    single_data["count"] = additive.count()
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "用電量":
-                t_data = []
-                # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.values("id", "years", "EMI_id", "address",
-                                                      "january", "february", "march", "april",
-                                                      "may", "june", "july", "august",
+                            single_data[d] = round(transportation_dic.get(d), 4)
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "廢棄物":
+            t_data = []
+            raw_data = waste.objects.values("id", "waste_name", "waste_weigh", "waste_date",
+                                            "waste_location", "waste_disposal", "waste_disposal_vendor",
+                                            "transport_type", "transport_fuel", "transport_distance")
+            for i in range(raw_data.count()):
+                # 計算單筆距離合計
+                if (raw_data[i].get("transport_distance") == None):
+                    Tkm = "-"
+                else:
+                    Tkm = raw_data[i].get("waste_weigh") * raw_data[i].get("transport_distance")
+                # print("Tkm::::::::::::::::::::::::::::::::::::::::", Tkm)
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["total_distance"] = Tkm
+                # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
+                t_data.append(single_data)
+            # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "VOCs_1":
+            t_data = list(VOCs_one.objects.values("id", "years", "emission", "concentration_ch4"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "VOCs_2":
+            t_data = list(VOCs_two.objects.values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
+                                                  "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "納管廢水排放量":
+            t_data = []
+            raw_data = pipe_wastewater.objects.values("id", "years", "pipe_id", "address", "factory", "january", "february", "march", "april", "may", "june", "july", "august",
                                                       "september", "october", "november", "december")
-                # 計算當月用電量
-                for i in range(raw_data.count()):
-                    kw_hr = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                            raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                            raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    kkw_hr = kw_hr / 1000
-                    # print("kw_hr::::::::::::::::::::::::::::::::::::::::", kw_hr)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["kw_hr"] = kw_hr
-                    single_data["kkw_hr"] = kkw_hr
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "上游運輸":
-                t_data = list(
-                    upstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
-                                                           "organizational_use_products", "customer", "supplier", "supplier_address",
-                                                           "trade_term", "receiving_address", "delivery_address",
-                                                           "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                           "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                           "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                           "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "下游運輸":
-                t_data = list(
-                    downstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
-                                                             "trade_term", "receiving_address", "delivery_address",
-                                                             "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                             "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                             "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                             "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "員工通勤":
-                t_data = []
-                # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                pre_data = employee_commute.objects.values("id", "years", "employee_id", "department", "employee_name")
-                post_data = employee_commute.objects.values("city", "township", "address", "commute_distance", "work_days")
-                for i in range(pre_data.count()):
-                    single_data = pre_data[i]
-                    id = pre_data[i].get("id")
-                    transportation = transportation_way.objects.filter(commute=id).values("transportation")
-                    if len(transportation) > 1:
-                        transportation_first = transportation_way.objects.filter(commute=id).values("transportation").first()
-                        single_data["transportation"] = transportation_first.get("transportation") + "*"
-                    else:
-                        for t in transportation:
-                            single_data["transportation"] = t.get("transportation")
-                    for j in post_data[i]:
-                        single_data[j] = post_data[i].get(j)
-                    # 計算單筆距離合計
-                    total_distance = post_data[i].get("commute_distance") * post_data[i].get("work_days") * 2
-                    # print("total_distance::::::::::::::::::::::::::::::::::::::::", total_distance)
-                    # 抓單筆資料
-                    # 將計算後的逸散量丟回字典
-                    single_data["total_distance"] = total_distance
-                    # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "員工出差":
-                t_data = []
-                raw_data = employee_business_trip.objects.values("id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
-                for i in range(raw_data.count()):
-                    single_data = raw_data[i]
-                    id = raw_data[i].get("id")
-                    section = trip_section.objects.filter(trip_id=id).values("transportation", "distance")
-                    transportation_dic = {"自駕汽車": 0.0, "高鐵": 0.0, "火車(電聯)": 0.0, "火車(柴聯)": 0.0, "計程車": 0.0, "機車": 0.0, "捷運": 0.0, "飛機": 0.0, "船舶": 0.0}
-                    for s in section:
-                        way = s.get("transportation")
-                        if way in transportation_dic:
-                            transportation_dic[way] += s.get("distance")
-                        for d in transportation_dic:
-                            if transportation_dic.get(d) == 0:
-                                single_data[d] = None
-                            else:
-                                single_data[d] = round(transportation_dic.get(d), 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "廢棄物":
-                t_data = []
-                raw_data = waste.objects.values("id", "waste_name", "waste_weigh", "waste_date",
-                                                "waste_location", "waste_disposal", "waste_disposal_vendor",
-                                                "transport_type", "transport_fuel", "transport_distance")
-                for i in range(raw_data.count()):
-                    # 計算單筆距離合計
-                    if (raw_data[i].get("transport_distance") == None):
-                        Tkm = "-"
-                    else:
-                        Tkm = raw_data[i].get("waste_weigh") * raw_data[i].get("transport_distance")
-                    # print("Tkm::::::::::::::::::::::::::::::::::::::::", Tkm)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["total_distance"] = Tkm
-                    # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
-                    t_data.append(single_data)
-                # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "VOCs_1":
-                t_data = list(VOCs_one.objects.values("id", "years", "emission", "concentration_ch4"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "VOCs_2":
-                t_data = list(VOCs_two.objects.values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
-                                                      "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "納管廢水排放量":
-                t_data = []
-                raw_data = pipe_wastewater.objects.values("id", "years", "pipe_id", "address", "factory", "january", "february", "march", "april", "may", "june", "july", "august",
-                                                          "september", "october", "november", "december")
-                # 計算當月排放量
-                for i in range(raw_data.count()):
-                    Total_Emission = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                                     raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                                     raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["Total_Emission"] = Total_Emission
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "採購原物料":
-                t_data = []
-                raw_data = purchase_material.objects.values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
-                                                            "september", "october", "november", "december")
-                # 計算當月排放量
-                for i in range(raw_data.count()):
-                    Total_Purchase = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                                     raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                                     raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["Total_Purchase"] = Total_Purchase
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "產品間接排放":
-                t_data = []
-                raw_data = product_indirect_emissions.objects.values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
-                                                                     "september", "october", "november", "december")
-                # 計算當月排放量
-                for i in range(raw_data.count()):
-                    Total_Deliver = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
-                                    raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
-                                    raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["Total_Deliver"] = Total_Deliver
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
+            # 計算當月排放量
+            for i in range(raw_data.count()):
+                Total_Emission = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                 raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                 raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["Total_Emission"] = Total_Emission
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "採購原物料":
+            t_data = []
+            raw_data = purchase_material.objects.values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                        "september", "october", "november", "december")
+            # 計算當月排放量
+            for i in range(raw_data.count()):
+                Total_Purchase = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                 raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                 raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["Total_Purchase"] = Total_Purchase
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
+        elif a["d_name"] == "產品間接排放":
+            t_data = []
+            raw_data = product_indirect_emissions.objects.values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                                 "september", "october", "november", "december")
+            # 計算當月排放量
+            for i in range(raw_data.count()):
+                Total_Deliver = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                # 抓單筆資料
+                single_data = raw_data[i]
+                # 將計算後的逸散量丟回字典
+                single_data["Total_Deliver"] = Total_Deliver
+                t_data.append(single_data)
+            return JsonResponse(t_data, safe=False)
 
 
 @login_required(login_url="/login/")
@@ -588,7 +606,7 @@ def combustion_equipment_add(request):
             CE_add = CE_add.save(commit=False)
             CE_add.company_id = current_user_group_id(request)
             CE_add.save()
-            return redirect('/carbon-system/')
+        return carbon_system(request)
     else:
         CE_add = CEform()
     context['CE_add'] = CE_add
@@ -1121,23 +1139,38 @@ def product_indirect_emissions_add(request):
 
 @login_required(login_url="/login/")
 def carbon_system(request):
+    print("carbon_system_____request: ", request)
     context = {}
+    if request.method == 'POST':
+        dropdown_one = request.POST.get("dropdown_one")
+        dropdown_two = request.POST.get("dropdown_two")
+        dropdown_three = request.POST.get("dropdown_three")
+        if dropdown_three:
+            context = load_table(request, dropdown_three)
+            title = add_title(request, dropdown_three)
+            context["title"] = title
+            dropdown = {
+                "dropdown_one": dropdown_one,
+                "dropdown_two": dropdown_two,
+                "dropdown_three": dropdown_three,
+            }
+            context.update(dropdown)
+            print("context:", context)
+            return render(request, "home/carbon-system.html", context)
     if request.user.is_authenticated:
         username = request.user.username
         print("username: ", username)
-    # groups_query = request.user.groups.values("id")
     groups_query = request.user.groups.values("name").first()
-    # print("groups_query: ", groups_query)
+    print("groups_query: ", groups_query)
     context.update(groups_query)
     return render(request, "home/carbon-system.html", context)
 
 
 # 新增轉跳
 @login_required(login_url="/login/")
-def add_page(request, ):
-    global device_function
+def new_device(request):
     if request.method == "GET":
-        device_id = request.GET.get('deviceId')
+        device_id = request.GET.get('device_id')
         # 建立字典
         function_dic = {
             "1": emergency_generators_add(request),
@@ -1172,7 +1205,7 @@ def add_page(request, ):
         }
         if function_dic.get(device_id):
             device_function = function_dic.get(device_id)
-        return device_function
+            return device_function
 
 
 # 編輯轉跳
@@ -1401,371 +1434,385 @@ def delete_device(request):
 
 # 新增title
 @login_required(login_url="/login/")
-def add_title(request):
-    if request.method == 'GET':
-        device_id = request.GET.get('deviceId', None)
-        # 選擇title要顯示的欄位
-        htmlName = {
-            "1": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "設備編號", "容量(𝓁)", "地點", "部門"],
-                "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
-            },
+# def add_title(request):
+def add_title(request, device_id):
+    # if request.method == 'GET':
+    #     device_id = request.GET.get('deviceId', None)
+    #     title = {}
+    device_id = device_id
+    # 選擇title要顯示的欄位
+    htmlName = {
+        "1": {
+            "編輯區": {"刪除", "修改"},
+            "內容": {"序號", "年度", "設備編號", "容量(𝓁)", "地點", "部門"},
+            "加油量(單位:𝓁)": {"一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"}
+        },
 
-            "2": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "名稱", "編號", "燃料種類"],
-                "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
-            },
+        "2": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "名稱", "編號", "燃料種類"],
+            "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+            "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
+        },
 
-            "3": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
-                "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
-            },
+        "3": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
+            "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+            "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+        },
 
-            "4": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "原物料號", "原/物料", "名稱"],
-                "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
-                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
-            },
+        "4": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "原物料號", "原/物料", "名稱"],
+            "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
+            "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+        },
 
-            "5": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒", "VOCs"],
-                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
-            },
-            # 冷媒(6~13)
-            "6": {
-                "編輯區": ["刪除", "修改"],
-                "冰箱清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "5": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒", "VOCs"],
+            "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
+        },
+        # 冷媒(6~13)
+        "6": {
+            "編輯區": ["刪除", "修改"],
+            "冰箱清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "7": {
-                "編輯區": ["刪除", "修改", "照片"],
-                "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "7": {
+            "編輯區": ["刪除", "修改", "照片"],
+            "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "8": {
-                "編輯區": ["刪除", "修改"],
-                "車輛清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "8": {
+            "編輯區": ["刪除", "修改"],
+            "車輛清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "9": {
-                "編輯區": ["刪除", "修改"],
-                "飲水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "9": {
+            "編輯區": ["刪除", "修改"],
+            "飲水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "10": {
-                "編輯區": ["刪除", "修改"],
-                "冰水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "10": {
+            "編輯區": ["刪除", "修改"],
+            "冰水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "11": {
-                "編輯區": ["刪除", "修改"],
-                "製冰機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "11": {
+            "編輯區": ["刪除", "修改"],
+            "製冰機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "12": {
-                "編輯區": ["刪除", "修改"],
-                "其他設備": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "12": {
+            "編輯區": ["刪除", "修改"],
+            "其他設備": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "13": {
-                "編輯區": ["刪除", "修改"],
-                "滅火器清單": ["序號", "年度", "滅火器名稱", "類型", "設備編號", "擺放位置(廠別)", "廠商", "藥劑重量(單位:kg)", "庫存量", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
-            },
+        "13": {
+            "編輯區": ["刪除", "修改"],
+            "滅火器清單": ["序號", "年度", "滅火器名稱", "類型", "設備編號", "擺放位置(廠別)", "廠商", "藥劑重量(單位:kg)", "庫存量", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
+        },
 
-            "14": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "員工總數"],
-                "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
-            },
+        "14": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "員工總數"],
+            "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+        },
 
-            "15": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "人員類別"],
-                "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
-            },
+        "15": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "人員類別"],
+            "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+        },
 
-            "16": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
-            },
+        "16": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+        },
 
-            "17": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
-            },
+        "17": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+        },
 
-            "18": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
-                "溶劑、噴霧劑添加物 (點擊\"修改\"可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
-            },
+        "18": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
+            "溶劑、噴霧劑添加物 (點擊\"修改\"可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
+        },
 
-            "19": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
-            },
+        "19": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+        },
 
-            "20": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
-                "VOCs濃度": ["入口濃度", "出口濃度"],
-                u"CO\u2082排放係數": ["內設值", "自訂值"],
-            },
+        "20": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
+            "VOCs濃度": ["入口濃度", "出口濃度"],
+            u"CO\u2082排放係數": ["內設值", "自訂值"],
+        },
 
-            "21": {
-                "編輯區": ["刪除", "修改"],
-                "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
-            },
+        "21": {
+            "編輯區": ["刪除", "修改"],
+            "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+        },
 
-            "22": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
-                "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
-                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
-            },
+        "22": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+            "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+            "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
+            "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+            "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
+        },
 
-            "23": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
-                "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
-                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
-            },
+        "23": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+            "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+            "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
+            "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+            "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
+        },
 
-            "24": {
-                "編輯區": ["刪除", "修改"],
-                "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
-            },
+        "24": {
+            "編輯區": ["刪除", "修改"],
+            "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
+        },
 
-            # 員工出差
-            "25": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
-                "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
-            },
+        # 員工出差
+        "25": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
+            "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
+        },
 
-            "26": {
-                "編輯區": ["刪除", "修改"],
-                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
-            },
+        "26": {
+            "編輯區": ["刪除", "修改"],
+            "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+        },
 
-            # 納管廢水
-            "27": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "納管編號", "廠別", "地址"],
-                "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
-            },
+        # 納管廢水
+        "27": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "納管編號", "廠別", "地址"],
+            "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+        },
 
-            # 原物料採購
-            "28": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "產品編號", "產品名稱"],
-                "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
-            },
+        # 原物料採購
+        "28": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "產品編號", "產品名稱"],
+            "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+        },
 
-            # 原物料採購
-            "29": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "產品編號", "產品名稱"],
-                "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
-            },
-        }
-        center_htmlName = {
-            "1": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "設備編號", "容量(𝓁)", "地點", "部門"],
-                "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
-            },
+        # 原物料採購
+        "29": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "年度", "產品編號", "產品名稱"],
+            "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+        },
+    }
+    center_htmlName = {
+        "1": {
+            # "編輯區": ["刪除", "修改"],
+            # "內容": ["序號", "公司名稱", "年度", "設備編號", "容量(𝓁)", "地點", "部門"],
+            "內容": ["公司名稱", "序號", "年度", "設備編號", "容量(𝓁)", "地點", "部門"],
+            "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+        },
 
-            "2": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "名稱", "編號", "燃料種類"],
-                "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
-            },
+        "2": {
+            # "編輯區": ["刪除", "修改"],
+            # "內容": ["序號", "公司名稱", "年度", "名稱", "編號", "燃料種類"],
+            "內容": ["公司名稱", "序號", "年度", "名稱", "編號", "燃料種類"],
+            "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+            "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
+        },
 
-            "3": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
-                "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
-            },
+        "3": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["公司名稱", "序號", "年度", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
+            "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+            "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+        },
 
-            "4": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "原物料號", "原/物料", "名稱"],
-                "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
-                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
-            },
+        "4": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "原物料號", "原/物料", "名稱"],
+            "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
+            "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+        },
 
-            "5": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒", "VOCs"],
-                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
-            },
-            # 冷媒(6~13)
-            "6": {
-                "編輯區": ["刪除", "修改"],
-                "冰箱清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "5": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒", "VOCs"],
+            "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
+        },
+        # 冷媒(6~13)
+        "6": {
+            "編輯區": ["刪除", "修改"],
+            "冰箱清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "7": {
-                "編輯區": ["刪除", "修改"],
-                "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "7": {
+            "編輯區": ["刪除", "修改"],
+            "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "8": {
-                "編輯區": ["刪除", "修改"],
-                "車輛清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "8": {
+            "編輯區": ["刪除", "修改"],
+            "車輛清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "9": {
-                "編輯區": ["刪除", "修改"],
-                "飲水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "9": {
+            "編輯區": ["刪除", "修改"],
+            "飲水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "10": {
-                "編輯區": ["刪除", "修改"],
-                "冰水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "10": {
+            "編輯區": ["刪除", "修改"],
+            "冰水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "11": {
-                "編輯區": ["刪除", "修改"],
-                "製冰機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "11": {
+            "編輯區": ["刪除", "修改"],
+            "製冰機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "12": {
-                "編輯區": ["刪除", "修改"],
-                "其他設備": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
-            },
+        "12": {
+            "編輯區": ["刪除", "修改"],
+            "其他設備": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+        },
 
-            "13": {
-                "編輯區": ["刪除", "修改"],
-                "滅火器清單": ["序號", "年度", "滅火器名稱", "類型", "設備編號", "擺放位置(廠別)", "廠商", "藥劑重量(單位:kg)", "庫存量", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
-            },
+        "13": {
+            "編輯區": ["刪除", "修改"],
+            "滅火器清單": ["序號", "年度", "滅火器名稱", "類型", "設備編號", "擺放位置(廠別)", "廠商", "藥劑重量(單位:kg)", "庫存量", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
+        },
 
-            "14": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "員工總數"],
-                "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
-            },
+        "14": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "員工總數"],
+            "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+        },
 
-            "15": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "人員類別"],
-                "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
-            },
+        "15": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "人員類別"],
+            "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+        },
 
-            "16": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
-            },
+        "16": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+        },
 
-            "17": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
-            },
+        "17": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+        },
 
-            "18": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
-                "溶劑、噴霧劑添加物 (點擊\"修改\"可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
-            },
+        "18": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
+            "溶劑、噴霧劑添加物 (點擊\"修改\"可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
+        },
 
-            "19": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
-            },
+        "19": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+        },
 
-            "20": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
-                "VOCs濃度": ["入口濃度", "出口濃度"],
-                u"CO\u2082排放係數": ["內設值", "自訂值"],
-            },
+        "20": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
+            "VOCs濃度": ["入口濃度", "出口濃度"],
+            u"CO\u2082排放係數": ["內設值", "自訂值"],
+        },
 
-            "21": {
-                "編輯區": ["刪除", "修改"],
-                "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
-            },
+        "21": {
+            "編輯區": ["刪除", "修改"],
+            "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+        },
 
-            "22": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
-                "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
-                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
-            },
+        "22": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+            "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+            "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
+            "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+            "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
+        },
 
-            "23": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
-                "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
-                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
-            },
+        "23": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+            "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+            "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
+            "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
+            "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
+        },
 
-            "24": {
-                "編輯區": ["刪除", "修改"],
-                "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
-            },
+        "24": {
+            "編輯區": ["刪除", "修改"],
+            "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
+        },
 
-            # 員工出差
-            "25": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
-                "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
-            },
+        # 員工出差
+        "25": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
+            "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
+        },
 
-            "26": {
-                "編輯區": ["刪除", "修改"],
-                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
-            },
+        "26": {
+            "編輯區": ["刪除", "修改"],
+            "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+        },
 
-            # 納管廢水
-            "27": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "納管編號", "廠別", "地址"],
-                "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
-            },
+        # 納管廢水
+        "27": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "納管編號", "廠別", "地址"],
+            "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+        },
 
-            # 原物料採購
-            "28": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "產品編號", "產品名稱"],
-                "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
-            },
+        # 原物料採購
+        "28": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "產品編號", "產品名稱"],
+            "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+        },
 
-            # 原物料採購
-            "29": {
-                "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "公司名稱", "年度", "產品編號", "產品名稱"],
-                "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
-            },
-        }
-        if current_user_group_id(request) == 1:
-            title = [center_htmlName.get(device_id)]
-        else:
-            title = [htmlName.get(device_id)]
-        return JsonResponse(title, safe=False)
+        # 原物料採購
+        "29": {
+            "編輯區": ["刪除", "修改"],
+            "內容": ["序號", "公司名稱", "年度", "產品編號", "產品名稱"],
+            "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+        },
+    }
+
+    #         dic = {"內容": {"刪除", "修改"},
+    # "內容": {"序號", "年度", "設備編號", "容量(𝓁)", "地點", "部門"},
+    # "加油量(單位:𝓁)": {"一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"}
+    if current_user_group_id(request) == 1:
+        # title = [center_htmlName.get(device_id)]
+        title = center_htmlName.get(device_id)
+    else:
+        title = htmlName.get(device_id)
+        # title["title"] = center_htmlName.get(device_id)
+        # title = [htmlName.get(device_id)]
+    # print("title", title)
+    return title
+    # return JsonResponse(title, safe=False)
 
 
 def chemical_dropdowm(request):
