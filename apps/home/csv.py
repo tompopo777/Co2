@@ -155,18 +155,6 @@ COLUMN_MAPPING = {
         'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
         'prefix': '類別三_'
     },
-    'employee_commute': {
-        'columns': ["business_trip_number", "employee_id", "department", "employee_name", "business_trip_location",
-                    "business_trip_date"],
-        'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
-        'prefix': '類別三_'
-    },
-    'employee_business_trip': {
-        'columns': ["business_trip_number", "employee_id", "department", "employee_name", "business_trip_location",
-                    "business_trip_date", "trip_id"],
-        'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期', '出差行程編號'],
-        'prefix': '類別三_'
-    },
     'waste': {
         'columns': ["business_trip_number", "employee_id", "department", "employee_name", "business_trip_location",
                     "business_trip_date"],
@@ -191,13 +179,23 @@ COLUMN_MAPPING = {
         'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
         'prefix': '類別五_'
     },
+    'employee_business_trip': {
+        'columns': ["id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date"],
+        'column_names': ['出差行程編號', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
+        'prefix': '類別三_'
+    },
     'trip_section': {
-        'columns': ["departure", "transportation", "distance"],
-        'column_names': ['出發地', '交通工具', '距離'],
+        'columns': ["departure", "transportation", "distance", "trip_id"],
+        'column_names': ['出發地', '交通工具', '距離', '出差行程編號'],
+    },
+    'employee_commute': {
+        'columns': ["id", "years", "employee_id", "department", "employee_name", "city", "township", "address", "commute_distance", "work_days"],
+        'column_names': ['員工通勤編號', '年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數'],
+        'prefix': '類別三_'
     },
     'transportation_way': {
-        'columns': ["transportation"],
-        'column_names': ['交通工具'],
+        'columns': ["transportation", "commute"],
+        'column_names': ['交通工具', '員工通勤編號'],
     },
 
 
@@ -205,6 +203,7 @@ COLUMN_MAPPING = {
 }
 
 
+# 匯出功能
 @csrf_exempt
 @require_http_methods(["POST"])
 def export_excel(request):
@@ -229,22 +228,60 @@ def export_excel(request):
         # 將欄位名稱改成中文
         df.columns = column_names
 
-        # 將子表資料加入到主表的Excel檔案中
         if table_name == 'employee_business_trip':
-            trip_columns = COLUMN_MAPPING['trip_section']['columns']
-            trip_column_names = COLUMN_MAPPING['trip_section']['column_names']
-            trip_data = trip_section.objects.all().values(*trip_columns)
-            trip_df = pd.DataFrame(list(trip_data))
-            trip_df.columns = trip_column_names
-            df = pd.merge(df, trip_df, how='outer', on='trip_id')
+            # 取得母表和子表的欄位資訊
+            mother_columns = COLUMN_MAPPING['employee_business_trip']['columns']
+            mother_column_names = COLUMN_MAPPING['employee_business_trip']['column_names']
+            child_columns = COLUMN_MAPPING['trip_section']['columns']
+            child_column_names = COLUMN_MAPPING['trip_section']['column_names']
+
+            # 取得母表和子表的資料
+            mother_data = employee_business_trip.objects.all().values(*mother_columns)
+            child_data = trip_section.objects.all().values(*child_columns)
+
+            # 將母表和子表的資料轉換為 DataFrame
+            mother_df = pd.DataFrame(list(mother_data))
+            child_df = pd.DataFrame(list(child_data))
+
+            # 將欄位名稱改成中文
+            mother_df.columns = mother_column_names
+            child_df.columns = child_column_names
+
+            # 將子表的資料加入到母表的資料中
+            df = pd.merge(mother_df, child_df[['出發地', '交通工具', '距離', '出差行程編號']], on='出差行程編號', how='left')
+
+            # 將子表的欄位名稱加入到匯出的資料中
+            column_names = ['出差行程編號', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期']
+            column_names.extend(['出發地', '交通工具', '距離'])
 
         elif table_name == 'employee_commute':
-            commute_columns = COLUMN_MAPPING['transportation_way']['columns']
-            commute_column_names = COLUMN_MAPPING['transportation_way']['column_names']
-            commute_data = globals()['transportation_way'].objects.all().values(*commute_columns)
-            commute_df = pd.DataFrame(list(commute_data))
-            commute_df.columns = commute_column_names
-            df = pd.merge(df, commute_df, how='outer', on='id')
+            # 取得母表和子表的欄位資訊
+            mother_columns = COLUMN_MAPPING['employee_commute']['columns']
+            mother_column_names = COLUMN_MAPPING['employee_commute']['column_names']
+            child_columns = COLUMN_MAPPING['transportation_way']['columns']
+            child_column_names = COLUMN_MAPPING['transportation_way']['column_names']
+
+            # 取得母表和子表的資料
+            mother_data = employee_commute.objects.all().values(*mother_columns)
+            child_data = transportation_way.objects.all().values(*child_columns)
+
+            # 將母表和子表的資料轉換為 DataFrame
+            mother_df = pd.DataFrame(list(mother_data))
+            child_df = pd.DataFrame(list(child_data))
+
+            # 將欄位名稱改成中文
+            mother_df.columns = mother_column_names
+            child_df.columns = child_column_names
+
+            # 將子表的資料加入到母表的資料中
+            df = pd.merge(mother_df, child_df[['交通工具', '員工通勤編號']], on='員工通勤編號', how='left')
+
+            # 將子表的欄位名稱加入到匯出的資料中
+            column_names = ['員工通勤編號', '年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數']
+            column_names.extend(['交通工具'])
+
+        # 將欄位名稱改成中文
+        df.columns = column_names
 
         # 創建Excel文件
         excel_name = prefix + excel_did[0].d_name + '.xlsx'
@@ -265,6 +302,7 @@ def export_excel(request):
         return render(request, 'home/carbon-system.html')
 
 
+# 匯入功能
 @csrf_exempt
 @require_http_methods(["POST"])
 def import_excel(request):
