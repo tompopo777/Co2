@@ -24,6 +24,12 @@
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
                                     <h3 class="text-white text-primary mb-0">新增 ᅳ 柴油發電機</h3>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="last_year_checkbox">
+                                        <label class="form-check-label" for="last_year_checkbox">
+                                            帶入去年資料
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -50,12 +56,12 @@
                                                     </div>
                                                 </div>
                                             {% else %}
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EG_add.device_id }}
+                                                <div class="col-4">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                        {{ EG_add.device_id }}
+                                                    </div>
                                                 </div>
-                                            </div>
                                             {% endif %}
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
@@ -224,15 +230,13 @@
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
         });
-    </script>
 
-    {#    日期篩選器#}
-    <script>
+        {#    日期篩選器#}
         $("#datepicker").datepicker({
             format: "yyyy",
             viewMode: "years",
@@ -240,6 +244,30 @@
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
+
+        //帶入去年資料
+        var last_year_checkbox = document.getElementById("last_year_checkbox")
+        var now_year = document.getElementById("datepicker").value
+        last_year_checkbox.addEventListener('click', LastYearData);
+
+        function LastYearData() {
+            if (last_year_checkbox.checked === true) {
+                $.ajax({
+                    url: "{% url 'last_year_data' %}",
+                    data: {
+                        'now_year': now_year
+                    },
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (raw_data) {
+                        for (const [key, value] of Object.entries((raw_data))) {
+                            $("#id_" + key).val(value)
+                        }
+                    },
+                });
+            } else {
+            }
+        }
     </script>
 
 {% endblock javascripts %}
