@@ -133,7 +133,7 @@
                                             </button>
                                         </div>
                                         <div class="col-1">
-                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
                                                 取消
                                             </button>
                                         </div>
@@ -161,7 +161,7 @@
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
