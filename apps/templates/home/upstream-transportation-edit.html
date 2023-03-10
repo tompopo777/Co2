@@ -26,9 +26,9 @@
                                     <h3 class="text-white text-primary mb-0">修改 ᅳ 上游運輸</h3>
                                 </div>
                             </div>
-                            <div class="card-body">                               
-                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                            <div class="card-body">
+                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
@@ -364,7 +364,7 @@
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0"
                                                         onclick="history.back()">
                                                     取消
                                                 </button>
@@ -390,6 +390,14 @@
 
 
     <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
         $('#date1').datetimepicker({
             date: null,
             format: 'YYYY-MM-DD',
