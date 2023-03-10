@@ -614,7 +614,7 @@ def official_car_add(request, company_id=None):
         OffCar_add = OFform()
     context['OffCar_add'] = OffCar_add
     context['company_id'] = company_id
-    return render(request, 'home/combustion-equipment.html', context)
+    return render(request, 'home/official-car.html', context)
 
 
 @login_required(login_url="/login/")
