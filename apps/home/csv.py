@@ -7,6 +7,7 @@ from django.shortcuts import render
 from urllib import parse
 from django.contrib import messages
 from openpyxl import load_workbook
+from .views import current_user_group_id
 
 from .models import *
 
@@ -16,7 +17,7 @@ COLUMN_MAPPING = {
         'columns': ['years', 'device_id', 'device_capacity', 'position', 'department',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december', 'message_board'],  # 欄位清單1
-        'column_names': ['ID', '年度', '設備編號', '容量(𝓁)', '地點', '部門', '一月', '二月', '三月', 
+        'column_names': ['年度', '設備編號', '容量(𝓁)', '地點', '部門', '一月', '二月', '三月',
                          '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],  # 欄位中文名稱1
         'prefix': '類別一_'
     },
@@ -324,6 +325,9 @@ def import_excel(request):
             column_names = column_mapping['column_names']
             columns = column_mapping['columns']
 
+            # 取得當前用戶所屬的公司 ID
+            company_id = current_user_group_id(request)
+
             # 讀取Excel中的資料，並存入資料庫中
             for row in sheet.iter_rows(min_row=2):
                 data = {}
@@ -334,6 +338,9 @@ def import_excel(request):
                     if column == "id":
                         continue  # 如果欄位是id，則略過不處理
                     data[column] = cell.value
+
+                # 添加公司 ID 到資料字典
+                data['company_id'] = company_id
 
                 # 將資料存入資料庫
                 your_model_instance = globals()[table_name](**data)
