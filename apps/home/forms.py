@@ -859,7 +859,7 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
 
 AdditiveFormSet = inlineformset_factory(solvent_aerosol_emission_sources, additive_section,
                                         fields=('additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio'), extra=1,
-                                        widgets={'additive_name': forms.TextInput(attrs={'class': 'form-control'}),
+                                        widgets={'additive_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入中文名稱'}),
                                                  'additive_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
                                                  'additive_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("公克", "公克"), ("oz", "oz"))),
                                                  'additive_ingredient': forms.TextInput(attrs={'class': 'form-control'}),
