@@ -28,6 +28,7 @@
                             <div class="card-body">
                                 <form action="/pipe_wastewater_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3 my-3">
                                         <div class="row my-2">
                                             <div class="col-6">

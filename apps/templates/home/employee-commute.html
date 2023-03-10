@@ -29,6 +29,7 @@
                             <div class="card-body">
                                 <form action="/employee_commute_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-4">
                                             <div class="col-4">
