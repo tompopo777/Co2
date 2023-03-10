@@ -25,7 +25,7 @@
                             <div class="card-body">
                                 <form action="/combustion_equipment_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
-{#                                    <input type="hidden" name="device_id" value="{{ device_id }}">#}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">

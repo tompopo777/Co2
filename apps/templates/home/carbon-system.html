@@ -20,72 +20,127 @@
              style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
-                <div class="card-body">
-                    <div class="d-flex">
-                        <div class="col-5">
-                            <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
-                            {#                            <select class="" id="dropdownmenu1" name="dropdown1name">#}
-                            <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)">
-{#                            <select class="" id="dropdown_one" name="dropdown_one">#}
-                                <option class="" id="question-subject" value="0" name="" selected>
-                                    <---請選擇類別--->
-                                </option>
-                                <option class="" id="question-subject" value="1">
-                                    直接溫室氣體排放(類別一)
-                                </option>
-                                <option class="" id="question-subject" value="2">
-                                    輸入能源之間接溫室氣體排放(類別二)
-                                </option>
-                                <option class="" id="question-subject" value="3">
-                                    運輸之間接溫室氣體排放(類別三)
-                                </option>
-                                <option class="" id="question-subject" value="4">
-                                    組織使用的產品之間接溫室氣體排放(類別四)
-                                </option>
-                                <option class="" id="question-subject" value="5">
-                                    使用組織產品之間接溫室氣體排放(類別五)
-                                </option>
-                                <option class="" id="question-subject" value="6">
-                                    其他來源之間接溫室氣體排放(類別六)
-                                </option>
-                            </select>
+                <div class="row">
+                    {% if company_id == 1 %}
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="col-3">
+                                    <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">公司廠別</label>
+                                    <select class="" id="company_dropdown" name="company_dropdown">
+                                        <option class="" id="question-subject" value="0" name="" selected>
+                                            <---請選擇類別--->
+                                        </option>
+                                        {% for company in company_group %}
+                                            <option class="" id="question-subject" value="{{ company.id }}">
+                                                {{ company.name }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
+                                    <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)" disabled>
+                                        <option class="" id="question-subject" value="0" name="" selected>
+                                            <---請選擇類別--->
+                                        </option>
+                                        <option class="" id="question-subject" value="1">
+                                            直接溫室氣體排放(類別一)
+                                        </option>
+                                        <option class="" id="question-subject" value="2">
+                                            輸入能源之間接溫室氣體排放(類別二)
+                                        </option>
+                                        <option class="" id="question-subject" value="3">
+                                            運輸之間接溫室氣體排放(類別三)
+                                        </option>
+                                        <option class="" id="question-subject" value="4">
+                                            組織使用的產品之間接溫室氣體排放(類別四)
+                                        </option>
+                                        <option class="" id="question-subject" value="5">
+                                            使用組織產品之間接溫室氣體排放(類別五)
+                                        </option>
+                                        <option class="" id="question-subject" value="6">
+                                            其他來源之間接溫室氣體排放(類別六)
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
+                                    <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
+                                </div>
+                                <div class="col-3">
+                                    <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
+                                    <select class="" id="dropdown_three" name="dropdown_three" disabled></select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-3">
-                            <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
-                            {#                            <select class="" id="dropdownmenu2" name="dropdown2name"></select>#}
-                            <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)"></select>
-{#                            <select class="" id="dropdown_two" name="dropdown_two"></select>#}
-                        </div>
-                        <div class="col-3">
-                            <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
-                            {#                            <select class="" id="dropdownmenu3" name="dropdown3name"></select>#}
-                            <select class="" id="dropdown_three" name="dropdown_three"></select>
-                        </div>
-                        <div class="col-1">
+                        <div class="d-flex justify-content-center">
                             <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
                         </div>
-                    </div>
-                </div>
-                <div class="d-flex">
-                    <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
-                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-center">
-                                {% if "_inquire" not in user.username %}
-                                    <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
-                                        新增
+                    {% else %}
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="col-5">
+                                    <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
+                                    <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)">
+                                        <option class="" id="question-subject" value="0" name="" selected>
+                                            <---請選擇類別--->
+                                        </option>
+                                        <option class="" id="question-subject" value="1">
+                                            直接溫室氣體排放(類別一)
+                                        </option>
+                                        <option class="" id="question-subject" value="2">
+                                            輸入能源之間接溫室氣體排放(類別二)
+                                        </option>
+                                        <option class="" id="question-subject" value="3">
+                                            運輸之間接溫室氣體排放(類別三)
+                                        </option>
+                                        <option class="" id="question-subject" value="4">
+                                            組織使用的產品之間接溫室氣體排放(類別四)
+                                        </option>
+                                        <option class="" id="question-subject" value="5">
+                                            使用組織產品之間接溫室氣體排放(類別五)
+                                        </option>
+                                        <option class="" id="question-subject" value="6">
+                                            其他來源之間接溫室氣體排放(類別六)
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
+                                    <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)"></select>
+                                </div>
+                                <div class="col-3">
+                                    <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
+                                    <select class="" id="dropdown_three" name="dropdown_three"></select>
+                                </div>
+
+                                <div class="d-flex justify-content-center">
+                                    <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="d-flex">
+                        <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
+                            <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-center">
+                                    {% if "_inquire" not in user.username %}
+                                        <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
+                                            新增
+                                        </a>
+                                    {% endif %}
+                                    <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
+                                        匯出Excel
                                     </a>
-                                {% endif %}
-                                <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
-                                    匯出Excel
-                                </a>
-                                <form method="post" enctype="multipart/form-data">
-                                    {% csrf_token %}
-                                    <label for="importExcel" class="btn btn-outline-light me-1">
-                                        匯入Excel
-                                    </label>
-                                    <input type="file" id="importExcel" name="importExcel" style="display:none">
-                                </form>
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <label for="importExcel" class="btn btn-outline-light me-1">
+                                            匯入Excel
+                                        </label>
+                                        <input type="file" id="importExcel" name="importExcel" style="display:none">
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -95,11 +150,11 @@
     </header>
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
         <div class="table-responsive">
-{#            {% if request.session.dropdown_one %}#}
-{#                {{ request.session.dropdown_one }}#}
-{#                {{ request.session.dropdown_two }}#}
-{#                {{ request.session.dropdown_three }}#}
-{#            {% endif %}#}
+            {#            {% if request.session.dropdown_one %}#}
+            {#                {{ request.session.dropdown_one }}#}
+            {#                {{ request.session.dropdown_two }}#}
+            {#                {{ request.session.dropdown_three }}#}
+            {#            {% endif %}#}
             <table class="table table-sm" id="table">
                 <thead class="text-center" id="table_head">
 
@@ -264,6 +319,13 @@
     </script>
 
     <script>
+        // if identity is not IAI dropdown can work
+        $("#company_dropdown").change(function () {
+            $("#dropdown_one").removeAttr("disabled");
+            $("#dropdown_two").removeAttr("disabled");
+            $("#dropdown_three").removeAttr("disabled");
+        });
+
         // dropdown_one預選(只執行一次)
         var dropdown_one_selected = (function () {
             var executed = false;
@@ -318,6 +380,7 @@
 
         // 類別>>>選擇過程區域
         {#dropdown_one.addEventListener('change', DropdownOne(this));#}
+
         function DropdownOne(param) {
             {#console.log("ok")#}
             {#console.log("type", typeof param)#}
@@ -347,6 +410,8 @@
                     })
                     /*
                     console.log("ok")
+
+
                     {#if (typeof {{ request.session.dropdown_two }} != "undefined") {#}
                         dropdown_two_selected()
                     }
@@ -384,6 +449,9 @@
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
                     /*
+
+
+
                     {#if (typeof '{{ request.session.dropdown_three }}' != "undefined") {#}
                         dropdown_three_selected()
                     }
@@ -395,13 +463,20 @@
             });
         }
 
-    // 顯示tableTitle
-        //select thead
+        // 顯示table資料
+        var dropdown_one = document.getElementById("dropdown_one")
+        var dropdown_two = document.getElementById("dropdown_two")
+        var tbody = document.getElementById("table").getElementsByTagName('tbody')[0]
+        var table_head = document.getElementById("table_head")
+        var table_body = document.getElementById("table_body")
+
         var thead = document.getElementById("table").getElementsByTagName('thead')[0]
         var tr = document.getElementById("table").getElementsByTagName('tr')[0]
         var style = document.createElement('style');
         $("#submit").on('click', function () {
             var deviceId = dropdown_three.value;
+            var company_value = $("#company_dropdown").val()
+            //載入標題
             $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
@@ -444,82 +519,75 @@
                     })
                 },
             });
-        })
-    </script>
 
-    <!--/*顯示table資料*/-->
-    <script>
-    // 顯示table資料
-        var dropdown_one = document.getElementById("dropdown_one")
-        var dropdown_two = document.getElementById("dropdown_two")
-        var dropdown_three = document.getElementById("dropdown_three")
-        var tbody = document.getElementById("table").getElementsByTagName('tbody')[0]
-        var table_head = document.getElementById("table_head")
-        var table_body = document.getElementById("table_body")
-        $("#submit").on('click', function () {
-            var deviceId = dropdown_three.value;
-            $.ajax({
-                url: "{% url 'loadtable' %}",
-                data: {
-                    'deviceId': deviceId
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function (t_data,) {
-                    {#console.warn(t_data);#}
-                    tbody.innerHTML = ""
-                    var id = 1;
-                    t_data.forEach((item, index) => {
-                        var trash = document.createElement('a')//加入"trash button"tag
-                        var trash_i_tag = document.createElement('i')//加入"i"tag
-                        var pencil = document.createElement('a')//加入"pencil button"tag
-                        var pencil_i_tag = document.createElement('i')//加入"i"tag
-                        {#var pic = document.createElement('a')//加入"picture button"tag#}
-                        {#var pic_i_tag = document.createElement('i')//加入"i"tag#}
-                        var row = tbody.insertRow(-1)//加入"第一筆資料"列
-                        var delete_squ = row.insertCell(-1)//加入刪除鈕框框
-                        var edit_squ = row.insertCell(-1)//加入編輯鈕框框
-                        {#var pic_squ = row.insertCell(-1)//加入照片鈕框框#}
-                        delete_squ.appendChild(trash)
-                        edit_squ.appendChild(pencil)
-                        {#pic_squ.appendChild(pic)#}
-                        trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
-                        trash.setAttribute('data-bs-toggle', 'modal')
-                        trash.setAttribute('data-bs-target', '#staticBackdrop')
-                        trash.appendChild(trash_i_tag)
-                        pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
-                        pencil.appendChild(pencil_i_tag)
-                        {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
-                        {#pic.setAttribute('data-bs-toggle', 'modal')#}
-                        {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
-                        {#pic.appendChild(pic_i_tag)#}
-                        trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
-                        pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
-                        {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
-                        var cr_id = row.insertCell(-1)//加入"序號"框框
-                        cr_id.innerHTML = id
-                        var datasheet_id = dropdown_three.value;
-                        var dropdown_one = $("#dropdown_one").val()
-                        var dropdown_two = $("#dropdown_two").val()
-                        for (const [key, value] of Object.entries((item))) {
-                            if (key === "id") {
-                                pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value + '&dropdown_one=' + dropdown_one + '&dropdown_two=' + dropdown_two)//將資料表id、選種資料id加到href裡，一起丟到後端
-                                pencil.setAttribute('id', value)//設定按鈕的id為設備id
-                                trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
-                                {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
-                                continue;
+            //載入資料
+            if (company_value !== 0) {
+                $.ajax({
+                    url: "{% url 'loadtable' %}",
+                    data: {
+                        'deviceId': deviceId,
+                        'company_value': company_value
+                    },
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (t_data,) {
+                        {#console.warn(t_data);#}
+                        tbody.innerHTML = ""
+                        var id = 1;
+                        t_data.forEach((item, index) => {
+                            var trash = document.createElement('a')//加入"trash button"tag
+                            var trash_i_tag = document.createElement('i')//加入"i"tag
+                            var pencil = document.createElement('a')//加入"pencil button"tag
+                            var pencil_i_tag = document.createElement('i')//加入"i"tag
+                            {#var pic = document.createElement('a')//加入"picture button"tag#}
+                            {#var pic_i_tag = document.createElement('i')//加入"i"tag#}
+                            var row = tbody.insertRow(-1)//加入"第一筆資料"列
+                            var delete_squ = row.insertCell(-1)//加入刪除鈕框框
+                            var edit_squ = row.insertCell(-1)//加入編輯鈕框框
+                            {#var pic_squ = row.insertCell(-1)//加入照片鈕框框#}
+                            delete_squ.appendChild(trash)
+                            edit_squ.appendChild(pencil)
+                            {#pic_squ.appendChild(pic)#}
+                            trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
+                            trash.setAttribute('data-bs-toggle', 'modal')
+                            trash.setAttribute('data-bs-target', '#staticBackdrop')
+                            trash.appendChild(trash_i_tag)
+                            pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
+                            pencil.appendChild(pencil_i_tag)
+                            {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
+                            {#pic.setAttribute('data-bs-toggle', 'modal')#}
+                            {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
+                            {#pic.appendChild(pic_i_tag)#}
+                            trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
+                            pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
+                            {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
+                            var cr_id = row.insertCell(-1)//加入"序號"框框
+                            cr_id.innerHTML = id
+                            var datasheet_id = dropdown_three.value;
+                            var dropdown_one = $("#dropdown_one").val()
+                            var dropdown_two = $("#dropdown_two").val()
+                            for (const [key, value] of Object.entries((item))) {
+                                if (key === "id") {
+                                    pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value + '&dropdown_one=' + dropdown_one + '&dropdown_two=' + dropdown_two)//將資料表id、選種資料id加到href裡，一起丟到後端
+                                    pencil.setAttribute('id', value)//設定按鈕的id為設備id
+                                    trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
+                                    {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
+                                    continue;
+                                }
+                                var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
+                                nuLL = value
+                                if (value == null) {
+                                    nuLL = '-'
+                                }
+                                cr_c2.innerHTML = nuLL
                             }
-                            var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
-                            nuLL = value
-                            if (value == null) {
-                                nuLL = '-'
-                            }
-                            cr_c2.innerHTML = nuLL
-                        }
-                        id++;
-                    })
-                },
-            });
+                            id++;
+                        })
+                    },
+                });
+            } else {
+                alert("請先選擇公司名稱")
+            }
         })
     </script>
 
@@ -530,11 +598,13 @@
         var addNewPage = document.getElementById("addNewPage")
         $("#submit").on('click', function () {
             var deviceId = dropdown_three.value;
+            var company_value = $("#company_dropdown").val()
             {#console.warn("新增跳轉", deviceId);#}
             $.ajax({
                 url: "{% url 'loadadd' %}",
                 data: {
-                    'deviceId': deviceId
+                    'deviceId': deviceId,
+                    'company_value': company_value
                 },
                 type: 'GET',
                 dataType: 'json',

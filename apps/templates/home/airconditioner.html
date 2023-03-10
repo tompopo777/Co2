@@ -28,7 +28,8 @@
                             </div>
                             <div class="card-body">
                                 <form action="/airconditioner_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                    {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
@@ -114,17 +115,17 @@
                                                 {{ AC_add.image_note }}
                                             </div>
                                         </div>
-{#                                        <p class="mt-5 text-center">#}
-{#                                            <label for="attachment">#}
-{#                                                <a class="btn btn-primary text-light" role="button" aria-disabled="false">+ Add</a>#}
-{#                                            </label>#}
-{#                                            <input type="file" name="file_field" accept=".pdf" id="attachment" style="visibility: hidden; position: absolute;" multiple/>#}
-{#                                        </p>#}
-{#                                        <p id="files-area">#}
-{#                                            <span id="filesList">#}
-{#                                                <span id="files-names"></span>#}
-{#                                            </span>#}
-{#                                        </p>#}
+                                        {#                                        <p class="mt-5 text-center">#}
+                                        {#                                            <label for="attachment">#}
+                                        {#                                                <a class="btn btn-primary text-light" role="button" aria-disabled="false">+ Add</a>#}
+                                        {#                                            </label>#}
+                                        {#                                            <input type="file" name="file_field" accept=".pdf" id="attachment" style="visibility: hidden; position: absolute;" multiple/>#}
+                                        {#                                        </p>#}
+                                        {#                                        <p id="files-area">#}
+                                        {#                                            <span id="filesList">#}
+                                        {#                                                <span id="files-names"></span>#}
+                                        {#                                            </span>#}
+                                        {#                                        </p>#}
                                     </div>
                                     <div class="d-flex">
                                         <div class="ps-md-2 align-self-center">
@@ -203,10 +204,10 @@
     {#    照片顯示檔名+可刪除#}
     <script>
         const dt = new DataTransfer(); // Permet de manipuler les fichiers de l'input file
-        $("#attachment").on('change', function(e){
-            for(var i = 0; i < this.files.length; i++){
+        $("#attachment").on('change', function (e) {
+            for (var i = 0; i < this.files.length; i++) {
                 let fileBloc = $('<span/>', {class: 'file-block'}),
-                     fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
                 fileBloc.append('<span class="file-delete"><span>+</span></span>')
                     .append(fileName);
                 $("#filesList > #files-names").append(fileBloc);
@@ -219,13 +220,13 @@
             this.files = dt.files;
 
             // EventListener pour le bouton de suppression créé
-            $('span.file-delete').click(function(){
+            $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
                 // Supprimer l'affichage du nom de fichier
                 $(this).parent().remove();
-                for(let i = 0; i < dt.items.length; i++){
+                for (let i = 0; i < dt.items.length; i++) {
                     // Correspondance du fichier et du nom
-                    if(name === dt.items[i].getAsFile().name){
+                    if (name === dt.items[i].getAsFile().name) {
                         // Suppression du fichier dans l'objet DataTransfer
                         dt.items.remove(i);
                     }

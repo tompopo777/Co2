@@ -28,7 +28,8 @@
                             </div>
                             <div class="card-body">
                                 <form action="/vehicle_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                    {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
@@ -170,7 +171,7 @@
         });
     </script>
 
-        {#    日期篩選器#}
+    {#    日期篩選器#}
     <script>
         $("#datepicker").datepicker({
             format: "yyyy",

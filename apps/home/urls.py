@@ -54,7 +54,6 @@ urlpatterns = [
     path("edit_device/", views.edit_device, name='loadedit'),
     path("chemical_dropdowm/", views.chemical_dropdowm, name='chemical_dropdowm'),
     path("loadchemical/", views.load_chemical, name='loadchemical'),
-    path("loadlastyeardata/", views.load_year_data, name='last_year_data'),
     # Excel
     path("export_excel/", csv.export_excel, name='export_excel'),
     path('import_excel/', csv.import_excel, name='import_excel'),

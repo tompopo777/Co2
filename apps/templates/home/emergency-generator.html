@@ -24,17 +24,12 @@
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
                                     <h3 class="text-white text-primary mb-0">新增 ᅳ 柴油發電機</h3>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="last_year_checkbox">
-                                        <label class="form-check-label" for="last_year_checkbox">
-                                            帶入去年資料
-                                        </label>
-                                    </div>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <form action="/emergency_generators_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
@@ -244,30 +239,6 @@
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
-
-        //帶入去年資料
-        var last_year_checkbox = document.getElementById("last_year_checkbox")
-        var now_year = document.getElementById("datepicker").value
-        last_year_checkbox.addEventListener('click', LastYearData);
-
-        function LastYearData() {
-            if (last_year_checkbox.checked === true) {
-                $.ajax({
-                    url: "{% url 'last_year_data' %}",
-                    data: {
-                        'now_year': now_year
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (raw_data) {
-                        for (const [key, value] of Object.entries((raw_data))) {
-                            $("#id_" + key).val(value)
-                        }
-                    },
-                });
-            } else {
-            }
-        }
     </script>
 
 {% endblock javascripts %}
