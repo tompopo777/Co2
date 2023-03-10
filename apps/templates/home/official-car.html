@@ -66,9 +66,11 @@
                                         </div>
                                         <div class="accordion" id="accordionExample">
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" type="radio" name="metering_method" id="radio" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" value="油車">
-                                                <label class="form-check-label" for="radio">油車{{ metering_method }}</label>
-                                                </input>
+                                                <h2 class="accordion-header" id="headingOne">
+                                                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                     {{ OffCar_add.metering_method.0 }}
+                                                   </button>
+                                                </h2>
                                                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <div class="d-flex flex-nowrap">
@@ -101,62 +103,62 @@
                                                                 </th>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_january }}
+                                                                        {{ OffCar_add.january }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_february }}
+                                                                        {{ OffCar_add.february }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_march }}
+                                                                        {{ OffCar_add.march }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_april }}
+                                                                        {{ OffCar_add.april }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_may }}
+                                                                        {{ OffCar_add.may }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_june }}
+                                                                        {{ OffCar_add.june }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_july }}
+                                                                        {{ OffCar_add.july }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_august }}
+                                                                        {{ OffCar_add.august }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_september }}
+                                                                        {{ OffCar_add.september }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_october }}
+                                                                        {{ OffCar_add.october }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_november }}
+                                                                        {{ OffCar_add.november }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.oil_december }}
+                                                                        {{ OffCar_add.december }}
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -231,10 +233,13 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" id="radio2" type="radio" name="metering_method" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-checked="true" aria-expanded="false" aria-controls="collapseTwo" value="電動車">
-                                                <label class="form-check-label" for="radio2">電動車{{ metering_method }}</label>
-                                                </input>
+                                                <h2 class="accordion-header" id="headingTwo">
+                                                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                     {{ OffCar_add.metering_method.1 }}
+                                                   </button>
+                                                </h2>
                                                 <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <div class="d-flex flex-nowrap">
@@ -263,62 +268,62 @@
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_january }}
+                                                                        {{ OffCar_add.january }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_february }}
+                                                                        {{ OffCar_add.february }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_march }}
+                                                                        {{ OffCar_add.march }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_april }}
+                                                                        {{ OffCar_add.april }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_may }}
+                                                                        {{ OffCar_add.may }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_june }}
+                                                                        {{ OffCar_add.june }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_july }}
+                                                                        {{ OffCar_add.july }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_august }}
+                                                                        {{ OffCar_add.august }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_september }}
+                                                                        {{ OffCar_add.september }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_october }}
+                                                                        {{ OffCar_add.october }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_november }}
+                                                                        {{ OffCar_add.november }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.elec_december }}
+                                                                        {{ OffCar_add.december }}
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -327,10 +332,13 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" id="radio3" type="radio" name="metering_method" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" value="公里數">
-                                                <label class="form-check-label" for="radio3">公里數{{ metering_method }}</label>
-                                                </input>
+                                                <h2 class="accordion-header" id="headingThree">
+                                                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                     {{ OffCar_add.metering_method.2 }}
+                                                   </button>
+                                                </h2>
                                                 <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <div class="d-flex flex-nowrap">
@@ -359,62 +367,62 @@
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_january }}
+                                                                        {{ OffCar_add.january }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_february }}
+                                                                        {{ OffCar_add.february }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_march }}
+                                                                        {{ OffCar_add.march }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_april }}
+                                                                        {{ OffCar_add.april }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_may }}
+                                                                        {{ OffCar_add.may }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_june }}
+                                                                        {{ OffCar_add.june }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_july }}
+                                                                        {{ OffCar_add.july }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_august }}
+                                                                        {{ OffCar_add.august }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_september }}
+                                                                        {{ OffCar_add.september }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_october }}
+                                                                        {{ OffCar_add.october }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_november }}
+                                                                        {{ OffCar_add.november }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.km_december }}
+                                                                        {{ OffCar_add.december }}
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -486,14 +494,14 @@
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
         });
     </script>
 
-    {#    日期篩選器#}
+    {#    年分篩選器#}
     <script>
         $("#datepicker").datepicker({
             format: "yyyy",
@@ -504,4 +512,6 @@
         }).datepicker("setDate", 'now');
     </script>
 
+
 {% endblock javascripts %}
+

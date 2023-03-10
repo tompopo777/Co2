@@ -95,6 +95,7 @@ def current_user_group_id(request):
 # 抓欄位(
 @login_required(login_url="/login/")
 def load_table(request):
+    global consumption_data
     if request.method == 'GET':
         device_id = request.GET.get('deviceId', None)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
@@ -169,15 +170,7 @@ def load_table(request):
                 t_data = []
                 # 「合計」前後的資料分開抓
                 raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                oil = official_car.objects.values("oil_january", "oil_february", "oil_march", "oil_april",
-                                                  "oil_may", "oil_june", "oil_july", "oil_august",
-                                                  "oil_september", "oil_october", "oil_november", "oil_december")
-                elec = official_car.objects.values("elec_january", "elec_february", "elec_march", "elec_april",
-                                                   "elec_may", "elec_june", "elec_july", "elec_august",
-                                                   "elec_september", "elec_october", "elec_november", "elec_december")
-                km = official_car.objects.values("km_january", "km_february", "km_march", "km_april",
-                                                 "km_may", "km_june", "km_july", "km_august",
-                                                 "km_september", "km_october", "km_november", "km_december")
+                metering_data = official_car.objects.values("january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december")
                 urea_data = official_car.objects.values("urea_january", "urea_february", "urea_march", "urea_april",
                                                         "urea_may", "urea_june", "urea_july", "urea_august",
                                                         "urea_september", "urea_october", "urea_november", "urea_december")
@@ -607,13 +600,13 @@ def official_car_add(request):
     if request.method == "POST":
         if OffCar_add.is_valid():
             OffCar_add = OffCar_add.save(commit=False)
-            OffCar_add.company_id = current_user_group_id()
+            OffCar_add.company_id = current_user_group_id(request)
             OffCar_add.save()
             return redirect('/carbon-system/')
     else:
         OffCar_add = OFform()
     context['OffCar_add'] = OffCar_add
-    return render(request, 'home/combustion-equipment.html', context)
+    return render(request, 'home/official-car.html', context)
 
 
 @login_required(login_url="/login/")
