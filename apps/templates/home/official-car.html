@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/official_car_add/" method="POST" enctype="multipart/form-data">
+                                <form action="/official_car_add/" method="POST" enctype="multipart/form-data" id="official-car">
                                     {% csrf_token %}
                                     <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
@@ -68,9 +68,9 @@
                                         <div class="accordion" id="accordionExample">
                                             <div class="form-check accordion-item typeSelected ps-1">
                                                 <h2 class="accordion-header" id="headingOne">
-                                                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                                     {{ OffCar_add.metering_method.0 }}
-                                                   </button>
+                                                    <button class="accordion-button" type="button" id="oil" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                        {{ OffCar_add.metering_method.0 }}
+                                                    </button>
                                                 </h2>
                                                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
@@ -79,7 +79,7 @@
                                                                 加油量(單位：公升) <span style="color:red; font-size:16px;">* </span>
                                                             </h5>
                                                         </div>
-                                                        <table class="table">
+                                                        <table class="table oil">
                                                             <thead>
                                                             <tr>
                                                                 <th></th>
@@ -169,66 +169,65 @@
                                                                 </th>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_january }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_february }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_march }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_april }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_may }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_june }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_july }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_august }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_september }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_october }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_november }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.urea_december }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <tr></tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -237,9 +236,9 @@
 
                                             <div class="form-check accordion-item typeSelected ps-1">
                                                 <h2 class="accordion-header" id="headingTwo">
-                                                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                     {{ OffCar_add.metering_method.1 }}
-                                                   </button>
+                                                    <button class="accordion-button" type="button" id="electric" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                        {{ OffCar_add.metering_method.1 }}
+                                                    </button>
                                                 </h2>
                                                 <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
@@ -248,7 +247,7 @@
                                                                 用電量(單位：度) <span style="color:red; font-size:16px;">* </span>
                                                             </h5>
                                                         </div>
-                                                        <table class="table">
+                                                        <table class="table electric">
                                                             <thead>
                                                             <tr>
                                                                 <th>一月</th>
@@ -336,9 +335,9 @@
 
                                             <div class="form-check accordion-item typeSelected ps-1">
                                                 <h2 class="accordion-header" id="headingThree">
-                                                   <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                                     {{ OffCar_add.metering_method.2 }}
-                                                   </button>
+                                                    <button class="accordion-button" type="button" id="miles" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                        {{ OffCar_add.metering_method.2 }}
+                                                    </button>
                                                 </h2>
                                                 <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
@@ -347,7 +346,7 @@
                                                                 公里數(單位：公里) <span style="color:red; font-size:16px;">* </span>
                                                             </h5>
                                                         </div>
-                                                        <table class="table">
+                                                        <table class="table miles">
                                                             <thead>
                                                             <tr>
                                                                 <th>一月</th>
@@ -491,8 +490,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
-    {#    禁止enter鍵#}
+
     <script>
+        {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
             if (code === 13) {
@@ -500,10 +500,9 @@
                 return false;
             }
         });
-    </script>
 
-    {#    年分篩選器#}
-    <script>
+
+        {#    年分篩選器#}
         $("#datepicker").datepicker({
             format: "yyyy",
             viewMode: "years",
@@ -511,6 +510,36 @@
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
+
+
+        const form = document.getElementById('official-car');
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault(); // Prevent the default form submission
+            //get all buttons that the class name is 'accordion-button'
+            const buttons = Array.from(document.querySelectorAll(".accordion-button"));
+            const activatedClass = buttons
+                .filter((button) => {
+                    return button.getAttribute("aria-expanded") === "true";
+                })
+                .map((button) => button.id)?.[0];
+            const tables = form.querySelectorAll("#official-car table");
+            console.log(tables);
+            const supportClasses = activatedClass === 'oil' ? ['urea', 'oil'] : [activatedClass];
+
+            tables.forEach((table) => {
+                const classNames = table.classList;
+                const isSupport = supportClasses.some((className) => classNames.contains(className));
+                if (!isSupport) {
+                    table.remove();
+                }
+            });
+
+            // Submit the form
+            form.submit();
+
+        });
+
     </script>
 
 

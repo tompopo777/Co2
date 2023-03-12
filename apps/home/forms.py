@@ -289,8 +289,7 @@ class OFform(forms.ModelForm):
         fields = ('years', 'vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december',
-                  'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july',
-                  'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december', 'image_note', 'message_board')
+                  'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'datepicker'}),
             'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
@@ -310,18 +309,6 @@ class OFform(forms.ModelForm):
             'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }

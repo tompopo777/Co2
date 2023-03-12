@@ -605,7 +605,21 @@ def official_car_add(request, company_id=None):
     if request.method == "POST":
         company_id = request.POST.get("company_id")
         if OffCar_add.is_valid():
+            urea = request.POST.getlist("urea")
             OffCar_add = OffCar_add.save(commit=False)
+            if urea:
+                OffCar_add.urea_january = urea[0]
+                OffCar_add.urea_february = urea[1]
+                OffCar_add.urea_march = urea[2]
+                OffCar_add.urea_april = urea[3]
+                OffCar_add.urea_may = urea[4]
+                OffCar_add.urea_june = urea[5]
+                OffCar_add.urea_july = urea[6]
+                OffCar_add.urea_august = urea[7]
+                OffCar_add.urea_september = urea[8]
+                OffCar_add.urea_october = urea[9]
+                OffCar_add.urea_november = urea[10]
+                OffCar_add.urea_december = urea[11]
             OffCar_add.company_id = company_id
             OffCar_add.save()
             return redirect('/carbon-system/')
