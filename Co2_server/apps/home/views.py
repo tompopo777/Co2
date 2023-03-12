@@ -2,14 +2,16 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
+import json
 from json import dumps
 
+import django.contrib.auth.models
 import pandas as pd
 from django import template
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.datastructures import MultiValueDictKeyError
@@ -23,7 +25,12 @@ from apps.home.models import *
 @login_required(login_url="/login/")
 def index(request):
     context = {'segment': 'index'}
-
+    # dropdown = {
+    #     'dropdown_one': "dropdown_one",
+    #     'dropdown_two': "dropdown_two",
+    #     'dropdown_three': "dropdown_three",
+    # }
+    # request.session.update(dropdown)
     html_template = loader.get_template('home/index.html')
     return HttpResponse(html_template.render(context, request))
 
@@ -77,42 +84,57 @@ def load_device(request):
             return JsonResponse(d_data, safe=False)
 
 
+# 判斷目前使用者在哪個group
+def current_user_group_id(request):
+    groups_query = request.user.groups.values("id")
+    for groups in groups_query:
+        company_id = groups["id"]
+        return company_id
+
+
 # 抓欄位(
 @login_required(login_url="/login/")
 def load_table(request):
+    global consumption_data
     if request.method == 'GET':
-        device_id = request.GET.get('deviceId', None)
+        device_id = request.GET.get('deviceId')
+        company_value = request.GET.get('company_value')
+        print("load_table_company_value", company_value)
+        if company_value is None:
+            company_id = current_user_group_id(request)
+        else:
+            company_id = int(company_value)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
-            if a["d_name"] == "緊急發電機":
+            if a["d_name"] == "柴油發電機":
                 t_data = []
-                raw_data = emergency_generators.objects.values("id", "years", "device_id",
-                                                               "device_capacity", "position", "department",
-                                                               "january", "february", "march", "april",
-                                                               "may", "june", "july", "august",
-                                                               "september", "october", "november", "december")
+                raw_data = emergency_generators.objects.filter(company_id=company_id).values("id", "years", "device_id",
+                                                                                             "device_capacity", "position", "department",
+                                                                                             "january", "february", "march", "april",
+                                                                                             "may", "june", "july", "august",
+                                                                                             "september", "october", "november", "december")
                 # 計算加油量合計
                 for i in range(raw_data.count()):
+                    single_data = {}
                     consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
                                         raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
                                         raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
-                    # print("total::::::::::::::::::::::::::::::::::::::::", total)
                     # 抓單筆資料
-                    single_data = raw_data[i]
+                    single_data.update(raw_data[i])
                     # 將計算後的加油量丟回字典
                     single_data["total"] = consumption_total
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
                 t_data = []
-                # 「合計」前後的資料分開抓
-                raw_data = combustion_equipment.objects.values("id", "years", "device_name", "device_id", "fuel_type",
-                                                               "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
-                                                               "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
-                heat_data = combustion_equipment.objects.values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
-                                                                "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
+                # 「合計」前後的資料分開
+                raw_data = combustion_equipment.objects.filter(company_id=company_id).values("id", "years", "device_name", "device_id", "fuel_type",
+                                                                                             "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
+                                                                                             "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
+                heat_data = combustion_equipment.objects.filter(company_id=company_id).values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
+                                                                                              "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
                 # 計算使用量合計/熱值平均
                 for i in range(raw_data.count()):
                     Total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
@@ -138,25 +160,25 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                oil = official_car.objects.values("oil_january", "oil_february", "oil_march", "oil_april",
-                                                  "oil_may", "oil_june", "oil_july", "oil_august",
-                                                  "oil_september", "oil_october", "oil_november", "oil_december")
-                elec = official_car.objects.values("elec_january", "elec_february", "elec_march", "elec_april",
-                                                   "elec_may", "elec_june", "elec_july", "elec_august",
-                                                   "elec_september", "elec_october", "elec_november", "elec_december")
-                km = official_car.objects.values("km_january", "km_february", "km_march", "km_april",
-                                                 "km_may", "km_june", "km_july", "km_august",
-                                                 "km_september", "km_october", "km_november", "km_december")
-                urea_data = official_car.objects.values("urea_january", "urea_february", "urea_march", "urea_april",
-                                                        "urea_may", "urea_june", "urea_july", "urea_august",
-                                                        "urea_september", "urea_october", "urea_november", "urea_december")
+                raw_data = official_car.objects.filter(company_id=company_id).values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
+                oil = official_car.objects.filter(company_id=company_id).values("oil_january", "oil_february", "oil_march", "oil_april",
+                                                                                "oil_may", "oil_june", "oil_july", "oil_august",
+                                                                                "oil_september", "oil_october", "oil_november", "oil_december")
+                elec = official_car.objects.filter(company_id=company_id).values("elec_january", "elec_february", "elec_march", "elec_april",
+                                                                                 "elec_may", "elec_june", "elec_july", "elec_august",
+                                                                                 "elec_september", "elec_october", "elec_november", "elec_december")
+                km = official_car.objects.filter(company_id=company_id).values("km_january", "km_february", "km_march", "km_april",
+                                                                               "km_may", "km_june", "km_july", "km_august",
+                                                                               "km_september", "km_october", "km_november", "km_december")
+                urea_data = official_car.objects.filter(company_id=company_id).values("urea_january", "urea_february", "urea_march", "urea_april",
+                                                                                      "urea_may", "urea_june", "urea_july", "urea_august",
+                                                                                      "urea_september", "urea_october", "urea_november", "urea_december")
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
                     # print("yes>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", official_car.objects.values("metering_method")[i].get("metering_method"))
-                    if official_car.objects.values("metering_method")[i].get("metering_method") == "油車":
+                    if official_car.objects.filter(company_id=company_id).values("metering_method")[i].get("metering_method") == "油車":
                         consumption_data = oil
-                    elif official_car.objects.values("metering_method")[i].get("metering_method") == "電動車":
+                    elif official_car.objects.filter(company_id=company_id).values("metering_method")[i].get("metering_method") == "電動車":
                         consumption_data = elec
                     elif official_car.objects.values("metering_method")[i].get("metering_method") == "公里數":
                         consumption_data = km
@@ -187,20 +209,20 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
-                    material.objects.values("id", "years", "material_id", "material_type", "material_name",
-                                            "process_add_name", "chemical_name", "chemical_formula",
-                                            "january", "february", "march", "april",
-                                            "may", "june", "july", "august",
-                                            "september", "october", "november", "december"))
+                    material.objects.filter(company_id=company_id).values("id", "years", "material_id", "material_type", "material_name",
+                                                                          "process_add_name", "chemical_name", "chemical_formula",
+                                                                          "january", "february", "march", "april",
+                                                                          "may", "june", "july", "august",
+                                                                          "september", "october", "november", "december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製程添加化學品":
                 t_data = []
-                raw_data = process.objects.values("id", "years", "process_stage", "material_id", "process_add_name",
-                                                  "chemical_name", "chemical_formula", "CAS_NO", "burn", "VOCs",
-                                                  "january", "february", "march", "april",
-                                                  "may", "june", "july", "august",
-                                                  "september", "october", "november", "december")
-                unit = process.objects.values("unit")
+                raw_data = process.objects.filter(company_id=company_id).values("id", "years", "process_stage", "material_id", "process_add_name",
+                                                                                "chemical_name", "chemical_formula", "CAS_NO", "burn", "VOCs",
+                                                                                "january", "february", "march", "april",
+                                                                                "may", "june", "july", "august",
+                                                                                "september", "october", "november", "december")
+                unit = process.objects.filter(company_id=company_id).values("unit")
                 # 計算使用量合計
                 for i in range(raw_data.count()):
                     consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -218,9 +240,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
-                raw_data = refrigerator.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                       "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                       "effusion_rate")
+                raw_data = refrigerator.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                                                     "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                     "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -234,9 +256,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
                 t_data = []
-                raw_data = airconditioner.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                         "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                         "effusion_rate")
+                raw_data = airconditioner.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                                                       "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                       "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -250,9 +272,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
                 t_data = []
-                raw_data = vehicle.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                  "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                  "effusion_rate")
+                raw_data = vehicle.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                                                "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -266,9 +288,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
                 t_data = []
-                raw_data = water_dispenser.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                          "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                          "effusion_rate")
+                raw_data = water_dispenser.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                                                        "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                        "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -282,9 +304,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
                 t_data = []
-                raw_data = ice_water_dispenser.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                              "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                              "effusion_rate")
+                raw_data = ice_water_dispenser.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                                                            "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                            "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -298,9 +320,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
                 t_data = []
-                raw_data = ice_maker.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                    "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                    "effusion_rate")
+                raw_data = ice_maker.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                                                  "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                  "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -314,25 +336,10 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "其他設備清單":
                 t_data = []
-                raw_data = other_device.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                       "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                       "effusion_rate")
+                raw_data = other_device.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
+                                                                                     "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                     "effusion_rate")
                 # 取單筆逸散量計算
-                for i in range(raw_data.count()):
-                    # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
-                    # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
-                    # 抓單筆資料
-                    single_data = raw_data[i]
-                    # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
-                    t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "冷媒總表":
-                t_data = []
-                raw_data = refrigerant_total_table.objects.values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                  "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                  "effusion_rate")
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
                     effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
@@ -345,34 +352,60 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
-                    extinguisher.objects.values("id", "years", "extinguisher_name", "extinguisher_type", "device_id", "position", "extinguisher_vendor",
-                                                "chemical_weight", "inventory", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
+                    extinguisher.objects.filter(company_id=company_id).values("id", "years", "device_id", "extinguisher_vendor", "extinguisher_type", "position", "inventory",
+                                                                              "chemical_weight", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
                 t_data = list(
-                    personnel_inventory.objects.values("id", "years", "employee_number",
-                                                       "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
-                                                       "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
-                                                       "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
-                                                       "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
+                    personnel_inventory.objects.filter(company_id=company_id).values("id", "years",
+                                                                                     "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
+                                                                                     "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
+                                                                                     "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
+                                                                                     "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "委外人員清冊":
                 t_data = list(
-                    employee.objects.values("id", "years", "career",
-                                            "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
-                                            "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
-                                            "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
-                                            "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
-                                            "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
-                                            "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
+                    employee.objects.filter(company_id=company_id).values("id", "years", "career",
+                                                                          "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
+                                                                          "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
+                                                                          "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
+                                                                          "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
+                                                                          "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
+                                                                          "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "廢水":
+                t_data = list(
+                    waste_water.objects.filter(company_id=company_id).values("id", "years", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
+                                                                             "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "廢汙泥":
+                t_data = list(
+                    waste_sludge.objects.filter(company_id=company_id).values("id", "years", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
+                                                                              "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "溶劑、噴霧劑":
+                t_data = []
+                raw_data = solvent_aerosol_emission_sources.objects.filter(company_id=company_id).values("id", "years", "solvent_name", "solvent_amount", "solvent_amount_unit", "solvent_capacity", "solvent_capacity_unit", "fugitive_recharge")
+                for i in range(raw_data.count()):
+                    single_data = raw_data[i]
+                    id = raw_data[i].get("id")
+                    additive = additive_section.objects.filter(additive_id=id).values("additive_name", "additive_amount", "additive_unit", "additive_ingredient", "additive_ratio")
+                    for a in additive:
+                        if additive.count() > 1:
+                            single_data.update(a)
+                            break
+                        else:
+                            single_data.update(a)
+                    single_data["count"] = additive.count()
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.values("id", "years", "EMI_id", "address",
-                                                      "january", "february", "march", "april",
-                                                      "may", "june", "july", "august",
-                                                      "september", "october", "november", "december")
+                raw_data = electricity.objects.filter(company_id=company_id).values("id", "years", "EMI_id", "address",
+                                                                                    "january", "february", "march", "april",
+                                                                                    "may", "june", "july", "august",
+                                                                                    "september", "october", "november", "december")
                 # 計算當月用電量
                 for i in range(raw_data.count()):
                     kw_hr = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -389,51 +422,73 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "上游運輸":
                 t_data = list(
-                    upstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
-                                                           "organizational_use_products", "customer", "supplier", "supplier_address",
-                                                           "trade_term", "receiving_address", "delivery_address",
-                                                           "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                           "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                           "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                           "air_transport_distance", "air_transport_country", "air_paid", "air_trips"))
+                    upstream_transportation.objects.filter(company_id=company_id).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
+                                                                                         "organizational_use_products", "customer", "supplier", "supplier_address",
+                                                                                         "trade_term", "receiving_address", "delivery_address",
+                                                                                         "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                                                         "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                                                         "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                                                         "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "下游運輸":
                 t_data = list(
-                    downstream_transportation.objects.values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
-                                                             "trade_term", "receiving_address", "delivery_address",
-                                                             "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                             "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                             "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                             "air_transport_distance", "air_transport_country", "air_paid", "air_trips"))
+                    downstream_transportation.objects.filter(company_id=company_id).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
+                                                                                           "trade_term", "receiving_address", "delivery_address",
+                                                                                           "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                                                           "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                                                           "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                                                           "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工通勤":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                raw_data = employee_commute.objects.values("id", "employee_id", "department", "employee_name",
-                                                           "transportation", "displacement", "city",
-                                                           "township", "address", "commute_distance", "work_days")
-                for i in range(raw_data.count()):
+                pre_data = employee_commute.objects.filter(company_id=company_id).values("id", "years", "employee_id", "department", "employee_name")
+                post_data = employee_commute.objects.filter(company_id=company_id).values("city", "township", "address", "commute_distance", "work_days")
+                for i in range(pre_data.count()):
+                    single_data = pre_data[i]
+                    id = pre_data[i].get("id")
+                    transportation = transportation_way.objects.filter(commute=id).values("transportation")
+                    if len(transportation) > 1:
+                        transportation_first = transportation_way.objects.filter(commute=id).values("transportation").first()
+                        single_data["transportation"] = transportation_first.get("transportation") + "*"
+                    else:
+                        for t in transportation:
+                            single_data["transportation"] = t.get("transportation")
+                    for j in post_data[i]:
+                        single_data[j] = post_data[i].get(j)
                     # 計算單筆距離合計
-                    total_distance = raw_data[i].get("commute_distance") * raw_data[i].get("work_days") * 2
+                    total_distance = post_data[i].get("commute_distance") * post_data[i].get("work_days") * 2
                     # print("total_distance::::::::::::::::::::::::::::::::::::::::", total_distance)
                     # 抓單筆資料
-                    single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
                     single_data["total_distance"] = total_distance
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工出差":
-                t_data = list(
-                    employee_business_trip.objects.values("id", "employee_id", "department", "employee_name",
-                                                          "business_trip_location", "business_trip_date", "department",
-                                                          "departure", "destination", "round_trip_distance"))
+                t_data = []
+                raw_data = employee_business_trip.objects.filter(company_id=company_id).values("id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
+                for i in range(raw_data.count()):
+                    single_data = raw_data[i]
+                    id = raw_data[i].get("id")
+                    section = trip_section.objects.filter(trip_id=id).values("transportation", "distance")
+                    transportation_dic = {"自駕汽車": 0.0, "高鐵": 0.0, "火車(電聯)": 0.0, "火車(柴聯)": 0.0, "計程車": 0.0, "機車": 0.0, "捷運": 0.0, "飛機": 0.0, "船舶": 0.0}
+                    for s in section:
+                        way = s.get("transportation")
+                        if way in transportation_dic:
+                            transportation_dic[way] += s.get("distance")
+                        for d in transportation_dic:
+                            if transportation_dic.get(d) == 0:
+                                single_data[d] = None
+                            else:
+                                single_data[d] = round(transportation_dic.get(d), 4)
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
-                raw_data = waste.objects.values("id", "waste_name", "waste_weigh", "waste_date",
-                                                "waste_location", "waste_disposal", "waste_disposal_vendor",
-                                                "transport_type", "transport_fuel", "transport_distance")
+                raw_data = waste.objects.filter(company_id=company_id).values("id", "waste_name", "waste_weigh", "waste_date",
+                                                                              "waste_location", "waste_disposal", "waste_disposal_vendor",
+                                                                              "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計
                     if (raw_data[i].get("transport_distance") == None):
@@ -449,384 +504,778 @@ def load_table(request):
                     t_data.append(single_data)
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "VOCs_1":
+                t_data = list(VOCs_one.objects.filter(company_id=company_id).values("id", "years", "emission", "concentration_ch4"))
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "VOCs_2":
+                t_data = list(VOCs_two.objects.filter(company_id=company_id).values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
+                                                                                    "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "納管廢水排放量":
+                t_data = []
+                raw_data = pipe_wastewater.objects.filter(company_id=company_id).values("id", "years", "pipe_id", "address", "factory", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                        "september", "october", "november", "december")
+                # 計算當月排放量
+                for i in range(raw_data.count()):
+                    Total_Emission = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                     raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                     raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的逸散量丟回字典
+                    single_data["Total_Emission"] = Total_Emission
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "採購原物料":
+                t_data = []
+                raw_data = purchase_material.objects.filter(company_id=company_id).values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                          "september", "october", "november", "december")
+                # 計算當月排放量
+                for i in range(raw_data.count()):
+                    Total_Purchase = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                     raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                     raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的逸散量丟回字典
+                    single_data["Total_Purchase"] = Total_Purchase
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "產品間接排放":
+                t_data = []
+                raw_data = product_indirect_emissions.objects.filter(company_id=company_id).values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                                   "september", "october", "november", "december")
+                # 計算當月排放量
+                for i in range(raw_data.count()):
+                    Total_Deliver = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                                    raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
+                                    raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的逸散量丟回字典
+                    single_data["Total_Deliver"] = Total_Deliver
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
 
 
 @login_required(login_url="/login/")
-def emergency_generators_add(request):
+def emergency_generators_add(request, company_id=None):
+    context = {}
     if request.method == "POST":
+        company_id = request.POST.get("company_id")
         EG_add = EGform(request.POST, request.FILES)
         if EG_add.is_valid():
+            EG_add = EG_add.save(commit=False)
+            EG_add.company_id = company_id
             EG_add.save()
             return redirect('/carbon-system/')
+        else:
+            print(EG_add.errors)
     else:
-        return redirect('/emergency_generator_add/')
+        company_id = company_id
+        EG_add = EGform()
+    context['EG_add'] = EG_add
+    context['company_id'] = company_id
+    return render(request, 'home/emergency-generator.html', context)
 
 
 @login_required(login_url="/login/")
-def combustion_equipment_add(request):
+def combustion_equipment_add(request, company_id=None):
+    context = {}
     if request.method == "POST":
+        company_id = request.POST.get("company_id")
         CE_add = CEform(request.POST, request.FILES)
         if CE_add.is_valid():
+            CE_add = CE_add.save(commit=False)
+            CE_add.company_id = company_id
             CE_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/combustion_equipment_add/')
+        company_id = company_id
+        CE_add = CEform()
+    context['CE_add'] = CE_add
+    context['company_id'] = company_id
+    return render(request, 'home/combustion-equipment.html', context)
 
 
 @login_required(login_url="/login/")
-def official_car_add(request):
+def official_car_add(request, company_id=None):
+    context = {}
+    OffCar_add = OFform(request.POST, request.FILES)
     if request.method == "POST":
-        OffCar_add = OFform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if OffCar_add.is_valid():
+            OffCar_add = OffCar_add.save(commit=False)
+            OffCar_add.company_id = company_id
             OffCar_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/official_car_add/')
+        company_id = company_id
+        OffCar_add = OFform()
+    context['OffCar_add'] = OffCar_add
+    context['company_id'] = company_id
+    return render(request, 'home/official-car.html', context)
 
 
 @login_required(login_url="/login/")
-def material_add(request):
+def material_add(request, company_id=None):
+    context = {}
+    MT_add = MTform(request.POST, request.FILES)
     if request.method == "POST":
-        MT_add = MTform(request.POST, request.FILES)
-        print("yyyyyyyyyyyyyy")
+        company_id = request.POST.get("company_id")
         if MT_add.is_valid():
+            MT_add = MT_add.save(commit=False)
+            MT_add.company_id = company_id
             MT_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/material_add/')
+        company_id = company_id
+        MT_add = MTform()
+    context['MT_add'] = MT_add
+    context['company_id'] = company_id
+    return render(request, 'home/material.html', context)
 
 
 @login_required(login_url="/login/")
-def process_add(request):
+def process_add(request, company_id=None):
+    context = {}
+    PC_add = PCform(request.POST, request.FILES)
     if request.method == "POST":
-        PC_add = PCform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if PC_add.is_valid():
+            PC_add = PC_add.save(commit=False)
+            PC_add.company_id = company_id
             PC_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/material_add/')
+        company_id = company_id
+        PC_add = PCform()
+    context['PC_add'] = PC_add
+    context['company_id'] = company_id
+    return render(request, 'home/process.html', context)
 
 
 @login_required(login_url="/login/")
-def refrigerator_add(request):
+def refrigerator_add(request, company_id=None):
+    context = {}
+    RF_add = RFform(request.POST, request.FILES)
     if request.method == "POST":
-        RF_add = RFform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if RF_add.is_valid():
+            RF_add = RF_add.save(commit=False)
+            RF_add.company_id = company_id
             RF_add.save()
-
             return redirect('/carbon-system/')
-
+        else:
+            return redirect('/new_device/', {'RF_add': RF_add})
     else:
-
-        return redirect('/refrigerator_add/')
+        company_id = company_id
+        RF_add = RFform()
+    context['RF_add'] = RF_add
+    context['company_id'] = company_id
+    return render(request, 'home/refrigerator.html', context)
 
 
 @login_required(login_url="/login/")
-def airconditioner_add(request):
+def airconditioner_add(request, company_id=None):
+    context = {}
+    AC_add = ACform(request.POST, request.FILES)
     if request.method == "POST":
-        AC_add = ACform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if AC_add.is_valid():
+            AC_add = AC_add.save(commit=False)
+            AC_add.company_id = company_id
             AC_add.save()
-
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = airconditioner.objects.values("id").last().get("id")
+            table_id = airconditioner.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
-
+        else:
+            return redirect('/new_device/', {'AC_add': AC_add})
     else:
-
-        return redirect('/airconditioner_add/')
+        company_id = company_id
+        AC_add = ACform()
+    context['AC_add'] = AC_add
+    context['company_id'] = company_id
+    return render(request, 'home/airconditioner.html', context)
 
 
 @login_required(login_url="/login/")
-def vehicle_add(request):
+def vehicle_add(request, company_id=None):
+    context = {}
+    VC_add = VCform(request.POST, request.FILES)
     if request.method == "POST":
-        VC_add = VCform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if VC_add.is_valid():
+            VC_add = VC_add.save(commit=False)
+            VC_add.company_id = company_id
             VC_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/vehicle_add/')
+        company_id = company_id
+        VC_add = VCform()
+    context['VC_add'] = VC_add
+    context['company_id'] = company_id
+    return render(request, 'home/vehicle.html', context)
 
 
 @login_required(login_url="/login/")
-def water_dispenser_add(request):
+def water_dispenser_add(request, company_id=None):
+    context = {}
+    WD_add = WDform(request.POST, request.FILES)
     if request.method == "POST":
-        WD_add = WDform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if WD_add.is_valid():
+            WD_add = WD_add.save(commit=False)
+            WD_add.company_id = company_id
             WD_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/water_dispenser_add/')
+        company_id = company_id
+        WD_add = WDform()
+    context['WD_add'] = WD_add
+    context['company_id'] = company_id
+    return render(request, 'home/water-dispenser.html', context)
 
 
 @login_required(login_url="/login/")
-def ice_water_dispenser_add(request):
+def ice_water_dispenser_add(request, company_id=None):
+    context = {}
+    IWD_add = IWDform(request.POST, request.FILES)
     if request.method == "POST":
-        IWD_add = IWDform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if IWD_add.is_valid():
+            IWD_add.save(commit=False)
+            IWD_add.company_id = company_id
             IWD_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/ice_water_dispenser_add/')
+        company_id = company_id
+        IWD_add = IWDform()
+    context['IWD_add'] = IWD_add
+    context['company_id'] = company_id
+    return render(request, 'home/ice-water-dispenser.html', context)
 
 
 @login_required(login_url="/login/")
-def ice_maker_add(request):
+def ice_maker_add(request, company_id=None):
+    context = {}
+    IM_add = IMform(request.POST, request.FILES)
     if request.method == "POST":
-        IM_add = IMform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if IM_add.is_valid():
+            IM_add = IM_add.save(commit=False)
+            IM_add.company_id = company_id
             IM_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/ice_maker_add/')
+        company_id = company_id
+        IM_add = IMform()
+    context['IM_add'] = IM_add
+    context['company_id'] = company_id
+    return render(request, 'home/ice-maker.html', context)
 
 
 @login_required(login_url="/login/")
-def other_device_add(request):
+def other_device_add(request, company_id=None):
+    context = {}
+    OD_add = ODform(request.POST, request.FILES)
     if request.method == "POST":
-        OD_add = ODform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if OD_add.is_valid():
+            OD_add = OD_add.save(commit=False)
+            OD_add.company_id = company_id
             OD_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/other_device_add/')
+        company_id = company_id
+        OD_add = ODform()
+    context['OD_add'] = OD_add
+    context['company_id'] = company_id
+    return render(request, 'home/other-device.html', context)
 
 
 @login_required(login_url="/login/")
-def refrigerant_total_table_add(request):
+def extinguisher_add(request, company_id=None):
+    context = {}
+    EX_add = EXform(request.POST, request.FILES)
     if request.method == "POST":
-        RTT_add = RTTform(request.POST, request.FILES)
-        if RTT_add.is_valid():
-            RTT_add.save()
-
-            return redirect('/carbon-system/')
-
-    else:
-
-        return redirect('/refrigerant_total_table_add/')
-
-
-@login_required(login_url="/login/")
-def extinguisher_add(request):
-    if request.method == "POST":
-        EX_add = EXform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if EX_add.is_valid():
+            EX_add = EX_add.save(commit=False)
+            EX_add.company_id = company_id
             EX_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/extinguisher_add/')
+        company_id = company_id
+        EX_add = EXform()
+    context['EX_add'] = EX_add
+    context['company_id'] = company_id
+    return render(request, 'home/extinguisher.html', context)
 
 
 @login_required(login_url="/login/")
-def personnel_inventory_add(request):
+def personnel_inventory_add(request, company_id=None):
+    context = {}
+    PI_add = PIform(request.POST, request.FILES)
     if request.method == "POST":
-        PI_add = PIform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if PI_add.is_valid():
+            PI_add = PI_add.save(commit=False)
+            PI_add.company_id = company_id
             PI_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/personnel_inventory_add/')
+        company_id = company_id
+        PI_add = PIform()
+    context['PI_add'] = PI_add
+    context['company_id'] = company_id
+    return render(request, 'home/personnel-inventory.html', context)
 
 
 @login_required(login_url="/login/")
-def employee_add(request):
+def employee_add(request, company_id=None):
+    context = {}
+    EMP_add = EMPform(request.POST, request.FILES)
     if request.method == "POST":
-        EMP_add = EMPform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if EMP_add.is_valid():
+            EMP_add = EMP_add.save(commit=False)
+            EMP_add.company_id = company_id
             EMP_add.save()
-
             return redirect('/carbon-system/')
-
     else:
+        company_id = company_id
+        EMP_add = EMPform()
+    context['EMP_add'] = EMP_add
+    context['company_id'] = company_id
+    return render(request, 'home/employee.html', context)
 
-        return redirect('/employee_add/')
+
+# 廢水
+@login_required(login_url="/login/")
+def waste_water_add(request, company_id=None):
+    context = {}
+    waste_water_add = WASTEWATERform(request.POST, request.FILES)
+    if request.method == "POST":
+        company_id = request.POST.get("company_id")
+        if waste_water_add.is_valid():
+            waste_water_add = waste_water_add.save(commit=False)
+            waste_water_add.company_id = company_id
+            waste_water_add.save()
+            return redirect('/carbon-system/')
+    else:
+        company_id = company_id
+        waste_water_add = WASTEWATERform
+    context['waste_water_add'] = waste_water_add
+    context['company_id'] = company_id
+    return render(request, 'home/waste-water.html', context)
+
+
+# 廢汙泥
+@login_required(login_url="/login/")
+def waste_sludge_add(request, company_id=None):
+    context = {}
+    waste_sludge_add = WasteSludgeForm(request.POST, request.FILES)
+    if request.method == "POST":
+        company_id = request.POST.get("company_id")
+        if waste_sludge_add.is_valid():
+            waste_sludge_add = waste_sludge_add.save(commit=False)
+            waste_sludge_add.company_id = company_id
+            waste_sludge_add.save()
+            return redirect('/carbon-system/')
+    else:
+        company_id = company_id
+        waste_sludge_add = WasteSludgeForm()
+    context['waste_sludge_add'] = waste_sludge_add
+    context['company_id'] = company_id
+    return render(request, 'home/waste-sludge.html', context)
+
+
+# 溶劑、噴霧劑
+@login_required(login_url="/login/")
+def solvent_aerosol_emission_sources_add(request, company_id=None):
+    context = {}
+    SAES_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
+    if request.method == "POST":
+        company_id = request.POST.get("company_id")
+        if SAES_add.is_valid():
+            solvent = SAES_add.save(commit=False)
+            solvent.company_id = company_id
+            solvent.save()
+            Additive_formSet = AdditiveFormSet(request.POST, request.FILES, instance=solvent)
+            if Additive_formSet.is_valid():
+                Additive_formSet.save()
+                return redirect('/carbon-system/')
+            else:
+                last_data = solvent_aerosol_emission_sources.objects.last()
+                last_data.delete()
+                print("Additive_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", Additive_formSet)
+                return render(request, 'home/employee-business-trip.html', {'SAES_add': SAES_add, 'TripSectionFormSet': TripSectionFormSet})
+        else:
+            print("SAES_add表單錯誤>>>>>>>>>>>>>>>>>>>>\n", SAES_add.errors)
+            return render(request, 'home/employee-business-trip.html', {'SAES_add': SAES_add, 'TripSectionFormSet': TripSectionFormSet})
+    else:
+        company_id = company_id
+        SAES_add = SolventAerosolEmissionSourcesForm()
+    context['SAES_add'] = SAES_add
+    context['company_id'] = company_id
+    return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'AdditiveFormSet': AdditiveFormSet, 'company_id': company_id})
+
+
+# VOCs1表單儲存
+@login_required(login_url="/login/")
+def VOCs_one_add(request, company_id=None):
+    context = {}
+    VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
+    if request.method == "POST":
+        company_id = request.POST.get("company_id")
+        if VOCs_one_add.is_valid():
+            VOCs_one_add = VOCs_one_add.save(commit=False)
+            VOCs_one_add.company_id = company_id
+            VOCs_one_add.save()
+            return redirect('/carbon-system/')
+    else:
+        company_id = company_id
+        VOCs_one_add = VOCsOneForm()
+    context['VOCs_one_add'] = VOCs_one_add
+    context['company_id'] = company_id
+    return render(request, 'home/VOCs-one.html', context)
+
+
+# VOCs2表單儲存
+@login_required(login_url="/login/")
+def VOCs_two_add(request, company_id=None):
+    context = {}
+    VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
+    if request.method == "POST":
+        company_id = request.POST.get("company_id")
+        if VOCs_two_add.is_valid():
+            VOCs_two_add = VOCs_two_add.save(commit=request)
+            VOCs_two_add.company_id = company_id
+            VOCs_two_add.save()
+            return redirect('/carbon-system/')
+        else:
+            print("\n", VOCs_two_add.errors)
+            return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add, 'company_id': company_id})
+    else:
+        company_id = company_id
+        VOCs_two_add = VOCsTwoForm()
+    context['VOCs_two_add'] = VOCs_two_add
+    context['company_id'] = company_id
+    return render(request, 'home/VOCs-two.html', context)
 
 
 @login_required(login_url="/login/")
-def electricity_add(request):
+def electricity_add(request, company_id=None):
+    context = {}
+    ELEC_add = ELECform(request.POST, request.FILES)
     if request.method == "POST":
-        ELEC_add = ELECform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if ELEC_add.is_valid():
+            ELEC_add = ELEC_add.save(commit=False)
+            ELEC_add.company_id = company_id
             ELEC_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/electricity_add/')
+        company_id = company_id
+        ELEC_add = ELECform
+    context['ELEC_add'] = ELEC_add
+    context['company_id'] = company_id
+    return render(request, 'home/electricity.html', context)
 
 
 @login_required(login_url="/login/")
-def upstream_transportation_add(request):
+def upstream_transportation_add(request, company_id=None):
+    context = {}
+    UT_add = UTform(request.POST, request.FILES)
     if request.method == "POST":
-        UT_add = UTform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if UT_add.is_valid():
+            UT_add = UT_add.save(commit=False)
+            UT_add.company_id = company_id
             UT_add.save()
-
+            stages = request.POST.getlist('stage')
+            last_id = upstream_transportation.objects.values("id").last().get("id")
+            table_id = upstream_transportation.objects.values("did").last().get("did")
+            for stage in stages:
+                if stage == "陸運":
+                    image_paths = request.FILES.getlist('file_field1')
+                elif stage == "海運":
+                    image_paths = request.FILES.getlist('file_field2')
+                elif stage == "特殊陸運":
+                    image_paths = request.FILES.getlist('file_field3')
+                elif stage == "空運":
+                    image_paths = request.FILES.getlist('file_field4')
+                else:
+                    image_paths = []
+                for img in image_paths:
+                    photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                    print(stage)
+                    photo.save()
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/upstream_transportation_add/')
+        company_id = company_id
+        UT_add = UTform()
+    context['UT_add'] = UT_add
+    context['company_id'] = company_id
+    return render(request, 'home/upstream-transportation.html', context)
 
 
 @login_required(login_url="/login/")
-def downstream_transportation_add(request):
+def downstream_transportation_add(request, company_id=None):
+    context = {}
+    DT_add = DTform(request.POST, request.FILES)
     if request.method == "POST":
-        DT_add = DTform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if DT_add.is_valid():
+            DT_add = DT_add.save(commit=False)
+            DT_add.company_id = company_id
             DT_add.save()
-
             return redirect('/carbon-system/')
-
     else:
-
-        return redirect('/downstream_transportation_add/')
+        company_id = company_id
+        DT_add = DTform()
+    context['DT_add'] = DT_add
+    context['company_id'] = company_id
+    return render(request, 'home/downstream-transportation.html', context)
 
 
 @login_required(login_url="/login/")
-def employee_commute_add(request):
+def employee_commute_add(request, company_id=None):
+    context = {}
+    EC_add = ECform(request.POST, request.FILES)
     if request.method == "POST":
-        EC_add = ECform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if EC_add.is_valid():
-            EC_add.save()
-
-            return redirect('/carbon-system/')
-
+            commute = EC_add.save(commit=False)
+            commute.company_id = company_id
+            commute.save()
+            Commute_formSet = CommuteFormSet(request.POST, request.FILES, instance=commute)
+            if Commute_formSet.is_valid():
+                Commute_formSet.save()
+                return redirect('/carbon-system/')
+            else:
+                last_data = employee_commute.objects.last()
+                last_data.delete()
+                print("Commute_formSet>>>>>>>>>>>>>>>>>>>>\n", Commute_formSet)
+                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'company_id': company_id})
     else:
-
-        return redirect('/employee_commute_add/')
+        company_id = company_id
+        EC_add = ECform()
+    context['EC_add'] = EC_add
+    context['company_id'] = company_id
+    return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'company_id': company_id})
 
 
 @login_required(login_url="/login/")
-def employee_business_trip_add(request):
+def employee_business_trip_add(request, company_id=None):
+    context = {}
+    EBT_add = EBTform(request.POST, request.FILES)
     if request.method == "POST":
-        EBT_add = EBTform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if EBT_add.is_valid():
-            EBT_add.save()
-
-            return redirect('/carbon-system/')
-
+            business = EBT_add.save(commit=False)
+            business.company_id = company_id
+            business.save()
+            tripsection_formSet = TripSectionFormSet(request.POST, request.FILES, instance=business)
+            if tripsection_formSet.is_valid():
+                tripsection_formSet.save()
+                return redirect('/carbon-system/')
+            else:
+                last_data = employee_business_trip.objects.last()
+                last_data.delete()
+                print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", tripsection_formSet)
+                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'company_id': company_id})
     else:
-
-        return redirect('/employee_business_trip_add/')
+        EBT_add = EBTform()
+        company_id = company_id
+    context['EBT_add'] = EBT_add
+    context['company_id'] = company_id
+    return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'company_id': company_id})
 
 
 @login_required(login_url="/login/")
-def waste_add(request):
+def waste_add(request, company_id=None):
+    context = {}
+    WASTE_add = WASTEform(request.POST, request.FILES)
     if request.method == "POST":
-        WASTE_add = WASTEform(request.POST, request.FILES)
+        company_id = request.POST.get("company_id")
         if WASTE_add.is_valid():
+            WASTE_add = WASTE_add.save(commit=False)
+            WASTE_add.company_id = company_id
             WASTE_add.save()
-
             return redirect('/carbon-system/')
-
     else:
+        company_id = company_id
+        WASTE_add = WASTEform
+    context['WASTE_add'] = WASTE_add
+    context['company_id'] = company_id
+    return render(request, 'home/waste.html', context)
 
-        return redirect('/waste_add/')
+
+# 納管廢水
+@login_required(login_url="/login/")
+def pipe_wastewater_add(request, company_id=None):
+    context = {}
+    PW_add = PWform(request.POST, request.FILES)
+    if request.method == "POST":
+        company_id = request.POST.get("company_id")
+        if PW_add.is_valid():
+            PW_add = PW_add.save(commit=False)
+            PW_add.company_id = company_id
+            PW_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = pipe_wastewater.objects.values("id").last().get("id")
+            table_id = pipe_wastewater.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
+            return redirect('/carbon-system/')
+    else:
+        company_id = company_id
+        PW_add = PWform()
+    context['PW_add'] = PW_add
+    context['company_id'] = company_id
+    return render(request, 'home/pipe-wastewater.html', context)
 
 
+# 採購原物料
+@login_required(login_url="/login/")
+def purchase_material_add(request, company_id=None):
+    context = {}
+    PM_add = PMform(request.POST, request.FILES)
+    if request.method == "POST":
+        company_id = request.POST.get("company_id")
+        if PM_add.is_valid():
+            PM_add = PM_add.save(commit=False)
+            PM_add.company_id = company_id
+            PM_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = purchase_material.objects.values("id").last().get("id")
+            table_id = purchase_material.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
+            return redirect('/carbon-system/')
+    else:
+        company_id = company_id
+        PM_add = PMform()
+    context['PM_add'] = PM_add
+    context['company_id'] = company_id
+    return render(request, 'home/purchase-material.html', context)
+
+
+# 產品間接排放
+@login_required(login_url="/login/")
+def product_indirect_emissions_add(request, company_id=None):
+    context = {}
+    PIE_add = PIEform(request.POST, request.FILES)
+    if request.method == "POST":
+        company_id = request.POST.get("company_id")
+        if PIE_add.is_valid():
+            PIE_add = PIE_add.save(commit=False)
+            PIE_add.company_id = company_id
+            PIE_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = product_indirect_emissions.objects.values("id").last().get("id")
+            table_id = product_indirect_emissions.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
+            return redirect('/carbon-system/')
+    else:
+        company_id = company_id
+        PIE_add = PIEform()
+    context['PIE_add'] = PIE_add
+    context['company_id'] = company_id
+    return render(request, 'home/product-indirect-emissions.html', context)
+
+
+# ~~~
 @login_required(login_url="/login/")
 def carbon_system(request):
-    # data = emergency_generators.objects.filter(id=5).values("image_path", "image_note")
-    # context ={
-    #     'data': data,
-    # }
-    # return render(request, "home/carbon-system.html", context)
-    return render(request, "home/carbon-system.html", locals())
+    if request.user.is_authenticated:
+        username = request.user.username
+        print("username: ", username)
+    groups_query = request.user.groups.values("name").first()
+    company_group = django.contrib.auth.models.Group.objects.values("id", "name")[1:]
+
+    company_id = current_user_group_id(request)
+    context = {
+        "groups_query": groups_query,
+        "company_id": company_id,
+        "company_group": company_group
+    }
+
+    # context.update(groups_query)
+    # print("context: ", context)
+
+    # if request.session.get('dropdown_one'):
+    #     del request.session['dropdown_one']
+    #     del request.session['dropdown_two']
+    #     del request.session['dropdown_three']
+    return render(request, "home/carbon-system.html", context)
 
 
 # 新增轉跳
 @login_required(login_url="/login/")
-def add_page(request):
-    global NewDevice_page
+def add_page(request, ):
+    global device_function
     if request.method == "GET":
         device_id = request.GET.get('deviceId')
+        company_value = request.GET.get('company_value')
+        if company_value is None:
+            company_id = current_user_group_id(request)
+        else:
+            company_id = int(company_value)
         # 建立字典
-        htmlName = {
-            "1": "home/emergency-generator.html",
-            "2": "home/combustion-equipment.html",
-            "3": "home/official-car.html",
-            "4": "home/material.html",
-            "5": "home/process.html",
-            "6": "home/refrigerator.html",
-            "7": "home/airconditioner.html",
-            "8": "home/vehicle.html",
-            "9": "home/water-dispenser.html",
-            "10": "home/ice-water-dispenser.html",
-            "11": "home/ice-maker.html",
-            "12": "home/other-device.html",
-            "13": "home/refrigerant-total-table.html",
-            "14": "home/extinguisher.html",
-            "15": "home/personnel-inventory.html",
-            "16": "home/employee.html",
-            "17": "home/electricity.html",
-            "18": "home/upstream-transportation.html",
-            "19": "home/downstream-transportation.html",
-            "20": "home/employee-commute.html",
-            "21": "home/employee-business-trip.html",
-            "22": "home/waste.html"
+        function_dic = {
+            "1": emergency_generators_add(request, company_id),
+            "2": combustion_equipment_add(request, company_id),
+            "3": official_car_add(request, company_id),
+            "4": material_add(request, company_id),
+            "5": process_add(request, company_id),
+            "6": refrigerator_add(request, company_id),
+            "7": airconditioner_add(request, company_id),
+            "8": vehicle_add(request, company_id),
+            "9": water_dispenser_add(request, company_id),
+            "10": ice_water_dispenser_add(request, company_id),
+            "11": ice_maker_add(request, company_id),
+            "12": other_device_add(request, company_id),
+            "13": extinguisher_add(request, company_id),
+            "14": personnel_inventory_add(request, company_id),
+            "15": employee_add(request, company_id),
+            "16": waste_water_add(request, company_id),
+            "17": waste_sludge_add(request, company_id),
+            "18": solvent_aerosol_emission_sources_add(request, company_id),
+            "19": VOCs_one_add(request, company_id),
+            "20": VOCs_two_add(request, company_id),
+            "21": electricity_add(request, company_id),
+            "22": upstream_transportation_add(request, company_id),
+            "23": downstream_transportation_add(request, company_id),
+            "24": employee_commute_add(request, company_id),
+            "25": employee_business_trip_add(request, company_id),
+            "26": waste_add(request, company_id),
+            "27": pipe_wastewater_add(request, company_id),
+            "28": purchase_material_add(request, company_id),
+            "29": product_indirect_emissions_add(request, company_id)
         }
-
-        EG_add = EGform(request.POST)
-        CE_add = CEform(request.POST)
-        OffCar_add = OFform(request.POST)
-        MT_add = MTform(request.POST)
-        PC_add = PCform(request.POST)
-        RF_add = RFform(request.POST)
-        AC_add = ACform(request.POST)
-        VC_add = VCform(request.POST)
-        WD_add = WDform(request.POST)
-        IWD_add = IWDform(request.POST)
-        IM_add = IMform(request.POST)
-        OD_add = ODform(request.POST)
-        RTT_add = RTTform(request.POST)
-        EX_add = EXform(request.POST)
-        PI_add = PIform(request.POST)
-        EMP_add = EMPform(request.POST)
-        ELEC_add = ELECform(request.POST)
-        UT_add = UTform(request.POST)
-        DT_add = DTform(request.POST)
-        EC_add = ECform(request.POST)
-        EBT_add = EBTform(request.POST)
-        WASTE_add = WASTEform(request.POST)
-
-        if htmlName.get(device_id):
-            NewDevice_page = htmlName.get(device_id)
-        # print("NewDevice_page:", NewDevice_page)
-    if request.method == "GET":
-        return render(request, NewDevice_page, locals())
+        if function_dic.get(device_id):
+            device_function = function_dic.get(device_id)
+        return device_function
+        # return redirect(device_function, locals())
 
 
 # 編輯轉跳
@@ -834,6 +1283,8 @@ def add_page(request):
 def edit_device(request):
     datasheet_id = request.GET.get('datasheet')
     single_dataID = request.GET.get('single_dataID')
+    dropdown_one = request.GET.get('dropdown_one')
+    dropdown_two = request.GET.get('dropdown_two')
     modelName = {
         "1": emergency_generators,
         "2": combustion_equipment,
@@ -847,27 +1298,39 @@ def edit_device(request):
         "10": ice_water_dispenser,
         "11": ice_maker,
         "12": other_device,
-        "13": refrigerant_total_table,
-        "14": extinguisher,
-        "15": personnel_inventory,
-        "16": employee,
-        "17": electricity,
-        "18": upstream_transportation,
-        "19": downstream_transportation,
-        "20": employee_commute,
-        "21": employee_business_trip,
-        "22": waste
+        "13": extinguisher,
+        "14": personnel_inventory,
+        "15": employee,
+        "16": waste_water,
+        "17": waste_sludge,
+        "18": solvent_aerosol_emission_sources,
+        "19": VOCs_one,
+        "20": VOCs_two,
+        "21": electricity,
+        "22": upstream_transportation,
+        "23": downstream_transportation,
+        "24": employee_commute,
+        "25": employee_business_trip,
+        "26": waste,
+        "27": pipe_wastewater,
+        "28": purchase_material,
+        "29": product_indirect_emissions
     }
     formlName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
-        "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
-        "16": EMPform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
-        "21": EBTform, "22": WASTEform
+        "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
+        "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
+    }
+    formsetName = {
+        "18": AdditiveFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
         form = formlName.get(datasheet_id)
+        formset = formsetName.get(datasheet_id)
         if request.method == 'GET':
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(instance=current_data)
@@ -875,8 +1338,18 @@ def edit_device(request):
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
-                'single_dataID': single_dataID
+                'single_dataID': single_dataID,
+                "dropdown_one": dropdown_one,
+                "dropdown_two": dropdown_two,
             }
+            try:
+                if datasheet_id in formsetName:
+                    update_formset = formset(instance=current_data)
+                    formUpdata_name["update_formset"] = update_formset
+
+            except:
+                pass
+
             # 建立字典
             htmlName = {
                 "1": "home/emergency-generator-edit.html",
@@ -891,16 +1364,23 @@ def edit_device(request):
                 "10": "home/ice-water-dispenser-edit.html",
                 "11": "home/ice-maker-edit.html",
                 "12": "home/other-device-edit.html",
-                "13": "home/refrigerant-total-table-edit.html",
-                "14": "home/extinguisher-edit.html",
-                "15": "home/personnel-inventory-edit.html",
-                "16": "home/employee-edit.html",
-                "17": "home/electricity-edit.html",
-                "18": "home/upstream-transportation-edit.html",
-                "19": "home/downstream-transportation-edit.html",
-                "20": "home/employee-commute-edit.html",
-                "21": "home/employee-business-trip-edit.html",
-                "22": "home/waste-edit.html"
+                "13": "home/extinguisher-edit.html",
+                "14": "home/personnel-inventory-edit.html",
+                "15": "home/employee-edit.html",
+                "16": "home/waste-water-edit.html",
+                "17": "home/waste-sludge-edit.html",
+                "18": "home/solvent-aerosol-emission-sources-edit.html",
+                "19": "home/VOCs-one-edit.html",
+                "20": "home/VOCs-two-edit.html",
+                "21": "home/electricity-edit.html",
+                "22": "home/upstream-transportation-edit.html",
+                "23": "home/downstream-transportation-edit.html",
+                "24": "home/employee-commute-edit.html",
+                "25": "home/employee-business-trip-edit.html",
+                "26": "home/waste-edit.html",
+                "27": "home/pipe-wastewater-edit.html",
+                "28": "home/purchase-material-edit.html",
+                "29": "home/product-indirect-emissions-edit.html",
             }
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
@@ -909,7 +1389,11 @@ def edit_device(request):
 
 # 儲存更新後的資料
 @login_required(login_url="/login/")
-def update_device(request, datasheet_id, single_dataID):
+def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_two):
+    if request.session.get('dropdown_one'):
+        del request.session['dropdown_one']
+        del request.session['dropdown_two']
+        del request.session['dropdown_three']
     modelName = {
         "1": emergency_generators,
         "2": combustion_equipment,
@@ -923,34 +1407,71 @@ def update_device(request, datasheet_id, single_dataID):
         "10": ice_water_dispenser,
         "11": ice_maker,
         "12": other_device,
-        "13": refrigerant_total_table,
-        "14": extinguisher,
-        "15": personnel_inventory,
-        "16": employee,
-        "17": electricity,
-        "18": upstream_transportation,
-        "19": downstream_transportation,
-        "20": employee_commute,
-        "21": employee_business_trip,
-        "22": waste
+        "13": extinguisher,
+        "14": personnel_inventory,
+        "15": employee,
+        "16": waste_water,
+        "17": waste_sludge,
+        "18": solvent_aerosol_emission_sources,
+        "19": VOCs_one,
+        "20": VOCs_two,
+        "21": electricity,
+        "22": upstream_transportation,
+        "23": downstream_transportation,
+        "24": employee_commute,
+        "25": employee_business_trip,
+        "26": waste,
+        "27": pipe_wastewater,
+        "28": purchase_material,
+        "29": product_indirect_emissions
     }
     formName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
-        "11": IMform, "12": ODform, "13": RTTform, "14": EXform, "15": PIform,
-        "16": EMPform, "17": ELECform, "18": UTform, "19": DTform, "20": ECform,
-        "21": EBTform, "22": WASTEform
+        "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
+        "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
+        "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
+    }
+    formsetName = {
+        "18": AdditiveFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
     }
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
         form = formName.get(datasheet_id)
+        current_data = get_object_or_404(dbName, id=single_dataID)
+        update_from = form(request.POST, request.FILES, instance=current_data)
         if request.method == 'POST':
-            current_data = dbName.objects.get(id=single_dataID)
-            update_from = form(request.POST, request.FILES, instance=current_data)
+            cancel = request.POST.get("cancel")
+            # ~~~
+            if cancel:
+                print("cancel")
+                dropdown = {
+                    'dropdown_one': dropdown_one,
+                    'dropdown_two': dropdown_two,
+                    'dropdown_three': datasheet_id,
+                }
+                request.session.update(dropdown)
+                return redirect('/carbon-system/')
+            try:
+                if datasheet_id in formsetName:
+                    formset = formsetName.get(datasheet_id)
+                    update_formset = formset(request.POST, request.FILES, instance=current_data)
+                    if update_from.is_valid() and update_formset.is_valid():
+                        update_from.save()
+                        update_formset.save()
+                        return redirect('/carbon-system/', locals())
+                    else:
+                        print("\n", update_formset.errors)
+                        return redirect('/edit_device/?datasheet=' + str(datasheet_id) + '&single_dataID=' + str(single_dataID), locals())
+            except:
+                pass
             if update_from.is_valid():
-                print("yyyyyyyyyyyyyy")
                 update_from.save()
                 return redirect('/carbon-system/', locals())
+            else:
+                print("\n", update_from.errors)
+                return redirect('/edit_device/?datasheet=' + str(datasheet_id) + '&single_dataID=' + str(single_dataID), locals())
         else:
             return render(request, 'home/index.html', locals())
 
@@ -974,16 +1495,23 @@ def delete_device(request):
             "10": ice_water_dispenser,
             "11": ice_maker,
             "12": other_device,
-            "13": refrigerant_total_table,
-            "14": extinguisher,
-            "15": personnel_inventory,
-            "16": employee,
-            "17": electricity,
-            "18": upstream_transportation,
-            "19": downstream_transportation,
-            "20": employee_commute,
-            "21": employee_business_trip,
-            "22": waste
+            "13": extinguisher,
+            "14": personnel_inventory,
+            "15": employee,
+            "16": waste_water,
+            "17": waste_sludge,
+            "18": solvent_aerosol_emission_sources,
+            "19": VOCs_one,
+            "20": VOCs_two,
+            "21": electricity,
+            "22": upstream_transportation,
+            "23": downstream_transportation,
+            "24": employee_commute,
+            "25": employee_business_trip,
+            "26": waste,
+            "27": pipe_wastewater,
+            "28": purchase_material,
+            "29": product_indirect_emissions
         }
         if modelName.get(datasheet_id):
             dbName = modelName.get(datasheet_id)
@@ -1039,7 +1567,7 @@ def add_title(request):
             },
 
             "7": {
-                "編輯區": ["刪除", "修改"],
+                "編輯區": ["刪除", "修改", "照片"],
                 "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
@@ -1070,22 +1598,17 @@ def add_title(request):
 
             "13": {
                 "編輯區": ["刪除", "修改"],
-                "冷媒總表": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "滅火器清單": ["序號", "年度", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
             },
 
             "14": {
-                "編輯區": ["刪除", "修改"],
-                "滅火器清單": ["序號", "年度", "滅火器名稱", "類型", "設備編號", "擺放位置(廠別)", "廠商", "藥劑重量(單位:kg)", "庫存量", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
-            },
-
-            "15": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "員工總數"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
-            "16": {
+            "15": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "年度", "人員類別"],
                 "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
@@ -1093,74 +1616,106 @@ def add_title(request):
                 "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
+            "16": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+            },
+
             "17": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+            },
+
+            "18": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
+                "溶劑、噴霧劑添加物 (點擊\"修改\"可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
+            },
+
+            "19": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+            },
+
+            "20": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
+                "VOCs濃度": ["入口濃度", "出口濃度"],
+                u"CO\u2082排放係數": ["內設值", "自訂值"],
+            },
+
+            "21": {
                 "編輯區": ["刪除", "修改"],
                 "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
             },
 
-            "18": {
+            "22": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
             },
 
-            "19": {
+            "23": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "運輸國家", "支付方", "趟次"]
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
             },
 
-            "20": {
+            "24": {
                 "編輯區": ["刪除", "修改"],
-                "員工通勤清冊": ["序號", "編號", "部門", "姓名", "交通方式", "排氣量(CC數)", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
+                "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
             },
 
-            "21": {
+            # 員工出差
+            "25": {
                 "編輯區": ["刪除", "修改"],
-                "員工出差清冊": ["序號", "員工編號", "部門", "姓名", "出差地點", "啟程日期", "出發地", "目的地", "來回距離(pkm)"],
+                "內容": ["序號", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
+                "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
             },
 
-            "22": {
+            "26": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
-            }
+            },
+
+            # 納管廢水
+            "27": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "納管編號", "廠別", "地址"],
+                "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+            },
+
+            # 原物料採購
+            "28": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "產品編號", "產品名稱"],
+                "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+            },
+
+            # 原物料採購
+            "29": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "年度", "產品編號", "產品名稱"],
+                "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+            },
         }
-    title = [htmlName.get(device_id)]
-    return JsonResponse(title, safe=False)
+        if device_id in htmlName:
+            title = [htmlName.get(device_id)]
+            return JsonResponse(title, safe=False)
 
 
 def chemical_dropdowm(request):
     chemical_add = list(chemical_table.objects.values("chemical_add"))
     return JsonResponse(chemical_add, safe=False)
 
+
 def load_chemical(request):
     chemical_add = request.GET.get("add_ch_name")
     chemical_data = list(chemical_table.objects.filter(chemical_add=chemical_add).values("chemical_name", "chemical_formula"))
     return JsonResponse(chemical_data, safe=False)
-
-# def export_data(request):
-#     if request.method == 'POST':
-#         # Get selected option from form
-#         file_format = request.POST['file-format']
-#         emergency_generators_resource = EGResource()
-#         dataset = emergency_generators_resource.export()
-#         if file_format == 'CSV':
-#             response = HttpResponse(dataset.csv, content_type='text/csv')
-#             response['Content-Disposition'] = 'attachment; filename="exported_data.csv"'
-#             return response
-#         elif file_format == 'JSON':
-#             response = HttpResponse(dataset.json, content_type='application/json')
-#             response['Content-Disposition'] = 'attachment; filename="exported_data.json"'
-#             return response
-#         elif file_format == 'XLS (Excel)':
-#             response = HttpResponse(dataset.xls, content_type='application/vnd.ms-excel')
-#             response['Content-Disposition'] = 'attachment; filename="exported_data.xls"'
-#             return response
-#
-#     return redirect('/carbon-system/')

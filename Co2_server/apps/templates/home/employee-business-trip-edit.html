@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype=multipart/form-data>
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-4 d-flex align-items-center">
@@ -37,59 +37,94 @@
                                                     {{ form.business_trip_location }}
                                                 </div>
                                             </div>
-                                            <div class="col-4 ps-md-2">
-                                                <label class="ms-0" for="start">出差日期 <span style="color:red; font-size:16px;">* </span></label>
-                                                <div class="col-6">
-                                                    <div class="ms-1 input-group date" id='date1'>
-                                                        {{ form.business_trip_date }}
-                                                    </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>啟程日期 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.business_trip_date }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ form.transportation }}
+                                                <div class="input-group input-group-static">
+                                                    <label>出差單號 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.business_trip_number }}
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                <div class="input-group input-group-static">
+                                                    <label>員工編號</label>
                                                     {{ form.employee_id }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
+                                                <div class="input-group input-group-static">
                                                     <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.employee_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
+                                                <div class="input-group input-group-static">
                                                     <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.department }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.departure }}
+                                        <br>
+                                        <div class="row mb-4">
+                                            出差段數
+                                            {% if update_formset_trip.errors %}
+                                                <div class="alert alert-danger">
+                                                    {{ update_formset_trip.errors }}
                                                 </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>目的地 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.destination }}
-                                                </div>
-                                            </div>
+                                            {% endif %}
                                         </div>
-                                        <div class="d-flex">
+                                        <div id="trip_section">
+                                            {{ update_formset.non_form_errors }}
+                                            {{ update_formset.management_form }}
+                                            {% for a in update_formset %}
+                                                <div class="row mb-4 trip" id="0">
+                                                    {% for hidden in a.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
+                                                    <div style="display: none">
+                                                        {{ a.DELETE }}
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.departure.hidden_fields }}
+                                                            {{ a.departure.errors }}
+                                                            {{ a.departure }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>交通工具 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.transportation.errors }}
+                                                            {{ a.transportation }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.distance.errors }}
+                                                            {{ a.distance }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                            <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="d-flex mb-4">
                                             <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
+                                                <div class="input-group input-group-static">
                                                     <label>上傳員工出差引用單據</label>
                                                     {{ form.bt_image_note }}
                                                 </div>
@@ -97,14 +132,6 @@
                                             <div class=" ps-md-2 align-self-center">
                                                 <div class="col-1 ">
                                                     {{ form.bt_image_path }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.round_trip_distance }}
                                                 </div>
                                             </div>
                                         </div>
@@ -132,12 +159,12 @@
                                         </div>
                                         <div class="d-flex justify-content-center">
                                             <div class="col-1">
-                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0" id="submit">
                                                     確認
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                <button type="button"  class="btn bg-gradient-secondary mt-3 mb-0" id="cancel"
                                                         onclick="history.back()">
                                                     取消
                                                 </button>
@@ -161,12 +188,14 @@
     {#    datepicker#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    icon#}
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
 
     {#    禁止enter鍵#}
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
@@ -176,11 +205,78 @@
     {#    日期篩選器#}
     <script>
         $("#datepicker").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
+            format: "yyyy-mm-dd",
+            viewMode: "days",
+            minViewMode: "days",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
+    </script>
+
+    {#    新增/刪除出差段數#}
+    <script>
+
+        //刪除extra=1新增的空白表單
+        var remove_extra = document.querySelectorAll(".trip:last-child")[0]
+        remove_extra.remove()
+        var TOTAL_FORMS = document.querySelectorAll("#trip_section > input")[0]
+        var trip_count = parseInt(TOTAL_FORMS.value, 10) -1
+        var id_count = trip_count
+        TOTAL_FORMS.value = id_count.toString()
+
+        //將initial表單排序
+        let trip_id = document.querySelectorAll(".trip")
+        for (let i = 0; i < id_count; i++) {
+            trip_id[i].id = i.toString();
+        }
+
+        function DeleteTrip(deletbutton) {
+            if (trip_count > 1) {
+                trip = deletbutton.closest("div.trip")
+                var delete_checkbox = document.getElementById("id_trip_section_set-" + trip.id + "-DELETE")
+                console.log(delete_checkbox)
+                delete_checkbox.checked = true;
+                trip.style.display = "none";
+                trip_count -= 1
+            }
+        }
+
+        function DuplicateTrip() {
+            document.getElementById("id_trip_section_set-TOTAL_FORMS").value = (id_count + 1).toString()
+            var trip_section = document.getElementById("trip_section")
+            var first_trip = document.getElementsByClassName("trip")[0]
+            var clone = first_trip.cloneNode(true);
+            trip_section.appendChild(clone)
+            clone.id = (id_count)
+            var hidden = document.querySelectorAll(".trip:last-child > input")
+            //主鍵
+            hidden[0].name = "trip_section_set-" + id_count + "-id"
+            hidden[0].id = "id_trip_section_set-" + id_count + "-id"
+            hidden[0].removeAttribute("value")
+
+            //外鍵
+            hidden[1].name = "trip_section_set-" + id_count + "-id"
+            hidden[1].id = "id_trip_section_set-" + id_count + "-id"
+
+            //刪除
+            var deleted = document.querySelectorAll(".trip:last-child > div > input")
+            deleted[0].name = "trip_section_set-" + id_count + "-DELETE"
+            deleted[0].id = "id_trip_section_set-" + id_count + "-DELETE"
+
+            //輸入欄位
+            var input = document.querySelectorAll(".trip:last-child > div > div > input")
+            input[0].id = "id_trip_section_set-" + id_count + "-departure"
+            input[0].name = "trip_section_set-" + id_count + "-departure"
+            input[1].id = "id_trip_section_set-" + id_count + "-distance"
+            input[1].name = "trip_section_set-" + id_count + "-distance"
+            input[0].value = ""
+            input[1].value = ""
+            var select = document.querySelectorAll(".trip:last-child > div > div > select")
+            select[0].id = "id_trip_section_set-" + id_count + "-transportation"
+            select[0].name = "trip_section_set-" + id_count + "-transportation"
+            select[0].value = ""
+            id_count += 1;
+            trip_count += 1;
+        }
     </script>
 {% endblock javascripts %}

@@ -1,0 +1,289 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} VOCs-two {% endblock %}
+
+{% block body_class %} VOCs-two {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ VOCs_2</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/VOCs_two_add/" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-5">
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VOCs_two_add.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-5">
+                                                    <label>VOCs處理量(單位: 千立方公尺/年) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VOCs_two_add.disposal_volume }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-5">
+                                                    <label>CH<sub>4</sub>濃度(單位: ppm) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VOCs_two_add.concentration_ch4 }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-5">
+                                                    <label>VOCs設備補集率 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VOCs_two_add.voc_capture_rate }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-5">
+                                                    <label>設備燃燒效率 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VOCs_two_add.combustion_equipment_rate }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-check p-0">
+                                                {#                                                <input class="form-check-input" type="radio" id="known_checkbox" name="radio_VOCs" value="known">#}
+                                                {#                                                已知VOCs濃度<span style="color:red; font-size:16px;">* (出口入口擇一必填)</span>#}
+                                                {#已知VOCs濃度#}
+                                                {{ VOCs_two_add.radio_VOCs.0 }}<span style="color:red; font-size:16px;">* (內設值/自訂值擇一必填)</span>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check p-0">
+                                                    {#                                                    <input class="form-check-input" type="radio" id="entrance_checkbox" name="radio_concentration" value="entrance" disabled>#}
+                                                    {#入口濃度#}
+                                                    {{ VOCs_two_add.radio_concentration.0 }}
+                                                </div>
+                                                <div class="input-group input-group-static mb-5">
+                                                    {{ VOCs_two_add.concentration_entrance }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check p-0">
+                                                    {#                                                    <input class="form-check-input" type="radio" id="exit_checkbox" name="radio_concentration" value="exit" disabled>#}
+                                                    {#出口濃度#}
+                                                    {{ VOCs_two_add.radio_concentration.1 }}
+                                                </div>
+                                                <div class="input-group input-group-static mb-5">
+                                                    {{ VOCs_two_add.concentration_exit }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-check p-0">
+                                                {#                                                <input class="form-check-input" type="radio" id="unknown_checkbox" name="radio_VOCs" value="unknown">#}
+                                                {#                                                未知VOCs濃度或已知CO<sub>2</sub>排放係數<span style="color:red; font-size:16px;">* (內設值/自訂值擇一必填)</span>#}
+                                                {#未知VOCs濃度或已知co2排放係數#}
+                                                {{ VOCs_two_add.radio_VOCs.1 }}<span style="color:red; font-size:16px;">* (內設值/自訂值擇一必填)</span>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check p-0">
+                                                    {#                                                    <input class="form-check-input" type="radio" id="builtIn_checkbox" name="radio_co2_emission" value="builtIn" disabled>#}
+                                                    {#                                                    <label class="m-0">內設值 </label>#}
+                                                    {{ VOCs_two_add.radio_co2_emission.0 }}
+                                                </div>
+                                                <div class="input-group input-group-static mb-5">
+                                                    {{ VOCs_two_add.builtIn_rate }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check p-0">
+                                                    {#                                                    <input class="form-check-input" type="radio" id="custom_checkbox" name="radio_co2_emission" value="custom" disabled>#}
+                                                    {#                                                    <label class="m-0">自訂值 </label>#}
+                                                    {{ VOCs_two_add.radio_co2_emission.1 }}
+                                                </div>
+                                                <div class="input-group input-group-static mb-5">
+                                                    {{ VOCs_two_add.custom_rate }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-control">
+                                                    <label>備註欄</label>
+                                                    {{ VOCs_two_add.message_board }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-1">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認
+                                                </button>
+                                            </div>
+                                            <div class="col-1">
+                                                <button type="button"  class="btn bg-gradient-secondary mt-3 mb-0"
+                                                        onclick="history.back()">
+                                                    取消
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+    {#    出入口濃度篩選器#}
+    <script>
+        var entrance_checkbox = document.getElementById("radio_concentration_0")
+        var concentration_exit = document.getElementById("concentration_exit")
+        var exit_checkbox = document.getElementById("radio_concentration_1")
+        var concentration_entrance = document.getElementById("concentration_entrance")
+
+        function concentration() {
+            if (entrance_checkbox.checked === false) {
+                concentration_entrance.disabled = true;
+                $(".concentration_entrance").val("")
+            } else {
+                concentration_entrance.disabled = false;
+            }
+            if (exit_checkbox.checked === false) {
+                concentration_exit.disabled = true;
+                $(".concentration_exit").val("")
+            } else {
+                concentration_exit.disabled = false;
+            }
+        }
+
+        entrance_checkbox.addEventListener('click', concentration);
+        exit_checkbox.addEventListener('click', concentration);
+    </script>
+
+    {#內設值/自訂值篩選器#}
+    <script>
+        var builtIn_checkbox = document.getElementById("radio_co2_emission_0")
+        var builtIn_rate = document.getElementById("builtIn_rate")
+        var custom_checkbox = document.getElementById("radio_co2_emission_1")
+        var custom_rate = document.getElementById("custom_rate")
+
+        function co2_emission() {
+            if (builtIn_checkbox.checked === false) {
+                builtIn_rate.disabled = true;
+                $(".builtIn_rate").val("")
+            } else {
+                builtIn_rate.disabled = false;
+                $(".builtIn_rate").val("2.170437")
+            }
+
+            if (custom_checkbox.checked === false) {
+                custom_rate.disabled = true;
+                $(".custom_rate").val("")
+            } else {
+                custom_rate.disabled = false;
+            }
+        }
+
+        builtIn_checkbox.addEventListener('click', co2_emission);
+        custom_checkbox.addEventListener('click', co2_emission);
+    </script>
+
+    {#    已知VOCa濃度/未知VOCa濃度篩選器#}
+    <script>
+        var known_checkbox = document.getElementById("radio_VOCs_0")
+        var unknown_checkbox = document.getElementById("radio_VOCs_1")
+        var entrance_checkbox = document.getElementById("radio_concentration_0")
+        var exit_checkbox = document.getElementById("radio_concentration_1")
+        var builtIn_checkbox = document.getElementById("radio_co2_emission_0")
+        var custom_checkbox = document.getElementById("radio_co2_emission_1")
+        var concentration_exit = document.getElementById("concentration_exit")
+        var concentration_entrance = document.getElementById("concentration_entrance")
+        var builtIn_rate = document.getElementById("builtIn_rate")
+        var custom_rate = document.getElementById("custom_rate")
+
+        function VOCs() {
+            if (known_checkbox.checked === false) {
+                entrance_checkbox.disabled = true;
+                exit_checkbox.disabled = true;
+                entrance_checkbox.checked = false;
+                exit_checkbox.checked = false;
+                concentration_exit.disabled = true;
+                concentration_entrance.disabled = true;
+                $(".concentration_entrance").val("")
+                $(".concentration_exit").val("")
+            } else {
+                entrance_checkbox.disabled = false;
+                exit_checkbox.disabled = false;
+            }
+
+            if (unknown_checkbox.checked === false) {
+                builtIn_checkbox.disabled = true;
+                custom_checkbox.disabled = true;
+                builtIn_checkbox.checked = false;
+                custom_checkbox.checked = false;
+                builtIn_rate.disabled = true;
+                custom_rate.disabled = true;
+                $(".builtIn_rate").val("")
+                $(".custom_rate").val("")
+            } else {
+                builtIn_checkbox.disabled = false;
+                custom_checkbox.disabled = false;
+            }
+        }
+
+        known_checkbox.addEventListener('click', VOCs);
+        unknown_checkbox.addEventListener('click', VOCs);
+    </script>
+
+{% endblock javascripts %}

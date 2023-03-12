@@ -1,75 +1,408 @@
 ﻿import io
-import zipfile
-
 import pandas as pd
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.shortcuts import render
 from urllib import parse
+from django.contrib import messages
+from openpyxl import load_workbook
+from .views import current_user_group_id
 
 from .models import *
 
+COLUMN_MAPPING = {
+    'emergency_generators': {
+        'columns': ['years', 'device_id', 'device_capacity', 'position', 'department',
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+                    'september', 'october', 'november', 'december', 'message_board'],  # 欄位清單1
+        'column_names': ['年度', '設備編號', '容量(𝓁)', '地點', '部門', '一月', '二月', '三月',
+                         '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],  # 欄位中文名稱1
+        'prefix': '類別一_'
+    },
+    'combustion_equipment': {
+        'columns': ['years', 'device_name', 'device_id', 'fuel_type', 'fuel_january', 'fuel_february', 'fuel_march',
+                    'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august', 'fuel_september', 'fuel_october',
+                    'fuel_november', 'fuel_december', 'heat_january', 'heat_february', 'heat_march', 'heat_april', 'heat_may',
+                    'heat_june', 'heat_july', 'heat_august', 'heat_september', 'heat_october', 'heat_november', 'heat_december', 'message_board'],
+        'column_names': ['年度', '名稱', '編號', '燃料種類', '一月 使用量', '二月 使用量', '三月 使用量', '四月 使用量', '五月 使用量', '六月 使用量', 
+                         '七月 使用量', '八月 使用量', '九月 使用量', '十月 使用量', '十一月 使用量', '十二月 使用量'
+                         '一月 熱值(Kcal/kg)', '二月 熱值(Kcal/kg)', '三月 熱值(Kcal/kg)', '四月 熱值(Kcal/kg)', '五月 熱值(Kcal/kg)', '六月 熱值(Kcal/kg)', 
+                         '七月 熱值(Kcal/kg)', '八月 熱值(Kcal/kg)', '九月 熱值(Kcal/kg)', '十月 熱值(Kcal/kg)', '十一月 熱值(Kcal/kg)', '十二月 熱值(Kcal/kg)', '備註欄'],
+        'prefix': '類別一_'
+    },
+    'official_car': {
+        'columns': ['col4', 'col5', 'col6'],
+        'column_names': ['中文名稱4', '中文名稱5', '中文名稱6'],
+        'prefix': '類別一_'
+    },
+    'material': {
+        'columns': ['years', 'material_id', 'material_type', 'material_name', 'process_add_name', 'chemical_name', 'chemical_formula',
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
+        'column_names': ['年度', '原物料號', '原/物料', '名稱', '化學品名稱', '化學品名', '化學式', '一月', '二月', '三月', '四月', '五月', 
+                         '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+        'prefix': '類別一_'
+    },
+    'process': {
+        'columns': ['years', 'process_stage', 'material_id', 'process_add_name', 'chemical_name', 'chemical_formula', 'CAS_NO', 'burn', 'VOCs',
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
+        'column_names': ['年度', '製程階段', '料號', '製程添加物', '化學品名', '化學式', 'CAS NO', '是否燃燒', 'VOCs',
+                         '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+        'prefix': '類別一__'
+    },
+    'refrigerator': {
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
+                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'prefix': '類別一__'
+    },
+    'airconditioner': {
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
+                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'prefix': '類別一__'
+    },
+    'vehicle': {
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
+                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'prefix': '類別一__'
+    },
+    'water_dispenser': {
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
+                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'prefix': '類別一__'
+    },
+    'ice_water_dispenser': {
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
+                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'prefix': '類別一__'
+    },
+    'ice_maker': {
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
+                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'prefix': '類別一__'
+    },
+    'other_device': {
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
+                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'prefix': '類別一__'
+    },
+    'extinguisher': {
+        'columns': ['years', 'device_id', 'extinguisher_vendor', 'extinguisher_type', 'position', 'inventory',
+                    'chemical_weight', 'using_amount', 'monthly', 'replace_filling_amount', 'replace_filling_date', 'message_board'],
+        'column_names': ['年度', '設備編號', '廠商', '類型', '擺放位置(廠別)', '庫存量', '藥劑重量(單位:kg)', '使用量數量', '使用月份', '更換/填充量', '更換/填充日期'],
+        'prefix': '類別一_'
+    },
+    'personnel_inventory': {
+        'columns': ['years', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june',
+                    'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
+                    'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july',
+                    'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'message_board'],
+        'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
+        'prefix': '類別一_'
+    },
+    'employee': {
+        'columns': ['years', 'career', 'employeeNum_january', 'employeeNum_february', 'employeeNum_march', 'employeeNum_april', 'employeeNum_may',
+                    'employeeNum_june', 'employeeNum_july', 'employeeNum_august', 'employeeNum_september', 'employeeNum_october', 'employeeNum_november',
+                    'employeeNum_december', 'WKdays_january', 'WKdays_february', 'WKdays_march', 'WKdays_april', 'WKdays_may', 'WKdays_june',
+                    'WKdays_july', 'WKdays_august', 'WKdays_september', 'WKdays_october', 'WKdays_november', 'WKdays_december',
+                    'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july',
+                    'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december', 'message_board'],
+        'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
+        'prefix': '類別一_'
+    },
+    'waste_water': {
+        'columns': ['years', 'waste_water_treatment_name', 'waste_water_inflow_rate', 'average_inlet_COD_concentration',
+                    'average_COD_removal_rate', 'CH4_capture_system_rate', 'combustion_equipment_efficiency', 'message_board'],
+        'column_names': ['年度', '廢水厭氧處理單元名稱 ', '廢水進流量(立方公尺/年)', '平均進流COD濃度(mg/L)', '平均進流COD濃度(mg/L)', 
+                         u'CH\u2084捕集系統捕集率', '燃燒設備效率', '備註欄'],
+        'prefix': '類別一_'
+    },
+    'waste_sludge': {
+        'columns': ['years', 'waste_sludge_treatment_name', 'waste_sludge_inflow_rate', 'average_inlet_MLSS_concentration',
+                    'CH4_capture_system_rate', 'combustion_equipment_efficiency', 'message_board'],
+        'column_names': ['年度', '廢棄污泥厭氧處理單元名稱', '污泥進流量(立方公尺/年)', '平均進流MLSS濃度(mg/L)', u'CH\u2084捕集系統捕集率', '燃燒設備效率', '備註欄'],
+        'prefix': '類別一_'
+    },
+    'solvent_aerosol_emission_sources': {
+        'columns': ['id', 'years', 'solvent_name', 'solvent_amount', 'solvent_amount_unit', 'solvent_capacity', 'solvent_capacity_unit', 'fugitive_recharge', 'message_board'],
+        'column_names': ['添加物編號', '年度', '溶劑、噴霧劑名稱', '數量', '單位', '容量', '單位', '逸散 / 補充量(公噸/年)', '備註欄'],
+        'prefix': '類別一_'
+    },
+    'additive_section': {
+        'columns': ['additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio', 'additive_id'],
+        'column_names': ['添加物名稱', '添加量', '單位', '成份', '添加比例', '添加物編號'],
+    },
+    'VOCs_one': {
+        'columns': ['years', 'emission', 'concentration_ch4', 'message_board'],
+        'column_names': ['年度', 'VOCs排放量(千立方公尺/年)', u'CH\u2084濃度(ppm)', '備註欄'],
+        'prefix': '類別一_'
+    },
+    'VOCs_two': {
+        'columns': ['years', 'disposal_volume', 'concentration_ch4', 'voc_capture_rate', 'combustion_equipment_rate',
+                    'concentration_entrance', 'concentration_exit', 'builtIn_rate', 'custom_rate', 'message_board'],
+        'column_names': ['年度', 'VOCs排放量(千立方公尺/年)', u'CH\u2084濃度', 'VOCs設備補集率', '燃燒設備效率', '入口濃度', '出口濃度', '內設值', '自訂值', '備註欄'],
+        'prefix': '類別一_'
+    },
+    'electricity': {
+        'columns': ['years', 'EMI_id', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+                    'september', 'october', 'november', 'december', 'message_board'],
+        'column_names': ['年度', '電表編號', '地址', '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+        'prefix': '類別二_'
+    },
+    'upstream_transportation': {
+        'columns': ['acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW',
+                    'organizational_use_products', 'customer', 'supplier', 'supplier_address',
+                    'trade_term', 'receiving_address', 'delivery_address',
+                    'transport_distance', 'transport_country', 'transport_type', 'transport_fuel', 'paid', 'trips',
+                    'overseas_transport_distance', 'overseas_delivery', 'overseas_arrive', 'overseas_paid', 'overseas_trips',
+                    'special_transport_distance', 'special_transport_country', 'special_transport_type', 'special_transport_fuel', 'special_paid', 'special_trips',
+                    'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'message_board'],
+        'column_names': ['單號', '商品', '淨/毛重', '重量(噸)', '組織使用產品', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點', 
+                         '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
+                         '海運距離(nm)', '出貨港口', '到達港口', '支付方', '趟次',
+                         '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
+                         '單趟運輸距離(km)', '出貨機場', '到達機場', '支付方', '趟次', '備註欄'],
+        'prefix': '類別三_'
+    },
+    'downstream_transportation': {
+        'columns': ['acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW', 'customer', 'supplier', 'supplier_address',
+                    'trade_term', 'receiving_address', 'delivery_address',
+                    'transport_distance', 'transport_country', 'transport_type', 'transport_fuel', 'paid', 'trips',
+                    'overseas_transport_distance', 'overseas_delivery', 'overseas_arrive', 'overseas_paid', 'overseas_trips',
+                    'special_transport_distance', 'special_transport_country', 'special_transport_type', 'special_transport_fuel', 'special_paid', 'special_trips',
+                    'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'message_board'],
+        'column_names': ['單號', '商品', '淨/毛重', '重量(噸)', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點',
+                         '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
+                         '海運距離(nm)', '出貨港口', '到達港口', '支付方', '趟次',
+                         '單趟運輸距離(km)', '出貨機場', '到達機場', '支付方', '趟次', '備註欄'],
+        'prefix': '類別三_'
+    },
+    'waste': {
+        'columns': ['waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
+                    'transport_type', 'transport_fuel', 'transport_distance', 'message_board'],
+        'column_names': ['名稱', '重量(噸)', '運送時間', '處置地點', '處理方式', '處理廠商名稱', '運輸方式', '運輸燃料', '運輸距離(km)', '備註欄'],
+        'prefix': '類別四_'
+    },
+    'pipe_wastewater': {
+        'columns': ['years', 'pipe_id', 'address', 'factory', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+                    'september', 'october', 'november', 'december', 'message_board'],
+        'column_names': ['年度', '納管編號', '廠別', '地址', '一月', '二月', '三月', '四月', '五月', '六月', 
+                         '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+        'prefix': '類別四_'
+    },
+    'purchase_material': {
+        'columns': ['years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+                    'september', 'october', 'november', 'december', 'message_board'],
+        'column_names': ['年度', '產品編號', '產品名稱', '一月', '二月', '三月', '四月', '五月', '六月', 
+                         '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+        'prefix': '類別四_'
+    },
+    'product_indirect_emissions': {
+        'columns': ['years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+                    'september', 'october', 'november', 'december', 'message_board'],
+        'column_names': ['年度', '產品編號', '產品名稱', '一月', '二月', '三月', '四月', '五月', '六月', 
+                         '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+        'prefix': '類別五_'
+    },
+    'employee_business_trip': {
+        'columns': ['id', 'business_trip_number', 'employee_id', 'department', 'employee_name', 'business_trip_location', 'business_trip_date'],
+        'column_names': ['出差行程編號', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
+        'prefix': '類別三_'
+    },
+    'trip_section': {
+        'columns': ['departure', 'transportation', 'distance', 'trip_id'],
+        'column_names': ['出發地', '交通工具', '距離', '出差行程編號'],
+    },
+    'employee_commute': {
+        'columns': ['id', 'years', 'employee_id', 'department', 'employee_name', 'city', 'township', 'address', 'commute_distance', 'work_days'],
+        'column_names': ['員工通勤編號', '年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數'],
+        'prefix': '類別三_'
+    },
+    'transportation_way': {
+        'columns': ['transportation', 'commute'],
+        'column_names': ['交通工具', '員工通勤編號'],
+    },
+
+    # ... 其他資料庫表格和欄位清單映射
+}
 
 
-
+# 匯出功能
 @csrf_exempt
 @require_http_methods(["POST"])
-def csv_view(request):
+def export_excel(request):
     if request.method == "POST":
-        # if 'start' in request.POST and 'end' and 'type' in request.POST:
-            # start = request.POST.get('start')
-            # end = request.POST.get('end')
-            # type = request.POST.get('type')
-            # if 'statistics' in request.POST:
-            #     statistics = request.POST.get('statistics')
-            # else:
-            #     statistics = '0'
-            # if 'checkbox' in request.POST:
-            #     checkbox_check = []
-            #     checkbox_check_boolean = request.POST.getlist('checkbox')
-            #     # true,false 轉成誰是true 0~3
-            #     r = 0
-            #     for c in checkbox_check_boolean:
-            #         if c == 'true':
-            #             checkbox_check.append(str(r))
-            #         r += 1
-            # if 'checkbox_check_boolean' not in locals():
-            #     checkbox_check = ['0']
-            # excel = []
-            # excel_name = []
-            # for c in checkbox_check:
-            #     # 抓取全部co2資料
-            #     co2, name = csv_getdata(request, type, c)
-            #     if name == 'false':
-            #         # 權限不足
-            #         return HttpResponse(status=500)
-            #     # 這邊可以使用query
-            #     if start:
-            #         co2 = co2.filter(date__gte=start)
-            #     if end:
-            #         co2 = co2.filter(date__lte=end)
-
         did = request.POST.get('did')
+        print(did)
         excel_did = section_two.objects.filter(did__exact=int(did))
 
-        df = csv_statistics(globals()[excel_did[0].t_name].objects.all())
+        # 取得欄位清單和欄位中文名稱
+        table_name = excel_did[0].t_name
+        column_mapping = COLUMN_MAPPING[table_name]
+        prefix = column_mapping.get('prefix', '')
+        columns = column_mapping['columns']
+        column_names = column_mapping['column_names']
 
+        # 根據所需欄位清單查詢資料
+        data = globals()[table_name].objects.all().values(*columns)
 
-        csv_name = excel_did[0].d_name + '.csv'
+        # 將查詢結果轉換為DataFrame
+        df = pd.DataFrame(list(data))
 
-        # csv型態
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; charset=utf_8_sig; filename=' + parse.quote(csv_name, encoding="UTF-8")
-        df.to_csv(index=False, sep=',', encoding='utf_8_sig', path_or_buf=response, na_rep='NULL')
+        # 將欄位名稱改成中文
+        df.columns = column_names
 
+        if table_name == 'employee_business_trip':
+            # 取得母表和子表的欄位資訊
+            mother_columns = COLUMN_MAPPING['employee_business_trip']['columns']
+            mother_column_names = COLUMN_MAPPING['employee_business_trip']['column_names']
+            child_columns = COLUMN_MAPPING['trip_section']['columns']
+            child_column_names = COLUMN_MAPPING['trip_section']['column_names']
+
+            # 取得母表和子表的資料
+            mother_data = employee_business_trip.objects.all().values(*mother_columns)
+            child_data = trip_section.objects.all().values(*child_columns)
+
+            # 將母表和子表的資料轉換為 DataFrame
+            mother_df = pd.DataFrame(list(mother_data))
+            child_df = pd.DataFrame(list(child_data))
+
+            # 將欄位名稱改成中文
+            mother_df.columns = mother_column_names
+            child_df.columns = child_column_names
+
+            # 將子表的資料加入到母表的資料中
+            df = pd.merge(mother_df, child_df[['出發地', '交通工具', '距離', '出差行程編號']], on='出差行程編號', how='left')
+
+            # 將子表的欄位名稱加入到匯出的資料中
+            column_names = ['出差行程編號', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期']
+            column_names.extend(['出發地', '交通工具', '距離'])
+
+        elif table_name == 'employee_commute':
+            # 取得母表和子表的欄位資訊
+            mother_columns = COLUMN_MAPPING['employee_commute']['columns']
+            mother_column_names = COLUMN_MAPPING['employee_commute']['column_names']
+            child_columns = COLUMN_MAPPING['transportation_way']['columns']
+            child_column_names = COLUMN_MAPPING['transportation_way']['column_names']
+
+            # 取得母表和子表的資料
+            mother_data = employee_commute.objects.all().values(*mother_columns)
+            child_data = transportation_way.objects.all().values(*child_columns)
+
+            # 將母表和子表的資料轉換為 DataFrame
+            mother_df = pd.DataFrame(list(mother_data))
+            child_df = pd.DataFrame(list(child_data))
+
+            # 將欄位名稱改成中文
+            mother_df.columns = mother_column_names
+            child_df.columns = child_column_names
+
+            # 將子表的資料加入到母表的資料中
+            df = pd.merge(mother_df, child_df[['交通工具', '員工通勤編號']], on='員工通勤編號', how='left')
+
+            # 將子表的欄位名稱加入到匯出的資料中
+            column_names = ['員工通勤編號', '年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數']
+            column_names.extend(['交通工具'])
+
+        elif table_name == 'solvent_aerosol_emission_sources':
+            # 取得母表和子表的欄位資訊
+            mother_columns = COLUMN_MAPPING['solvent_aerosol_emission_sources']['columns']
+            mother_column_names = COLUMN_MAPPING['solvent_aerosol_emission_sources']['column_names']
+            child_columns = COLUMN_MAPPING['additive_section']['columns']
+            child_column_names = COLUMN_MAPPING['additive_section']['column_names']
+
+            # 取得母表和子表的資料
+            mother_data = solvent_aerosol_emission_sources.objects.all().values(*mother_columns)
+            child_data = additive_section.objects.all().values(*child_columns)
+
+            # 將母表和子表的資料轉換為 DataFrame
+            mother_df = pd.DataFrame(list(mother_data))
+            child_df = pd.DataFrame(list(child_data))
+
+            # 將欄位名稱改成中文
+            mother_df.columns = mother_column_names
+            child_df.columns = child_column_names
+
+            # 將子表的資料加入到母表的資料中
+            df = pd.merge(mother_df, child_df[['添加物名稱', '添加量', '單位', '成份', '添加比例', '添加物編號']], on='添加物編號', how='left')
+
+            # 將子表的欄位名稱加入到匯出的資料中
+            column_names = ['添加物編號', '年度', '溶劑、噴霧劑名稱', '數量', '單位', '容量', '單位', '逸散 / 補充量(公噸/年)', '備註欄']
+            column_names.extend(['添加物名稱', '添加量', '單位', '成份', '添加比例'])
+
+        # 將欄位名稱改成中文
+        df.columns = column_names
+
+        # 創建Excel文件
+        excel_name = prefix + excel_did[0].d_name + '.xlsx'
+        output = io.BytesIO()
+        writer = pd.ExcelWriter(output, engine='xlsxwriter')
+        df.to_excel(writer, index=False, sheet_name='Sheet1')
+        writer.save()
+        output.seek(0)
+
+        # 下載 Excel 文件
+        response = HttpResponse(output.getvalue(), content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=' + parse.quote(excel_name, encoding="UTF-8")
 
         return response
 
+    else:
+        # 呈現選擇保存位置的表格
+        return render(request, 'home/carbon-system.html')
 
 
-def csv_statistics(data):
-    df = pd.DataFrame(list(data.values()))
-    df = df.drop(columns=['did_id'])
-    df = df.drop(columns=['image_note'])
-    df = df.drop(columns=['image_path'])
-    return df
+# 匯入功能
+@csrf_exempt
+@require_http_methods(["POST"])
+def import_excel(request):
+    if request.method == 'POST':
+        try:
+            did = request.POST.get('did')
+            file = request.FILES['excel_file']
+
+            # 解析Excel檔案
+            wb = load_workbook(file, data_only=True)
+            sheet = wb.active
+
+            # 取得目標資料表名稱
+            section = section_two.objects.get(did=did)
+            table_name = section.t_name
+
+            # 取得目標資料表的中英文欄位名稱對應
+            column_mapping = COLUMN_MAPPING[table_name]
+            column_names = column_mapping['column_names']
+            columns = column_mapping['columns']
+
+            # 取得當前用戶所屬的公司 ID
+            company_id = current_user_group_id(request)
+
+            # 讀取Excel中的資料，並存入資料庫中
+            for row in sheet.iter_rows(min_row=2):
+                data = {}
+                for i, cell in enumerate(row):
+                    # 將中文欄位名稱轉換為英文欄位名稱
+                    column_name = column_names[i]
+                    column = columns[i]
+                    if column == "id":
+                        continue  # 如果欄位是id，則略過不處理
+                    data[column] = cell.value
+
+                # 添加公司 ID 到資料字典
+                data['company_id'] = company_id
+
+                # 將資料存入資料庫
+                your_model_instance = globals()[table_name](**data)
+                your_model_instance.save()
+
+            messages.success(request, '匯入Excel成功')
+            return HttpResponse('OK')
+        except Exception as e:
+            messages.error(request, '匯入Excel失敗')
+            return HttpResponse(str(e), status=400)

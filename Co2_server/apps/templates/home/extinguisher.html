@@ -28,27 +28,22 @@
                             <div class="card-body">
                                 <form action="/extinguisher_add/" method="POST" enctype="multipart/form-data">
                                 {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row my-3">
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年度 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ EX_add.years }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_add.extinguisher_name }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;"></span></label>
                                                     {{ EX_add.device_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廠商</label>
                                                     {{ EX_add.extinguisher_vendor }}
@@ -139,7 +134,7 @@
                                             </button>
                                         </div>
                                         <div class="col-1">
-                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
                                                 取消
                                             </button>
                                         </div>
@@ -167,14 +162,14 @@
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
         });
     </script>
 
-    {#    日期篩選器#}
+    {#    年度篩選器#}
     <script>
         $("#datepicker").datepicker({
             format: "yyyy",
@@ -185,7 +180,7 @@
         }).datepicker("setDate", 'now');
     </script>
 
-    {#    月份篩選器#}
+    {#    月份篩選器1#}
     <script>
         $("#datepicker2").datepicker({
             format: "yyyy-mm",
@@ -196,10 +191,20 @@
         }).datepicker("setDate", 'now');
     </script>
 
+        {#    月份篩選器2#}
+    <script>
+        $("#datepicker3").datepicker({
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
 
     {#    日期篩選器#}
     <script>
-        $("#datepicker3").datepicker({
+        $("#datepicker4").datepicker({
             format: "yyyy-mm-dd",
             viewMode: "days",
             minViewMode: "days",

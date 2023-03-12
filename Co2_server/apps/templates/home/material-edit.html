@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID %}" method="POST" enctype="multipart/form-data">
+                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
@@ -193,9 +193,7 @@
                                             </button>
                                         </div>
                                         <div class="col-1">
-                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
-                                                取消
-                                            </button>
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0" name="cancel" value="cancel">取消</button>
                                         </div>
                                     </div>
                                 </form>

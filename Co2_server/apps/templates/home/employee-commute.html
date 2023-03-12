@@ -28,23 +28,30 @@
                             </div>
                             <div class="card-body">
                                 <form action="/employee_commute_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                    {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-6">
+                                        <div class="row mb-4">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EC_add.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.employee_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.employee_name }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>服務部門 <span style="color:red; font-size:16px;">* </span></label>
@@ -58,22 +65,7 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="row">
-                                            <div class="col-6 d-flex align-items-center">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>交通方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ EC_add.transportation }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>汽/機車排氣量(CC數) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_add.displacement }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>居住縣市 <span style="color:red; font-size:16px;">* </span></label>
@@ -87,7 +79,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>行政區公家機關地址 <span style="color:red; font-size:16px;">* </span></label>
@@ -100,6 +92,36 @@
                                                     {{ EC_add.commute_distance }}
                                                 </div>
                                             </div>
+
+                                            <br>
+                                            <div class="row mb-4">
+                                                交通方式
+                                            </div>
+                                            {{ CommuteFormSet.management_form }}
+                                            {{ CommuteFormSet.non_form_errors }}
+                                            {% for a in CommuteFormSet %}
+                                                <div id="commute_section">
+                                                    <div class="row mb-4 commute" id="0">
+                                                        {% for hidden in a.hidden_fields %}
+                                                            {{ hidden }}
+                                                        {% endfor %}
+                                                        <div class="col-4">
+                                                            <div class="input-group input-group-static mb-4">
+                                                                <label>交通方式 <span style="color:red; font-size:16px;">* </span></label>
+                                                                {{ a.transportation.errors }}
+                                                                {{ a.transportation }}
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-1 d-flex align-items-center">
+                                                            <div class="input-group input-group-static mb-4">
+                                                                <a class="col" onclick="DuplicateCommute()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                                <a class="col" onclick="DeleteCommute(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
                                             <div class="d-flex">
                                                 <div class="col-6">
                                                     <div class="input-group input-group-static mb-4">
@@ -115,7 +137,7 @@
                                             </div>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
-                                        <div class="row">
+                                        <div class="row mb-4">
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
@@ -130,7 +152,7 @@
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                <button type="submit"  class="btn bg-gradient-secondary mt-3 mb-0"
                                                         onclick="history.back()">
                                                     取消
                                                 </button>
@@ -152,37 +174,65 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-
-    <script>
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-
-        $("#datepicker").datepicker({
-            format: "mm-yyyy",
-            startView: "months",
-            minViewMode: "months"
-        });
-    </script>
+    {#    datepicker#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    icon#}
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
 
     {#    禁止enter鍵#}
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
         });
+    </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+    {#    新增/刪除出差段數#}
+    <script>
+        var commute_count = 0;
+
+        function DuplicateCommute() {
+            commute_count += 1;
+            document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (commute_count + 1).toString()
+            var commute_section = document.getElementById("commute_section")
+            var first_trip = document.getElementsByClassName("commute")[0]
+            var clone = first_trip.cloneNode(true);
+            commute_section.appendChild(clone)
+            clone.id = (commute_count)
+            var select = document.querySelectorAll(".commute:last-child > div > div > select")
+            select[0].id = "id_transportation_way_set-" + commute_count + "-transportation"
+            select[0].name = "transportation_way_set-" + commute_count + "-transportation"
+            select[0].value = ""
+        }
+
+        function DeleteCommute(deletbutton) {
+            if (commute_count > 0) {
+                commute_count -= 1;
+                deletbutton.closest("div.commute").remove()
+                document.getElementById("id_transportation_way_set-TOTAL_FORMS").value = (commute_count + 1).toString()
+                var commute = document.getElementsByClassName("commute")
+                for (let i = 0; i <= commute_count; i++) {
+                    commute[i].id = i.toString()
+                    let select = document.querySelectorAll(".commute:nth-child(" + (i + 1) + ") > div > div > select")
+                    select[0].id = ("id_transportation_way_set-" + i + "-transportation").toString()
+                    select[0].name = ("transportation_way_set-" + i + "-transportation").toString()
+                }
+            }
+        }
     </script>
 {% endblock javascripts %}

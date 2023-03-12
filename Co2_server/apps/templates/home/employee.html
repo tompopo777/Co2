@@ -29,6 +29,7 @@
                             <div class="card-body">
                                 <form action="/employee_add/" method="POST" enctype="multipart/form-data">
                                 {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-6">
@@ -293,7 +294,7 @@
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0"
                                                         onclick="history.back()">
                                                     取消
                                                 </button>
@@ -322,7 +323,7 @@
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }

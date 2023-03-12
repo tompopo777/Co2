@@ -1,0 +1,277 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} VOCs-one {% endblock %}
+
+{% block body_class %} VOCs-one {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 溶劑、噴霧劑</h3>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.years }}
+                                                </div>
+                                            </div>
+                                            <div class="col-7">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>溶劑、噴霧劑名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.solvent_name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>溶劑、噴霧劑數量(單位: {{ form.solvent_amount_unit }})<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.solvent_amount }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>溶劑、噴霧劑容量(單位: {{ form.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.solvent_capacity }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>逸散 / 補充量(公噸/年)<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.fugitive_recharge }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="row mb-4">
+                                            <div class="col">
+                                                溶劑、噴霧劑添加物
+                                            </div>
+                                        </div>
+                                        <div id="additive_section">
+                                            {{ update_formset.management_form }}
+                                            {{ update_formset.non_form_errors }}
+                                            {% for a in update_formset %}
+
+                                                <div class="row mb-4 additive" id="0">
+                                                    {% for hidden in a.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
+                                                    <div style="display: none">
+{#                                                    <div>#}
+                                                        {{ a.DELETE }}
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>添加物名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.additive_name.errors }}
+                                                            {{ a.additive_name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>添加量(單位: {{ a.additive_unit }}) <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.additive_amount.errors }}
+                                                            {{ a.additive_amount }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>添加成份 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.additive_ingredient.errors }}
+                                                            {{ a.additive_ingredient }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>添加比例(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.additive_ratio.errors }}
+                                                            {{ a.additive_ratio }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-1 d-flex align-items-center">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <a class="col" onclick="DuplicateAdditive()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                            <a class="col" onclick="DeleteAdditive(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="d-flex">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>上傳引用單據</label>
+                                                    {{ form.image_note }}
+                                                </div>
+                                            </div>
+                                            <div class=" ps-md-2 align-self-center">
+                                                <div class="col-1 ">
+                                                    {{ form.image_path }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-control">
+                                                    <label>備註欄</label>
+                                                    {{ form.message_board }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-1">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認
+                                                </button>
+                                            </div>
+                                            <div class="col-1">
+                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0"
+                                                        onclick="history.back()">
+                                                    取消
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    icon#}
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+
+    {#    禁止enter鍵#}
+    <script>
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+
+    {#    日期篩選器#}
+    <script>
+        $("#datepicker").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+    </script>
+
+    {#    新增/刪除出差段數#}
+    <script>
+
+        //刪除extra=1新增的空白表單
+        var remove_extra = document.querySelectorAll(".additive:last-child")[0]
+        remove_extra.remove()
+        var TOTAL_FORMS = document.querySelectorAll("#additive_section > input")[0]
+        var additive_count = parseInt(TOTAL_FORMS.value, 10) - 1
+        var id_count = additive_count
+        TOTAL_FORMS.value = id_count.toString()
+
+        //將initial表單排序
+        let additive_id = document.querySelectorAll(".additive")
+        for (let i = 0; i < id_count; i++) {
+            additive_id[i].id = i.toString();
+        }
+
+        function DeleteAdditive(deletbutton) {
+            if (additive_count > 1) {
+                additive = deletbutton.closest("div.additive")
+                console.log(additive.id)
+                var delete_checkbox = document.getElementById("id_additive_section_set-" + additive.id + "-DELETE")
+                console.log(delete_checkbox)
+                delete_checkbox.checked = true;
+                additive.style.display = "none";
+                additive_count -= 1;
+            }
+        }
+
+        function DuplicateAdditive() {
+            document.getElementById("id_additive_section_set-TOTAL_FORMS").value = (id_count + 1).toString()
+            var additive_section = document.getElementById("additive_section")
+            var first_additive = document.getElementsByClassName("additive")[0]
+            var clone = first_additive.cloneNode(true);
+            additive_section.appendChild(clone)
+            clone.id = (id_count)
+            var hidden = document.querySelectorAll(".additive:last-child > input")
+            //主鍵
+            hidden[0].name = "additive_section_set-" + id_count + "-id"
+            hidden[0].id = "id_additive_section_set-" + id_count + "-id"
+            hidden[0].removeAttribute("value")
+
+            //外鍵
+            hidden[1].name = "additive_section_set-" + id_count + "-additive_id"
+            hidden[1].id = "id_additive_section_set-" + id_count + "-additive_id"
+
+            //刪除
+            var deleted = document.querySelectorAll(".additive:last-child > div > input")
+            deleted[0].name = "additive_section_set-" + id_count + "-DELETE"
+            deleted[0].id = "id_additive_section_set-" + id_count + "-DELETE"
+
+            //輸入欄位
+            var input = document.querySelectorAll(".additive:last-child > div > div > input")
+            input[0].id = "id_additive_section_set-" + id_count + "-additive_name"
+            input[0].name = "additive_section_set-" + id_count + "-additive_name"
+            input[1].id = "id_additive_section_set-" + id_count + "-additive_amount"
+            input[1].name = "additive_section_set-" + id_count + "-additive_amount"
+            input[2].id = "id_additive_section_set-" + id_count + "-additive_ingredient"
+            input[2].name = "additive_section_set-" + id_count + "-additive_ingredient"
+            input[3].id = "id_additive_section_set-" + id_count + "-additive_ratio"
+            input[3].name = "additive_section_set-" + id_count + "-additive_ratio"
+            input[0].value = ""
+            input[1].value = ""
+            input[2].value = ""
+            input[3].value = ""
+            var select = document.querySelectorAll(".additive:last-child > div > div > label > select")
+            select[0].name = "additive_section_set-" + id_count + "-additive_unit"
+            select[0].id = "id_additive_section_set-" + id_count + "-additive_unit"
+            select[0].value = ""
+            id_count += 1;
+            additive_count += 1;
+        }
+    </script>
+{% endblock javascripts %}

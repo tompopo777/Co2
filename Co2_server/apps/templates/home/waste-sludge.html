@@ -1,8 +1,8 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} waste {% endblock %}
+{% block title %} VOCs-one {% endblock %}
 
-{% block body_class %} waste {% endblock %}
+{% block body_class %} VOCs-one {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -23,86 +23,64 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 廢棄物</h3>
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 廢汙泥</h3>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
+                                <form action="/waste_sludge_add/" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_name }}
+                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ waste_sludge_add.years }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-8">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物重量(單位:噸) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_weigh }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物運送年月度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_date }}
+                                                    <label>廢棄污泥厭氧處理單元名稱  <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ waste_sludge_add.waste_sludge_treatment_name }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物處置地點 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_location }}
+                                                    <label>污泥進流量(立方公尺/年)<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ waste_sludge_add.waste_sludge_inflow_rate }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物處理方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ form.waste_disposal }}
+                                                    <label>平均進流MLSS濃度(mg/L)<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ waste_sludge_add.average_inlet_MLSS_concentration }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>處理廠商名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_disposal_vendor }}
+                                                    <label>CH4捕集系統捕集率<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ waste_sludge_add.CH4_capture_system_rate }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>運輸工具&nbsp;</label>
-                                                    {{ form.transport_type }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>運輸燃料</label>
-                                                    {{ form.transport_fuel }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>運輸距離(單位:公里)</label>
-                                                    {{ form.transport_distance }}
+                                                    <label>燃燒設備效率<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ waste_sludge_add.combustion_equipment_efficiency }}
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="d-flex">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>上傳引用單據</label>
-                                                    {{ form.image_note }}
+                                                    {{ waste_sludge_add.image_note }}
                                                 </div>
                                             </div>
                                             <div class=" ps-md-2 align-self-center">
                                                 <div class="col-1 ">
-                                                    {{ form.image_path }}
+                                                    {{ waste_sludge_add.image_path }}
                                                 </div>
                                             </div>
                                         </div>
@@ -111,7 +89,7 @@
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
-                                                    {{ form.message_board }}
+                                                    {{ waste_sludge_add.message_board }}
                                                 </div>
                                             </div>
                                         </div>
@@ -122,7 +100,7 @@
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="button"  class="btn bg-gradient-secondary mt-3 mb-0"
+                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0"
                                                         onclick="history.back()">
                                                     取消
                                                 </button>
@@ -161,9 +139,9 @@
     {#    日期篩選器#}
     <script>
         $("#datepicker").datepicker({
-            format: "yyyy-mm",
-            viewMode: "months",
-            minViewMode: "months",
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');

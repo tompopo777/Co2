@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.conf.urls import url
 from django.urls import path, re_path
-from apps.home import views,csv
+from apps.home import views, csv
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -28,16 +28,23 @@ urlpatterns = [
     path("ice_water_dispenser_add/", views.ice_water_dispenser_add),
     path("ice_maker_add/", views.ice_maker_add),
     path("other_device_add/", views.other_device_add),
-    path("refrigerant_total_table_add/", views.refrigerant_total_table_add),
     path("extinguisher_add/", views.extinguisher_add),
     path("personnel_inventory_add/", views.personnel_inventory_add),
     path("employee_add/", views.employee_add),
+    path("waste_water_add/", views.waste_water_add),
+    path("waste_sludge_add/", views.waste_sludge_add),
+    path("solvent_aerosol_emission_sources_add/", views.solvent_aerosol_emission_sources_add),
+    path("VOCs_one_add/", views.VOCs_one_add),
+    path("VOCs_two_add/", views.VOCs_two_add),
     path("electricity_add/", views.electricity_add),
     path("upstream_transportation_add/", views.upstream_transportation_add),
     path("downstream_transportation_add/", views.downstream_transportation_add),
     path("employee_commute_add/", views.employee_commute_add),
     path("employee_business_trip_add/", views.employee_business_trip_add),
     path("waste_add/", views.waste_add),
+    path("pipe_wastewater_add/", views.pipe_wastewater_add),
+    path("purchase_material_add/", views.purchase_material_add),
+    path("product_indirect_emissions_add/", views.product_indirect_emissions_add),
     # ajax傳質
     path("ajax/process", views.load_process, name='loadprocess'),
     path("ajax/device", views.load_device, name='loaddevice'),
@@ -48,9 +55,10 @@ urlpatterns = [
     path("chemical_dropdowm/", views.chemical_dropdowm, name='chemical_dropdowm'),
     path("loadchemical/", views.load_chemical, name='loadchemical'),
     # Excel
-    path("csv_view/", csv.csv_view, name='csv_view'),
+    path("export_excel/", csv.export_excel, name='export_excel'),
+    path('import_excel/', csv.import_excel, name='import_excel'),
     # 編輯設備
-    path('update_device/<str:datasheet_id>&<int:single_dataID>', views.update_device, name='update_device'),
+    path('update_device/<str:datasheet_id>&<int:single_dataID>&<str:dropdown_one>&<str:dropdown_two>', views.update_device, name='update_device'),
     # 刪除設備
     path('delete_device/', views.delete_device, name='delete_device'),
     # Matches any html file
