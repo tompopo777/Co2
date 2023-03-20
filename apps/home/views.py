@@ -16,6 +16,7 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
+from django.db.models import Sum, F, Value, CharField
 
 import apps
 from .forms import *
@@ -126,7 +127,20 @@ def load_table(request):
                     # 將計算後的加油量丟回字典
                     single_data["total"] = consumption_total
                     t_data.append(single_data)
-                return JsonResponse(t_data, safe=False)
+                # months_total = emergency_generators.objects.filter(company_id=company_id).annotate(
+                #     device_name=Value('柴油發電機', output_field=CharField(max_length=20)),
+                #     fuel_type=Value('柴油', output_field=CharField(max_length=20)),
+                #     total_usage=Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
+                #                     F('july') + F('august') + F('september') + F('october') + F('november') + F('december'))
+                # )
+                # print(months_total)
+                # for month_total in months_total:
+                #     # # print('柴油發電機', '柴油', month_total["total_usage"])
+                #     # a = '發電機'
+                #     # month_total.objects.update_or_create(device_name='發電機')
+                #     print(month_total.device_name, month_total.fuel_type, month_total.total_usage)
+                #     pass
+                # return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
                 t_data = []
                 # 「合計」前後的資料分開
@@ -161,28 +175,14 @@ def load_table(request):
                 t_data = []
                 # 「合計」前後的資料分開抓
                 raw_data = official_car.objects.filter(company_id=company_id).values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                oil = official_car.objects.filter(company_id=company_id).values("oil_january", "oil_february", "oil_march", "oil_april",
-                                                                                "oil_may", "oil_june", "oil_july", "oil_august",
-                                                                                "oil_september", "oil_october", "oil_november", "oil_december")
-                elec = official_car.objects.filter(company_id=company_id).values("elec_january", "elec_february", "elec_march", "elec_april",
-                                                                                 "elec_may", "elec_june", "elec_july", "elec_august",
-                                                                                 "elec_september", "elec_october", "elec_november", "elec_december")
-                km = official_car.objects.filter(company_id=company_id).values("km_january", "km_february", "km_march", "km_april",
-                                                                               "km_may", "km_june", "km_july", "km_august",
-                                                                               "km_september", "km_october", "km_november", "km_december")
+                consumption_data = official_car.objects.filter(company_id=company_id).values("january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                             "september", "october", "november", "december")
+
                 urea_data = official_car.objects.filter(company_id=company_id).values("urea_january", "urea_february", "urea_march", "urea_april",
                                                                                       "urea_may", "urea_june", "urea_july", "urea_august",
                                                                                       "urea_september", "urea_october", "urea_november", "urea_december")
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
-                    # print("yes>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", official_car.objects.values("metering_method")[i].get("metering_method"))
-                    if official_car.objects.filter(company_id=company_id).values("metering_method")[i].get("metering_method") == "油車":
-                        consumption_data = oil
-                    elif official_car.objects.filter(company_id=company_id).values("metering_method")[i].get("metering_method") == "電動車":
-                        consumption_data = elec
-                    elif official_car.objects.values("metering_method")[i].get("metering_method") == "公里數":
-                        consumption_data = km
-
                     single_data = raw_data[i]
                     consumption_total = 0
                     for j in consumption_data[i]:
@@ -206,6 +206,7 @@ def load_table(request):
                             single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
                         single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
                     t_data.append(single_data)
+
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
@@ -970,7 +971,7 @@ def VOCs_two_add(request, company_id=None):
     if request.method == "POST":
         company_id = request.POST.get("company_id")
         if VOCs_two_add.is_valid():
-            VOCs_two_add = VOCs_two_add.save(commit=request)
+            VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = company_id
             VOCs_two_add.save()
             return redirect('/carbon-system/')
