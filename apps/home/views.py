@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import json
+import os.path
 from json import dumps
 
 import django.contrib.auth.models
@@ -14,9 +15,11 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template import loader
 from django.urls import reverse, reverse_lazy
+from decimal import *
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
-from django.db.models import Sum, F, Value, CharField
+from django.db.models import Count
+
 
 import apps
 from .forms import *
@@ -100,12 +103,13 @@ def load_table(request):
     if request.method == 'GET':
         device_id = request.GET.get('deviceId')
         company_value = request.GET.get('company_value')
-        print("load_table_company_value", company_value)
         if company_value is None:
             company_id = current_user_group_id(request)
         else:
             company_id = int(company_value)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+        # 四捨五入小數點第四位
+        getcontext().prec = 4
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
@@ -247,7 +251,7 @@ def load_table(request):
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
@@ -263,7 +267,7 @@ def load_table(request):
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
@@ -279,7 +283,7 @@ def load_table(request):
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
@@ -295,7 +299,7 @@ def load_table(request):
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
@@ -311,12 +315,13 @@ def load_table(request):
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
                     single_data["effusion_volume"] = round(effusion_volume, 4)
+                    # single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
@@ -327,7 +332,7 @@ def load_table(request):
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
@@ -335,7 +340,7 @@ def load_table(request):
                     single_data["effusion_volume"] = round(effusion_volume, 4)
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "其他設備清單":
+            elif a["d_name"] == "設備清單":
                 t_data = []
                 raw_data = other_device.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
                                                                                      "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
@@ -343,7 +348,7 @@ def load_table(request):
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
@@ -970,6 +975,7 @@ def VOCs_two_add(request, company_id=None):
     VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
     if request.method == "POST":
         company_id = request.POST.get("company_id")
+        print("company_id", company_id)
         if VOCs_two_add.is_valid():
             VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = company_id
@@ -1582,7 +1588,7 @@ def add_title(request):
             },
 
             "7": {
-                "編輯區": ["刪除", "修改", "照片"],
+                "編輯區": ["刪除", "修改"],
                 "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
