@@ -242,6 +242,13 @@ def export_excel(request):
         print(did)
         excel_did = section_two.objects.filter(did__exact=int(did))
 
+        company_value = request.POST.get('company_id')
+        print("load_table_company_value", company_value)
+        if company_value is None:
+            company_id = current_user_group_id(request)
+        else:
+            company_id = int(company_value)
+
         # 取得欄位清單和欄位中文名稱
         table_name = excel_did[0].t_name
         column_mapping = COLUMN_MAPPING[table_name]
@@ -250,7 +257,7 @@ def export_excel(request):
         column_names = column_mapping['column_names']
 
         # 根據所需欄位清單查詢資料
-        data = globals()[table_name].objects.all().values(*columns)
+        data = globals()[table_name].objects.all().filter(company_id=company_id).values(*columns)
 
         # 將查詢結果轉換為DataFrame
         df = pd.DataFrame(list(data))
