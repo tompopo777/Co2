@@ -131,18 +131,6 @@ def load_table(request):
                     # 將計算後的加油量丟回字典
                     single_data["total"] = consumption_total
                     t_data.append(single_data)
-                months_total = emergency_generators.objects.filter(company_id=company_id).annotate(
-                    device_name=Value('柴油發電機', output_field=CharField(max_length=20)),
-                    fuel_type=Value('柴油', output_field=CharField(max_length=20)),
-                    total_usage=Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
-                                    F('july') + F('august') + F('september') + F('october') + F('november') + F('december'))
-                )
-                total_usage_sum = months_total.aggregate(Sum('total_usage'))['total_usage__sum']
-                print(months_total)
-                for month_total in months_total:
-                    month_total.total_usage = total_usage_sum
-                    print(month_total.device_name, month_total.fuel_type, month_total.total_usage)
-                    break
 
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
@@ -210,13 +198,6 @@ def load_table(request):
                             single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
                         single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
                     t_data.append(single_data)
-
-                months_total = official_car.objects.filter(company_id=company_id).values('vehicle_type', 'fuel_type', 'metering_method').annotate(
-                    total_usage=Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
-                                    F('july') + F('august') + F('september') + F('october') + F('november') + F('december'))
-                )
-                print(months_total)
-
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
