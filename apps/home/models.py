@@ -777,7 +777,7 @@ class coefficient_stationary_mobile(models.Model):
     id = models.AutoField(primary_key=True)
     fuel_type = models.CharField(max_length=30)
     gas_name = models.CharField(max_length=50)
-    coefficient = models.FloatField()
+    coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
     coefficient_source = models.CharField(max_length=50)
 
 
@@ -785,5 +785,5 @@ class coefficient_stationary_mobile(models.Model):
 class coefficient_effusion(models.Model):
     device = models.CharField(max_length=30, primary_key=True)
     gas_name = models.CharField(max_length=50)
-    coefficient = models.FloatField()
+    coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
     coefficient_source = models.CharField(max_length=50)
