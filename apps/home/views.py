@@ -18,7 +18,7 @@ from django.urls import reverse, reverse_lazy
 from decimal import *
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Sum, F, Value, Subquery, CharField
 
 
 import apps
@@ -131,6 +131,7 @@ def load_table(request):
                     # 將計算後的加油量丟回字典
                     single_data["total"] = consumption_total
                     t_data.append(single_data)
+
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
                 t_data = []
@@ -168,28 +169,14 @@ def load_table(request):
                 t_data = []
                 # 「合計」前後的資料分開抓
                 raw_data = official_car.objects.filter(company_id=company_id).values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                oil = official_car.objects.filter(company_id=company_id).values("oil_january", "oil_february", "oil_march", "oil_april",
-                                                                                "oil_may", "oil_june", "oil_july", "oil_august",
-                                                                                "oil_september", "oil_october", "oil_november", "oil_december")
-                elec = official_car.objects.filter(company_id=company_id).values("elec_january", "elec_february", "elec_march", "elec_april",
-                                                                                 "elec_may", "elec_june", "elec_july", "elec_august",
-                                                                                 "elec_september", "elec_october", "elec_november", "elec_december")
-                km = official_car.objects.filter(company_id=company_id).values("km_january", "km_february", "km_march", "km_april",
-                                                                               "km_may", "km_june", "km_july", "km_august",
-                                                                               "km_september", "km_october", "km_november", "km_december")
+                consumption_data = official_car.objects.filter(company_id=company_id).values("january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                             "september", "october", "november", "december")
+
                 urea_data = official_car.objects.filter(company_id=company_id).values("urea_january", "urea_february", "urea_march", "urea_april",
                                                                                       "urea_may", "urea_june", "urea_july", "urea_august",
                                                                                       "urea_september", "urea_october", "urea_november", "urea_december")
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
-                    # print("yes>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", official_car.objects.values("metering_method")[i].get("metering_method"))
-                    if official_car.objects.filter(company_id=company_id).values("metering_method")[i].get("metering_method") == "油車":
-                        consumption_data = oil
-                    elif official_car.objects.filter(company_id=company_id).values("metering_method")[i].get("metering_method") == "電動車":
-                        consumption_data = elec
-                    elif official_car.objects.values("metering_method")[i].get("metering_method") == "公里數":
-                        consumption_data = km
-
                     single_data = raw_data[i]
                     consumption_total = 0
                     for j in consumption_data[i]:

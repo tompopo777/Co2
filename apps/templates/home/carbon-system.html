@@ -654,8 +654,9 @@
             $('#exportExcel').on('click', function () {
                 let dropdown_three = document.getElementById('dropdown_three');
                 let selectedValue = dropdown_three.value;
+                let companyValue = $("#company_dropdown").val();
 
-                let data = {did: selectedValue};
+                let data = {did: selectedValue, company_id: companyValue};
                 console.log(data)
 
                 $.ajax({
