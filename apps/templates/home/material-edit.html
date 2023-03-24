@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} material {% endblock %}
+{% block title %} Material - Edit {% endblock %}
 
 {% block body_class %} material {% endblock %}
 
@@ -214,19 +214,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
-    {#    禁止enter鍵#}
+
     <script>
+        {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
         });
-    </script>
 
-    {#    日期篩選器#}
-    <script>
+
+        {#    日期篩選器#}
         $("#datepicker").datepicker({
             format: "yyyy",
             viewMode: "years",
@@ -234,10 +234,36 @@
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
-    </script>
 
-    {# 自動帶入化學品名稱、化學式#}
-    <script>
+
+        {# select2#}
+        $('#single-select-field').select2({
+            theme: "bootstrap-5",
+            {#width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',#}
+            {#placeholder: $(this).data('placeholder'),#}
+            width: 300
+        });
+
+
+        {# 帶入下拉選單資料#}
+        $(document).ready(function () {
+            $.ajax({
+                url: "{% url 'chemical_dropdowm' %}",
+                data: {},
+                type: 'GET',
+                dataType: 'json',
+                success: function (chemical_add) {
+                    chemical_add.forEach((item) => {
+                        for (const [key, value] of Object.entries((item))) {
+                            $("#single-select-field").append("<option>" + value + "</option>");
+                        }
+                    })
+                }
+            });
+        })
+
+
+        {# 自動帶入化學品名稱、化學式#}
         var chemical_name = $(".chemical_name")
         var chemical_formula = $(".chemical_formula")
         $(".process_add_name").on('change', function () {
@@ -252,7 +278,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (chemical_data) {
-                    console.warn(chemical_data);
+                    {#console.warn(chemical_data);#}
                     var list = [];
                     chemical_data.forEach((item) => {
                         for (const [key, value] of Object.entries((item))) {
@@ -264,10 +290,9 @@
                 },
             });
         });
-    </script>
 
-    {# 當checkbox勾選，下方摺疊展開#}
-    <script>
+
+        {# 當checkbox勾選，下方摺疊展開#}
         var process_add_name = $(".process_add_name")
         var checkbox = document.getElementById("chemical")
         var collapse = document.getElementById("collapsePee")
@@ -281,6 +306,40 @@
                 chemical_formula.val("")
             }
         });
-    </script>
 
+
+        {#    照片顯示檔名+可刪除#}
+        const dt = new DataTransfer(); // 允許操作輸入文件的文件
+        $("#attachment").on('change', function (e) {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc = $('<span/>', {class: 'file-block'}),
+                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName);
+                $("#filesList > #files-names").append(fileBloc);
+            }
+            // 將文件添加到 DataTransfer 對象
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 添加後更新輸入文件中的文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的事件監聽器
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 抑製文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt.items.length; i++) {
+                    // 匹配文件名
+                    if (name === dt.items[i].getAsFile().name) {
+                        // 刪除DataTransfer對像中的文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件中的文件
+                document.getElementById('attachment').files = dt.files;
+            });
+        });
+    </script>
 {% endblock javascripts %}

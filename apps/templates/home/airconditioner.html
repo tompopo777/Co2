@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} airconditioner {% endblock %}
+{% block title %} Airconditioner {% endblock %}
 
 {% block body_class %} airconditioner {% endblock %}
 
@@ -218,7 +218,7 @@
 
 
         {#    照片顯示檔名+可刪除#}
-        const dt = new DataTransfer(); // Permet de manipuler les fichiers de l'input file
+        const dt = new DataTransfer(); // 允許操作輸入文件的文件
         $("#attachment").on('change', function (e) {
             for (var i = 0; i < this.files.length; i++) {
                 let fileBloc = $('<span/>', {class: 'file-block'}),
@@ -227,26 +227,26 @@
                     .append(fileName);
                 $("#filesList > #files-names").append(fileBloc);
             }
-            // Ajout des fichiers dans l'objet DataTransfer
+            // 將文件添加到 DataTransfer 對象
             for (let file of this.files) {
                 dt.items.add(file);
             }
-            // Mise à jour des fichiers de l'input file après ajout
+            // 添加後更新輸入文件中的文件
             this.files = dt.files;
 
-            // EventListener pour le bouton de suppression créé
+            // 創建的刪除按鈕的事件監聽器
             $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
-                // Supprimer l'affichage du nom de fichier
+                // 抑製文件名的顯示
                 $(this).parent().remove();
                 for (let i = 0; i < dt.items.length; i++) {
-                    // Correspondance du fichier et du nom
+                    // 匹配文件名
                     if (name === dt.items[i].getAsFile().name) {
-                        // Suppression du fichier dans l'objet DataTransfer
+                        // 刪除DataTransfer對像中的文件
                         dt.items.remove(i);
                     }
                 }
-                // Mise à jour des fichiers de l'input file après suppression
+                // 刪除後更新輸入文件中的文件
                 document.getElementById('attachment').files = dt.files;
             });
         });
