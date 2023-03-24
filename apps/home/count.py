@@ -15,12 +15,11 @@ getcontext().prec = 4
 generators = pd.DataFrame(list(emergency_generators.objects.values('did').annotate(
     device_name=Value('柴油發電機', output_field=CharField(max_length=20)),
     fuel_type=Value('柴油', output_field=CharField(max_length=20)),
-    total_usage=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
-                         F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000, output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+    sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
+                       F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000, output_field=models.DecimalField(max_digits=20, decimal_places=4)),
 )))
 generators = generators.drop(columns=['did'])
 display(generators.to_string(index=False))
-
 
 # 燃燒設備
 combustion = pd.DataFrame(list(combustion_equipment.objects.values('device_name', 'fuel_type').annotate(
@@ -29,7 +28,6 @@ combustion = pd.DataFrame(list(combustion_equipment.objects.values('device_name'
                    output_field=models.DecimalField(max_digits=20, decimal_places=4)),
 ).order_by('device_name', 'fuel_type')))
 display(combustion.to_string(index=False))
-
 
 # 公務車
 official_car = pd.DataFrame(list(official_car.objects.values('vehicle_type', 'fuel_type').annotate(
@@ -51,3 +49,4 @@ calculate = refrigerant.groupby(["device_name", "refrigerant_type"]).agg({'filli
 refrigerant = refrigerant.drop(columns=['filling_volume'])
 final = refrigerant.merge(calculate, on=["device_name", 'refrigerant_type'], how='left').drop_duplicates()
 display(final.reset_index().to_string(index=False))
+

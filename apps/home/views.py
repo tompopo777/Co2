@@ -20,7 +20,6 @@ from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
 from django.db.models import Count, Sum, F, Value, Subquery, CharField
 
-
 import apps
 from .forms import *
 from apps.home.models import *
@@ -234,8 +233,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
-                raw_data = refrigerator.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                     "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = refrigerator.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                     "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                      "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
@@ -250,8 +249,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
                 t_data = []
-                raw_data = airconditioner.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                       "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = airconditioner.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                       "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                        "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
@@ -266,8 +265,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
                 t_data = []
-                raw_data = vehicle.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = vehicle.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                 "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
@@ -282,8 +281,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
                 t_data = []
-                raw_data = water_dispenser.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                        "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = water_dispenser.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                        "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                         "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
@@ -298,8 +297,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
                 t_data = []
-                raw_data = ice_water_dispenser.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                            "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = ice_water_dispenser.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                            "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                             "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
@@ -315,8 +314,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
                 t_data = []
-                raw_data = ice_maker.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                  "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = ice_maker.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                   "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
@@ -326,13 +325,13 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volum
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "設備清單":
                 t_data = []
-                raw_data = other_device.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                     "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = other_device.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                     "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                      "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
@@ -1578,32 +1577,32 @@ def add_title(request):
 
             "7": {
                 "編輯區": ["刪除", "修改"],
-                "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冷氣機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "8": {
                 "編輯區": ["刪除", "修改"],
-                "車輛清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "車輛清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "9": {
                 "編輯區": ["刪除", "修改"],
-                "飲水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "飲水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "10": {
                 "編輯區": ["刪除", "修改"],
-                "冰水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冰水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "11": {
                 "編輯區": ["刪除", "修改"],
-                "製冰機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "製冰機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "12": {
                 "編輯區": ["刪除", "修改"],
-                "其他設備": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "13": {
