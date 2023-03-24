@@ -31,10 +31,10 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>填報年度 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ VC_add.years }}
                                                 </div>
                                             </div>
@@ -51,7 +51,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備品牌</label>
@@ -71,20 +71,26 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-4">
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>該設備購買年份 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VC_add.years_purchased }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ VC_add.filling_volume }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ VC_add.effusion_rate }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ VC_add.refrigerant_type }}
@@ -160,8 +166,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
-    {#    禁止enter鍵#}
+
     <script>
+        {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
             if (code === 13) {
@@ -169,11 +176,20 @@
                 return false;
             }
         });
-    </script>
 
-    {#    日期篩選器#}
-    <script>
-        $("#datepicker").datepicker({
+
+        {#    年度篩選器#}
+        $("#years").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+
+
+        {#    購買年份篩選器#}
+        $("#years_purchased").datepicker({
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",
