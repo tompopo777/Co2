@@ -7,7 +7,7 @@ from .models import *
 
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
-pd.set_option('display.width', 180)
+pd.set_option('display.width', 200)
 
 getcontext().prec = 4
 
@@ -51,3 +51,24 @@ calculate = refrigerant.groupby(["device_name", "refrigerant_type"]).agg({'filli
 refrigerant = refrigerant.drop(columns=['filling_volume'])
 final = refrigerant.merge(calculate, on=["device_name", 'refrigerant_type'], how='left').drop_duplicates()
 display(final.reset_index().to_string(index=False))
+
+# 溶劑、噴霧劑
+solvent = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.values('id', 'solvent_name', 'solvent_amount')))
+addition = pd.DataFrame(list(additive_section.objects.values('additive_id_id', 'additive_name', 'additive_amount')))
+total = pd.merge(addition, solvent, left_on=['additive_id_id'], right_on=['id'],  how='left')
+count = total.groupby(["solvent_name", "additive_name"]).agg({'solvent_amount': 'sum'}).apply(lambda x: x * Decimal(0.82) * Decimal(0.03))
+total = total.drop(columns=['additive_id_id', 'id', 'solvent_amount'])
+final = pd.merge(total, count, on='solvent_name', how='left')
+final['solvent_amount'] = final['solvent_amount'].multiply(final['additive_amount'])
+display(final.drop(columns=['additive_amount']).drop_duplicates().to_string(index=False))
+print('\n')
+
+# 人天清冊/委外人員
+personnel = pd.DataFrame(list(personnel_inventory.objects.values('did').annotate(
+    device_name=Value('化糞池', output_field=CharField(max_length=20)),
+    fuel_type=Value('水肥', output_field=CharField(max_length=20)),
+    total_usage=Cast(Sum(F('WKhours_january') + F('WKhours_february') + F('WKhours_march') + F('WKhours_april') + F('WKhours_may') + F('WKhours_june') +
+                         F('WKhours_july') + F('WKhours_august') + F('WKhours_september') + F('WKhours_october') + F('WKhours_november') + F('WKhours_december')), output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+)))
+personnel = personnel.drop(columns=['did'])
+display(personnel.to_string(index=False))

@@ -326,7 +326,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volum
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "設備清單":
@@ -1613,7 +1613,7 @@ def add_title(request):
 
             "14": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "員工總數"],
+                "內容": ["序號", "年度"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
