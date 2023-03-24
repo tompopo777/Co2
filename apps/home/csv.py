@@ -26,7 +26,7 @@ COLUMN_MAPPING = {
                     'fuel_november', 'fuel_december', 'heat_january', 'heat_february', 'heat_march', 'heat_april', 'heat_may',
                     'heat_june', 'heat_july', 'heat_august', 'heat_september', 'heat_october', 'heat_november', 'heat_december', 'message_board'],
         'column_names': ['年度', '名稱', '編號', '燃料種類', '一月 使用量', '二月 使用量', '三月 使用量', '四月 使用量', '五月 使用量', '六月 使用量', 
-                         '七月 使用量', '八月 使用量', '九月 使用量', '十月 使用量', '十一月 使用量', '十二月 使用量'
+                         '七月 使用量', '八月 使用量', '九月 使用量', '十月 使用量', '十一月 使用量', '十二月 使用量',
                          '一月 熱值(Kcal/kg)', '二月 熱值(Kcal/kg)', '三月 熱值(Kcal/kg)', '四月 熱值(Kcal/kg)', '五月 熱值(Kcal/kg)', '六月 熱值(Kcal/kg)', 
                          '七月 熱值(Kcal/kg)', '八月 熱值(Kcal/kg)', '九月 熱值(Kcal/kg)', '十月 熱值(Kcal/kg)', '十一月 熱值(Kcal/kg)', '十二月 熱值(Kcal/kg)', '備註欄'],
         'prefix': '類別一_'
