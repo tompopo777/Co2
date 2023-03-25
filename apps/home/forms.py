@@ -1,15 +1,6 @@
-import re
-
-import django.contrib.auth.models
 from django import forms
-
 from .models import *
-from django.core.validators import RegexValidator, validate_slug
-from django.core.exceptions import ValidationError
-from django.forms import widgets, RegexField, inlineformset_factory
-from django.forms import fields
-import datetime
-
+from django.forms import inlineformset_factory
 MONTH_CHOICES = [
     ('1', '一月'),
     ('2', '二月'),
@@ -83,21 +74,21 @@ PROCESS_UNIT_CHOICES = [
     ('立方公尺', '立方公尺')
 ]
 REFRIGERANT_TYPE_CHOICES = [
-    ('R11', 'R11'),
-    ('R12', 'R12'),
-    ('R115', 'R115'),
-    ('R22', 'R22'),
-    ('R123', 'R123'),
-    ('R124', 'R124'),
-    ('R32', 'R32'),
-    ('R134a', 'R134a'),
-    ('R404A', 'R404A'),
-    ('R407A', 'R407A'),
-    ('R407F', 'R407F'),
-    ('R442A', 'R442A'),
-    ('R410A', 'R410A'),
+    ('R-11', 'R-11'),
+    ('R-12', 'R-12'),
+    ('R-115', 'R-115'),
+    ('R-22', 'R-22'),
+    ('R-123', 'R-123'),
+    ('R-124', 'R-124'),
+    ('R-32', 'R-32'),
+    ('R-134a', 'R-134a'),
+    ('R-404A', 'R-404A'),
+    ('R-407A', 'R-407A'),
+    ('R-407F', 'R-407F'),
+    ('R-442A', 'R-442A'),
+    ('R-410A', 'R-410A'),
     ('R-1234yf', 'R-1234yf'),
-    ('R513A', 'R513A'),
+    ('R-513A', 'R-513A'),
     ('CO2 R-744', 'CO2 R-744'),
     ('NH3 R-717', 'NH3 R-717')
 ]

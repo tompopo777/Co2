@@ -784,6 +784,14 @@ class coefficient_stationary_mobile(models.Model):
 # 逸散係數表表格
 class coefficient_effusion(models.Model):
     device = models.CharField(max_length=30, primary_key=True)
-    gas_name = models.CharField(max_length=50)
+    gas_name = models.CharField(max_length=30)
     coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
     coefficient_source = models.CharField(max_length=50)
+
+# 逸散係數表表格
+class coefficient_gwp(models.Model):
+    id = models.AutoField(primary_key=True)
+    gas_name = models.CharField(max_length=30)
+    version = models.IntegerField()
+    years = models.IntegerField()
+    coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
