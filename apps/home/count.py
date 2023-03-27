@@ -1,5 +1,6 @@
 import pandas as pd
 from IPython.core.display import display
+from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, Value, CharField
 from django.db.models.functions import Cast
 from decimal import *
@@ -10,6 +11,7 @@ pd.set_option('display.unicode.east_asian_width', True)
 pd.set_option('display.width', 200)
 
 getcontext().prec = 4
+
 
 # 發電機
 # generators = pd.DataFrame(list(emergency_generators.objects.values('did').annotate(
@@ -22,29 +24,34 @@ getcontext().prec = 4
 # display(generators.to_string(index=False))
 #
 #
-# # 燃燒設備
-combustion = combustion_equipment.objects.values('device_name', 'fuel_type').annotate(
-    process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
-    sum_count=Cast(Sum(F('fuel_january') + F('fuel_february') + F('fuel_march') + F('fuel_april') + F('fuel_may') + F('fuel_june') + F('fuel_july') + F('fuel_august') + F('fuel_september') + F('fuel_october') + F('fuel_november') + F('fuel_december')) * 1.818 / 1000,
-                   output_field=models.DecimalField(max_digits=20, decimal_places=4)),
-    data_unit=Value('公秉', output_field=models.CharField(max_length=50))
-).order_by('device_name', 'fuel_type')
-coefficient_part = None
-for query in combustion:
-    fuel_type = query['fuel_type']
-    coefficient_data = coefficient_stationary_mobile.objects.filter(fuel_type=fuel_type).values('fuel_type', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
-    coefficient_part = pd.DataFrame(list(coefficient_data))
-gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=6).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
-combustion = pd.DataFrame(list(combustion))
-final = pd.merge(combustion, coefficient_part, on='fuel_type', how='left')
-final = pd.merge(final, gwp, left_on='gas_name', right_on='gas_name', how='left')
-# 將(A)、(B)、(C)轉為float才能取round
-final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
-final['emission'] = final['emission'].round(4)
-new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-final = final.reindex(columns=new_order)
-display(final)
-display(final.shape)
+
+# 燃燒設備
+@login_required(login_url="/login/")
+def combustion_equipment(coefficient_source, gwp_version):
+    coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+    gwp_version = 6
+    combustion = combustion_equipment.objects.values('device_name', 'fuel_type').annotate(
+        process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
+        sum_count=Cast(Sum(F('fuel_january') + F('fuel_february') + F('fuel_march') + F('fuel_april') + F('fuel_may') + F('fuel_june') + F('fuel_july') + F('fuel_august') + F('fuel_september') + F('fuel_october') + F('fuel_november') + F('fuel_december')) * 1.818 / 1000,
+                       output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+        data_unit=Value('公秉', output_field=models.CharField(max_length=50))
+    ).order_by('device_name', 'fuel_type')
+    coefficient_part = None
+    for query in combustion:
+        fuel_type = query['fuel_type']
+        coefficient_data = coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause=fuel_type).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
+        coefficient_part = pd.DataFrame(list(coefficient_data))
+    gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+    combustion = pd.DataFrame(list(combustion))
+    final = pd.merge(combustion, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+    final = pd.merge(final, gwp, left_on='gas_name', right_on='gas_name', how='left')
+    # 將(A)、(B)、(C)轉為float才能取round
+    final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
+    final['emission'] = final['emission'].round(4)
+    new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    final = final.reindex(columns=new_order)
+    display(final)
+    display(final.shape)
 
 # @login_required(login_url="/login/")
 # def combustion_equipment(gwp):
