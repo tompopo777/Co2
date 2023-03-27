@@ -562,6 +562,14 @@ def emergency_generators_add(request, company_id=None):
             EG_add = EG_add.save(commit=False)
             EG_add.company_id = company_id
             EG_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = emergency_generators.objects.values("id").last().get("id")
+            table_id = emergency_generators.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
         else:
             print(EG_add.errors)
@@ -583,6 +591,14 @@ def combustion_equipment_add(request, company_id=None):
             CE_add = CE_add.save(commit=False)
             CE_add.company_id = company_id
             CE_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = combustion_equipment.objects.values("id").last().get("id")
+            table_id = combustion_equipment.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -616,6 +632,14 @@ def official_car_add(request, company_id=None):
                 OffCar_add.urea_december = urea[11]
             OffCar_add.company_id = company_id
             OffCar_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = official_car.objects.values("id").last().get("id")
+            table_id = official_car.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -635,6 +659,14 @@ def material_add(request, company_id=None):
             MT_add = MT_add.save(commit=False)
             MT_add.company_id = company_id
             MT_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = material.objects.values("id").last().get("id")
+            table_id = material.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -654,6 +686,14 @@ def process_add(request, company_id=None):
             PC_add = PC_add.save(commit=False)
             PC_add.company_id = company_id
             PC_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = process.objects.values("id").last().get("id")
+            table_id = process.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -673,6 +713,14 @@ def refrigerator_add(request, company_id=None):
             RF_add = RF_add.save(commit=False)
             RF_add.company_id = company_id
             RF_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = refrigerator.objects.values("id").last().get("id")
+            table_id = refrigerator.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
         else:
             return redirect('/new_device/', {'RF_add': RF_add})
@@ -723,6 +771,14 @@ def vehicle_add(request, company_id=None):
             VC_add = VC_add.save(commit=False)
             VC_add.company_id = company_id
             VC_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = vehicle.objects.values("id").last().get("id")
+            table_id = vehicle.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -742,6 +798,14 @@ def water_dispenser_add(request, company_id=None):
             WD_add = WD_add.save(commit=False)
             WD_add.company_id = company_id
             WD_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = water_dispenser.objects.values("id").last().get("id")
+            table_id = water_dispenser.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -761,6 +825,14 @@ def ice_water_dispenser_add(request, company_id=None):
             IWD_add.save(commit=False)
             IWD_add.company_id = company_id
             IWD_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = ice_water_dispenser.objects.values("id").last().get("id")
+            table_id = ice_water_dispenser.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -780,6 +852,14 @@ def ice_maker_add(request, company_id=None):
             IM_add = IM_add.save(commit=False)
             IM_add.company_id = company_id
             IM_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = ice_maker.objects.values("id").last().get("id")
+            table_id = ice_maker.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -799,6 +879,14 @@ def other_device_add(request, company_id=None):
             OD_add = OD_add.save(commit=False)
             OD_add.company_id = company_id
             OD_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = other_device.objects.values("id").last().get("id")
+            table_id = other_device.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -818,6 +906,14 @@ def extinguisher_add(request, company_id=None):
             EX_add = EX_add.save(commit=False)
             EX_add.company_id = company_id
             EX_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = extinguisher.objects.values("id").last().get("id")
+            table_id = extinguisher.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -837,6 +933,14 @@ def personnel_inventory_add(request, company_id=None):
             PI_add = PI_add.save(commit=False)
             PI_add.company_id = company_id
             PI_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = personnel_inventory.objects.values("id").last().get("id")
+            table_id = personnel_inventory.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -856,6 +960,14 @@ def employee_add(request, company_id=None):
             EMP_add = EMP_add.save(commit=False)
             EMP_add.company_id = company_id
             EMP_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = employee.objects.values("id").last().get("id")
+            table_id = employee.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -876,6 +988,14 @@ def waste_water_add(request, company_id=None):
             waste_water_add = waste_water_add.save(commit=False)
             waste_water_add.company_id = company_id
             waste_water_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = waste_water.objects.values("id").last().get("id")
+            table_id = waste_water.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -896,6 +1016,14 @@ def waste_sludge_add(request, company_id=None):
             waste_sludge_add = waste_sludge_add.save(commit=False)
             waste_sludge_add.company_id = company_id
             waste_sludge_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = waste_sludge_add.objects.values("id").last().get("id")
+            table_id = waste_sludge_add.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -947,6 +1075,14 @@ def VOCs_one_add(request, company_id=None):
             VOCs_one_add = VOCs_one_add.save(commit=False)
             VOCs_one_add.company_id = company_id
             VOCs_one_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = VOCs_one.objects.values("id").last().get("id")
+            table_id = VOCs_one.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -968,6 +1104,14 @@ def VOCs_two_add(request, company_id=None):
             VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = company_id
             VOCs_two_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = VOCs_two.objects.values("id").last().get("id")
+            table_id = VOCs_two.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
         else:
             print("\n", VOCs_two_add.errors)
@@ -990,6 +1134,14 @@ def electricity_add(request, company_id=None):
             ELEC_add = ELEC_add.save(commit=False)
             ELEC_add.company_id = company_id
             ELEC_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = electricity.objects.values("id").last().get("id")
+            table_id = electricity.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -1046,6 +1198,24 @@ def downstream_transportation_add(request, company_id=None):
             DT_add = DT_add.save(commit=False)
             DT_add.company_id = company_id
             DT_add.save()
+            stages = request.POST.getlist('stage')
+            last_id = downstream_transportation.objects.values("id").last().get("id")
+            table_id = downstream_transportation.objects.values("did").last().get("did")
+            for stage in stages:
+                if stage == "陸運":
+                    image_paths = request.FILES.getlist('file_field1')
+                elif stage == "海運":
+                    image_paths = request.FILES.getlist('file_field2')
+                elif stage == "特殊陸運":
+                    image_paths = request.FILES.getlist('file_field3')
+                elif stage == "空運":
+                    image_paths = request.FILES.getlist('file_field4')
+                else:
+                    image_paths = []
+                for img in image_paths:
+                    photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                    print(stage)
+                    photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -1119,6 +1289,14 @@ def waste_add(request, company_id=None):
             WASTE_add = WASTE_add.save(commit=False)
             WASTE_add.company_id = company_id
             WASTE_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = waste.objects.values("id").last().get("id")
+            table_id = waste.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
