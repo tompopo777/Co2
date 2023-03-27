@@ -1,5 +1,5 @@
 {% extends "layouts/base.html" %}
-{% block title %} Combustion Equipment {% endblock %}
+{% block title %} 燃燒設備 {% endblock %}
 {% block body_class %} combustion-equipment {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
@@ -223,10 +223,18 @@
                                                 {{ CE_add.image_note }}
                                             </div>
                                         </div>
-                                        <div class=" ps-md-2 align-self-center">
-                                            <div class="col-1 ">
-                                                {{ CE_add.image_path }}
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="ps-md-2 align-self-center">
+                                            <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="燃燒設備">
+                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
+                                        </div>
+                                        <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">

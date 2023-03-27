@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} upstream-transportation {% endblock %}
+{% block title %} 上游運輸 {% endblock %}
 
 {% block body_class %} upstream-transportation {% endblock %}
 
@@ -431,34 +431,7 @@
             }
         });
 
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
-
-        $("#datepicker").datepicker({
-            format: "mm-yyyy",
-            startView: "months",
-            minViewMode: "months"
-        });
-
-        $(document).ready(function () {
-            $(".accordion-button").click(function () {
-                $(#hidehr).hide();
-            });
-        });
-    </script>
-
-
-    {#    陸運照片顯示檔名+可刪除#}
-    <script>
+        {#    陸運照片顯示檔名+可刪除#}
         const dt1 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
         $("#attachment1").on('change', function(){
             for(var i = 0; i < this.files.length; i++){
@@ -491,10 +464,8 @@
                 document.getElementById('attachment1').files = dt1.files;
             });
         });
-    </script>
 
-    {#    海運照片顯示檔名+可刪除#}
-    <script>
+        {#    海運照片顯示檔名+可刪除#}
         const dt2 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
         $("#attachment2").on('change', function(){
             for(var i = 0; i < this.files.length; i++){
@@ -527,10 +498,8 @@
                 document.getElementById('attachment2').files = dt2.files;
             });
         });
-    </script>
 
-    {#    特殊陸運照片顯示檔名+可刪除#}
-    <script>
+        {#    特殊陸運照片顯示檔名+可刪除#}
         const dt3 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
         $("#attachment3").on('change', function(){
             for(var i = 0; i < this.files.length; i++){
@@ -563,11 +532,9 @@
                 document.getElementById('attachment3').files = dt3.files;
             });
         });
-    </script>
 
-    {#    空運照片顯示檔名+可刪除#}
-    <script>
-        const dt3 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        {#    空運照片顯示檔名+可刪除#}
+        const dt4 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
         $("#attachment4").on('change', function(){
             for(var i = 0; i < this.files.length; i++){
                 let fileBloc4 = $('<span/>', {class: 'file-block'}),
@@ -578,25 +545,25 @@
             }
             // 將文件添加到DataTransfer對像中
             for (let file of this.files) {
-                dt3.items.add(file);
+                dt4.items.add(file);
             }
             // 在添加了以下內容後更新輸入文件
-            this.files = dt3.files;
+            this.files = dt4.files;
 
             // 創建的刪除按鈕的EventListener
             $('span.file-delete').click(function(){
                 let name = $(this).next('span.name').text();
                 // 移除文件名的顯示
                 $(this).parent().remove();
-                for(let i = 0; i < dt3.items.length; i++){
+                for(let i = 0; i < dt4.items.length; i++){
                     // 文件和名稱匹配
-                    if(name === dt3.items[i].getAsFile().name){
+                    if(name === dt4.items[i].getAsFile().name){
                         // 在DataTransfer對像中刪除該文件
-                        dt3.items.remove(i);
+                        dt4.items.remove(i);
                     }
                 }
                 // 刪除後更新輸入文件
-                document.getElementById('attachment4').files = dt3.files;
+                document.getElementById('attachment4').files = dt4.files;
             });
         });
     </script>
