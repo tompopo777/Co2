@@ -6,47 +6,48 @@ from decimal import *
 from .models import *
 import re
 
-
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
 pd.set_option('display.width', 200)
 
 getcontext().prec = 4
 
-# 發電機
+# # 發電機
 # generators = pd.DataFrame(list(emergency_generators.objects.values('did').annotate(
+#     process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
 #     device_name=Value('柴油發電機', output_field=CharField(max_length=20)),
 #     fuel_type=Value('柴油', output_field=CharField(max_length=20)),
-#     total_usage=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
-#                          F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000, output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+#     sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
+#                        F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000,
+#                    output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+#     data_unit=Value('公秉', output_field=models.CharField(max_length=50))
 # )))
 # generators = generators.drop(columns=['did'])
 # display(generators.to_string(index=False))
-#
-#
+
 # # 燃燒設備
-combustion = combustion_equipment.objects.values('device_name', 'fuel_type').annotate(
-    process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
-    sum_count=Cast(Sum(F('fuel_january') + F('fuel_february') + F('fuel_march') + F('fuel_april') + F('fuel_may') + F('fuel_june') + F('fuel_july') + F('fuel_august') + F('fuel_september') + F('fuel_october') + F('fuel_november') + F('fuel_december')) * 1.818 / 1000,
-                   output_field=models.DecimalField(max_digits=20, decimal_places=4)),
-    data_unit=Value('公秉', output_field=models.CharField(max_length=50))
-).order_by('device_name', 'fuel_type')
-coefficient_part = None
-for query in combustion:
-    fuel_type = query['fuel_type']
-    coefficient_data = coefficient_stationary_mobile.objects.filter(fuel_type=fuel_type).values('fuel_type', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
-    coefficient_part = pd.DataFrame(list(coefficient_data))
-gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=6).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
-combustion = pd.DataFrame(list(combustion))
-final = pd.merge(combustion, coefficient_part, on='fuel_type', how='left')
-final = pd.merge(final, gwp, left_on='gas_name', right_on='gas_name', how='left')
-# 將(A)、(B)、(C)轉為float才能取round
-final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
-final['emission'] = final['emission'].round(4)
-new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-final = final.reindex(columns=new_order)
-display(final)
-display(final.shape)
+# combustion = combustion_equipment.objects.values('device_name', 'fuel_type').annotate(
+#     process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
+#     sum_count=Cast(Sum(F('fuel_january') + F('fuel_february') + F('fuel_march') + F('fuel_april') + F('fuel_may') + F('fuel_june') + F('fuel_july') + F('fuel_august') + F('fuel_september') + F('fuel_october') + F('fuel_november') + F('fuel_december')) * 1.818 / 1000,
+#                    output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+#     data_unit=Value('公秉', output_field=models.CharField(max_length=50))
+# ).order_by('device_name', 'fuel_type')
+# coefficient_part = None
+# for query in combustion:
+#     fuel_type = query['fuel_type']
+#     coefficient_data = coefficient_stationary_mobile.objects.filter(fuel_type=fuel_type).values('fuel_type', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
+#     coefficient_part = pd.DataFrame(list(coefficient_data))
+# gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=6).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+# combustion = pd.DataFrame(list(combustion))
+# final = pd.merge(combustion, coefficient_part, on='fuel_type', how='left')
+# final = pd.merge(final, gwp, left_on='gas_name', right_on='gas_name', how='left')
+# # 將(A)、(B)、(C)轉為float才能取round
+# final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
+# final['emission'] = final['emission'].round(4)
+# new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+# final = final.reindex(columns=new_order)
+# display(final)
+# display(final.shape)
 
 # @login_required(login_url="/login/")
 # def combustion_equipment(gwp):
@@ -102,3 +103,25 @@ display(final.shape)
 # )))
 # personnel = personnel.drop(columns=['did'])
 # display(personnel.to_string(index=False))
+
+# # 滅火器
+# extinguisher = pd.DataFrame(list(extinguisher.objects.values('extinguisher_type').annotate(
+#     sum_count=Cast(Sum(F('chemical_weight') * F('inventory')) / 1000, output_field=models.DecimalField(max_digits=20, decimal_places=4))
+# ).order_by('extinguisher_type')))
+# display(extinguisher.to_string(index=False))
+#
+# # 原物料
+# material = pd.DataFrame(list(material.objects.values('material_name').annotate(
+#     sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
+#                        F('july') + F('august') + F('september') + F('october') + F('november') + F('december')), output_field=models.DecimalField(max_digits=20, decimal_places=4))
+# )))
+# display(material.to_string(index=False))
+#
+# # 新增 material_type 欄位，提取 material_name 中的中文字，並將其相同的類型歸為一類
+# material['material_type'] = material['material_name'].apply(lambda x: re.findall('[\u4e00-\u9fa5]+', x)[0])
+#
+# # 以 material_type 為分組依據，計算 sum_count 的加總
+# total_sum_count_by_type = material.groupby('material_type')['sum_count'].sum()
+#
+# # 印出加總結果
+# print('相同中文字的 sum_count 欄位加總結果為:', total_sum_count_by_type)
