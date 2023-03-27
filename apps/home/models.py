@@ -5,17 +5,12 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.db import models
 from django.contrib.auth.models import User
-import datetime
-
 # 限制文件
 from django.core import validators
 
-YEAR_CHOICES = []
-for r in range(1980, (datetime.datetime.now().year + 1)):
-    YEAR_CHOICES.append((r, r))
-
 
 # Create your models here.
+# 公司基本資料
 class company(models.Model):
     id = models.AutoField(primary_key=True)
     company_name = models.CharField(max_length=255)
@@ -44,6 +39,7 @@ class section_two(models.Model):
     t_name = models.CharField(max_length=50)
 
 
+# 柴油發電機
 class emergency_generators(models.Model):
     id = models.AutoField(primary_key=True, )
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=1, db_column='did_id')
@@ -69,6 +65,7 @@ class emergency_generators(models.Model):
     company_id = models.IntegerField()
 
 
+# 燃燒設備
 class combustion_equipment(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=2, db_column='did_id')
@@ -105,6 +102,7 @@ class combustion_equipment(models.Model):
     company_id = models.IntegerField()
 
 
+# 公務車
 class official_car(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=3, db_column='did_id')
@@ -143,6 +141,7 @@ class official_car(models.Model):
     company_id = models.IntegerField()
 
 
+# 原物料使用
 class material(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=4, db_column='did_id')
@@ -171,6 +170,7 @@ class material(models.Model):
     company_id = models.IntegerField()
 
 
+# 製成添加物
 class process(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=5, db_column='did_id')
@@ -201,6 +201,7 @@ class process(models.Model):
     company_id = models.IntegerField()
 
 
+# 冰箱清單
 class refrigerator(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=6, db_column='did_id')
@@ -210,6 +211,7 @@ class refrigerator(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
+    years_purchased = models.IntegerField()
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -219,6 +221,7 @@ class refrigerator(models.Model):
     company_id = models.IntegerField()
 
 
+# 冷氣清單
 class airconditioner(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=7, db_column='did_id')
@@ -228,6 +231,7 @@ class airconditioner(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
+    years_purchased = models.IntegerField()
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -237,6 +241,7 @@ class airconditioner(models.Model):
     company_id = models.IntegerField()
 
 
+# 車輛清單
 class vehicle(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=8, db_column='did_id')
@@ -246,6 +251,7 @@ class vehicle(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
+    years_purchased = models.IntegerField()
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -255,6 +261,7 @@ class vehicle(models.Model):
     company_id = models.IntegerField()
 
 
+# 飲水機清單
 class water_dispenser(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=9, db_column='did_id')
@@ -264,6 +271,7 @@ class water_dispenser(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
+    years_purchased = models.IntegerField()
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -273,6 +281,7 @@ class water_dispenser(models.Model):
     company_id = models.IntegerField()
 
 
+# 冰水機清單
 class ice_water_dispenser(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=10, db_column='did_id')
@@ -282,6 +291,7 @@ class ice_water_dispenser(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
+    years_purchased = models.IntegerField()
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -291,6 +301,7 @@ class ice_water_dispenser(models.Model):
     company_id = models.IntegerField()
 
 
+# 製冰機清單
 class ice_maker(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=11, db_column='did_id')
@@ -300,6 +311,7 @@ class ice_maker(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
+    years_purchased = models.IntegerField()
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -309,6 +321,7 @@ class ice_maker(models.Model):
     company_id = models.IntegerField()
 
 
+# 設備清單
 class other_device(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=12, db_column='did_id')
@@ -318,6 +331,7 @@ class other_device(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
+    years_purchased = models.IntegerField()
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -327,6 +341,7 @@ class other_device(models.Model):
     company_id = models.IntegerField()
 
 
+# 滅火器
 class extinguisher(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=13, db_column='did_id')
@@ -335,8 +350,8 @@ class extinguisher(models.Model):
     device_id = models.CharField(max_length=30, null=True)
     position = models.CharField(max_length=100)
     extinguisher_vendor = models.CharField(max_length=30, null=True)
-    chemical_weight = models.FloatField()
-    inventory = models.IntegerField()
+    chemical_weight = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    inventory = models.DecimalField(max_digits=20, decimal_places=0, default=0)
     using_amount = models.IntegerField()
     monthly = models.CharField(max_length=20)
     replace_filling_amount = models.FloatField()
@@ -346,6 +361,7 @@ class extinguisher(models.Model):
     company_id = models.IntegerField()
 
 
+# 人添清冊
 class personnel_inventory(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=14, db_column='did_id')
@@ -379,6 +395,7 @@ class personnel_inventory(models.Model):
     company_id = models.IntegerField()
 
 
+# 委外人員清冊
 class employee(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=15, db_column='did_id')
@@ -472,6 +489,7 @@ class solvent_aerosol_emission_sources(models.Model):
     company_id = models.IntegerField()
 
 
+# 溶劑、噴霧劑段數
 class additive_section(models.Model):
     id = models.AutoField(primary_key=True)
     additive_name = models.CharField(max_length=100)
@@ -482,6 +500,7 @@ class additive_section(models.Model):
     additive_id = models.ForeignKey(solvent_aerosol_emission_sources, on_delete=models.CASCADE)
 
 
+# 用電量
 class electricity(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=21, db_column='did_id')
@@ -505,6 +524,7 @@ class electricity(models.Model):
     company_id = models.IntegerField()
 
 
+# 上游運輸
 class upstream_transportation(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=22, db_column='did_id')
@@ -549,6 +569,7 @@ class upstream_transportation(models.Model):
     company_id = models.IntegerField()
 
 
+# 下游運輸
 class downstream_transportation(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=23, db_column='did_id')
@@ -592,6 +613,7 @@ class downstream_transportation(models.Model):
     company_id = models.IntegerField()
 
 
+# 員工通勤
 class employee_commute(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=24, db_column='did_id')
@@ -609,12 +631,14 @@ class employee_commute(models.Model):
     company_id = models.IntegerField()
 
 
+# 員工通勤段數
 class transportation_way(models.Model):
     id = models.AutoField(primary_key=True)
     transportation = models.CharField(max_length=30)
     commute = models.ForeignKey(employee_commute, on_delete=models.CASCADE, db_column='commute_id')
 
 
+# 員工出差
 class employee_business_trip(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=25, db_column='did_id')
@@ -630,6 +654,7 @@ class employee_business_trip(models.Model):
     company_id = models.IntegerField()
 
 
+# 員工出差段數
 class trip_section(models.Model):
     id = models.AutoField(primary_key=True)
     departure = models.CharField(max_length=50)
@@ -638,6 +663,7 @@ class trip_section(models.Model):
     trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE, db_column='trip_id')
 
 
+# VOC1
 class VOCs_one(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=22, db_column='did_id')
@@ -648,6 +674,7 @@ class VOCs_one(models.Model):
     company_id = models.IntegerField()
 
 
+# VOC2
 class VOCs_two(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=23, db_column='did_id')
@@ -667,6 +694,7 @@ class VOCs_two(models.Model):
     company_id = models.IntegerField()
 
 
+# 廢棄物
 class waste(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=26, db_column='did_id')
@@ -690,6 +718,7 @@ class chemical_table(models.Model):
     chemical_formula = models.CharField(max_length=50)
 
 
+# 照片
 class image(models.Model):
     id = models.AutoField(primary_key=True)
     table_id = models.IntegerField()

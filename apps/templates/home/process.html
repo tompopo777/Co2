@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} process {% endblock %}
+{% block title %} 製程添加化學品 {% endblock %}
 
 {% block body_class %} process {% endblock %}
 
@@ -191,10 +191,18 @@
                                                 {{ PC_add.image_note }}
                                             </div>
                                         </div>
-                                        <div class=" ps-md-2 align-self-center">
-                                            <div class="col-1 ">
-                                                {{ PC_add.image_path }}
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="ps-md-2 align-self-center">
+                                            <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="製程">
+                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
+                                        </div>
+                                        <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -236,30 +244,74 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
-    {#    禁止enter鍵#}
+
     <script>
+        {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
         });
-    </script>
 
-    {#    日期篩選器#}
-    <script>
-        $("#datepicker").datepicker({
+
+        {#    年度篩選器#}
+        $("#years").datepicker({
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
-    </script>
 
-    {# 自動帶入化學品名稱、化學式#}
-    <script>
+
+        {#    購買年份篩選器#}
+        $("#years_purchased").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+
+
+        {#    照片顯示檔名+可刪除#}
+        const dt = new DataTransfer(); // 允許操作輸入文件的文件
+        $("#attachment").on('change', function (e) {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc = $('<span/>', {class: 'file-block'}),
+                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName);
+                $("#filesList > #files-names").append(fileBloc);
+            }
+            // 將文件添加到 DataTransfer 對象
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 添加後更新輸入文件中的文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的事件監聽器
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 抑製文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt.items.length; i++) {
+                    // 匹配文件名
+                    if (name === dt.items[i].getAsFile().name) {
+                        // 刪除DataTransfer對像中的文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件中的文件
+                document.getElementById('attachment').files = dt.files;
+            });
+        });
+
+
+        {# 自動帶入化學品名稱、化學式#}
         var chemical_name = $(".chemical_name")
         var chemical_formula = $(".chemical_formula")
         $(".process_add_name").on('change', function () {
@@ -287,5 +339,4 @@
             });
         });
     </script>
-
 {% endblock javascripts %}

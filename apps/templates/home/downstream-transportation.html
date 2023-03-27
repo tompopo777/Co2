@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} upstream-transportation {% endblock %}
+{% block title %} 下游運輸 {% endblock %}
 
 {% block body_class %} upstream-transportation {% endblock %}
 
@@ -105,19 +105,19 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>單趟運輸距離(單位:公里)</label>
-                                                                    {{ DT_add.transport_distance }}
+                                                                    {{ UT_add.transport_distance }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸國家</label>
-                                                                    {{ DT_add.transport_country }}
+                                                                    {{ UT_add.transport_country }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>支付方</label>
-                                                                    {{ DT_add.paid }}
+                                                                    {{ UT_add.paid }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -125,19 +125,19 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸工具</label>&nbsp;
-                                                                    {{ DT_add.transport_type }}
+                                                                    {{ UT_add.transport_type }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸工具燃料</label>&nbsp;
-                                                                    {{ DT_add.transport_fuel }}
+                                                                    {{ UT_add.transport_fuel }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
-                                                                    {{ DT_add.trips }}
+                                                                    {{ UT_add.trips }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -145,13 +145,21 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>上傳陸運單據</label>
-                                                                    {{ DT_add.image_note }}
+                                                                    {{ UT_add.image_note }}
                                                                 </div>
                                                             </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ DT_add.image_path }}
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="ps-md-2 align-self-center">
+                                                                <div class="col-2" multiple="multiple">
+                                                                    <input type="hidden" id="stage1" name="stage" value="陸運">
+                                                                    <input class="form-control-file" type="file" id="attachment1" name="file_field1" multiple="multiple" accept="image/*, .pdf">
                                                                 </div>
+                                                            </div>
+                                                            <div id="files-area">
+                                                                <span id="filesList1">
+                                                                    <span id="files-names1"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -170,13 +178,13 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>海外運輸距離(單位:海里)</label>
-                                                                    {{ DT_add.overseas_transport_distance }}
+                                                                    {{ UT_add.overseas_transport_distance }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>支付方</label>
-                                                                    {{ DT_add.overseas_paid }}
+                                                                    {{ UT_add.overseas_paid }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -184,19 +192,19 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>出貨港口</label>
-                                                                    {{ DT_add.overseas_delivery }}
+                                                                    {{ UT_add.overseas_delivery }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>到達港口</label>
-                                                                    {{ DT_add.overseas_arrive }}
+                                                                    {{ UT_add.overseas_arrive }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
-                                                                    {{ DT_add.overseas_trips }}
+                                                                    {{ UT_add.overseas_trips }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -204,13 +212,21 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>上傳海運單據</label>
-                                                                    {{ DT_add.overseas_image_note }}
+                                                                    {{ UT_add.overseas_image_note }}
                                                                 </div>
                                                             </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ DT_add.overseas_image_path }}
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="ps-md-2 align-self-center">
+                                                                <div class="col-2" multiple="multiple">
+                                                                    <input type="hidden" id="stage2" name="stage" value="海運">
+                                                                    <input class="form-control-file" type="file" id="attachment2" name="file_field2" multiple="multiple" accept="image/*, .pdf">
                                                                 </div>
+                                                            </div>
+                                                            <div id="files-area">
+                                                                <span id="filesList2">
+                                                                    <span id="files-names2"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -229,19 +245,19 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>單趟運輸距離(單位:公里)</label>
-                                                                    {{ DT_add.special_transport_distance }}
+                                                                    {{ UT_add.special_transport_distance }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸國家</label>
-                                                                    {{ DT_add.special_transport_country }}
+                                                                    {{ UT_add.special_transport_country }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>支付方</label>
-                                                                    {{ DT_add.overseas_paid }}
+                                                                    {{ UT_add.overseas_paid }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -249,19 +265,19 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸工具</label>&nbsp;
-                                                                    {{ DT_add.special_transport_type }}
+                                                                    {{ UT_add.special_transport_type }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸工具燃料</label>&nbsp;
-                                                                    {{ DT_add.special_transport_fuel }}
+                                                                    {{ UT_add.special_transport_fuel }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
-                                                                    {{ DT_add.special_trips }}
+                                                                    {{ UT_add.special_trips }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -269,13 +285,21 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>上傳陸運單據</label>
-                                                                    {{ DT_add.special_image_note }}
+                                                                    {{ UT_add.special_image_note }}
                                                                 </div>
                                                             </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ DT_add.special_image_path }}
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="ps-md-2 align-self-center">
+                                                                <div class="col-2" multiple="multiple">
+                                                                    <input type="hidden" id="stage3" name="stage" value="特殊陸運">
+                                                                    <input class="form-control-file" type="file" id="attachment3" name="file_field3" multiple="multiple" accept="image/*, .pdf">
                                                                 </div>
+                                                            </div>
+                                                            <div id="files-area">
+                                                                <span id="filesList3">
+                                                                    <span id="files-names3"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -294,19 +318,19 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>單趟運輸距離(單位:公里)</label>
-                                                                    {{ DT_add.air_transport_distance }}
+                                                                    {{ UT_add.air_transport_distance }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>出貨機場</label>
-                                                                    {{ DT_add.air_delivery }}
+                                                                    {{ UT_add.air_delivery }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>到達機場</label>
-                                                                    {{ DT_add.air_arrive }}
+                                                                    {{ UT_add.air_arrive }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -314,13 +338,13 @@
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
-                                                                    {{ DT_add.air_trips }}
+                                                                    {{ UT_add.air_trips }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>支付方</label>
-                                                                    {{ DT_add.air_paid }}
+                                                                    {{ UT_add.air_paid }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -328,13 +352,21 @@
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>上傳空運單據</label>
-                                                                    {{ DT_add.air_image_note }}
+                                                                    {{ UT_add.air_image_note }}
                                                                 </div>
                                                             </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ DT_add.air_image_path }}
+                                                        </div>
+                                                        <div class="d-flex">
+                                                            <div class="ps-md-2 align-self-center">
+                                                                <div class="col-2" multiple="multiple">
+                                                                    <input type="hidden" id="stage4" name="stage" value="空運">
+                                                                    <input class="form-control-file" type="file" id="attachment4" name="file_field4" multiple="multiple" accept="image/*, .pdf">
                                                                 </div>
+                                                            </div>
+                                                            <div id="files-area">
+                                                                <span id="filesList4">
+                                                                    <span id="files-names4"></span>
+                                                                </span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -391,39 +423,140 @@
             }
         });
 
-        $('#date1').datetimepicker({
-            date: null,
-            format: 'YYYY-MM-DD',
-            locale: moment.locale('zh-tw'),
-            disabledDates: [
-                moment().add(1, 'days'),
-                moment().add(2, 'days'),
-                '2021-10-10',
-                '2021-12-25'
-            ]
-        });
+        {#    陸運照片顯示檔名+可刪除#}
+        const dt1 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment1").on('change', function(){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc1 = $('<span/>', {class: 'file-block'}),
+                     fileName1 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc1.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName1);
+                $("#filesList1 > #files-names1").append(fileBloc1);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt1.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt1.files;
 
-        $("#datepicker").datepicker({
-            format: "mm-yyyy",
-            startView: "months",
-            minViewMode: "months"
-        });
-
-        $(document).ready(function () {
-            $(".accordion-button").click(function () {
-                $(#hidehr).hide();
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for(let i = 0; i < dt1.items.length; i++){
+                    // 文件和名稱匹配
+                    if(name === dt1.items[i].getAsFile().name){
+                        // 在DataTransfer對像中刪除該文件
+                        dt1.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment1').files = dt1.files;
             });
         });
-    </script>
 
-    {#    禁止enter鍵#}
-    <script>
-        $(document).on("keypress", "form", function (e) {
-            var code = e.keyCode || e.which;
-            if (code == 13) {
-                e.preventDefault();
-                return false;
+        {#    海運照片顯示檔名+可刪除#}
+        const dt2 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment2").on('change', function(){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc2 = $('<span/>', {class: 'file-block'}),
+                     fileName2 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc2.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName2);
+                $("#filesList2 > #files-names2").append(fileBloc2);
             }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt2.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt2.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for(let i = 0; i < dt2.items.length; i++){
+                    // 文件和名稱匹配
+                    if(name === dt2.items[i].getAsFile().name){
+                        // 在DataTransfer對像中刪除該文件
+                        dt2.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment2').files = dt2.files;
+            });
+        });
+
+        {#    特殊陸運照片顯示檔名+可刪除#}
+        const dt3 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment3").on('change', function(){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc3 = $('<span/>', {class: 'file-block'}),
+                     fileName3 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc3.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName3);
+                $("#filesList3 > #files-names3").append(fileBloc3);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt3.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt3.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for(let i = 0; i < dt3.items.length; i++){
+                    // 文件和名稱匹配
+                    if(name === dt3.items[i].getAsFile().name){
+                        // 在DataTransfer對像中刪除該文件
+                        dt3.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment3').files = dt3.files;
+            });
+        });
+
+        {#    空運照片顯示檔名+可刪除#}
+        const dt4 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment4").on('change', function(){
+            for(var i = 0; i < this.files.length; i++){
+                let fileBloc4 = $('<span/>', {class: 'file-block'}),
+                     fileName4 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc4.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName4);
+                $("#filesList4 > #files-names4").append(fileBloc4);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt4.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt4.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function(){
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for(let i = 0; i < dt4.items.length; i++){
+                    // 文件和名稱匹配
+                    if(name === dt4.items[i].getAsFile().name){
+                        // 在DataTransfer對像中刪除該文件
+                        dt4.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment4').files = dt4.files;
+            });
         });
     </script>
 {% endblock javascripts %}

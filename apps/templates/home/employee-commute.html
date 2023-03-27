@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} employee-commute {% endblock %}
+{% block title %} 員工通勤 {% endblock %}
 
 {% block body_class %} employee-commute {% endblock %}
 
@@ -129,10 +129,18 @@
                                                         {{ EC_add.image_note }}
                                                     </div>
                                                 </div>
-                                                <div class=" ps-md-2 align-self-center">
-                                                    <div class="col-1 ">
-                                                        {{ EC_add.image_path }}
+                                            </div>
+                                            <div class="d-flex">
+                                                <div class="ps-md-2 align-self-center">
+                                                    <div class="col-2" multiple="multiple">
+                                                        <input type="hidden" name="stage" value="員工通勤">
+                                                        <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                                     </div>
+                                                </div>
+                                                <div id="files-area">
+                                                    <span id="filesList">
+                                                        <span id="files-names"></span>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -152,7 +160,7 @@
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="submit"  class="btn bg-gradient-secondary mt-3 mb-0"
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0"
                                                         onclick="history.back()">
                                                     取消
                                                 </button>
@@ -180,8 +188,9 @@
     {#    icon#}
     <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
 
-    {#    禁止enter鍵#}
+
     <script>
+        {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
             if (code === 13) {
@@ -189,21 +198,64 @@
                 return false;
             }
         });
-    </script>
 
-    {#    日期篩選器#}
-    <script>
-        $("#datepicker").datepicker({
+
+        {#    年度篩選器#}
+        $("#years").datepicker({
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
-    </script>
 
-    {#    新增/刪除出差段數#}
-    <script>
+
+        {#    購買年份篩選器#}
+        $("#years_purchased").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+
+
+        {#    照片顯示檔名+可刪除#}
+        const dt = new DataTransfer(); // 允許操作輸入文件的文件
+        $("#attachment").on('change', function (e) {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc = $('<span/>', {class: 'file-block'}),
+                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName);
+                $("#filesList > #files-names").append(fileBloc);
+            }
+            // 將文件添加到 DataTransfer 對象
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 添加後更新輸入文件中的文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的事件監聽器
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 抑製文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt.items.length; i++) {
+                    // 匹配文件名
+                    if (name === dt.items[i].getAsFile().name) {
+                        // 刪除DataTransfer對像中的文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件中的文件
+                document.getElementById('attachment').files = dt.files;
+            });
+        });
+
+
+        {#    新增/刪除出差段數#}
         var commute_count = 0;
 
         function DuplicateCommute() {

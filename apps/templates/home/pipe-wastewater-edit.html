@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} pipe-wastewater {% endblock %}
+{% block title %} 納管廢水排放量 - 修改 {% endblock %}
 
 {% block body_class %} pipe-wastewater {% endblock %}
 
@@ -216,8 +216,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/>
 
-    {#    禁止enter鍵#}
+
     <script>
+        {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
             if (code === 13) {
@@ -225,54 +226,60 @@
                 return false;
             }
         });
-    </script>
 
-    {#    日期篩選器#}
-    <script>
-        $("#datepicker").datepicker({
+
+        {#    年度篩選器#}
+        $("#years").datepicker({
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
-    </script>
 
 
-    {#    照片顯示檔名+可刪除#}
-    <script>
-        const dt = new DataTransfer(); // Permet de manipuler les fichiers de l'input file
-        $("#attachment").on('change', function(e){
-            for(var i = 0; i < this.files.length; i++){
+        {#    購買年份篩選器#}
+        $("#years_purchased").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+
+
+        {#    照片顯示檔名+可刪除#}
+        const dt = new DataTransfer(); // 允許操作輸入文件的文件
+        $("#attachment").on('change', function (e) {
+            for (var i = 0; i < this.files.length; i++) {
                 let fileBloc = $('<span/>', {class: 'file-block'}),
-                     fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
                 fileBloc.append('<span class="file-delete"><span>+</span></span>')
                     .append(fileName);
                 $("#filesList > #files-names").append(fileBloc);
             }
-            // Ajout des fichiers dans l'objet DataTransfer
+            // 將文件添加到 DataTransfer 對象
             for (let file of this.files) {
                 dt.items.add(file);
             }
-            // Mise à jour des fichiers de l'input file après ajout
+            // 添加後更新輸入文件中的文件
             this.files = dt.files;
 
-            // EventListener pour le bouton de suppression créé
-            $('span.file-delete').click(function(){
+            // 創建的刪除按鈕的事件監聽器
+            $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
-                // Supprimer l'affichage du nom de fichier
+                // 抑製文件名的顯示
                 $(this).parent().remove();
-                for(let i = 0; i < dt.items.length; i++){
-                    // Correspondance du fichier et du nom
-                    if(name === dt.items[i].getAsFile().name){
-                        // Suppression du fichier dans l'objet DataTransfer
+                for (let i = 0; i < dt.items.length; i++) {
+                    // 匹配文件名
+                    if (name === dt.items[i].getAsFile().name) {
+                        // 刪除DataTransfer對像中的文件
                         dt.items.remove(i);
                     }
                 }
-                // Mise à jour des fichiers de l'input file après suppression
+                // 刪除後更新輸入文件中的文件
                 document.getElementById('attachment').files = dt.files;
             });
         });
     </script>
-
 {% endblock javascripts %}
