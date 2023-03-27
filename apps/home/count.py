@@ -4,6 +4,8 @@ from django.db.models import Sum, F, Value, CharField
 from django.db.models.functions import Cast
 from decimal import *
 from .models import *
+import re
+
 
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
@@ -49,4 +51,26 @@ calculate = refrigerant.groupby(["device_name", "refrigerant_type"]).agg({'filli
 refrigerant = refrigerant.drop(columns=['filling_volume'])
 final = refrigerant.merge(calculate, on=["device_name", 'refrigerant_type'], how='left').drop_duplicates()
 display(final.reset_index().to_string(index=False))
+
+# 滅火器
+extinguisher = pd.DataFrame(list(extinguisher.objects.values('extinguisher_type').annotate(
+    sum_count=Cast(Sum(F('chemical_weight') * F('inventory')) / 1000, output_field=models.DecimalField(max_digits=20, decimal_places=4))
+).order_by('extinguisher_type')))
+display(extinguisher.to_string(index=False))
+
+# 原物料
+material = pd.DataFrame(list(material.objects.values('material_name').annotate(
+    sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
+                       F('july') + F('august') + F('september') + F('october') + F('november') + F('december')), output_field=models.DecimalField(max_digits=20, decimal_places=4))
+)))
+display(material.to_string(index=False))
+
+# 新增 material_type 欄位，提取 material_name 中的中文字，並將其相同的類型歸為一類
+material['material_type'] = material['material_name'].apply(lambda x: re.findall('[\u4e00-\u9fa5]+', x)[0])
+
+# 以 material_type 為分組依據，計算 sum_count 的加總
+total_sum_count_by_type = material.groupby('material_type')['sum_count'].sum()
+
+# 印出加總結果
+print('相同中文字的 sum_count 欄位加總結果為:', total_sum_count_by_type)
 
