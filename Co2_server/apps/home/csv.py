@@ -25,21 +25,29 @@ COLUMN_MAPPING = {
                     'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august', 'fuel_september', 'fuel_october',
                     'fuel_november', 'fuel_december', 'heat_january', 'heat_february', 'heat_march', 'heat_april', 'heat_may',
                     'heat_june', 'heat_july', 'heat_august', 'heat_september', 'heat_october', 'heat_november', 'heat_december', 'message_board'],
-        'column_names': ['年度', '名稱', '編號', '燃料種類', '一月 使用量', '二月 使用量', '三月 使用量', '四月 使用量', '五月 使用量', '六月 使用量', 
-                         '七月 使用量', '八月 使用量', '九月 使用量', '十月 使用量', '十一月 使用量', '十二月 使用量'
-                         '一月 熱值(Kcal/kg)', '二月 熱值(Kcal/kg)', '三月 熱值(Kcal/kg)', '四月 熱值(Kcal/kg)', '五月 熱值(Kcal/kg)', '六月 熱值(Kcal/kg)', 
+        'column_names': ['年度', '名稱', '編號', '燃料種類', '一月 使用量', '二月 使用量', '三月 使用量', '四月 使用量', '五月 使用量', '六月 使用量',
+                         '七月 使用量', '八月 使用量', '九月 使用量', '十月 使用量', '十一月 使用量', '十二月 使用量',
+                         '一月 熱值(Kcal/kg)', '二月 熱值(Kcal/kg)', '三月 熱值(Kcal/kg)', '四月 熱值(Kcal/kg)', '五月 熱值(Kcal/kg)', '六月 熱值(Kcal/kg)',
                          '七月 熱值(Kcal/kg)', '八月 熱值(Kcal/kg)', '九月 熱值(Kcal/kg)', '十月 熱值(Kcal/kg)', '十一月 熱值(Kcal/kg)', '十二月 熱值(Kcal/kg)', '備註欄'],
         'prefix': '類別一_'
     },
     'official_car': {
-        'columns': ['col4', 'col5', 'col6'],
-        'column_names': ['中文名稱4', '中文名稱5', '中文名稱6'],
+        'columns': ['years', 'vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method', 
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+                    'september', 'october', 'november', 'december',
+                    'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july', 
+                    'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december'],
+        'column_names': ['年度', '類別', '編號', '燃料種類', '所屬單位', '計程方式',
+                         '耗用量 一月', '耗用量 二月', '耗用量 三月', '耗用量 四月', '耗用量 五月', '耗用量 六月', 
+                         '耗用量 七月', '耗用量 八月', '耗用量 九月', '耗用量 十月', '耗用量 十一月', '耗用量 十二月',
+                         '尿素 一月', '尿素 二月', '尿素 三月', '尿素 四月', '尿素 五月', '尿素 六月', 
+                         '尿素 七月', '尿素 八月', '尿素 九月', '尿素 十月', '尿素 十一月', '尿素 十二月'],
         'prefix': '類別一_'
     },
     'material': {
         'columns': ['years', 'material_id', 'material_type', 'material_name', 'process_add_name', 'chemical_name', 'chemical_formula',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '原物料號', '原/物料', '名稱', '化學品名稱', '化學品名', '化學式', '一月', '二月', '三月', '四月', '五月', 
+        'column_names': ['年度', '原物料號', '原/物料', '名稱', '化學品名稱', '化學品名', '化學式', '一月', '二月', '三月', '四月', '五月',
                          '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別一_'
     },
@@ -119,7 +127,7 @@ COLUMN_MAPPING = {
     'waste_water': {
         'columns': ['years', 'waste_water_treatment_name', 'waste_water_inflow_rate', 'average_inlet_COD_concentration',
                     'average_COD_removal_rate', 'CH4_capture_system_rate', 'combustion_equipment_efficiency', 'message_board'],
-        'column_names': ['年度', '廢水厭氧處理單元名稱 ', '廢水進流量(立方公尺/年)', '平均進流COD濃度(mg/L)', '平均進流COD濃度(mg/L)', 
+        'column_names': ['年度', '廢水厭氧處理單元名稱 ', '廢水進流量(立方公尺/年)', '平均進流COD濃度(mg/L)', '平均進流COD濃度(mg/L)',
                          u'CH\u2084捕集系統捕集率', '燃燒設備效率', '備註欄'],
         'prefix': '類別一_'
     },
@@ -163,7 +171,7 @@ COLUMN_MAPPING = {
                     'overseas_transport_distance', 'overseas_delivery', 'overseas_arrive', 'overseas_paid', 'overseas_trips',
                     'special_transport_distance', 'special_transport_country', 'special_transport_type', 'special_transport_fuel', 'special_paid', 'special_trips',
                     'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'message_board'],
-        'column_names': ['單號', '商品', '淨/毛重', '重量(噸)', '組織使用產品', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點', 
+        'column_names': ['單號', '商品', '淨/毛重', '重量(噸)', '組織使用產品', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點',
                          '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
                          '海運距離(nm)', '出貨港口', '到達港口', '支付方', '趟次',
                          '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
@@ -192,21 +200,21 @@ COLUMN_MAPPING = {
     'pipe_wastewater': {
         'columns': ['years', 'pipe_id', 'address', 'factory', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '納管編號', '廠別', '地址', '一月', '二月', '三月', '四月', '五月', '六月', 
+        'column_names': ['年度', '納管編號', '廠別', '地址', '一月', '二月', '三月', '四月', '五月', '六月',
                          '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別四_'
     },
     'purchase_material': {
         'columns': ['years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '產品編號', '產品名稱', '一月', '二月', '三月', '四月', '五月', '六月', 
+        'column_names': ['年度', '產品編號', '產品名稱', '一月', '二月', '三月', '四月', '五月', '六月',
                          '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別四_'
     },
     'product_indirect_emissions': {
         'columns': ['years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '產品編號', '產品名稱', '一月', '二月', '三月', '四月', '五月', '六月', 
+        'column_names': ['年度', '產品編號', '產品名稱', '一月', '二月', '三月', '四月', '五月', '六月',
                          '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別五_'
     },
@@ -242,6 +250,13 @@ def export_excel(request):
         print(did)
         excel_did = section_two.objects.filter(did__exact=int(did))
 
+        company_value = request.POST.get('company_id')
+        print("load_table_company_value", company_value)
+        if company_value is None:
+            company_id = current_user_group_id(request)
+        else:
+            company_id = int(company_value)
+
         # 取得欄位清單和欄位中文名稱
         table_name = excel_did[0].t_name
         column_mapping = COLUMN_MAPPING[table_name]
@@ -250,7 +265,7 @@ def export_excel(request):
         column_names = column_mapping['column_names']
 
         # 根據所需欄位清單查詢資料
-        data = globals()[table_name].objects.all().values(*columns)
+        data = globals()[table_name].objects.all().filter(company_id=company_id).values(*columns)
 
         # 將查詢結果轉換為DataFrame
         df = pd.DataFrame(list(data))

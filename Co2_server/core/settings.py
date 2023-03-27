@@ -98,7 +98,7 @@ DATABASES = {
     # },
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'co2 server'),
+        'NAME': os.getenv('DB_NAME', 'co2'),
         'USER': os.getenv('DB_USERNAME', 'root'),
         'PASSWORD': os.getenv('DB_PASS', ''),
         'HOST': os.getenv('DB_HOST', '127.0.0.1'),

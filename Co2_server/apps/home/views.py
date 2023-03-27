@@ -3,6 +3,7 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 import json
+import os.path
 from json import dumps
 
 import django.contrib.auth.models
@@ -14,8 +15,10 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template import loader
 from django.urls import reverse, reverse_lazy
+from decimal import *
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
+from django.db.models import Count, Sum, F, Value, Subquery, CharField
 
 import apps
 from .forms import *
@@ -99,12 +102,13 @@ def load_table(request):
     if request.method == 'GET':
         device_id = request.GET.get('deviceId')
         company_value = request.GET.get('company_value')
-        print("load_table_company_value", company_value)
         if company_value is None:
             company_id = current_user_group_id(request)
         else:
             company_id = int(company_value)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+        # 四捨五入小數點第四位
+        getcontext().prec = 4
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
@@ -126,6 +130,7 @@ def load_table(request):
                     # 將計算後的加油量丟回字典
                     single_data["total"] = consumption_total
                     t_data.append(single_data)
+
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
                 t_data = []
@@ -148,41 +153,29 @@ def load_table(request):
                     # print("fuel::::::::::::::::::::::::::::::::::::::::", Total_fuel)
                     # 抓單筆資料
                     single_data = raw_data[i]
+                    # print("Total_fuel", Total_fuel)
                     # 將計算後的「合計」丟回字典
-                    single_data["Total_fuel"] = Total_fuel
+                    single_data["Total_fuel"] = '%.4f' % Total_fuel
                     for j in heat_data[i]:
                         # 「合計」後的資料(每月熱值)丟回字典
                         single_data[j] = heat_data[i].get(j)
                     # 將計算後的「平均熱值」丟回字典
-                    single_data["avg_heat"] = round(avg_heat, 4)
+                    # single_data["avg_heat"] = round(avg_heat, 4)
+                    single_data["avg_heat"] = '%.4f' % avg_heat
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
                 raw_data = official_car.objects.filter(company_id=company_id).values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                oil = official_car.objects.filter(company_id=company_id).values("oil_january", "oil_february", "oil_march", "oil_april",
-                                                                                "oil_may", "oil_june", "oil_july", "oil_august",
-                                                                                "oil_september", "oil_october", "oil_november", "oil_december")
-                elec = official_car.objects.filter(company_id=company_id).values("elec_january", "elec_february", "elec_march", "elec_april",
-                                                                                 "elec_may", "elec_june", "elec_july", "elec_august",
-                                                                                 "elec_september", "elec_october", "elec_november", "elec_december")
-                km = official_car.objects.filter(company_id=company_id).values("km_january", "km_february", "km_march", "km_april",
-                                                                               "km_may", "km_june", "km_july", "km_august",
-                                                                               "km_september", "km_october", "km_november", "km_december")
+                consumption_data = official_car.objects.filter(company_id=company_id).values("january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                             "september", "october", "november", "december")
+
                 urea_data = official_car.objects.filter(company_id=company_id).values("urea_january", "urea_february", "urea_march", "urea_april",
                                                                                       "urea_may", "urea_june", "urea_july", "urea_august",
                                                                                       "urea_september", "urea_october", "urea_november", "urea_december")
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
-                    # print("yes>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", official_car.objects.values("metering_method")[i].get("metering_method"))
-                    if official_car.objects.filter(company_id=company_id).values("metering_method")[i].get("metering_method") == "油車":
-                        consumption_data = oil
-                    elif official_car.objects.filter(company_id=company_id).values("metering_method")[i].get("metering_method") == "電動車":
-                        consumption_data = elec
-                    elif official_car.objects.values("metering_method")[i].get("metering_method") == "公里數":
-                        consumption_data = km
-
                     single_data = raw_data[i]
                     consumption_total = 0
                     for j in consumption_data[i]:
@@ -232,7 +225,7 @@ def load_table(request):
 
                     single_data = raw_data[i]
                     # 將計算後的使用量丟回字典
-                    single_data["total"] = consumption_total
+                    single_data["total"] = '%.4f' % consumption_total
                     # 將單位丟回字典
                     for j in unit[i]:
                         single_data[j] = unit[i].get(j)
@@ -240,114 +233,115 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
-                raw_data = refrigerator.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                     "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = refrigerator.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                     "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                      "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
                 t_data = []
-                raw_data = airconditioner.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                       "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = airconditioner.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                       "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                        "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
                 t_data = []
-                raw_data = vehicle.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = vehicle.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                 "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
                 t_data = []
-                raw_data = water_dispenser.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                        "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = water_dispenser.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                        "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                         "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
                 t_data = []
-                raw_data = ice_water_dispenser.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                            "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = ice_water_dispenser.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                            "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                             "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
+                    # single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
                 t_data = []
-                raw_data = ice_maker.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                  "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = ice_maker.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                   "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "其他設備清單":
+            elif a["d_name"] == "設備清單":
                 t_data = []
-                raw_data = other_device.objects.filter(company_id=company_id).values("id", "years", "device_id", "device_name", "brand_name", "model_type",
-                                                                                     "position", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                raw_data = other_device.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                     "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                      "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
-                    effusion_volume = raw_data[i].get("effusion_rate") * 0.01 * raw_data[i].get("filling_volume")
+                    effusion_volume = Decimal(raw_data[i].get("effusion_rate")) * Decimal(0.01) * raw_data[i].get("filling_volume")
                     # print("effusion_volume::::::::::::::::::::::::::::::::::::::::", effusion_volume)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = round(effusion_volume, 4)
+                    single_data["effusion_volume"] = '%.4f' % effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
@@ -416,8 +410,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["kw_hr"] = kw_hr
-                    single_data["kkw_hr"] = kkw_hr
+                    single_data["kw_hr"] = '%.4f' % kw_hr
+                    single_data["kkw_hr"] = '%.4f' % kkw_hr
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "上游運輸":
@@ -523,7 +517,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["Total_Emission"] = Total_Emission
+                    single_data["Total_Emission"] = '%.4f' % Total_Emission
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "採購原物料":
@@ -538,7 +532,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["Total_Purchase"] = Total_Purchase
+                    single_data["Total_Purchase"] = '%.4f' % Total_Purchase
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "產品間接排放":
@@ -553,7 +547,7 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["Total_Deliver"] = Total_Deliver
+                    single_data["Total_Deliver"] = '%.4f' % Total_Deliver
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
 
@@ -568,6 +562,14 @@ def emergency_generators_add(request, company_id=None):
             EG_add = EG_add.save(commit=False)
             EG_add.company_id = company_id
             EG_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = emergency_generators.objects.values("id").last().get("id")
+            table_id = emergency_generators.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
         else:
             print(EG_add.errors)
@@ -589,6 +591,14 @@ def combustion_equipment_add(request, company_id=None):
             CE_add = CE_add.save(commit=False)
             CE_add.company_id = company_id
             CE_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = combustion_equipment.objects.values("id").last().get("id")
+            table_id = combustion_equipment.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -605,9 +615,31 @@ def official_car_add(request, company_id=None):
     if request.method == "POST":
         company_id = request.POST.get("company_id")
         if OffCar_add.is_valid():
+            urea = request.POST.getlist("urea")
             OffCar_add = OffCar_add.save(commit=False)
+            if urea:
+                OffCar_add.urea_january = urea[0]
+                OffCar_add.urea_february = urea[1]
+                OffCar_add.urea_march = urea[2]
+                OffCar_add.urea_april = urea[3]
+                OffCar_add.urea_may = urea[4]
+                OffCar_add.urea_june = urea[5]
+                OffCar_add.urea_july = urea[6]
+                OffCar_add.urea_august = urea[7]
+                OffCar_add.urea_september = urea[8]
+                OffCar_add.urea_october = urea[9]
+                OffCar_add.urea_november = urea[10]
+                OffCar_add.urea_december = urea[11]
             OffCar_add.company_id = company_id
             OffCar_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = official_car.objects.values("id").last().get("id")
+            table_id = official_car.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -627,6 +659,14 @@ def material_add(request, company_id=None):
             MT_add = MT_add.save(commit=False)
             MT_add.company_id = company_id
             MT_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = material.objects.values("id").last().get("id")
+            table_id = material.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -646,6 +686,14 @@ def process_add(request, company_id=None):
             PC_add = PC_add.save(commit=False)
             PC_add.company_id = company_id
             PC_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = process.objects.values("id").last().get("id")
+            table_id = process.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -665,6 +713,14 @@ def refrigerator_add(request, company_id=None):
             RF_add = RF_add.save(commit=False)
             RF_add.company_id = company_id
             RF_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = refrigerator.objects.values("id").last().get("id")
+            table_id = refrigerator.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
         else:
             return redirect('/new_device/', {'RF_add': RF_add})
@@ -715,6 +771,14 @@ def vehicle_add(request, company_id=None):
             VC_add = VC_add.save(commit=False)
             VC_add.company_id = company_id
             VC_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = vehicle.objects.values("id").last().get("id")
+            table_id = vehicle.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -734,6 +798,14 @@ def water_dispenser_add(request, company_id=None):
             WD_add = WD_add.save(commit=False)
             WD_add.company_id = company_id
             WD_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = water_dispenser.objects.values("id").last().get("id")
+            table_id = water_dispenser.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -753,6 +825,14 @@ def ice_water_dispenser_add(request, company_id=None):
             IWD_add.save(commit=False)
             IWD_add.company_id = company_id
             IWD_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = ice_water_dispenser.objects.values("id").last().get("id")
+            table_id = ice_water_dispenser.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -772,6 +852,14 @@ def ice_maker_add(request, company_id=None):
             IM_add = IM_add.save(commit=False)
             IM_add.company_id = company_id
             IM_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = ice_maker.objects.values("id").last().get("id")
+            table_id = ice_maker.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -791,6 +879,14 @@ def other_device_add(request, company_id=None):
             OD_add = OD_add.save(commit=False)
             OD_add.company_id = company_id
             OD_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = other_device.objects.values("id").last().get("id")
+            table_id = other_device.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -810,6 +906,14 @@ def extinguisher_add(request, company_id=None):
             EX_add = EX_add.save(commit=False)
             EX_add.company_id = company_id
             EX_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = extinguisher.objects.values("id").last().get("id")
+            table_id = extinguisher.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -829,6 +933,14 @@ def personnel_inventory_add(request, company_id=None):
             PI_add = PI_add.save(commit=False)
             PI_add.company_id = company_id
             PI_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = personnel_inventory.objects.values("id").last().get("id")
+            table_id = personnel_inventory.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -848,6 +960,14 @@ def employee_add(request, company_id=None):
             EMP_add = EMP_add.save(commit=False)
             EMP_add.company_id = company_id
             EMP_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = employee.objects.values("id").last().get("id")
+            table_id = employee.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -868,6 +988,14 @@ def waste_water_add(request, company_id=None):
             waste_water_add = waste_water_add.save(commit=False)
             waste_water_add.company_id = company_id
             waste_water_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = waste_water.objects.values("id").last().get("id")
+            table_id = waste_water.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -888,6 +1016,14 @@ def waste_sludge_add(request, company_id=None):
             waste_sludge_add = waste_sludge_add.save(commit=False)
             waste_sludge_add.company_id = company_id
             waste_sludge_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = waste_sludge_add.objects.values("id").last().get("id")
+            table_id = waste_sludge_add.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -939,6 +1075,14 @@ def VOCs_one_add(request, company_id=None):
             VOCs_one_add = VOCs_one_add.save(commit=False)
             VOCs_one_add.company_id = company_id
             VOCs_one_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = VOCs_one.objects.values("id").last().get("id")
+            table_id = VOCs_one.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -955,10 +1099,19 @@ def VOCs_two_add(request, company_id=None):
     VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
     if request.method == "POST":
         company_id = request.POST.get("company_id")
+        print("company_id", company_id)
         if VOCs_two_add.is_valid():
-            VOCs_two_add = VOCs_two_add.save(commit=request)
+            VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = company_id
             VOCs_two_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = VOCs_two.objects.values("id").last().get("id")
+            table_id = VOCs_two.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
         else:
             print("\n", VOCs_two_add.errors)
@@ -981,6 +1134,14 @@ def electricity_add(request, company_id=None):
             ELEC_add = ELEC_add.save(commit=False)
             ELEC_add.company_id = company_id
             ELEC_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = electricity.objects.values("id").last().get("id")
+            table_id = electricity.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -1037,6 +1198,24 @@ def downstream_transportation_add(request, company_id=None):
             DT_add = DT_add.save(commit=False)
             DT_add.company_id = company_id
             DT_add.save()
+            stages = request.POST.getlist('stage')
+            last_id = downstream_transportation.objects.values("id").last().get("id")
+            table_id = downstream_transportation.objects.values("did").last().get("did")
+            for stage in stages:
+                if stage == "陸運":
+                    image_paths = request.FILES.getlist('file_field1')
+                elif stage == "海運":
+                    image_paths = request.FILES.getlist('file_field2')
+                elif stage == "特殊陸運":
+                    image_paths = request.FILES.getlist('file_field3')
+                elif stage == "空運":
+                    image_paths = request.FILES.getlist('file_field4')
+                else:
+                    image_paths = []
+                for img in image_paths:
+                    photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                    print(stage)
+                    photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -1110,6 +1289,14 @@ def waste_add(request, company_id=None):
             WASTE_add = WASTE_add.save(commit=False)
             WASTE_add.company_id = company_id
             WASTE_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = waste.objects.values("id").last().get("id")
+            table_id = waste.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
             return redirect('/carbon-system/')
     else:
         company_id = company_id
@@ -1567,33 +1754,33 @@ def add_title(request):
             },
 
             "7": {
-                "編輯區": ["刪除", "修改", "照片"],
-                "冷氣機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "編輯區": ["刪除", "修改"],
+                "冷氣機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "8": {
                 "編輯區": ["刪除", "修改"],
-                "車輛清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "車輛清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "9": {
                 "編輯區": ["刪除", "修改"],
-                "飲水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "飲水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "10": {
                 "編輯區": ["刪除", "修改"],
-                "冰水機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冰水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "11": {
                 "編輯區": ["刪除", "修改"],
-                "製冰機清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "製冰機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "12": {
                 "編輯區": ["刪除", "修改"],
-                "其他設備": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "13": {
@@ -1603,7 +1790,7 @@ def add_title(request):
 
             "14": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "員工總數"],
+                "內容": ["序號", "年度"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },

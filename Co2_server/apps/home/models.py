@@ -5,17 +5,12 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.db import models
 from django.contrib.auth.models import User
-import datetime
-
 # 限制文件
 from django.core import validators
 
-YEAR_CHOICES = []
-for r in range(1980, (datetime.datetime.now().year + 1)):
-    YEAR_CHOICES.append((r, r))
-
 
 # Create your models here.
+# 公司基本資料
 class company(models.Model):
     id = models.AutoField(primary_key=True)
     company_name = models.CharField(max_length=255)
@@ -44,6 +39,7 @@ class section_two(models.Model):
     t_name = models.CharField(max_length=50)
 
 
+# 柴油發電機
 class emergency_generators(models.Model):
     id = models.AutoField(primary_key=True, )
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=1, db_column='did_id')
@@ -52,23 +48,24 @@ class emergency_generators(models.Model):
     device_capacity = models.IntegerField()
     position = models.CharField(max_length=30)
     department = models.CharField(max_length=100, null=True)
-    january = models.FloatField(default=0)
-    february = models.FloatField(default=0)
-    march = models.FloatField(default=0)
-    april = models.FloatField(default=0)
-    may = models.FloatField(default=0)
-    june = models.FloatField(default=0)
-    july = models.FloatField(default=0)
-    august = models.FloatField(default=0)
-    september = models.FloatField(default=0)
-    october = models.FloatField(default=0)
-    november = models.FloatField(default=0)
-    december = models.FloatField(default=0)
+    january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 燃燒設備
 class combustion_equipment(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=2, db_column='did_id')
@@ -76,35 +73,36 @@ class combustion_equipment(models.Model):
     device_name = models.CharField(max_length=50)
     device_id = models.CharField(max_length=30)
     fuel_type = models.CharField(max_length=10)
-    fuel_january = models.FloatField(default=0)
-    fuel_february = models.FloatField(default=0)
-    fuel_march = models.FloatField(default=0)
-    fuel_april = models.FloatField(default=0)
-    fuel_may = models.FloatField(default=0)
-    fuel_june = models.FloatField(default=0)
-    fuel_july = models.FloatField(default=0)
-    fuel_august = models.FloatField(default=0)
-    fuel_september = models.FloatField(default=0)
-    fuel_october = models.FloatField(default=0)
-    fuel_november = models.FloatField(default=0)
-    fuel_december = models.FloatField(default=0)
-    heat_january = models.FloatField(default=0)
-    heat_february = models.FloatField(default=0)
-    heat_march = models.FloatField(default=0)
-    heat_april = models.FloatField(default=0)
-    heat_may = models.FloatField(default=0)
-    heat_june = models.FloatField(default=0)
-    heat_july = models.FloatField(default=0)
-    heat_august = models.FloatField(default=0)
-    heat_september = models.FloatField(default=0)
-    heat_october = models.FloatField(default=0)
-    heat_november = models.FloatField(default=0)
-    heat_december = models.FloatField(default=0)
+    fuel_january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    fuel_december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    heat_december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 公務車
 class official_car(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=3, db_column='did_id')
@@ -114,35 +112,36 @@ class official_car(models.Model):
     fuel_type = models.CharField(max_length=30)
     department = models.CharField(max_length=100, null=True)
     metering_method = models.CharField(max_length=20)
-    january = models.FloatField(default=0)
-    february = models.FloatField(default=0)
-    march = models.FloatField(default=0)
-    april = models.FloatField(default=0)
-    may = models.FloatField(default=0)
-    june = models.FloatField(default=0)
-    july = models.FloatField(default=0)
-    august = models.FloatField(default=0)
-    september = models.FloatField(default=0)
-    october = models.FloatField(default=0)
-    november = models.FloatField(default=0)
-    december = models.FloatField(default=0)
-    urea_january = models.FloatField(default=0)
-    urea_february = models.FloatField(default=0)
-    urea_march = models.FloatField(default=0)
-    urea_april = models.FloatField(default=0)
-    urea_may = models.FloatField(default=0)
-    urea_june = models.FloatField(default=0)
-    urea_july = models.FloatField(default=0)
-    urea_august = models.FloatField(default=0)
-    urea_september = models.FloatField(default=0)
-    urea_october = models.FloatField(default=0)
-    urea_november = models.FloatField(default=0)
-    urea_december = models.FloatField(default=0)
+    january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    urea_december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 原物料使用
 class material(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=4, db_column='did_id')
@@ -154,23 +153,24 @@ class material(models.Model):
     process_add_name = models.CharField(max_length=20, null=True)
     chemical_name = models.CharField(max_length=20, null=True)
     chemical_formula = models.CharField(max_length=20, null=True)
-    january = models.FloatField(default=0)
-    february = models.FloatField(default=0)
-    march = models.FloatField(default=0)
-    april = models.FloatField(default=0)
-    may = models.FloatField(default=0)
-    june = models.FloatField(default=0)
-    july = models.FloatField(default=0)
-    august = models.FloatField(default=0)
-    september = models.FloatField(default=0)
-    october = models.FloatField(default=0)
-    november = models.FloatField(default=0)
-    december = models.FloatField(default=0)
+    january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 製成添加物
 class process(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=5, db_column='did_id')
@@ -184,23 +184,24 @@ class process(models.Model):
     burn = models.BooleanField(default=False)
     VOCs = models.BooleanField(default=False)
     unit = models.CharField(max_length=20)
-    january = models.FloatField(default=0)
-    february = models.FloatField(default=0)
-    march = models.FloatField(default=0)
-    april = models.FloatField(default=0)
-    may = models.FloatField(default=0)
-    june = models.FloatField(default=0)
-    july = models.FloatField(default=0)
-    august = models.FloatField(default=0)
-    september = models.FloatField(default=0)
-    october = models.FloatField(default=0)
-    november = models.FloatField(default=0)
-    december = models.FloatField(default=0)
+    january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 冰箱清單
 class refrigerator(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=6, db_column='did_id')
@@ -210,15 +211,17 @@ class refrigerator(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    filling_volume = models.FloatField(null=True)
+    years_purchased = models.IntegerField()
+    filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
-    filling_fix_volume = models.FloatField(null=True)
+    filling_fix_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 冷氣清單
 class airconditioner(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=7, db_column='did_id')
@@ -228,15 +231,17 @@ class airconditioner(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    filling_volume = models.FloatField(null=True)
+    years_purchased = models.IntegerField()
+    filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
-    filling_fix_volume = models.FloatField(null=True)
+    filling_fix_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 車輛清單
 class vehicle(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=8, db_column='did_id')
@@ -246,15 +251,17 @@ class vehicle(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    filling_volume = models.FloatField(null=True)
+    years_purchased = models.IntegerField()
+    filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
-    filling_fix_volume = models.FloatField(null=True)
+    filling_fix_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 飲水機清單
 class water_dispenser(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=9, db_column='did_id')
@@ -264,15 +271,17 @@ class water_dispenser(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    filling_volume = models.FloatField(null=True)
+    years_purchased = models.IntegerField()
+    filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
-    filling_fix_volume = models.FloatField(null=True)
+    filling_fix_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 冰水機清單
 class ice_water_dispenser(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=10, db_column='did_id')
@@ -282,15 +291,17 @@ class ice_water_dispenser(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    filling_volume = models.FloatField(null=True)
+    years_purchased = models.IntegerField()
+    filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
-    filling_fix_volume = models.FloatField(null=True)
+    filling_fix_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 製冰機清單
 class ice_maker(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=11, db_column='did_id')
@@ -300,15 +311,17 @@ class ice_maker(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    filling_volume = models.FloatField(null=True)
+    years_purchased = models.IntegerField()
+    filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
-    filling_fix_volume = models.FloatField(null=True)
+    filling_fix_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 設備清單
 class other_device(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=12, db_column='did_id')
@@ -318,15 +331,17 @@ class other_device(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    filling_volume = models.FloatField(null=True)
+    years_purchased = models.IntegerField()
+    filling_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
-    filling_fix_volume = models.FloatField(null=True)
+    filling_fix_volume = models.DecimalField(max_digits=20, decimal_places=4, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 滅火器
 class extinguisher(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=13, db_column='did_id')
@@ -335,8 +350,8 @@ class extinguisher(models.Model):
     device_id = models.CharField(max_length=30, null=True)
     position = models.CharField(max_length=100)
     extinguisher_vendor = models.CharField(max_length=30, null=True)
-    chemical_weight = models.FloatField()
-    inventory = models.IntegerField()
+    chemical_weight = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    inventory = models.DecimalField(max_digits=20, decimal_places=0, default=0)
     using_amount = models.IntegerField()
     monthly = models.CharField(max_length=20)
     replace_filling_amount = models.FloatField()
@@ -346,22 +361,23 @@ class extinguisher(models.Model):
     company_id = models.IntegerField()
 
 
+# 人添清冊
 class personnel_inventory(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=14, db_column='did_id')
     years = models.IntegerField()
-    WKhours_january = models.FloatField(default=0)
-    WKhours_february = models.FloatField(default=0)
-    WKhours_march = models.FloatField(default=0)
-    WKhours_april = models.FloatField(default=0)
-    WKhours_may = models.FloatField(default=0)
-    WKhours_june = models.FloatField(default=0)
-    WKhours_july = models.FloatField(default=0)
-    WKhours_august = models.FloatField(default=0)
-    WKhours_september = models.FloatField(default=0)
-    WKhours_october = models.FloatField(default=0)
-    WKhours_november = models.FloatField(default=0)
-    WKhours_december = models.FloatField(default=0)
+    WKhours_january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    WKhours_december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     WKnum_january = models.IntegerField(default=0)
     WKnum_february = models.IntegerField(default=0)
     WKnum_march = models.IntegerField(default=0)
@@ -379,6 +395,7 @@ class personnel_inventory(models.Model):
     company_id = models.IntegerField()
 
 
+# 委外人員清冊
 class employee(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=15, db_column='did_id')
@@ -462,7 +479,7 @@ class solvent_aerosol_emission_sources(models.Model):
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=18, db_column='did_id')
     years = models.IntegerField()
     solvent_name = models.CharField(max_length=100)
-    solvent_amount = models.FloatField()
+    solvent_amount = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     solvent_amount_unit = models.CharField(max_length=30)
     solvent_capacity = models.FloatField()
     solvent_capacity_unit = models.CharField(max_length=30)
@@ -472,39 +489,42 @@ class solvent_aerosol_emission_sources(models.Model):
     company_id = models.IntegerField()
 
 
+# 溶劑、噴霧劑段數
 class additive_section(models.Model):
     id = models.AutoField(primary_key=True)
     additive_name = models.CharField(max_length=100)
-    additive_amount = models.FloatField()
+    additive_amount = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     additive_unit = models.CharField(max_length=30)
     additive_ingredient = models.CharField(max_length=255)
     additive_ratio = models.CharField(max_length=30)
     additive_id = models.ForeignKey(solvent_aerosol_emission_sources, on_delete=models.CASCADE)
 
 
+# 用電量
 class electricity(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=21, db_column='did_id')
     years = models.IntegerField()
     EMI_id = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
-    january = models.FloatField(default=0)
-    february = models.FloatField(default=0)
-    march = models.FloatField(default=0)
-    april = models.FloatField(default=0)
-    may = models.FloatField(default=0)
-    june = models.FloatField(default=0)
-    july = models.FloatField(default=0)
-    august = models.FloatField(default=0)
-    september = models.FloatField(default=0)
-    october = models.FloatField(default=0)
-    november = models.FloatField(default=0)
-    december = models.FloatField(default=0)
+    january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
 
 
+# 上游運輸
 class upstream_transportation(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=22, db_column='did_id')
@@ -549,6 +569,7 @@ class upstream_transportation(models.Model):
     company_id = models.IntegerField()
 
 
+# 下游運輸
 class downstream_transportation(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=23, db_column='did_id')
@@ -592,6 +613,7 @@ class downstream_transportation(models.Model):
     company_id = models.IntegerField()
 
 
+# 員工通勤
 class employee_commute(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=24, db_column='did_id')
@@ -609,12 +631,14 @@ class employee_commute(models.Model):
     company_id = models.IntegerField()
 
 
+# 員工通勤段數
 class transportation_way(models.Model):
     id = models.AutoField(primary_key=True)
     transportation = models.CharField(max_length=30)
     commute = models.ForeignKey(employee_commute, on_delete=models.CASCADE, db_column='commute_id')
 
 
+# 員工出差
 class employee_business_trip(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=25, db_column='did_id')
@@ -630,6 +654,7 @@ class employee_business_trip(models.Model):
     company_id = models.IntegerField()
 
 
+# 員工出差段數
 class trip_section(models.Model):
     id = models.AutoField(primary_key=True)
     departure = models.CharField(max_length=50)
@@ -638,6 +663,7 @@ class trip_section(models.Model):
     trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE, db_column='trip_id')
 
 
+# VOC1
 class VOCs_one(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=22, db_column='did_id')
@@ -648,6 +674,7 @@ class VOCs_one(models.Model):
     company_id = models.IntegerField()
 
 
+# VOC2
 class VOCs_two(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=23, db_column='did_id')
@@ -667,6 +694,7 @@ class VOCs_two(models.Model):
     company_id = models.IntegerField()
 
 
+# 廢棄物
 class waste(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=26, db_column='did_id')
@@ -690,6 +718,7 @@ class chemical_table(models.Model):
     chemical_formula = models.CharField(max_length=50)
 
 
+# 照片
 class image(models.Model):
     id = models.AutoField(primary_key=True)
     table_id = models.IntegerField()
@@ -706,18 +735,18 @@ class pipe_wastewater(models.Model):
     pipe_id = models.CharField(max_length=225)
     address = models.CharField(max_length=225)
     factory = models.CharField(max_length=50)
-    january = models.FloatField(default=0)
-    february = models.FloatField(default=0)
-    march = models.FloatField(default=0)
-    april = models.FloatField(default=0)
-    may = models.FloatField(default=0)
-    june = models.FloatField(default=0)
-    july = models.FloatField(default=0)
-    august = models.FloatField(default=0)
-    september = models.FloatField(default=0)
-    october = models.FloatField(default=0)
-    november = models.FloatField(default=0)
-    december = models.FloatField(default=0)
+    january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
@@ -730,18 +759,18 @@ class purchase_material(models.Model):
     years = models.IntegerField()
     product_id = models.CharField(max_length=50)
     product_name = models.CharField(max_length=50)
-    january = models.FloatField(default=0)
-    february = models.FloatField(default=0)
-    march = models.FloatField(default=0)
-    april = models.FloatField(default=0)
-    may = models.FloatField(default=0)
-    june = models.FloatField(default=0)
-    july = models.FloatField(default=0)
-    august = models.FloatField(default=0)
-    september = models.FloatField(default=0)
-    october = models.FloatField(default=0)
-    november = models.FloatField(default=0)
-    december = models.FloatField(default=0)
+    january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
@@ -750,22 +779,49 @@ class purchase_material(models.Model):
 # 使用產品間接排放
 class product_indirect_emissions(models.Model):
     id = models.AutoField(primary_key=True)
+
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=29, db_column='did_id')
     years = models.IntegerField()
     product_id = models.CharField(max_length=50)
     product_name = models.CharField(max_length=50)
-    january = models.FloatField(default=0)
-    february = models.FloatField(default=0)
-    march = models.FloatField(default=0)
-    april = models.FloatField(default=0)
-    may = models.FloatField(default=0)
-    june = models.FloatField(default=0)
-    july = models.FloatField(default=0)
-    august = models.FloatField(default=0)
-    september = models.FloatField(default=0)
-    october = models.FloatField(default=0)
-    november = models.FloatField(default=0)
-    december = models.FloatField(default=0)
+    january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    april = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    may = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    june = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    july = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    august = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    september = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    october = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    november = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    december = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
+
+
+# 固定、移動係數表表格
+class coefficient_stationary_mobile(models.Model):
+    id = models.AutoField(primary_key=True)
+    fuel_type = models.CharField(max_length=30)
+    gas_name = models.CharField(max_length=50)
+    coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
+    coefficient_source = models.CharField(max_length=50)
+
+
+# 逸散係數表表格
+class coefficient_effusion(models.Model):
+    device = models.CharField(max_length=30, primary_key=True)
+    gas_name = models.CharField(max_length=30)
+    coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
+    coefficient_source = models.CharField(max_length=50)
+
+
+# gwp係數表表格
+class coefficient_gwp(models.Model):
+    id = models.AutoField(primary_key=True)
+    gas_name = models.CharField(max_length=30)
+    version = models.IntegerField()
+    years = models.IntegerField()
+    gwp_coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)

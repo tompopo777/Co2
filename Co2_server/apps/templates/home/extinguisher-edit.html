@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} extinguisher {% endblock %}
+{% block title %} 滅火器 - 修改 {% endblock %}
 
 {% block body_class %} extinguisher {% endblock %}
 
@@ -158,8 +158,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
-    {#    禁止enter鍵#}
+
     <script>
+        {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
             if (code === 13) {
@@ -167,44 +168,27 @@
                 return false;
             }
         });
-    </script>
 
-    {#    日期篩選器#}
-    <script>
-        $("#datepicker").datepicker({
+        {#    年度篩選器#}
+        $("#years").datepicker({
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
-    </script>
 
-    {#    月份篩選器1#}
-    <script>
-        $("#datepicker2").datepicker({
+        {#    月份篩選器#}
+        $("#monthly").datepicker({
             format: "yyyy-mm",
             viewMode: "months",
             minViewMode: "months",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
-    </script>
 
-    {#    月份篩選器2#}
-    <script>
-        $("#datepicker3").datepicker({
-            format: "yyyy-mm",
-            viewMode: "months",
-            minViewMode: "months",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-    </script>
-
-    {#    日期篩選器#}
-    <script>
-        $("#datepicker4").datepicker({
+        {#    日期篩選器#}
+        $("#replace_filling_date").datepicker({
             format: "yyyy-mm-dd",
             viewMode: "days",
             minViewMode: "days",
