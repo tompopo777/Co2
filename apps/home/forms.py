@@ -1087,7 +1087,7 @@ class EBTform(forms.ModelForm):
                   'department', 'bt_image_note', 'rtd_image_note', 'message_board')
         widgets = {
             'business_trip_location': forms.TextInput(attrs={'class': 'form-control'}),
-            'business_trip_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
+            'business_trip_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'business_trip_date'}),
             'business_trip_number': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1120,7 +1120,7 @@ class WASTEform(forms.ModelForm):
         widgets = {
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_weigh': forms.TextInput(attrs={'class': 'form-control'}),
-            'waste_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
+            'waste_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'waste_date'}),
             'waste_location': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
