@@ -66,9 +66,17 @@ def combustion_equipment(coefficient_source, gwp_version):
     combustion = pd.DataFrame(list(combustion))
     a_b_part = pd.merge(combustion, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
     final = pd.merge(a_b_part, gwp, left_on='gas_name', right_on='gas_name', how='left')
+    display(final['sum_count'])
+    display(final['coefficient'])
+    display(final['gwp_coefficient'])
+    # final['sum_count'] = final['sum_count'].apply(lambda x: Decimal(str(x)))
+    # final['coefficient'] = final['coefficient'].apply(lambda x: Decimal(str(x)))
+    # final['gwp_coefficient'] = final['gwp_coefficient'].apply(lambda x: Decimal(str(x)))
     # 將(A)、(B)、(C)轉為float才能取round
-    final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
-    final['emission'] = final['emission'].round(4)
+    # final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+    # final['emission'] = final.apply(lambda x: (Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient'])).quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP), axis=1)
+    final['emission'] = final.apply(lambda x: round(float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), 4), axis=1)
+    display(final['emission'])
     new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
     final = final.reindex(columns=new_order)
     display(final)
@@ -110,62 +118,96 @@ gwp_version = 6
 # refrigerator = pd.DataFrame(list(refrigerator.objects.values("device_name", "refrigerant_type", "filling_volume")))
 # airconditioner = pd.DataFrame(list(airconditioner.objects.values("device_name", "refrigerant_type", "filling_volume")))
 # vehicle = pd.DataFrame(list(vehicle.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# water_dispenser = pd.DataFrame(list(water_dispenser.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# ice_water_dispenser = pd.DataFrame(list(ice_water_dispenser.objects.values("device_name", "refrigerant_type", "filling_volume")))
 # ice_maker = pd.DataFrame(list(ice_maker.objects.values("device_name", "refrigerant_type", "filling_volume")))
 #
-airconditioner = pd.DataFrame(list(airconditioner.objects.values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
-calculate = airconditioner.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
-calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
-# 丟掉舊欄位，為了merge時欄位不會重複
-airconditioner = airconditioner.drop(columns=['filling_volume'])
-a_part = airconditioner.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
-# 用dataframe欄位去filter queryset要用'欄位名稱__in'
-coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
-ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
-gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
-final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
-final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
-new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume', 'data_unit', 'emission', 'gas_name_x', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-final = final.reindex(columns=new_order)
-display(final)
-display(final.shape)
+
+# 製冰機
+@login_required(login_url="/login/")
+def water_dispenser_count(coefficient_source, gwp_version):
+    try:
+        raw_data = pd.DataFrame(list(ice_maker.objects.values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('製冰機', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+
+        calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
+        calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
+        # 丟掉舊欄位，為了merge時欄位不會重複
+        raw_data = raw_data.drop(columns=['filling_volume'])
+        a_part = raw_data.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
+        # 用dataframe欄位去filter queryset要用'欄位名稱__in'
+        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+        ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
+        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
+        final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
+        final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume', 'data_unit', 'emission', 'gas_name_x', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        final = final.reindex(columns=new_order)
+        display(final)
+        display(final.shape)
+    except KeyError:
+        print('沒有該設備')
+        pass
+
+# 飲水機
+@login_required(login_url="/login/")
+def water_dispenser_count(coefficient_source, gwp_version):
+    raw_data = pd.DataFrame(list(water_dispenser.objects.values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('飲水機', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+    calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
+    calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
+    # 丟掉舊欄位，為了merge時欄位不會重複
+    raw_data = raw_data.drop(columns=['filling_volume'])
+    a_part = raw_data.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
+    # 用dataframe欄位去filter queryset要用'欄位名稱__in'
+    coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+    ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
+    gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
+    final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
+    final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+    new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume', 'data_unit', 'emission', 'gas_name_x', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    final = final.reindex(columns=new_order)
+    display(final)
+    display(final.shape)
 
 
-# other_device = pd.DataFrame(list(other_device.objects.values('device_name', "refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
-# calculate = other_device.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
-# calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
-# # 丟掉舊欄位，為了merge時欄位不會重複
-# other_device = other_device.drop(columns=['filling_volume'])
-# a_part = other_device.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
-# coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause='其他設備').values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
-# ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
-# gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
-# final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
-# final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
-# # 102行做merge兩個表都有'gas_name'欄位, 原本的(左邊)被系統改名叫'gas_name_x'
-# new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume', 'data_unit', 'emission', 'gas_name_x', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-# final = final.reindex(columns=new_order)
-# display(final)
-# display(final.shape)
+# 冷氣機
+@login_required(login_url="/login/")
+def airconditioner_count(coefficient_source, gwp_version):
+    raw_data = pd.DataFrame(list(airconditioner.objects.values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+    calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
+    calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
+    # 丟掉舊欄位，為了merge時欄位不會重複
+    raw_data = raw_data.drop(columns=['filling_volume'])
+    a_part = raw_data.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
+    # 用dataframe欄位去filter queryset要用'欄位名稱__in'
+    coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+    ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
+    gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
+    final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
+    final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+    new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume', 'data_unit', 'emission', 'gas_name_x', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    final = final.reindex(columns=new_order)
+    display(final)
+    display(final.shape)
 
-# refrigerator = pd.DataFrame(list(refrigerator.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# airconditioner = pd.DataFrame(list(airconditioner.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# vehicle = pd.DataFrame(list(vehicle.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# water_dispenser = pd.DataFrame(list(water_dispenser.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# ice_water_dispenser = pd.DataFrame(list(ice_water_dispenser.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# ice_maker = pd.DataFrame(list(ice_maker.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# other_device = pd.DataFrame(list(other_device.objects.values("device_name", "refrigerant_type", "filling_volume")))
-# refrigerant = pd.concat([refrigerator, airconditioner, vehicle, water_dispenser, ice_water_dispenser, ice_maker, other_device])
-# if 'device_name' and 'refrigerant_type' in refrigerant:
-#     calculate = refrigerant.groupby(["device_name", "refrigerant_type"]).agg({'filling_volume': 'sum'}).apply(lambda x: x / 1000)
-#     display(calculate)
-#     display(calculate.shape)
-#     refrigerant = refrigerant.drop(columns=['filling_volume'])
-#     final = refrigerant.merge(calculate, on=["device_name", 'refrigerant_type'], how='left').drop_duplicates()
-#     display(final)
-#     display(final.shape)
-#
+# 其他設備
+@login_required(login_url="/login/")
+def other_device_count(coefficient_source, gwp_version):
+    raw_data = pd.DataFrame(list(other_device.objects.values('device_name', "refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+    calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
+    calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
+    # 丟掉舊欄位，為了merge時欄位不會重複
+    raw_data = raw_data.drop(columns=['filling_volume'])
+    a_part = raw_data.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
+    coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause='其他設備').values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+    ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
+    gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
+    final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
+    final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+    # 102行做merge兩個表都有'gas_name'欄位, 原本的(左邊)被系統改名叫'gas_name_x'
+    new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume', 'data_unit', 'emission', 'gas_name_x', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    final = final.reindex(columns=new_order)
+    display(final)
+    display(final.shape)
+
+
 # # 溶劑、噴霧劑
 # solvent = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.values('id', 'solvent_name', 'solvent_amount')))
 # addition = pd.DataFrame(list(additive_section.objects.values('additive_id_id', 'additive_name', 'additive_amount')))
