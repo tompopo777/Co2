@@ -15,17 +15,35 @@ getcontext().prec = 4
 
 
 # 發電機
-# generators = pd.DataFrame(list(emergency_generators.objects.values('did').annotate(
-#     process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
-#     device_name=Value('柴油發電機', output_field=CharField(max_length=20)),
-#     fuel_type=Value('柴油', output_field=CharField(max_length=20)),
-#     sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
-#                        F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000,
-#                    output_field=models.DecimalField(max_digits=20, decimal_places=4)),
-#     data_unit=Value('公秉', output_field=models.CharField(max_length=50))
-# )))
-# generators = generators.drop(columns=['did'])
-# display(generators.to_string(index=False))
+@login_required(login_url="/login/")
+def emergency_generators(coefficient_source, gwp_version):
+    coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+    gwp_version = 6
+    generators = emergency_generators.objects.values('did').annotate(
+        process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
+        device_name=Value('柴油發電機', output_field=CharField(max_length=20)),
+        fuel_type=Value('柴油', output_field=CharField(max_length=20)),
+        sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
+                           F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000,
+                       output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+        data_unit=Value('公秉', output_field=models.CharField(max_length=50))
+    )
+    coefficient_part = None
+    for query in generators:
+        fuel_type = query['fuel_type']
+        coefficient_data = coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause=fuel_type).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
+        coefficient_part = pd.DataFrame(list(coefficient_data))
+    gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+    generators = pd.DataFrame(list(generators))
+    a_b_part = pd.merge(generators, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+    final = pd.merge(a_b_part, gwp, left_on='gas_name', right_on='gas_name', how='left')
+    # 將(A)、(B)、(C)轉為float才能取round
+    final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
+    final['emission'] = final['emission'].round(4)
+    new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    final = final.reindex(columns=new_order)
+    display(final)
+    display(final.shape)
 
 
 # 燃燒設備
@@ -56,15 +74,36 @@ def combustion_equipment(coefficient_source, gwp_version):
     display(final)
     display(final.shape)
 
+# 公務車
+@login_required(login_url="/login/")
+def official_car(coefficient_source, gwp_version):
+    coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+    gwp_version = 6
+    officialCar = official_car.objects.values('vehicle_type', 'fuel_type').annotate(
+        process_area=Value('移動式式燃燒', output_field=models.CharField(max_length=50)),
+        sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
+                           F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000,
+                       output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+        data_unit=Value('公秉', output_field=models.CharField(max_length=50))
+    ).order_by('vehicle_type', 'fuel_type')
+    coefficient_part = None
+    for query in officialCar:
+        fuel_type = query['fuel_type']
+        coefficient_data = coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause=fuel_type).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
+        coefficient_part = pd.DataFrame(list(coefficient_data))
+    gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+    officialCar = pd.DataFrame(list(officialCar))
+    a_b_part = pd.merge(officialCar, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+    final = pd.merge(a_b_part, gwp, left_on='gas_name', right_on='gas_name', how='left')
+    # 將(A)、(B)、(C)轉為float才能取round
+    final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
+    final['emission'] = final['emission'].round(4)
+    new_order = ['process_area', 'vehicle_type', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    final = final.reindex(columns=new_order)
+    display(final)
+    display(final.shape)
 
-#
-# # 公務車
-# official_car = pd.DataFrame(list(official_car.objects.values('vehicle_type', 'fuel_type').annotate(
-#     sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
-#                        F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000, output_field=models.DecimalField(max_digits=20, decimal_places=4))
-# ).order_by('vehicle_type', 'fuel_type')))
-# display(official_car.to_string(index=False))
-#
+
 # 逸散(冰箱~其他設備)
 coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
 gwp_version = 6
@@ -91,6 +130,7 @@ new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume'
 final = final.reindex(columns=new_order)
 display(final)
 display(final.shape)
+
 
 # other_device = pd.DataFrame(list(other_device.objects.values('device_name', "refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
 # calculate = other_device.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
