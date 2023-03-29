@@ -123,8 +123,8 @@ def official_car(coefficient_source, gwp_version):
         pass
 
 # 逸散(冰箱~其他設備)
-coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-gwp_version = 6
+# coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+# gwp_version = 6
 # refrigerator = pd.DataFrame(list(refrigerator.objects.values("device_name", "refrigerant_type", "filling_volume")))
 # airconditioner = pd.DataFrame(list(airconditioner.objects.values("device_name", "refrigerant_type", "filling_volume")))
 # vehicle = pd.DataFrame(list(vehicle.objects.values("device_name", "refrigerant_type", "filling_volume")))
@@ -229,20 +229,37 @@ def other_device_count(coefficient_source, gwp_version):
         pass
 
 
-# # 溶劑、噴霧劑
-try:
-    solvent = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.values('id', 'solvent_name', 'solvent_amount')))
-    addition = pd.DataFrame(list(additive_section.objects.values('additive_id_id', 'additive_name', 'additive_amount')))
-    total = pd.merge(addition, solvent, left_on=['additive_id_id'], right_on=['id'],  how='left')
-    count = total.groupby(["solvent_name", "additive_name"]).agg({'solvent_amount': 'sum'}).apply(lambda x: x * Decimal(0.82) * Decimal(0.03))
-    total = total.drop(columns=['additive_id_id', 'id', 'solvent_amount'])
-    final = pd.merge(total, count, on='solvent_name', how='left')
-    final['solvent_amount'] = final['solvent_amount'].multiply(final['additive_amount'])
-    display(final.drop(columns=['additive_amount']).drop_duplicates().to_string(index=False))
-    print('\n')
-except KeyError:
-        print('沒有該設備')
-        pass
+# 溶劑、噴霧劑
+@login_required(login_url="/login/")
+def solvent_aerosol_emission_sources_count(coefficient_source, gwp_version):
+    coefficient_source = '質量平衡法'
+    gwp_version = 6
+    try:
+        raw_main = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.values('id', 'solvent_name', 'solvent_amount').annotate(process_area=Value('溶劑、噴霧劑', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50)))))
+        raw_sub = pd.DataFrame(list(additive_section.objects.values('additive_id_id', 'additive_name', 'additive_amount')))
+        union_part = pd.merge(raw_sub, raw_main, left_on=['additive_id_id'], right_on=['id'],  how='left').drop(columns=['additive_id_id', 'id'])
+        # 溶劑名稱、添加物名稱相同的，將數量做總和
+        a_part = union_part.groupby(["solvent_name", "additive_name"]).agg({'solvent_amount': 'sum', 'additive_amount': 'first', 'process_area': 'first', 'data_unit': 'first'}).reset_index()
+        # 溶劑數量*比重(0.82)*CO2含量(0.03)
+        a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x) * Decimal(0.82) * Decimal(0.03), 4))
+        # 再跟添加量相乘
+        a_part['solvent_amount'] = a_part['solvent_amount'].multiply(a_part['additive_amount'])
+        a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(x, 4))
+        a_part = a_part.drop(columns=['additive_amount']).drop_duplicates()
+        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['process_area']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
+        ab_part = pd.merge(a_part, coefficient_part, left_on='process_area', right_on='cause', how='left')
+        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+        final = pd.merge(ab_part, gwp, on='gas_name', how='left')
+        final['emission'] = final.apply(lambda x: round(Decimal(x['solvent_amount']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        new_order = ['process_area', 'solvent_name', 'additive_name', 'solvent_amount', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        final = final.reindex(columns=new_order)
+        display(final)
+        display(final.shape)
+        print('\n')
+    except KeyError:
+                print('沒有該設備')
+                pass
+
 #
 # # 人天清冊/委外人員
 # personnel = pd.DataFrame(list(personnel_inventory.objects.values('did').annotate(
