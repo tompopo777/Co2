@@ -479,25 +479,15 @@ class solvent_aerosol_emission_sources(models.Model):
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=18, db_column='did_id')
     years = models.IntegerField()
     solvent_name = models.CharField(max_length=100)
-    solvent_amount = models.DecimalField(max_digits=20, decimal_places=4, default=0)
-    solvent_amount_unit = models.CharField(max_length=30)
-    solvent_capacity = models.FloatField()
-    solvent_capacity_unit = models.CharField(max_length=30)
-    fugitive_recharge = models.FloatField()
+    solvent_amount = models.DecimalField(max_digits=20, decimal_places=0)
+    solvent_capacity = models.DecimalField(max_digits=20, decimal_places=4)
+    solvent_capacity_unit = models.CharField(max_length=20)
+    gas_name = models.CharField(max_length=20)
+    gas_ratio = models.CharField(max_length=20)
+    density = models.DecimalField(max_digits=10, decimal_places=10, default=1)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
-
-
-# 溶劑、噴霧劑段數
-class additive_section(models.Model):
-    id = models.AutoField(primary_key=True)
-    additive_name = models.CharField(max_length=100)
-    additive_amount = models.DecimalField(max_digits=20, decimal_places=4, default=0)
-    additive_unit = models.CharField(max_length=30)
-    additive_ingredient = models.CharField(max_length=255)
-    additive_ratio = models.CharField(max_length=30)
-    additive_id = models.ForeignKey(solvent_aerosol_emission_sources, on_delete=models.CASCADE)
 
 
 # 用電量
@@ -712,6 +702,7 @@ class waste(models.Model):
     company_id = models.IntegerField()
 
 
+# 製程排放自動帶入的化學品表
 class chemical_table(models.Model):
     chemical_add = models.CharField(primary_key=True, max_length=50)
     chemical_name = models.CharField(max_length=50)

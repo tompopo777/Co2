@@ -173,6 +173,34 @@ BUSINESS_TRANSPORTATION_CHOICES = [
     ('飛機', '飛機'),
     ('船舶', '船舶'),
 ]
+SOLVENT_GAS_CHOICES = [
+    ('', '-------'),
+    ('CO2', 'R744，二氧化碳，CO2'),
+    ('CH4', 'R50，甲烷，CH4'),
+    ('HFCs', 'HFC-23/R-23，三氟甲烷，CHF3'),
+    ('HFCs', 'HFC-32/R-32，二氟甲烷，CH2F2'),
+    ('HFCs', 'HFC-125/R-125，1,1,1,2,2-五氟乙烷，C2HF5'),
+    ('HFCs', 'HFC-134a/R-134a，1,1,1,2-四氟乙烷，C2H2F4'),
+    ('HFCs', 'HFC-143a/R-143a，1,1,1-三氟乙烷，C2H3F3'),
+    ('HFCs', 'HFC-152a/R-152a，1,1-二氟乙烷，C2H4F2'),
+    ('HFCs', 'HFC-227ea，1,1,1,2,3,3,3-七氟丙烷，CF3CHFCF3'),
+    ('HFCs', 'HFC-236fa，1,1,1,3,3,3-六氟丙烷，C3H2F6'),
+    ('HFCs', 'HFC-245fa，1,1,1,3,3-五氟丙烷，CHF2CH2CF3'),
+    ('HFCs', 'R401a，R22/152a/124（53/13/34）'),
+    ('HFCs', 'R401b，R22/152a/124（61/11/28）'),
+    ('HFCs', 'R404a，R125/143a/134a（44/52/4）'),
+    ('HFCs', 'R407a，R32/125/134a（20/40/40）'),
+    ('HFCs', 'R407b，R32/125/134a（10/70/20）'),
+    ('HFCs', 'R407c，R32/125/134a（23/25/52）'),
+    ('HFCs', 'R408a，R125/R143a/22（7/46/47）'),
+    ('HFCs', 'R410a，R32/125（50/50）'),
+    ('HFCs', 'R413a，R134a/218/600a'),
+    ('HFCs', 'R417a，R125/134a/600a'),
+    ('HFCs', 'R507，R125/143a（50.0/50.0）'),
+    ('HFCs', 'FX80，R32/125'),
+    ('PFCs', 'C4F10，全氟丁烷'),
+    ('SF6', 'SF6，六氟化硫')
+]
 
 
 # 前面: 存DB，後面: 顯示
@@ -810,16 +838,17 @@ class WasteSludgeForm(forms.ModelForm):
 class SolventAerosolEmissionSourcesForm(forms.ModelForm):
     class Meta:
         model = solvent_aerosol_emission_sources
-        fields = ('years', 'solvent_name', 'solvent_amount', 'solvent_amount_unit', 'solvent_capacity',
-                  'solvent_capacity_unit', 'fugitive_recharge', 'image_note', 'message_board')
+        fields = ('years', 'solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit',
+                  'gas_name', 'gas_ratio', 'density', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-            'solvent_amount_unit': forms.Select(choices=(("瓶", "瓶"), ("罐", "罐"))),
+            'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^\+?[1-9][0-9]*$', 'title': '只能輸入正整數', 'placeholder': '只能輸入正整數'}),
             'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'solvent_capacity_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
-            'fugitive_recharge': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'gas_name': forms.Select(choices=SOLVENT_GAS_CHOICES),
+            'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
+            'density': forms.TextInput(attrs={'class': 'form-control'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -828,16 +857,6 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         super(SolventAerosolEmissionSourcesForm, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
-
-
-AdditiveFormSet = inlineformset_factory(solvent_aerosol_emission_sources, additive_section,
-                                        fields=('additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio'), extra=1,
-                                        widgets={'additive_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入中文名稱'}),
-                                                 'additive_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-                                                 'additive_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("公克", "公克"), ("oz", "oz"))),
-                                                 'additive_ingredient': forms.TextInput(attrs={'class': 'form-control'}),
-                                                 'additive_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-                                                 })
 
 
 # 發電量

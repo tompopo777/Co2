@@ -378,20 +378,7 @@ def load_table(request):
                                                                               "CH4_capture_system_rate", "combustion_equipment_efficiency"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
-                t_data = []
-                raw_data = solvent_aerosol_emission_sources.objects.filter(company_id=company_id).values("id", "years", "solvent_name", "solvent_amount", "solvent_amount_unit", "solvent_capacity", "solvent_capacity_unit", "fugitive_recharge")
-                for i in range(raw_data.count()):
-                    single_data = raw_data[i]
-                    id = raw_data[i].get("id")
-                    additive = additive_section.objects.filter(additive_id=id).values("additive_name", "additive_amount", "additive_unit", "additive_ingredient", "additive_ratio")
-                    for a in additive:
-                        if additive.count() > 1:
-                            single_data.update(a)
-                            break
-                        else:
-                            single_data.update(a)
-                    single_data["count"] = additive.count()
-                    t_data.append(single_data)
+                t_data = list(solvent_aerosol_emission_sources.objects.filter(company_id=company_id).values("id", "years", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
@@ -1044,24 +1031,16 @@ def solvent_aerosol_emission_sources_add(request, company_id=None):
             solvent = SAES_add.save(commit=False)
             solvent.company_id = company_id
             solvent.save()
-            Additive_formSet = AdditiveFormSet(request.POST, request.FILES, instance=solvent)
-            if Additive_formSet.is_valid():
-                Additive_formSet.save()
-                return redirect('/carbon-system/')
-            else:
-                last_data = solvent_aerosol_emission_sources.objects.last()
-                last_data.delete()
-                print("Additive_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", Additive_formSet)
-                return render(request, 'home/employee-business-trip.html', {'SAES_add': SAES_add, 'TripSectionFormSet': TripSectionFormSet})
+            return redirect('/carbon-system/')
         else:
             print("SAES_add表單錯誤>>>>>>>>>>>>>>>>>>>>\n", SAES_add.errors)
-            return render(request, 'home/employee-business-trip.html', {'SAES_add': SAES_add, 'TripSectionFormSet': TripSectionFormSet})
+            return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'company_id': company_id})
     else:
         company_id = company_id
         SAES_add = SolventAerosolEmissionSourcesForm()
     context['SAES_add'] = SAES_add
     context['company_id'] = company_id
-    return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'AdditiveFormSet': AdditiveFormSet, 'company_id': company_id})
+    return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'company_id': company_id})
 
 
 # VOCs1表單儲存
@@ -1512,7 +1491,7 @@ def edit_device(request):
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
     }
     formsetName = {
-        "18": AdditiveFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
+        "24": CommuteFormSet, "25": TripSectionFormSet
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -1621,7 +1600,7 @@ def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_t
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
     }
     formsetName = {
-        "18": AdditiveFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
+        "24": CommuteFormSet, "25": TripSectionFormSet
     }
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -1815,8 +1794,7 @@ def add_title(request):
 
             "18": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量", "單位", "容量", "單位", "逸散 / 補充量(公噸/年)"],
-                "溶劑、噴霧劑添加物 (點擊\"修改\"可查看添加物細項*)": ["添加物名稱", "添加量", "單位", "成份", "添加比例", "添加物筆數*"],
+                "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量(瓶/罐)", "容量", "單位", "氣體名稱", "氣體含量(%)", "密度"]
             },
 
             "19": {

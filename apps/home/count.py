@@ -232,26 +232,32 @@ def other_device_count(coefficient_source, gwp_version):
 # 溶劑、噴霧劑
 @login_required(login_url="/login/")
 def solvent_aerosol_emission_sources_count(coefficient_source, gwp_version):
-    coefficient_source = '質量平衡法'
-    gwp_version = 6
+# coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+# gwp_version = 6
     try:
-        raw_main = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.values('id', 'solvent_name', 'solvent_amount').annotate(process_area=Value('溶劑、噴霧劑', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50)))))
-        raw_sub = pd.DataFrame(list(additive_section.objects.values('additive_id_id', 'additive_name', 'additive_amount')))
-        union_part = pd.merge(raw_sub, raw_main, left_on=['additive_id_id'], right_on=['id'],  how='left').drop(columns=['additive_id_id', 'id'])
+        raw_part = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.values('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density').annotate(
+            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+            device_name=Value('溶劑、噴霧劑', output_field=models.CharField(max_length=50)),
+            data_unit=Value('公噸', output_field=models.CharField(max_length=50))))
+        )
         # 溶劑名稱、添加物名稱相同的，將數量做總和
-        a_part = union_part.groupby(["solvent_name", "additive_name"]).agg({'solvent_amount': 'sum', 'additive_amount': 'first', 'process_area': 'first', 'data_unit': 'first'}).reset_index()
-        # 溶劑數量*比重(0.82)*CO2含量(0.03)
-        a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x) * Decimal(0.82) * Decimal(0.03), 4))
-        # 再跟添加量相乘
-        a_part['solvent_amount'] = a_part['solvent_amount'].multiply(a_part['additive_amount'])
-        a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(x, 4))
-        a_part = a_part.drop(columns=['additive_amount']).drop_duplicates()
-        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['process_area']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
-        ab_part = pd.merge(a_part, coefficient_part, left_on='process_area', right_on='cause', how='left')
+        a_part = raw_part.groupby(["solvent_name", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density", ]).agg({'solvent_amount': 'sum', 'process_area': 'first', 'device_name': 'first', 'data_unit': 'first'}).reset_index()
+        # 數量*容量*密度(%/100)*添加比例
+        # 公升比毫升跟oz少除一個1000
+        if '公升' in a_part['solvent_capacity_unit']:
+            a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+            a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+        # elif 'oz' in a_part['solvent_capacity_unit']:
+        else:
+            a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+            a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+        a_part = a_part.drop(columns=['solvent_capacity_unit', 'solvent_capacity', 'gas_ratio', 'density']).drop_duplicates()
+        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).filter(gas_name__in=a_part['gas_name']).values('gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
+        ab_part = pd.merge(a_part, coefficient_part, left_on='gas_name', right_on='gas_name', how='left')
         gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
         final = pd.merge(ab_part, gwp, on='gas_name', how='left')
         final['emission'] = final.apply(lambda x: round(Decimal(x['solvent_amount']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
-        new_order = ['process_area', 'solvent_name', 'additive_name', 'solvent_amount', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        new_order = ['process_area', 'device_name', 'solvent_name', 'solvent_amount', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
         final = final.reindex(columns=new_order)
         display(final)
         display(final.shape)
@@ -260,16 +266,21 @@ def solvent_aerosol_emission_sources_count(coefficient_source, gwp_version):
                 print('沒有該設備')
                 pass
 
-#
+
 # # 人天清冊/委外人員
 # personnel = pd.DataFrame(list(personnel_inventory.objects.values('did').annotate(
-#     device_name=Value('化糞池', output_field=CharField(max_length=20)),
+#     process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+#     device_name=Value('人天清冊、委外人員', output_field=CharField(max_length=20)),
 #     fuel_type=Value('水肥', output_field=CharField(max_length=20)),
 #     total_usage=Cast(Sum(F('WKhours_january') + F('WKhours_february') + F('WKhours_march') + F('WKhours_april') + F('WKhours_may') + F('WKhours_june') +
 #                          F('WKhours_july') + F('WKhours_august') + F('WKhours_september') + F('WKhours_october') + F('WKhours_november') + F('WKhours_december')), output_field=models.DecimalField(max_digits=20, decimal_places=4)),
 # )))
 # personnel = personnel.drop(columns=['did'])
-# display(personnel.to_string(index=False))
+# new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume', 'data_unit', 'emission', 'gas_name_x', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+# final = personnel
+# final = final.reindex(columns=new_order)
+# display(final)
+# display(final.shape)
 
 # # 滅火器
 # extinguisher = pd.DataFrame(list(extinguisher.objects.values('extinguisher_type').annotate(
