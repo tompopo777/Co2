@@ -187,6 +187,60 @@
         </div>
     </div>
 
+    <!-- 盤查設定 -->
+    <div class="modal fade" id="settings" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="row modal-header">
+                    <div class="col">
+                        <h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row mb-3">
+                        <label for="yearInput" class="col-3 col-form-label">盤查年份:</label>
+                        <div class="col">
+                            <input type="text" class="form-control" id="yearInput" name="year" value="{{ year }}">
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label for="nameInput" class="col-3 col-form-label">盤查名稱:</label>
+                        <div class="col">
+                            <input type="text" class="form-control" id="nameInput" name="name" placeholder="請輸入盤查名稱" value="{{ name }}">
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label for="versionSelect" class="col-3 col-form-label">GWP 版本:</label>
+                        <div class="col">
+                            <select class="form-control custom-select" id="versionSelect" name="version" value="{{ version }}">
+                                <option value="4">GWP 4</option>
+                                <option value="5">GWP 5</option>
+                                <option value="6" selected>GWP 6</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label for="initiatorInput" class="col-3 col-form-label">發起人:</label>
+                        <div class="col">
+                            <input type="text" class="form-control" id="initiatorInput" name="initiator" value="{{ request.user.username }}">
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3">
+                        <label for="checkNumberInput" class="col-3 col-form-label">盤查單號:</label>
+                        <div class="col">
+                            <input type="text" class="form-control" id="checkNumberInput" name="check_number" placeholder="請輸入盤查單號" value="{{ check_number }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">確認</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <div class="modal fade" id="exampleModalCenter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -230,9 +284,21 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
 
 
     <script>
+        {#    年度篩選器#}
+        $("#yearInput").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+
+
         // get the element to animate
         var element = document.getElementById('count-stats');
         var elementHeight = element.clientHeight;
@@ -415,6 +481,21 @@
                     console.log("ok")
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     {#if (typeof {{ request.session.dropdown_two }} != "undefined") {#}
                         dropdown_two_selected()
                     }
@@ -452,6 +533,21 @@
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
                     /*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
