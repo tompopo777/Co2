@@ -93,17 +93,9 @@ REFRIGERANT_TYPE_CHOICES = [
     ('NH3 R-717', 'NH3 R-717')
 ]
 EXTINGUISHER_TYPE_CHOICES = [
-    ('ABC型乾粉滅火器', 'ABC型乾粉滅火器'),
-    ('KBC型乾粉滅火器', 'KBC型乾粉滅火器'),
-    ('BC型乾粉滅火器', 'BC型乾粉滅火器'),
     ('二氧化碳滅火器', '二氧化碳滅火器'),
-    ('泡沫滅火器', '泡沫滅火器'),
     ('潔淨滅火器HFC-227ea（FM-200、FE-227）', '潔淨滅火器HFC-227ea（FM-200、FE-227）'),
     ('潔淨滅火器HFC-125', '潔淨滅火器HFC-125'),
-    ('潔淨滅火器Novec 1230', '潔淨滅火器Novec 1230'),
-    ('潔淨滅火器Inergen（IG-541、IG-55）', '潔淨滅火器Inergen（IG-541、IG-55）'),
-    ('潔淨滅火器Ar（IG-01）HFC-236fa(FE36)', '潔淨滅火器Ar（IG-01）HFC-236fa(FE36)'),
-    ('金屬火災滅火器', '金屬火災滅火器')
 ]
 TRANSPORT_TYPE_CHOICES = [
     ('', '請選擇運輸工具'),
@@ -191,7 +183,7 @@ BUSINESS_TRANSPORTATION_CHOICES = [
 class EGform(forms.ModelForm):
     class Meta:
         model = emergency_generators
-        fields = ('years', 'device_id', 'device_capacity', 'position', 'department',
+        fields = ('years', 'device_id', 'device_capacity', 'position', 'department', 'estimate',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
                   'november', 'december', 'image_note', 'message_board')
         widgets = {
@@ -200,6 +192,7 @@ class EGform(forms.ModelForm):
             'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '單位:公升'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
+            'estimate': forms.CheckboxInput(attrs={'class': 'form-check-input estimate', 'id': 'estimate', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#estimate-collapse', 'aria-expanded': 'false', 'aria-controls': 'estimate-collapse'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -360,7 +353,7 @@ class MTform(forms.ModelForm):
 class PCform(forms.ModelForm):
     class Meta:
         model = process
-        fields = ('years', 'process_add_name', 'chemical_name', 'chemical_formula', 'process_stage', 'material_id', 'CAS_NO',
+        fields = ('years', 'process_add_name', 'carbon_content', 'process_stage', 'material_id',
                   'burn', 'VOCs', 'unit', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
                   'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
@@ -368,9 +361,7 @@ class PCform(forms.ModelForm):
             'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name'}),
-            'chemical_name': forms.TextInput(attrs={'class': 'form-control chemical_name'}),
-            'chemical_formula': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
-            'CAS_NO': forms.TextInput(attrs={'class': 'form-control'}),
+            'carbon_content': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
             'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'VOCs': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'unit': forms.Select(choices=PROCESS_UNIT_CHOICES),
@@ -393,7 +384,6 @@ class PCform(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PCform, self).__init__(*args, **kwargs)
-        self.fields['chemical_formula'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
