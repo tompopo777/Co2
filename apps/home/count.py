@@ -40,8 +40,9 @@ def emergency_generators(coefficient_source, gwp_version):
         a_b_part = pd.merge(generators, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
         final = pd.merge(a_b_part, gwp, left_on='gas_name', right_on='gas_name', how='left')
         # 將(A)、(B)、(C)轉為float才能取round
-        final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
-        final['emission'] = final['emission'].round(4)
+        final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        # final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
+        # final['emission'] = final['emission'].round(4)
         new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
         final = final.reindex(columns=new_order)
         display(final)
@@ -90,6 +91,8 @@ def combustion_equipment(coefficient_source, gwp_version):
     except KeyError:
         print('沒有該設備')
         pass
+
+
 # 公務車
 @login_required(login_url="/login/")
 def official_car(coefficient_source, gwp_version):
@@ -106,6 +109,8 @@ def official_car(coefficient_source, gwp_version):
         coefficient_part = None
         for query in officialCar:
             fuel_type = query['fuel_type']
+            if fuel_type in ['92汽油', '95汽油', '98汽油']:
+                fuel_type = '車用汽油'
             coefficient_data = coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause=fuel_type).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
             coefficient_part = pd.DataFrame(list(coefficient_data))
         gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
@@ -113,8 +118,8 @@ def official_car(coefficient_source, gwp_version):
         a_b_part = pd.merge(officialCar, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
         final = pd.merge(a_b_part, gwp, left_on='gas_name', right_on='gas_name', how='left')
         # 將(A)、(B)、(C)轉為float才能取round
-        final['emission'] = final.apply(lambda x: float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), axis=1)
-        final['emission'] = final['emission'].round(4)
+        # final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        final['emission'] = final.apply(lambda x: round(float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), 4), axis=1)
         new_order = ['process_area', 'vehicle_type', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
         final = final.reindex(columns=new_order)
         display(final)
@@ -123,6 +128,7 @@ def official_car(coefficient_source, gwp_version):
         print('沒有該設備')
         pass
 
+
 # 逸散(冰箱~其他設備)
 # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
 # gwp_version = 6
@@ -130,7 +136,7 @@ def official_car(coefficient_source, gwp_version):
 # airconditioner = pd.DataFrame(list(airconditioner.objects.values("device_name", "refrigerant_type", "filling_volume")))
 # vehicle = pd.DataFrame(list(vehicle.objects.values("device_name", "refrigerant_type", "filling_volume")))
 # ice_maker = pd.DataFrame(list(ice_maker.objects.values("device_name", "refrigerant_type", "filling_volume")))
-#
+
 
 # 製冰機
 @login_required(login_url="/login/")
@@ -157,6 +163,7 @@ def water_dispenser_count(coefficient_source, gwp_version):
         print('沒有該設備')
         pass
 
+
 # 飲水機
 @login_required(login_url="/login/")
 def water_dispenser_count(coefficient_source, gwp_version):
@@ -181,6 +188,7 @@ def water_dispenser_count(coefficient_source, gwp_version):
             print('沒有該設備')
             pass
 
+
 # 冷氣機
 @login_required(login_url="/login/")
 def airconditioner_count(coefficient_source, gwp_version):
@@ -204,6 +212,7 @@ def airconditioner_count(coefficient_source, gwp_version):
     except KeyError:
         print('沒有該設備')
         pass
+
 
 # 其他設備
 @login_required(login_url="/login/")

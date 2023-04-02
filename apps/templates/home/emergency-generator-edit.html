@@ -51,16 +51,25 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設置地點 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.position }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>所屬單位</label>
                                                     {{ form.department }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check ps-1">
+                                                    {{ EG_add.estimate }}
+                                                    <label>是否為推估計算</label>
+                                                </div>
+                                                <div class="collapse" id="estimate-collapse">
+                                                    <label>(公式請備註在備註欄)</label>
                                                 </div>
                                             </div>
                                         </div>

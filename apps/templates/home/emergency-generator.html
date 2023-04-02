@@ -66,23 +66,32 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設置地點 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EG_add.position }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>所屬單位</label>
                                                     {{ EG_add.department }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check ps-1">
+                                                    {{ EG_add.estimate }}
+                                                    <label>是否為推估計算</label>
+                                                </div>
+                                                <div class="collapse" id="estimate-collapse">
+                                                    <label style="color: red">(公式請備註在備註欄)</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <br>
                                         <div class="d-flex flex-nowrap">
                                             <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                加油量(單位：公升) <span style="color:red; font-size:16px;">* </span>
+                                                耗用量(單位：公升) <span style="color:red; font-size:16px;">* </span>
                                             </h5>
                                         </div>
                                         <table class="table">
