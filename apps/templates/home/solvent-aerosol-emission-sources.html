@@ -74,7 +74,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>換算密度<span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>容量換算密度('oz' 預設為'1')<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.density }}
                                                 </div>
                                             </div>
@@ -159,16 +159,6 @@
 
         {#    年度篩選器#}
         $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
-
-        {#    購買年份篩選器#}
-        $("#years_purchased").datepicker({
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",

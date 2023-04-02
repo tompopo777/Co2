@@ -1032,9 +1032,9 @@ def solvent_aerosol_emission_sources_add(request, company_id=None):
             solvent.company_id = company_id
             solvent.save()
             return redirect('/carbon-system/')
-        else:
-            print("SAES_add表單錯誤>>>>>>>>>>>>>>>>>>>>\n", SAES_add.errors)
-            return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'company_id': company_id})
+        # else:
+        #     print("SAES_add表單錯誤>>>>>>>>>>>>>>>>>>>>\n", SAES_add.errors)
+        #     return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'company_id': company_id})
     else:
         company_id = company_id
         SAES_add = SolventAerosolEmissionSourcesForm()

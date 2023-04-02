@@ -848,7 +848,8 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
             'solvent_capacity_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
             'gas_name': forms.Select(choices=SOLVENT_GAS_CHOICES),
             'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-            'density': forms.TextInput(attrs={'class': 'form-control'}),
+            'density': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)'}),
+            # 'density': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^\+?[1-9][0-9]*$', 'title': '只能輸入正整數', 'placeholder': '只能輸入正整數'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }

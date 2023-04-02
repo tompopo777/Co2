@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from IPython.core.display import display
 from django.contrib.auth.decorators import login_required
@@ -230,44 +231,193 @@ def other_device_count(coefficient_source, gwp_version):
 
 
 # 溶劑、噴霧劑
-@login_required(login_url="/login/")
-def solvent_aerosol_emission_sources_count(coefficient_source, gwp_version):
-# coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-# gwp_version = 6
-    try:
-        raw_part = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.values('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density').annotate(
-            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
-            device_name=Value('溶劑、噴霧劑', output_field=models.CharField(max_length=50)),
-            data_unit=Value('公噸', output_field=models.CharField(max_length=50))))
-        )
-        # 溶劑名稱、添加物名稱相同的，將數量做總和
-        a_part = raw_part.groupby(["solvent_name", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density", ]).agg({'solvent_amount': 'sum', 'process_area': 'first', 'device_name': 'first', 'data_unit': 'first'}).reset_index()
-        # 數量*容量*密度(%/100)*添加比例
-        # 公升比毫升跟oz少除一個1000
-        if '公升' in a_part['solvent_capacity_unit']:
-            a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
-            a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
-        # elif 'oz' in a_part['solvent_capacity_unit']:
-        else:
-            a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
-            a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
-        a_part = a_part.drop(columns=['solvent_capacity_unit', 'solvent_capacity', 'gas_ratio', 'density']).drop_duplicates()
-        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).filter(gas_name__in=a_part['gas_name']).values('gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
-        ab_part = pd.merge(a_part, coefficient_part, left_on='gas_name', right_on='gas_name', how='left')
-        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
-        final = pd.merge(ab_part, gwp, on='gas_name', how='left')
-        final['emission'] = final.apply(lambda x: round(Decimal(x['solvent_amount']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
-        new_order = ['process_area', 'device_name', 'solvent_name', 'solvent_amount', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-        final = final.reindex(columns=new_order)
-        display(final)
-        display(final.shape)
-        print('\n')
-    except KeyError:
-                print('沒有該設備')
-                pass
+# @login_required(login_url="/login/")
+# def solvent_aerosol_emission_sources_count(coefficient_source, gwp_version):
+coefficient_source = '質量平衡法'
+gwp_version = 6
+try:
+    raw_part = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.values('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density').annotate(
+        process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+        device_name=Value('溶劑、噴霧劑', output_field=models.CharField(max_length=50)),
+        data_unit=Value('公噸', output_field=models.CharField(max_length=50))))
+    )
+    # 溶劑名稱、添加物名稱相同的，將數量做總和
+    # a_part = raw_part.groupby(["solvent_name", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density", ]).agg({'solvent_amount': 'sum', 'process_area': 'first', 'device_name': 'first', 'data_unit': 'first'}).reset_index()
+    # for i in range(0, len(a_part), 1):
+    #     unit = a_part.loc[i:i]
+    #     # print(unit['solvent_capacity_unit'])
+    #     # if '毫升' in unit['solvent_capacity_unit']:
+    #     if unit['solvent_capacity_unit'].values[0] == '毫升':
+    #         # print(unit['solvent_amount'])
+    #         print(type(unit['solvent_capacity_unit']))
+    #         print(unit['solvent_capacity_unit'].values[0])
+    #         print(type(unit['solvent_capacity_unit'].values[0]))
+    #         unit['solvent_amount'] = unit['solvent_amount'] * unit['solvent_capacity'].apply(Decimal) * unit['density'].apply(Decimal) * unit['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+    #         unit['solvent_amount'] = unit['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #
+    # # 數量*容量*密度(%/100)*添加比例
+    # # 公升比毫升跟oz少除一個1000
+    # if '公升' in a_part['solvent_capacity_unit']:
+    #     a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+    #     a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    # # oz換算g乘28.3495231
+    # elif 'oz' in a_part['solvent_capacity_unit']:
+    #     a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * Decimal(28.3495231) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+    #     a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    # else:
+    #     a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    #     a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    # a_part = a_part.drop(columns=['solvent_capacity_unit', 'solvent_capacity', 'gas_ratio', 'density']).drop_duplicates()
+    # coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).filter(gas_name__in=a_part['gas_name']).values('gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
+    # ab_part = pd.merge(a_part, coefficient_part, left_on='gas_name', right_on='gas_name', how='left')
+    # # ccc = coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')
+    # # for p in ccc:
+    # #     vv = p['gwp_coefficient']
+    # #     print(vv)
+    # gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+    # # display(gwp)
+    # final = pd.merge(ab_part, gwp, on='gas_name', how='left')
+    # final['emission'] = final.apply(lambda x: round(Decimal(x['solvent_amount']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+    # new_order = ['process_area', 'device_name', 'solvent_name', 'solvent_amount', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    # final = final.reindex(columns=new_order)
+    # display(final)
+    # display(final.shape)
+    # print('\n')
 
 
-# # 人天清冊/委外人員
+    # 溶劑名稱、添加物名稱相同的，將數量做總和
+    # a_part = raw_part.groupby(["solvent_name", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density", ]).agg({'solvent_amount': 'sum', 'process_area': 'first', 'device_name': 'first', 'data_unit': 'first'}).reset_index()
+    # for i in range(0, len(a_part), 1):
+    #     unit = a_part.loc[i:i]
+    #     print(unit)
+    #     print(unit['solvent_capacity_unit'])
+    #     if unit['solvent_capacity_unit'] == '毫升':
+    #         print('毫升')
+    #         # unit['solvent_amount'] = unit['solvent_amount']
+    #         unit['solvent_amount'] = unit['solvent_amount'] * unit['solvent_capacity'].apply(Decimal) * unit['density'].apply(Decimal) * unit['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+    #         unit['solvent_amount'] = unit['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #         print(unit['solvent_amount'])
+    #     # if '公升' in unit['solvent_capacity_unit']:
+    #     #     print('ok')
+    #     #     # unit['solvent_amount'] = unit['solvent_amount'] * unit['solvent_capacity'].apply(Decimal) * unit['density'].apply(Decimal) * unit['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+    #     #     # unit['solvent_amount'] = unit['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #     # # oz換算g乘28.3495231
+    #     elif 'oz' in unit['solvent_capacity_unit']:
+    #         print('oz')
+    #         unit['solvent_amount'] = unit['solvent_amount'] * unit['solvent_capacity'].apply(Decimal) * Decimal(28.3495231) * unit['density'].apply(Decimal) * unit['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    #         unit['solvent_amount'] = unit['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #     # # else:
+    #     #     # unit['solvent_amount'] = unit['solvent_amount'] * unit['solvent_capacity'].apply(Decimal) * unit['density'].apply(Decimal) * unit['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    #     #     # unit['solvent_amount'] = unit['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #     # print(unit['solvent_capacity_unit'])
+    #     # print('unit\n', unit)
+    #     # a_part = pd.concat([a_part, unit], ignore_index=True)
+    # # print(a_part)
+    # # # 數量*容量*密度(%/100)*添加比例
+    # # # 公升比毫升跟oz少除一個1000
+    # # if '公升' in a_part['solvent_capacity_unit']:
+    # #     a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+    # #     a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    # # # oz換算g乘28.3495231
+    # # elif 'oz' in a_part['solvent_capacity_unit']:
+    # #     a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * Decimal(28.3495231) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    # #     a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    # # else:
+    # #     a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    # #     a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    # # a_part = a_part.drop(columns=['solvent_capacity_unit', 'solvent_capacity', 'gas_ratio', 'density']).drop_duplicates()
+    # # coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).filter(gas_name__in=a_part['gas_name']).values('gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
+    # # ab_part = pd.merge(a_part, coefficient_part, left_on='gas_name', right_on='gas_name', how='left')
+    # # gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+    # # final = pd.merge(ab_part, gwp, on='gas_name', how='left')
+    # # final['emission'] = final.apply(lambda x: round(Decimal(x['solvent_amount']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+    # # new_order = ['process_area', 'device_name', 'solvent_name', 'solvent_amount', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    # # final = final.reindex(columns=new_order)
+    # # display(final)
+    # # display(final.shape)
+    # print('\n')
+
+
+    # 溶劑名稱、添加物名稱相同的，將數量做總和
+    a_part = raw_part.groupby(["solvent_name", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density", ]).agg({'solvent_amount': 'sum', 'process_area': 'first', 'device_name': 'first', 'data_unit': 'first'}).reset_index()
+    # 數量*容量*密度(%/100)*添加比例
+    # 公升比毫升跟oz少除一個1000
+    # display(a_part['solvent_capacity_unit'].values[1])
+    # for unit in a_part['solvent_capacity_unit'].values:
+    #     print(unit)
+    #     if unit == '毫升':
+    #         a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+    #         a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+
+    # def multiply(row):
+    #     if row["solvent_capacity_unit"] == '公升':
+    #         row['solvent_amount'] = row['solvent_amount'] * row['solvent_capacity'].apply(Decimal) * row['density'].apply(Decimal) * row['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+    #         row['solvent_amount'] = row['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #         return row['solvent_amount']
+    #     elif row["solvent_capacity_unit"] == 'oz':
+    #         row['solvent_amount'] = row['solvent_amount'] * row['solvent_capacity'].apply(Decimal) * Decimal(28.3495231) * row['density'].apply(Decimal) * row['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    #         row['solvent_amount'] = row['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #         return row['solvent_amount']
+    #     else:
+    #         row['solvent_amount'] = row['solvent_amount'] * row['solvent_capacity'].apply(Decimal) * row['density'].apply(Decimal) * row['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    #         row['solvent_amount'] = row['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #         return row['solvent_amount']
+
+
+    # display(a_part)
+    # ml = 0
+    # ooz = 0
+    # for i in range(0, len(a_part), 1):
+    #     unit = a_part.loc[i:i]
+    #     # print(unit)
+    #     # print(unit['solvent_capacity_unit'].values[0])
+    #     # print(type(unit['solvent_capacity_unit'].values[0]))
+    #     if str(unit['solvent_capacity_unit'].values[0]) == '毫升':
+    #         # print('ok')
+    #         unit['solvent_amount'] = Decimal(unit['solvent_amount'].values[0]) * Decimal(unit['solvent_capacity'].values[0]) * Decimal(unit['density'].values[0]) * Decimal(unit['gas_ratio'].values[0]) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    #         # unit['solvent_amount'] = unit['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #         ml += 1
+    #     if str(unit['solvent_capacity_unit'].values[0]) == 'oz':
+    #         # print('ok')
+    #         unit['solvent_amount'] = unit['solvent_amount'] * unit['solvent_capacity'].apply(Decimal) * unit['density'].apply(Decimal) * unit['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+    #         unit['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    #         ooz += 1
+    # print('ml', ml)
+    # print('ooz', ooz)
+
+
+    if '公升' in a_part['solvent_capacity_unit']:
+        a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000)
+        a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    # oz換算g需*28.3495231
+    elif 'oz' in a_part['solvent_capacity_unit']:
+        a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * Decimal(28.3495231) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+        a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    else:
+        a_part['solvent_amount'] = a_part['solvent_amount'] * a_part['solvent_capacity'].apply(Decimal) * a_part['density'].apply(Decimal) * a_part['gas_ratio'].apply(Decimal) / Decimal(100) / Decimal(1000) / Decimal(1000)
+        a_part['solvent_amount'] = a_part['solvent_amount'].apply(lambda x: round(Decimal(x), 4))
+    # a_part['solvent_amount'] = np.where(a_part['solvent_amount'] == '')
+
+    # a_part['solvent_amount'] = a_part['solvent_capacity_unit'].apply(lambda x: x * 1000 if x == '毫升' else 0.0295735 if x == 'oz' else 1)
+    # df['result'] = df['solvent_capacity'] * df['multiplier'] * df['density']
+    # display(a_part)
+    # a_part = a_part.drop(columns=['solvent_capacity_unit', 'solvent_capacity', 'gas_ratio', 'density']).drop_duplicates()
+    # coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).filter(gas_name__in=a_part['gas_name']).values('gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
+    # ab_part = pd.merge(a_part, coefficient_part, left_on='gas_name', right_on='gas_name', how='left')
+    # gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+    # final = pd.merge(ab_part, gwp, on='gas_name', how='left')
+    # final['emission'] = final.apply(lambda x: round(Decimal(x['solvent_amount']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+    # new_order = ['process_area', 'device_name', 'solvent_name', 'solvent_amount', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+    # final = final.reindex(columns=new_order)
+    # display(final)
+    # display(final.shape)
+    # print('\n')
+except KeyError:
+            print('沒有該設備')
+            pass
+
+
+# 人天清冊/委外人員
 # personnel = pd.DataFrame(list(personnel_inventory.objects.values('did').annotate(
 #     process_area=Value('逸散', output_field=models.CharField(max_length=50)),
 #     device_name=Value('人天清冊、委外人員', output_field=CharField(max_length=20)),

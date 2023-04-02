@@ -484,7 +484,7 @@ class solvent_aerosol_emission_sources(models.Model):
     solvent_capacity_unit = models.CharField(max_length=20)
     gas_name = models.CharField(max_length=20)
     gas_ratio = models.CharField(max_length=20)
-    density = models.DecimalField(max_digits=10, decimal_places=10, default=1)
+    density = models.DecimalField(max_digits=30, decimal_places=10)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
