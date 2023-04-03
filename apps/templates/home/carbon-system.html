@@ -132,9 +132,12 @@
                                             新增
                                         </a>
                                     {% endif %}
-                                    <a type="button" class="btn btn-outline-light me-1" id="copyLastYear" href="{% url 'copy_last_year_data' %}">
-                                        複製去年資料
-                                    </a>
+{#                                    <a type="button" class="btn btn-outline-light me-1" id="copyLastYear" href="{% url 'copy_last_year_data' %}">#}
+{#                                        複製去年資料#}
+{#                                    </a>#}
+                                    <div class="d-flex justify-content-center">
+                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
+                                    </div>
                                     <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
                                         匯出Excel
                                     </a>

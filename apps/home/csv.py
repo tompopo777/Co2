@@ -52,9 +52,9 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'process': {
-        'columns': ['years', 'process_stage', 'material_id', 'process_add_name', 'chemical_name', 'chemical_formula', 'CAS_NO', 'burn', 'VOCs',
+        'columns': ['years', 'process_stage', 'material_id', 'process_add_name', 'carbon_content', 'burn', 'VOCs',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '製程階段', '料號', '製程添加物', '化學品名', '化學式', 'CAS NO', '是否燃燒', 'VOCs',
+        'column_names': ['年度', '製程階段', '料號', '製程添加名稱', '含碳量(%)', '是否燃燒', 'VOCs',
                          '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別一__'
     },
@@ -325,31 +325,31 @@ def export_excel(request):
             column_names = ['員工通勤編號', '年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數']
             column_names.extend(['交通工具'])
 
-        elif table_name == 'solvent_aerosol_emission_sources':
-            # 取得母表和子表的欄位資訊
-            mother_columns = COLUMN_MAPPING['solvent_aerosol_emission_sources']['columns']
-            mother_column_names = COLUMN_MAPPING['solvent_aerosol_emission_sources']['column_names']
-            child_columns = COLUMN_MAPPING['additive_section']['columns']
-            child_column_names = COLUMN_MAPPING['additive_section']['column_names']
-
-            # 取得母表和子表的資料
-            mother_data = solvent_aerosol_emission_sources.objects.all().values(*mother_columns)
-            child_data = additive_section.objects.all().values(*child_columns)
-
-            # 將母表和子表的資料轉換為 DataFrame
-            mother_df = pd.DataFrame(list(mother_data))
-            child_df = pd.DataFrame(list(child_data))
-
-            # 將欄位名稱改成中文
-            mother_df.columns = mother_column_names
-            child_df.columns = child_column_names
-
-            # 將子表的資料加入到母表的資料中
-            df = pd.merge(mother_df, child_df[['添加物名稱', '添加量', '單位', '成份', '添加比例', '添加物編號']], on='添加物編號', how='left')
-
-            # 將子表的欄位名稱加入到匯出的資料中
-            column_names = ['添加物編號', '年度', '溶劑、噴霧劑名稱', '數量', '單位', '容量', '單位', '逸散 / 補充量(公噸/年)', '備註欄']
-            column_names.extend(['添加物名稱', '添加量', '單位', '成份', '添加比例'])
+        # elif table_name == 'solvent_aerosol_emission_sources':
+        #     # 取得母表和子表的欄位資訊
+        #     mother_columns = COLUMN_MAPPING['solvent_aerosol_emission_sources']['columns']
+        #     mother_column_names = COLUMN_MAPPING['solvent_aerosol_emission_sources']['column_names']
+        #     child_columns = COLUMN_MAPPING['additive_section']['columns']
+        #     child_column_names = COLUMN_MAPPING['additive_section']['column_names']
+        #
+        #     # 取得母表和子表的資料
+        #     mother_data = solvent_aerosol_emission_sources.objects.all().values(*mother_columns)
+        #     child_data = additive_section.objects.all().values(*child_columns)
+        #
+        #     # 將母表和子表的資料轉換為 DataFrame
+        #     mother_df = pd.DataFrame(list(mother_data))
+        #     child_df = pd.DataFrame(list(child_data))
+        #
+        #     # 將欄位名稱改成中文
+        #     mother_df.columns = mother_column_names
+        #     child_df.columns = child_column_names
+        #
+        #     # 將子表的資料加入到母表的資料中
+        #     df = pd.merge(mother_df, child_df[['添加物名稱', '添加量', '單位', '成份', '添加比例', '添加物編號']], on='添加物編號', how='left')
+        #
+        #     # 將子表的欄位名稱加入到匯出的資料中
+        #     column_names = ['添加物編號', '年度', '溶劑、噴霧劑名稱', '數量', '單位', '容量', '單位', '逸散 / 補充量(公噸/年)', '備註欄']
+        #     column_names.extend(['添加物名稱', '添加量', '單位', '成份', '添加比例'])
 
         # 將欄位名稱改成中文
         df.columns = column_names

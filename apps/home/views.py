@@ -115,8 +115,8 @@ def load_table(request):
         for a in t_name:
             if a["d_name"] == "柴油發電機":
                 t_data = []
-                raw_data = emergency_generators.objects.filter(company_id=company_id, years=year).values("id", "device_id",
-                                                                                                         "device_capacity", "position", "department",
+                raw_data = emergency_generators.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_capacity", "position",
+                                                                                                         "department", "estimate",
                                                                                                          "january", "february", "march", "april",
                                                                                                          "may", "june", "july", "august",
                                                                                                          "september", "october", "november", "december")
@@ -130,6 +130,8 @@ def load_table(request):
                     single_data.update(raw_data[i])
                     # 將計算後的加油量丟回字典
                     single_data["total"] = consumption_total
+                    # 將 estimate 替換成中文
+                    single_data["estimate"] = "是" if single_data["estimate"] else "否"
                     t_data.append(single_data)
 
                 return JsonResponse(t_data, safe=False)
@@ -168,13 +170,13 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.filter(company_id=company_id).values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                consumptions_data = official_car.objects.filter(company_id=company_id).values("january", "february", "march", "april", "may", "june", "july", "august",
-                                                                                              "september", "october", "november", "december")
+                raw_data = official_car.objects.filter(company_id=company_id, years=year).values("id", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
+                consumptions_data = official_car.objects.filter(company_id=company_id, years=year).values("january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                                          "september", "october", "november", "december")
 
-                urea_data = official_car.objects.filter(company_id=company_id).values("urea_january", "urea_february", "urea_march", "urea_april",
-                                                                                      "urea_may", "urea_june", "urea_july", "urea_august",
-                                                                                      "urea_september", "urea_october", "urea_november", "urea_december")
+                urea_data = official_car.objects.filter(company_id=company_id, years=year).values("urea_january", "urea_february", "urea_march", "urea_april",
+                                                                                                  "urea_may", "urea_june", "urea_july", "urea_august",
+                                                                                                  "urea_september", "urea_october", "urea_november", "urea_december")
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
                     single_data = raw_data[i]
@@ -203,19 +205,19 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
-                    material.objects.filter(company_id=company_id).values("id", "years", "material_id", "material_type", "material_name",
-                                                                          "process_add_name", "chemical_name", "chemical_formula",
-                                                                          "january", "february", "march", "april",
-                                                                          "may", "june", "july", "august",
-                                                                          "september", "october", "november", "december"))
+                    material.objects.filter(company_id=company_id, years=year).values("id", "material_id", "material_type", "material_name",
+                                                                                      "process_add_name", "chemical_name", "chemical_formula",
+                                                                                      "january", "february", "march", "april",
+                                                                                      "may", "june", "july", "august",
+                                                                                      "september", "october", "november", "december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製程添加化學品":
                 t_data = []
-                raw_data = process.objects.filter(company_id=company_id).values("id", "years", "process_stage", "material_id", "process_add_name",
-                                                                                "chemical_name", "chemical_formula", "CAS_NO", "burn", "VOCs",
-                                                                                "january", "february", "march", "april",
-                                                                                "may", "june", "july", "august",
-                                                                                "september", "october", "november", "december")
+                raw_data = process.objects.filter(company_id=company_id, years=year).values("id", "process_stage", "material_id", "process_add_name",
+                                                                                            "carbon_content", "burn", "VOCs",
+                                                                                            "january", "february", "march", "april",
+                                                                                            "may", "june", "july", "august",
+                                                                                            "september", "october", "november", "december")
                 unit = process.objects.filter(company_id=company_id).values("unit")
                 # 計算使用量合計
                 for i in range(raw_data.count()):
@@ -227,6 +229,9 @@ def load_table(request):
                     single_data = raw_data[i]
                     # 將計算後的使用量丟回字典
                     single_data["total"] = '%.4f' % consumption_total
+                    # 將 estimate 替換成中文
+                    single_data["burn"] = "是" if single_data["burn"] else "否"
+                    single_data["VOCs"] = "是" if single_data["VOCs"] else "否"
                     # 將單位丟回字典
                     for j in unit[i]:
                         single_data[j] = unit[i].get(j)
@@ -266,9 +271,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
                 t_data = []
-                raw_data = vehicle.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
-                                                                                "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                                "effusion_rate")
+                raw_data = vehicle.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                            "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                            "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -282,9 +287,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
                 t_data = []
-                raw_data = water_dispenser.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
-                                                                                        "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                                        "effusion_rate")
+                raw_data = water_dispenser.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                                    "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                                    "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -298,9 +303,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
                 t_data = []
-                raw_data = ice_water_dispenser.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
-                                                                                            "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                                            "effusion_rate")
+                raw_data = ice_water_dispenser.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                                        "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                                        "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -315,9 +320,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
                 t_data = []
-                raw_data = ice_maker.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
-                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                                  "effusion_rate")
+                raw_data = ice_maker.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                              "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                              "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -331,9 +336,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "設備清單":
                 t_data = []
-                raw_data = other_device.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
-                                                                                     "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                                     "effusion_rate")
+                raw_data = other_device.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                                 "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                                 "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -347,47 +352,47 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
-                    extinguisher.objects.filter(company_id=company_id).values("id", "years", "device_id", "extinguisher_vendor", "extinguisher_type", "position", "inventory",
-                                                                              "chemical_weight", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
+                    extinguisher.objects.filter(company_id=company_id, years=year).values("id", "device_id", "extinguisher_vendor", "extinguisher_type", "position", "inventory",
+                                                                                          "chemical_weight", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
                 t_data = list(
-                    personnel_inventory.objects.filter(company_id=company_id).values("id", "years", "classification",
-                                                                                     "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
-                                                                                     "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
-                                                                                     "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
-                                                                                     "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
+                    personnel_inventory.objects.filter(company_id=company_id, years=year).values("id", "classification",
+                                                                                                 "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
+                                                                                                 "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
+                                                                                                 "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
+                                                                                                 "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "委外人員清冊":
                 t_data = list(
-                    employee.objects.filter(company_id=company_id).values("id", "years", "career",
-                                                                          "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
-                                                                          "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
-                                                                          "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
-                                                                          "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
-                                                                          "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
-                                                                          "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
+                    employee.objects.filter(company_id=company_id, years=year).values("id", "career",
+                                                                                      "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
+                                                                                      "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
+                                                                                      "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
+                                                                                      "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
+                                                                                      "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
+                                                                                      "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢水":
                 t_data = list(
-                    waste_water.objects.filter(company_id=company_id).values("id", "years", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
-                                                                             "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+                    waste_water.objects.filter(company_id=company_id, years=year).values("id", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
+                                                                                         "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢汙泥":
                 t_data = list(
-                    waste_sludge.objects.filter(company_id=company_id).values("id", "years", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
-                                                                              "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+                    waste_sludge.objects.filter(company_id=company_id, years=year).values("id", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
+                                                                                          "CH4_capture_system_rate", "combustion_equipment_efficiency"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
-                t_data = list(solvent_aerosol_emission_sources.objects.filter(company_id=company_id).values("id", "years", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density"))
+                t_data = list(solvent_aerosol_emission_sources.objects.filter(company_id=company_id, years=year).values("id", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.filter(company_id=company_id).values("id", "years", "EMI_id", "address",
-                                                                                    "january", "february", "march", "april",
-                                                                                    "may", "june", "july", "august",
-                                                                                    "september", "october", "november", "december")
+                raw_data = electricity.objects.filter(company_id=company_id, years=year).values("id", "EMI_id", "address",
+                                                                                                "january", "february", "march", "april",
+                                                                                                "may", "june", "july", "august",
+                                                                                                "september", "october", "november", "december")
                 # 計算當月用電量
                 for i in range(raw_data.count()):
                     kw_hr = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -424,8 +429,8 @@ def load_table(request):
             elif a["d_name"] == "員工通勤":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                pre_data = employee_commute.objects.filter(company_id=company_id).values("id", "years", "employee_id", "department", "employee_name")
-                post_data = employee_commute.objects.filter(company_id=company_id).values("city", "township", "address", "commute_distance", "work_days")
+                pre_data = employee_commute.objects.filter(company_id=company_id, years=year).values("id", "employee_id", "department", "employee_name")
+                post_data = employee_commute.objects.filter(company_id=company_id, years=year).values("city", "township", "address", "commute_distance", "work_days")
                 for i in range(pre_data.count()):
                     single_data = pre_data[i]
                     id = pre_data[i].get("id")
@@ -487,16 +492,16 @@ def load_table(request):
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_1":
-                t_data = list(VOCs_one.objects.filter(company_id=company_id).values("id", "years", "emission", "concentration_ch4"))
+                t_data = list(VOCs_one.objects.filter(company_id=company_id, years=year).values("id", "emission", "concentration_ch4"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_2":
-                t_data = list(VOCs_two.objects.filter(company_id=company_id).values("id", "years", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
-                                                                                    "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
+                t_data = list(VOCs_two.objects.filter(company_id=company_id, years=year).values("id", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
+                                                                                                "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "納管廢水排放量":
                 t_data = []
-                raw_data = pipe_wastewater.objects.filter(company_id=company_id).values("id", "years", "pipe_id", "address", "factory", "january", "february", "march", "april", "may", "june", "july", "august",
-                                                                                        "september", "october", "november", "december")
+                raw_data = pipe_wastewater.objects.filter(company_id=company_id, years=year).values("id", "pipe_id", "address", "factory", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                                    "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
                     Total_Emission = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -510,8 +515,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "採購原物料":
                 t_data = []
-                raw_data = purchase_material.objects.filter(company_id=company_id).values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
-                                                                                          "september", "october", "november", "december")
+                raw_data = purchase_material.objects.filter(company_id=company_id, years=year).values("id", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                                      "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
                     Total_Purchase = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -525,8 +530,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "產品間接排放":
                 t_data = []
-                raw_data = product_indirect_emissions.objects.filter(company_id=company_id).values("id", "years", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
-                                                                                                   "september", "october", "november", "december")
+                raw_data = product_indirect_emissions.objects.filter(company_id=company_id, years=year).values("id", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                                               "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
                     Total_Deliver = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -545,11 +550,11 @@ def copy_last_year_data(request):
         device_id = request.GET.get('deviceId')
         print(device_id)
         company_value = request.GET.get('company_value')
-        print("load_table_company_value", company_value)
         if company_value is None:
             company_id = current_user_group_id(request)
         else:
             company_id = int(company_value)
+        print("load_table_company_value", company_value)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
 
         # 獲取當前年份
@@ -588,7 +593,10 @@ def copy_last_year_data(request):
                     [combustion_equipment(**data) for data in last_year_data]
                 )
         # 回傳 alert 訊息
-        response_data = {'message': '資料複製完成'}
+        response_data = {
+            'success': True,  # 也可以改為 False
+            'message': '複製成功！'
+        }
         return JsonResponse(response_data)
 
 
@@ -1749,7 +1757,7 @@ def add_title(request):
         htmlName = {
             "1": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "設備編號", "容量(𝓁)", "地點", "部門"],
+                "內容": ["序號", "設備編號", "容量(𝓁)", "地點", "部門", "是否推估"],
                 "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
 
@@ -1762,27 +1770,27 @@ def add_title(request):
 
             "3": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
+                "內容": ["序號", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
                 "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
 
             "4": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "原物料號", "原/物料", "名稱"],
+                "內容": ["序號", "原物料號", "原/物料", "名稱"],
                 "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
                 "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
             "5": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "製程階段", "料號", "製程添加物", "化學品名", "化學式", "CAS NO", "是否燃燒", "VOCs"],
+                "內容": ["序號", "製程階段", "料號", "製程添加名稱", "含碳量(%)", "是否燃燒", "VOCs"],
                 "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
             },
             # 冷媒(6~13)
             "6": {
                 "編輯區": ["刪除", "修改"],
-                "冰箱清單": ["序號", "年度", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冰箱清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "7": {
@@ -1817,19 +1825,19 @@ def add_title(request):
 
             "13": {
                 "編輯區": ["刪除", "修改"],
-                "滅火器清單": ["序號", "年度", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
+                "滅火器清單": ["序號", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
             },
             # 人天清冊
             "14": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "類型"],
+                "內容": ["序號", "類型"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
 
             "15": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "人員類別"],
+                "內容": ["序號", "人員類別"],
                 "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
@@ -1837,34 +1845,34 @@ def add_title(request):
 
             "16": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "內容": ["序號", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
             },
 
             "17": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "內容": ["序號", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
             },
 
             "18": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "溶劑、噴霧劑名稱", "數量(瓶/罐)", "容量", "單位", "氣體名稱", "氣體含量(%)", "密度"]
+                "內容": ["序號", "溶劑、噴霧劑名稱", "數量(瓶/罐)", "容量", "單位", "氣體名稱", "氣體含量(%)", "密度"]
             },
 
             "19": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+                "內容": ["序號", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
             },
 
             "20": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
+                "內容": ["序號", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
                 "VOCs濃度": ["入口濃度", "出口濃度"],
                 u"CO\u2082排放係數": ["內設值", "自訂值"],
             },
 
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "用電量": ["序號", "年度", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+                "用電量": ["序號", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
             },
 
             "22": {
@@ -1887,7 +1895,7 @@ def add_title(request):
 
             "24": {
                 "編輯區": ["刪除", "修改"],
-                "員工通勤清冊": ["序號", "年度", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
+                "員工通勤清冊": ["序號", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
             },
 
             # 員工出差
@@ -1905,21 +1913,21 @@ def add_title(request):
             # 納管廢水
             "27": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "納管編號", "廠別", "地址"],
+                "內容": ["序號", "納管編號", "廠別", "地址"],
                 "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
             },
 
             # 原物料採購
             "28": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "產品編號", "產品名稱"],
+                "內容": ["序號", "產品編號", "產品名稱"],
                 "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
             },
 
             # 原物料採購
             "29": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "產品編號", "產品名稱"],
+                "內容": ["序號", "產品編號", "產品名稱"],
                 "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
             },
         }
