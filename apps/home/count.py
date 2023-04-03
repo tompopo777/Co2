@@ -35,8 +35,8 @@ def current_user_group_id(request):
 def calculate_summary(request):
     if request.method == "POST":
         company_value = request.POST.get('company_id')
-        print('company_value', company_value)
-        print(type(company_value))
+        # print('company_value', company_value)
+        # print(type(company_value))
         if company_value != '':
             company_id = int(company_value)
         else:
@@ -71,7 +71,6 @@ def calculate_summary(request):
         # 匯出Excel檔案
         output.to_excel(response, index=False)
         return response
-    return render(request, "accounts/login.html", locals())
     # return None
 
 

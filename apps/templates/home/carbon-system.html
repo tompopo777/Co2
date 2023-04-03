@@ -591,7 +591,6 @@
                     title.forEach((item, index) => {
                         var i = 0;
                         for (const [key, value] of Object.entries((item))) {
-                            console.warn(">>>>>")
                             var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
                             var a = thead_row_category.appendChild(tr_c)
                             tr_c.innerHTML = key//"分類"框框填質
@@ -717,7 +716,7 @@
         var dropdown_three = document.getElementById("dropdown_three")
         $(document).on('click', ".trash_btn", function () {
             var single_dataID = this.id;
-            console.warn(single_dataID)
+            {#console.warn(single_dataID)#}
             var deviceID = dropdown_three.value
             delete_device(single_dataID, deviceID)
         })
@@ -727,7 +726,7 @@
     <script>
         function delete_device(id, datasheet_id) {
             $(document).on('click', ".delete_btn", function () {
-                console.warn("single_dataID", id)
+                {#console.warn("single_dataID", id)#}
                 $.ajax({
                     url: "{% url 'delete_device' %}",
                     data: {
@@ -738,7 +737,7 @@
                     dataType: 'json',
                     success: function (single_dataID) {
                         var single_data = document.getElementById(single_dataID)
-                        console.warn(">>>>>>>>>>>", single_data)
+                        {#console.warn(">>>>>>>>>>>", single_data)#}
                         single_data.closest("tr").remove()
                     }
                 });
@@ -757,7 +756,7 @@
                 let companyValue = $("#company_dropdown").val();
 
                 let data = {did: selectedValue, company_id: companyValue};
-                console.log(data)
+                {#console.log(data)#}
 
                 $.ajax({
                     url: "{% url 'export_excel' %}",
@@ -787,7 +786,7 @@
                     },
                     error: function (xhr, status, error) {
                         alert('匯出 Excel 失敗');
-                        console.error(xhr.responseText);
+                        {#console.error(xhr.responseText);#}
                     },
                     contentType: 'application/x-www-form-urlencoded',
                     processData: true,
@@ -812,12 +811,12 @@
                     processData: false,
                     success: function (data) {
                         alert('匯入 Excel 成功');
-                        console.log(data);
+                        {#console.log(data);#}
                         // 在此處執行其他的操作，例如更新頁面資料等
                     },
                     error: function (xhr, status, error) {
                         alert('匯入 Excel 失敗');
-                        console.error(xhr.responseText);
+                        {#console.error(xhr.responseText);#}
                     },
                 });
             });
