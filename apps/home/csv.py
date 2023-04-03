@@ -13,10 +13,10 @@ from .models import *
 
 COLUMN_MAPPING = {
     'emergency_generators': {
-        'columns': ['years', 'device_id', 'device_capacity', 'position', 'department',
+        'columns': ['years', 'device_id', 'device_capacity', 'position', 'department', 'estimate',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december', 'message_board'],  # 欄位清單1
-        'column_names': ['年度', '設備編號', '容量(𝓁)', '地點', '部門', '一月', '二月', '三月',
+        'column_names': ['年度', '設備編號', '容量(𝓁)', '地點', '部門', '是否推估', '一月', '二月', '三月',
                          '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],  # 欄位中文名稱1
         'prefix': '類別一_'
     },
@@ -381,6 +381,8 @@ def import_excel(request):
         try:
             did = request.POST.get('did')
             file = request.FILES['excel_file']
+            print(file)
+            print(did)
 
             # 解析Excel檔案
             wb = load_workbook(file, data_only=True)

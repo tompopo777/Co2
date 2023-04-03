@@ -66,9 +66,11 @@
                                         </div>
                                         <div class="accordion" id="accordionExample">
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" type="radio" name="metering_method" id="radio" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" value="油車">
-                                                <label class="form-check-label" for="radio">油車{{ metering_method }}</label>
-                                                </input>
+                                                <h2 class="accordion-header" id="headingOne">
+                                                    <button class="accordion-button" type="button" id="oil" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                                        {{ form.metering_method.0 }}
+                                                    </button>
+                                                </h2>
                                                 <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <div class="d-flex flex-nowrap">
@@ -76,7 +78,7 @@
                                                                 加油量(單位：公升) <span style="color:red; font-size:16px;">* </span>
                                                             </h5>
                                                         </div>
-                                                        <table class="table">
+                                                        <table class="table oil">
                                                             <thead>
                                                             <tr>
                                                                 <th></th>
@@ -101,62 +103,62 @@
                                                                 </th>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_january }}
+                                                                        {{ form.january }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_february }}
+                                                                        {{ form.february }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_march }}
+                                                                        {{ form.march }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_april }}
+                                                                        {{ form.april }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_may }}
+                                                                        {{ form.may }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_june }}
+                                                                        {{ form.june }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_july }}
+                                                                        {{ form.july }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_august }}
+                                                                        {{ form.august }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_september }}
+                                                                        {{ form.september }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_october }}
+                                                                        {{ form.october }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_november }}
+                                                                        {{ form.november }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.oil_december }}
+                                                                        {{ form.december }}
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -166,75 +168,77 @@
                                                                 </th>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_january }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_february }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_march }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_april }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_may }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_june }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_july }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                       {{ form.urea_august }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_september }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_october }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_november }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.urea_december }}
+                                                                        <input class="col-6" type="text" name="urea" value="0">
                                                                     </div>
                                                                 </td>
                                                             </tr>
-                                                            <tr></tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" id="radio2" type="radio" name="metering_method" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-checked="true" aria-expanded="false" aria-controls="collapseTwo" value="電動車">
-                                                <label class="form-check-label" for="radio2">電動車{{ metering_method }}</label>
-                                                </input>
+                                                <h2 class="accordion-header" id="headingTwo">
+                                                    <button class="accordion-button" type="button" id="electric" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                        {{ form.metering_method.1 }}
+                                                    </button>
+                                                </h2>
                                                 <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <div class="d-flex flex-nowrap">
@@ -242,7 +246,7 @@
                                                                 用電量(單位：度) <span style="color:red; font-size:16px;">* </span>
                                                             </h5>
                                                         </div>
-                                                        <table class="table">
+                                                        <table class="table electric">
                                                             <thead>
                                                             <tr>
                                                                 <th>一月</th>
@@ -263,62 +267,62 @@
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_january }}
+                                                                        {{ form.january }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_february }}
+                                                                        {{ form.february }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_march }}
+                                                                        {{ form.march }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_april }}
+                                                                        {{ form.april }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_may }}
+                                                                        {{ form.may }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_june }}
+                                                                        {{ form.june }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_july }}
+                                                                        {{ form.july }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_august }}
+                                                                        {{ form.august }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_september }}
+                                                                        {{ form.september }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_october }}
+                                                                        {{ form.october }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_november }}
+                                                                        {{ form.november }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.elec_december }}
+                                                                        {{ form.december }}
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -327,10 +331,13 @@
                                                     </div>
                                                 </div>
                                             </div>
+
                                             <div class="form-check accordion-item typeSelected ps-1">
-                                                <input class="form-check-input accordion-header collapsed" id="radio3" type="radio" name="metering_method" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" value="公里數">
-                                                <label class="form-check-label" for="radio3">公里數{{ metering_method }}</label>
-                                                </input>
+                                                <h2 class="accordion-header" id="headingThree">
+                                                    <button class="accordion-button" type="button" id="miles" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                        {{ form.metering_method.2 }}
+                                                    </button>
+                                                </h2>
                                                 <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                                     <div class="accordion-body">
                                                         <div class="d-flex flex-nowrap">
@@ -338,7 +345,7 @@
                                                                 公里數(單位：公里) <span style="color:red; font-size:16px;">* </span>
                                                             </h5>
                                                         </div>
-                                                        <table class="table">
+                                                        <table class="table miles">
                                                             <thead>
                                                             <tr>
                                                                 <th>一月</th>
@@ -359,62 +366,62 @@
                                                             <tr>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_january }}
+                                                                        {{ form.january }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_february }}
+                                                                        {{ form.february }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_march }}
+                                                                        {{ form.march }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_april }}
+                                                                        {{ form.april }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_may }}
+                                                                        {{ form.may }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_june }}
+                                                                        {{ form.june }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_july }}
+                                                                        {{ form.july }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_august }}
+                                                                        {{ form.august }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_september }}
+                                                                        {{ form.september }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_october }}
+                                                                        {{ form.october }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_november }}
+                                                                        {{ form.november }}
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="d-flex justify-content-center">
-                                                                        {{ form.km_december }}
+                                                                        {{ form.december }}
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -501,6 +508,45 @@
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
+
+
+        {#    購買年份篩選器#}
+        $("#years_purchased").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+
+
+        const form = document.getElementById('official-car');
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault(); // Prevent the default form submission
+            //get all buttons that the class name is 'accordion-button'
+            const buttons = Array.from(document.querySelectorAll(".accordion-button"));
+            const activatedClass = buttons
+                .filter((button) => {
+                    return button.getAttribute("aria-expanded") === "true";
+                })
+                .map((button) => button.id)?.[0];
+            const tables = form.querySelectorAll("#official-car table");
+            console.log(tables);
+            const supportClasses = activatedClass === 'oil' ? ['urea', 'oil'] : [activatedClass];
+
+            tables.forEach((table) => {
+                const classNames = table.classList;
+                const isSupport = supportClasses.some((className) => classNames.contains(className));
+                if (!isSupport) {
+                    table.remove();
+                }
+            });
+
+            // Submit the form
+            form.submit();
+
+        });
 
 
         {#    照片顯示檔名+可刪除#}
