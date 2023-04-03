@@ -351,7 +351,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
                 t_data = list(
-                    personnel_inventory.objects.filter(company_id=company_id).values("id", "years",
+                    personnel_inventory.objects.filter(company_id=company_id).values("id", "years", "classification",
                                                                                      "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
                                                                                      "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
                                                                                      "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
@@ -1766,10 +1766,10 @@ def add_title(request):
                 "編輯區": ["刪除", "修改"],
                 "滅火器清單": ["序號", "年度", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
             },
-
+            # 人天清冊
             "14": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度"],
+                "內容": ["序號", "年度", "類別"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },

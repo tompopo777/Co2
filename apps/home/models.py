@@ -366,6 +366,7 @@ class personnel_inventory(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=14, db_column='did_id')
     years = models.IntegerField()
+    classification = models.CharField(max_length=30)
     WKhours_january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     WKhours_february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     WKhours_march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
