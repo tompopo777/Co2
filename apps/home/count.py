@@ -62,7 +62,8 @@ def calculate_summary(request):
         ice_maker_device = ice_maker_count(company_id, coefficient_source, gwp_version)
         other_device_device = other_device_count(company_id, coefficient_source, gwp_version)
         solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_count(company_id, coefficient_source, gwp_version)
-        output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device])
+        personnel_inventory_device = personnel_inventory_count(company_id, coefficient_source, gwp_version)
+        output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device, personnel_inventory_device])
         display(output)
         response = HttpResponse(content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放量統計總表-' + company_name + '.xlsx', encoding="UTF-8")
@@ -70,9 +71,6 @@ def calculate_summary(request):
         # 匯出Excel檔案
         output.to_excel(response, index=False)
         return response
-        # return render(request, "accounts/login.html", locals())
-
-    print('outside')
     return render(request, "accounts/login.html", locals())
     # return None
 
@@ -80,8 +78,6 @@ def calculate_summary(request):
 # 發電機
 def emergency_generators_count(company_id, coefficient_source, gwp_version):
     try:
-        # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-        # gwp_version = 6
         raw_data = emergency_generators.objects.filter(company_id=company_id).values('did').annotate(
             process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
             device_name=Value('柴油發電機', output_field=CharField(max_length=20)),
@@ -159,8 +155,6 @@ def combustion_equipment_count(company_id, coefficient_source, gwp_version):
 # 公務車
 def official_car_count(company_id, coefficient_source, gwp_version):
     try:
-        coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-        gwp_version = 6
         raw_data = official_car.objects.filter(company_id=company_id).values('vehicle_type', 'fuel_type').annotate(
             process_area=Value('移動式式燃燒', output_field=models.CharField(max_length=50)),
             sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
@@ -318,8 +312,6 @@ def other_device_count(company_id, coefficient_source, gwp_version):
 
 # 溶劑、噴霧劑
 def solvent_aerosol_emission_sources_count(company_id, coefficient_source, gwp_version):
-# company_id = 2
-# gwp_version = 6
     try:
         raw_part = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.filter(company_id=company_id).values('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -346,6 +338,7 @@ def solvent_aerosol_emission_sources_count(company_id, coefficient_source, gwp_v
                 row['solvent_amount'] = Decimal(row['solvent_amount']) * Decimal(row['solvent_capacity']) * Decimal(row['density']) * Decimal(row['gas_ratio']) / Decimal(100) / Decimal(1000)
                 row['solvent_amount'] = round(Decimal(row['solvent_amount']), 4)
                 return row['solvent_amount']
+
         a_part['solvent_amount'] = a_part.apply(multiply, axis=1)
         # display(a_part)
         a_part = a_part.drop(columns=['solvent_capacity_unit', 'solvent_capacity', 'gas_ratio', 'density']).drop_duplicates()
@@ -357,29 +350,74 @@ def solvent_aerosol_emission_sources_count(company_id, coefficient_source, gwp_v
         final['emission'] = final.apply(lambda x: round(Decimal(x['solvent_amount']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
         final = final.rename(columns={'solvent_name': 'fuel_type', 'solvent_amount': 'sum_count'})
         new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-        # new_order = ['process_area', 'device_name', 'solvent_name', 'solvent_amount', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
         final = final.reindex(columns=new_order)
         # display(final)
         # display(final.shape)
         return final
-    except KeyError:
+    except:
         print('沒有該溶劑、噴霧劑設備')
         pass
 
-# 人天清冊/委外人員
-# personnel = pd.DataFrame(list(personnel_inventory.objects.values('did').annotate(
-#     process_area=Value('逸散', output_field=models.CharField(max_length=50)),
-#     device_name=Value('人天清冊、委外人員', output_field=CharField(max_length=20)),
-#     fuel_type=Value('水肥', output_field=CharField(max_length=20)),
-#     total_usage=Cast(Sum(F('WKhours_january') + F('WKhours_february') + F('WKhours_march') + F('WKhours_april') + F('WKhours_may') + F('WKhours_june') +
-#                          F('WKhours_july') + F('WKhours_august') + F('WKhours_september') + F('WKhours_october') + F('WKhours_november') + F('WKhours_december')), output_field=models.DecimalField(max_digits=20, decimal_places=4)),
-# )))
-# personnel = personnel.drop(columns=['did'])
-# new_order = ['process_area', 'device_name', 'refrigerant_type', 'filling_volume', 'data_unit', 'emission', 'gas_name_x', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-# final = personnel
-# # final = final.reindex(columns=new_order)
-# display(final)
-# display(final.shape)
+
+# 人天清冊
+def personnel_inventory_count(company_id, coefficient_source, gwp_version):
+    try:
+        employee_raw_data = pd.DataFrame(list(personnel_inventory.objects.filter(company_id=company_id).filter(classification='員工').values('did').annotate(
+            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+            device_name=Value('人天清冊', output_field=CharField(max_length=20)),
+            fuel_type=Value('水肥', output_field=CharField(max_length=20)),
+            data_unit=Value('時/人', output_field=models.CharField(max_length=50)),
+            total_usage=Sum(F('WKhours_january') + F('WKhours_february') + F('WKhours_march') + F('WKhours_april') + F('WKhours_may') + F('WKhours_june') + F('WKhours_july') + F('WKhours_august') + F('WKhours_september') + F('WKhours_october') + F('WKhours_november') + F('WKhours_december')),
+        )))
+        employee_raw_data = employee_raw_data.drop(columns=['did'])
+        # 員工宿舍dataframe
+        dormitory_raw_data = pd.DataFrame(list(personnel_inventory.objects.filter(company_id=2).filter(classification='員工宿舍').values(
+            'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
+            'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december').annotate(
+            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+            device_name=Value('人天清冊', output_field=CharField(max_length=20)),
+            fuel_type=Value('水肥', output_field=CharField(max_length=20)),
+        )))
+
+        def dormitory_count(row):
+            row['dormitory_total_usage'] = \
+                ((Decimal(str(row['WKnum_january'])) * Decimal('31') * Decimal('24')) - Decimal(str(row['WKhours_january']))) + \
+                ((Decimal(str(row['WKnum_february'])) * Decimal('28') * Decimal('24')) - Decimal(str(row['WKhours_february']))) + \
+                ((Decimal(str(row['WKnum_march'])) * Decimal('31') * Decimal('24')) - Decimal(str(row['WKhours_march']))) + \
+                ((Decimal(str(row['WKnum_april'])) * Decimal('30') * Decimal('24')) - Decimal(str(row['WKhours_april']))) + \
+                ((Decimal(str(row['WKnum_may'])) * Decimal('31') * Decimal('24')) - Decimal(str(row['WKhours_may']))) + \
+                ((Decimal(str(row['WKnum_june'])) * Decimal('30') * Decimal('24')) - Decimal(str(row['WKhours_june']))) + \
+                ((Decimal(str(row['WKnum_july'])) * Decimal('31') * Decimal('24')) - Decimal(str(row['WKhours_july']))) + \
+                ((Decimal(str(row['WKnum_august'])) * Decimal('31') * Decimal('24')) - Decimal(str(row['WKhours_august']))) + \
+                ((Decimal(str(row['WKnum_september'])) * Decimal('30') * Decimal('24')) - Decimal(str(row['WKhours_september']))) + \
+                ((Decimal(str(row['WKnum_october'])) * Decimal('31') * Decimal('24')) - Decimal(str(row['WKhours_october']))) + \
+                ((Decimal(str(row['WKnum_november'])) * Decimal('30') * Decimal('24')) - Decimal(str(row['WKhours_november']))) + \
+                ((Decimal(str(row['WKnum_december'])) * Decimal('31') * Decimal('24')) - Decimal(str(row['WKhours_december'])))
+            return row['dormitory_total_usage']
+
+        dormitory_raw_data['dormitory_total_usage'] = dormitory_raw_data.apply(dormitory_count, axis=1)
+        dormitory_raw_data = dormitory_raw_data.drop(columns=['WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
+                                                              'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december'])
+        # 宿舍總人天
+        dormitory_raw_data = dormitory_raw_data.groupby(["process_area", "device_name", "fuel_type"]).agg({'dormitory_total_usage': 'sum'}).reset_index()
+        employee_raw_data['total_usage'] = employee_raw_data['total_usage'] + dormitory_raw_data['dormitory_total_usage']
+        a_part = employee_raw_data
+        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
+            coefficient_unit=Value('公噸' + '/人時', output_field=models.CharField(max_length=50)))))
+        ab_part = pd.merge(a_part, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+        ab_part = ab_part.drop(columns=['cause'])
+        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+        final = pd.merge(ab_part, gwp, on='gas_name', how='left')
+        final['emission'] = final.apply(lambda x: round(Decimal(x['total_usage']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        final = final.rename(columns={'total_usage': 'sum_count'})
+        new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        final = final.reindex(columns=new_order)
+        # display(final)
+        # display(final.shape)
+        return final
+    except:
+        print('沒有該人天清冊設備')
+        pass
 
 # 滅火器
 # extinguisher = pd.DataFrame(list(extinguisher.objects.values('extinguisher_type').annotate(
