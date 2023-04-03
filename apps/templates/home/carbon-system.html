@@ -27,7 +27,7 @@
                             <div class="d-flex">
                                 <div class="col-3">
                                     <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">公司廠別</label>
-                                    <select class="" id="company_dropdown" name="company_dropdown">
+                                    <select class="" id="company_dropdown" name="company_dropdown" onchange="companyID()">
                                         <option class="" id="question-subject" value="0" name="" selected>
                                             <---請選擇類別--->
                                         </option>
@@ -66,6 +66,7 @@
                                 </div>
                                 <div class="col-3">
                                     <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
+{#                                    <script src="{% static 'h' %}"></script>#}
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
                                 </div>
                                 <div class="col-3">
@@ -194,7 +195,7 @@
             <div class="modal-content">
                 <div class="row modal-header">
                     <div class="col">
-                        <h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
+                        <h5 class="modal-title text-light bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
                     </div>
                 </div>
                 <div class="modal-body">
@@ -207,7 +208,7 @@
                     <div class="form-group row mb-3">
                         <label for="versionSelect" class="col-3 col-form-label">GWP 版本:</label>
                         <div class="col">
-                            <select class="form-control custom-select" id="versionSelect" name="version" value="{{ version }}">
+                            <select class="form-control custom-select" id="versionSelect" name="version">
                                 <option value="4">GWP 4</option>
                                 <option value="5">GWP 5</option>
                                 <option value="6" selected>GWP 6</option>
@@ -541,7 +542,6 @@
                     title.forEach((item, index) => {
                         var i = 0;
                         for (const [key, value] of Object.entries((item))) {
-                            console.warn(">>>>>")
                             var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
                             var a = thead_row_category.appendChild(tr_c)
                             tr_c.innerHTML = key//"分類"框框填質
@@ -669,7 +669,7 @@
         var dropdown_three = document.getElementById("dropdown_three")
         $(document).on('click', ".trash_btn", function () {
             var single_dataID = this.id;
-            console.warn(single_dataID)
+            {#console.warn(single_dataID)#}
             var deviceID = dropdown_three.value
             delete_device(single_dataID, deviceID)
         })
@@ -679,7 +679,7 @@
     <script>
         function delete_device(id, datasheet_id) {
             $(document).on('click', ".delete_btn", function () {
-                console.warn("single_dataID", id)
+                {#console.warn("single_dataID", id)#}
                 $.ajax({
                     url: "{% url 'delete_device' %}",
                     data: {
@@ -690,7 +690,7 @@
                     dataType: 'json',
                     success: function (single_dataID) {
                         var single_data = document.getElementById(single_dataID)
-                        console.warn(">>>>>>>>>>>", single_data)
+                        {#console.warn(">>>>>>>>>>>", single_data)#}
                         single_data.closest("tr").remove()
                     }
                 });
@@ -709,7 +709,7 @@
                 let companyValue = $("#company_dropdown").val();
 
                 let data = {did: selectedValue, company_id: companyValue};
-                console.log(data)
+                {#console.log(data)#}
 
                 $.ajax({
                     url: "{% url 'export_excel' %}",
@@ -739,7 +739,7 @@
                     },
                     error: function (xhr, status, error) {
                         alert('匯出 Excel 失敗');
-                        console.error(xhr.responseText);
+                        {#console.error(xhr.responseText);#}
                     },
                     contentType: 'application/x-www-form-urlencoded',
                     processData: true,
@@ -764,12 +764,12 @@
                     processData: false,
                     success: function (data) {
                         alert('匯入 Excel 成功');
-                        console.log(data);
+                        {#console.log(data);#}
                         // 在此處執行其他的操作，例如更新頁面資料等
                     },
                     error: function (xhr, status, error) {
                         alert('匯入 Excel 失敗');
-                        console.error(xhr.responseText);
+                        {#console.error(xhr.responseText);#}
                     },
                 });
             });

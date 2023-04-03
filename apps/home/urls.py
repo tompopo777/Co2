@@ -60,6 +60,8 @@ urlpatterns = [
                   path('update_device/<str:datasheet_id>&<int:single_dataID>&<str:dropdown_one>&<str:dropdown_two>', views.update_device, name='update_device'),
                   # 刪除設備
                   path('delete_device/', views.delete_device, name='delete_device'),
+                  # 匯出總表
+                  path("calculate_summary/", count.calculate_summary, name='calculate_summary'),
                   # Matches any html file
                   re_path(r'^.*\.*', views.pages, name='pages'),
 

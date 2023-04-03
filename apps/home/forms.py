@@ -194,6 +194,11 @@ SOLVENT_GAS_CHOICES = [
     ('SF6', 'SF6，六氟化硫')
 ]
 
+# 人添清冊
+CLASSIFICATION_CHOICES = [
+    ('員工', '員工'),
+    ('員工宿舍', '員工宿舍'),
+]
 
 # 前面: 存DB，後面: 顯示
 # COMPANY_CHOICES = []
@@ -675,12 +680,13 @@ class EXform(forms.ModelForm):
 class PIform(forms.ModelForm):
     class Meta:
         model = personnel_inventory
-        fields = ('years', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
+        fields = ('years', 'classification', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
                   'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november',
                   'WKhours_december', 'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june',
                   'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
+            'classification': forms.Select(choices=CLASSIFICATION_CHOICES),
             'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -838,7 +844,8 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
             'solvent_capacity_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
             'gas_name': forms.Select(choices=SOLVENT_GAS_CHOICES),
             'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-            'density': forms.TextInput(attrs={'class': 'form-control'}),
+            'density': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)'}),
+            # 'density': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^\+?[1-9][0-9]*$', 'title': '只能輸入正整數', 'placeholder': '只能輸入正整數'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }

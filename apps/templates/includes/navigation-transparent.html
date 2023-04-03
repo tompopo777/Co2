@@ -21,17 +21,27 @@
                     <li class="nav-item dropdown dropdown-hover mx-2">
                         <a class="nav-link ps-2 d-flex cursor-pointer align-items-center"
                            data-bs-toggle="modal" data-bs-target="#settings" type="button">
-                            盤查設定
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">盤查設定</p>
                         </a>
                     </li>
                     <li class="nav-item dropdown dropdown-hover mx-2">
                         <a class="nav-link ps-2 d-flex cursor-pointer align-items-center"
                            href="/carbon-system/">
-                            碳盤查系統
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">碳盤查系統</p>
                         </a>
                     </li>
+                    <li class="nav-item dropdown dropdown-hover mx-2">
+                        <div class="nav-link ps-2 d-flex cursor-pointer align-items-center">
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">盤查選單</p>
+                        </div>
+                        <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item border-radius-md border-bottom text-center" id="summary" data-bs-toggle="modal" data-bs-target="#CalculateSummaryModal" href="javascript:;">產生總表</a></li>
+                            <li><a class="dropdown-item border-radius-md border-bottom text-center" href="javascript:;">產生清冊</a></li>
+                            <li><a class="dropdown-item border-radius-md border-bottom text-center" href="javascript:;">產生報告書</a></li>
+                        </ul>
+                    </li>
                     <li class="nav-item ms-lg-auto nav-link nav-link-icon me-2">
-                        <i class="fa-solid fa-user me-2"></i>
+                        <i class="fa-solid fa-user me-1"></i>
                         <p class="d-inline text-sm z-index-1 font-weight-bold">{{ request.user.username }}</p>
                     </li>
                     <li class="nav-item ms-lg-auto">
@@ -48,10 +58,97 @@
         </div>
     </div>
 </nav>
+
+<!-- Modal -->
+<div class="modal fade" id="CalculateSummaryModal" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="CalculateSummaryModalLabel">產生總表</h5></div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/calculate_summary/" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" id="company_in_nav" name="company_id">
+                    <div class="row d-flex align-items-center mb-3">
+                        <div class="col-auto">
+                            <h6>請選擇GWP版本: </h6>
+                        </div>
+                        <div class="form-check form-check-inline col-auto m-0" id="gwpVersion_radio">
+                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault1" value=4>
+                            <label class="form-check-label me-2" for="flexRadioDefault1">
+                                GWP 4
+                            </label>
+                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault2" value=5>
+                            <label class="form-check-label me-2" for="flexRadioDefault2">
+                                GWP 5
+                            </label>
+                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault3" value=6 checked>
+                            <label class="form-check-label me-2" for="flexRadioDefault3">
+                                GWP 6
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row d-flex align-items-center">
+                        <div class="col-auto">
+                            <h6>請選擇係數來源: </h6>
+                        </div>
+                        <div class="form-check form-check-inline col-auto m-0" id="coefficient_source_radio">
+                            <input class="form-check-input" type="radio" name="coefficient_source" id="604" value="環保署溫室氣體排放係數管理表6.0.4" checked>
+                            <label class="form-check-label me-2" for="604">
+                                環保署溫室氣體排放係數管理表6.0.4
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-danger" id="calculate_summary" data-bs-dismiss="modal">確認</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- End Navbar -->
 
 {% block javascripts %}
     {#    icon#}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+    {#    <script>#}
+    {#        $('#calculate_summary').on('click', function () {#}
+    {#var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();#}
+    {#            let coefficient_source = document.getElementById('coefficient_source_radio').value;#}
+    {#            let gwp_version = document.getElementById('gwpVersion_radio').value;#}
+    {#            $.ajax({#}
+    {#                url: "{% url 'calculate_summary' %}",#}
+    {#                data: {#}
+    {#                    'gwp_version': gwp_version,#}
+    {#                    'coefficient_source': coefficient_source,#}
+    {#'csrfmiddlewaretoken': csrftoken#}
+    {#                },#}
+    {#type: "POST",#}
+    {#                type: "GET",#}
+    {#                dataType: 'json',#}
+    {#            });#}
+    {#        });#}
+    {#    </script>#}
+    <script>
+        function companyID(){
+            let company_value = $("#company_dropdown").val()
+            let company_in_nav = document.getElementById('company_in_nav')
+            company_in_nav.value = company_value
+        }
+
+        /*
+        $(document).ready(function () {
+            let company_in_nav = document.getElementById('company_in_nav')
+            console.warn('nav', company_in_nav.value)
+            console.warn(typeof company_in_nav.value)
+        });
+         */
+
+
+    </script>
 {% endblock javascripts %}
