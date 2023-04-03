@@ -9,10 +9,6 @@
     border-radius: 0 !important;
 }
 
-h5, .text-warning {
-    color: white !important;
-}
-
 #settings .modal-body input.form-control, .modal-body select.form-control {
     display: block;
     width: 100%;

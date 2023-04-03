@@ -29,7 +29,7 @@
                             <div class="d-flex">
                                 <div class="col-3">
                                     <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">公司廠別</label>
-                                    <select class="" id="company_dropdown" name="company_dropdown">
+                                    <select class="" id="company_dropdown" name="company_dropdown" onchange="companyID()">
                                         <option class="" id="question-subject" value="0" name="" selected>
                                             <---請選擇類別--->
                                         </option>
@@ -68,6 +68,7 @@
                                 </div>
                                 <div class="col-3">
                                     <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
+{#                                    <script src="{% static 'h' %}"></script>#}
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
                                 </div>
                                 <div class="col-3">
@@ -193,10 +194,10 @@
             <div class="modal-content">
                 <div class="row modal-header">
                     <div class="col">
-                        <h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
+                        <h5 class="modal-title text-light bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
                     </div>
                 </div>
-                <div class="">
+                <div class="modal-body">
                     <div class="form-group row mb-3">
                         <label for="yearInput" class="col-3 col-form-label">盤查年份:</label>
                         <div class="col">
@@ -212,7 +213,7 @@
                     <div class="form-group row mb-3">
                         <label for="versionSelect" class="col-3 col-form-label">GWP 版本:</label>
                         <div class="col">
-                            <select class="form-control custom-select" id="versionSelect" name="version" value="{{ version }}">
+                            <select class="form-control custom-select" id="versionSelect" name="version">
                                 <option value="4">GWP 4</option>
                                 <option value="5">GWP 5</option>
                                 <option value="6" selected>GWP 6</option>
