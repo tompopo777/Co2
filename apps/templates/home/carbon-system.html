@@ -20,9 +20,7 @@
              style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
-                <div class="row">
-                    <code style="font-size: 20px">年度: 2023</code>
-                </div>
+                <code style="font-size: 20px">盤查年份: <span id="yearDisplay"></span></code>
                 <div class="row">
                     {% if company_id == 1 %}
                         <div class="card-body">
@@ -133,6 +131,9 @@
                                             新增
                                         </a>
                                     {% endif %}
+                                    <a type="button" class="btn btn-outline-light me-1" id="copyLastYear" href="{% url 'copy_last_year_data' %}">
+                                        複製去年資料
+                                    </a>
                                     <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
                                         匯出Excel
                                     </a>
@@ -196,19 +197,13 @@
                         <h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
                     </div>
                 </div>
-                <div class="">
+                <div class="modal-body">
                     <div class="form-group row mb-3">
                         <label for="yearInput" class="col-3 col-form-label">盤查年份:</label>
                         <div class="col">
-                            <input type="text" class="form-control" id="yearInput" name="year" value="{{ year }}">
+                            <input type="text" class="form-control" id="yearInput" name="years" value="{{ years }}">
                         </div>
                     </div>
-{#                    <div class="form-group row mb-3">#}
-{#                        <label for="nameInput" class="col-3 col-form-label">盤查名稱:</label>#}
-{#                        <div class="col">#}
-{#                            <input type="text" class="form-control" id="nameInput" name="name" placeholder="請輸入盤查名稱" value="{{ name }}">#}
-{#                        </div>#}
-{#                    </div>#}
                     <div class="form-group row mb-3">
                         <label for="versionSelect" class="col-3 col-form-label">GWP 版本:</label>
                         <div class="col">
@@ -219,27 +214,14 @@
                             </select>
                         </div>
                     </div>
-{#                    <div class="form-group row mb-3">#}
-{#                        <label for="initiatorInput" class="col-3 col-form-label">發起人:</label>#}
-{#                        <div class="col">#}
-{#                            <input type="text" class="form-control" id="initiatorInput" name="initiator" value="{{ request.user.username }}">#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <div class="form-group row mb-3">#}
-{#                        <label for="checkNumberInput" class="col-3 col-form-label">盤查單號:</label>#}
-{#                        <div class="col">#}
-{#                            <input type="text" class="form-control" id="checkNumberInput" name="check_number" placeholder="請輸入盤查單號" value="{{ check_number }}">#}
-{#                        </div>#}
-{#                    </div>#}
                 </div>
                 <div class="modal-footer justify-content-center">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">確認</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="updateYear()">確認</button>
                 </div>
             </div>
         </div>
     </div>
-
 
 
     <div class="modal fade" id="exampleModalCenter" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -480,22 +462,6 @@
                     /*
                     console.log("ok")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     {#if (typeof {{ request.session.dropdown_two }} != "undefined") {#}
                         dropdown_two_selected()
                     }
@@ -534,23 +500,6 @@
                     })
                     /*
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     {#if (typeof '{{ request.session.dropdown_three }}' != "undefined") {#}
                         dropdown_three_selected()
                     }
@@ -575,11 +524,13 @@
         $("#submit").on('click', function () {
             var deviceId = dropdown_three.value;
             var company_value = $("#company_dropdown").val()
+            var yearInput = $("#yearInput").val()
             //載入標題
             $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
-                    'deviceId': deviceId
+                    'deviceId': deviceId,
+                    'yearInput': yearInput
                 },
                 type: 'GET',
                 dataType: 'json',
@@ -619,17 +570,19 @@
                 },
             });
 
+
             //載入資料
             if (company_value !== 0) {
                 $.ajax({
                     url: "{% url 'loadtable' %}",
                     data: {
                         'deviceId': deviceId,
-                        'company_value': company_value
+                        'company_value': company_value,
+                        'yearInput': yearInput
                     },
                     type: 'GET',
                     dataType: 'json',
-                    success: function (t_data,) {
+                    success: function (t_data) {
                         {#console.warn(t_data);#}
                         tbody.innerHTML = ""
                         var id = 1;
@@ -821,8 +774,40 @@
                 });
             });
         });
+
+
+        $("#copyLastYear").on("click", function () {
+            let deviceId = dropdown_three.value;
+            let company_value = $("#company_dropdown").val()
+
+            $.ajax({
+                type: "GET",
+                url: "{% url 'copy_last_year_data' %}",
+                data: {
+                    'deviceId': deviceId,
+                    'company_value': company_value
+                },
+                dataType: "json",  // 設定回傳的資料型態為 JSON
+                success: function (response) {
+                    if (response.success) {
+                        alert('複製成功！'); // 顯示成功訊息
+                    } else {
+                        alert('複製失敗，請稍後再試。');
+                    }
+                }
+            });
+        });
     </script>
+    <script>
+        function updateYear() {
+            const yearInput = document.getElementById("yearInput");
+            const yearDisplay = document.getElementById("yearDisplay");
+            yearDisplay.textContent = yearInput.value;
+        }
 
-
+        window.addEventListener('load', function () {
+            updateYear();
+        });
+    </script>
 
 {% endblock javascripts %}

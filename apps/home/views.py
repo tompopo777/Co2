@@ -19,7 +19,7 @@ from decimal import *
 from django.utils.datastructures import MultiValueDictKeyError
 from django.db import models
 from django.db.models import Count, Sum, F, Value, Subquery, CharField
-
+from datetime import datetime
 import apps
 from .forms import *
 from apps.home.models import *
@@ -102,6 +102,7 @@ def load_table(request):
     if request.method == 'GET':
         device_id = request.GET.get('deviceId')
         company_value = request.GET.get('company_value')
+        year = request.GET.get('yearInput')
         if company_value is None:
             company_id = current_user_group_id(request)
         else:
@@ -114,11 +115,11 @@ def load_table(request):
         for a in t_name:
             if a["d_name"] == "柴油發電機":
                 t_data = []
-                raw_data = emergency_generators.objects.filter(company_id=company_id).values("id", "years", "device_id",
-                                                                                             "device_capacity", "position", "department",
-                                                                                             "january", "february", "march", "april",
-                                                                                             "may", "june", "july", "august",
-                                                                                             "september", "october", "november", "december")
+                raw_data = emergency_generators.objects.filter(company_id=company_id, years=year).values("id", "device_id",
+                                                                                                         "device_capacity", "position", "department",
+                                                                                                         "january", "february", "march", "april",
+                                                                                                         "may", "june", "july", "august",
+                                                                                                         "september", "october", "november", "december")
                 # 計算加油量合計
                 for i in range(raw_data.count()):
                     single_data = {}
@@ -135,11 +136,11 @@ def load_table(request):
             elif a["d_name"] == "燃燒設備":
                 t_data = []
                 # 「合計」前後的資料分開
-                raw_data = combustion_equipment.objects.filter(company_id=company_id).values("id", "years", "device_name", "device_id", "fuel_type",
-                                                                                             "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
-                                                                                             "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
-                heat_data = combustion_equipment.objects.filter(company_id=company_id).values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
-                                                                                              "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
+                raw_data = combustion_equipment.objects.filter(company_id=company_id, years=year).values("id", "device_name", "device_id", "fuel_type",
+                                                                                                         "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
+                                                                                                         "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
+                heat_data = combustion_equipment.objects.filter(company_id=company_id, years=year).values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
+                                                                                                          "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
                 # 計算使用量合計/熱值平均
                 for i in range(raw_data.count()):
                     Total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
@@ -168,8 +169,8 @@ def load_table(request):
                 t_data = []
                 # 「合計」前後的資料分開抓
                 raw_data = official_car.objects.filter(company_id=company_id).values("id", "years", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                consumption_data = official_car.objects.filter(company_id=company_id).values("january", "february", "march", "april", "may", "june", "july", "august",
-                                                                                             "september", "october", "november", "december")
+                consumptions_data = official_car.objects.filter(company_id=company_id).values("january", "february", "march", "april", "may", "june", "july", "august",
+                                                                                              "september", "october", "november", "december")
 
                 urea_data = official_car.objects.filter(company_id=company_id).values("urea_january", "urea_february", "urea_march", "urea_april",
                                                                                       "urea_may", "urea_june", "urea_july", "urea_august",
@@ -178,11 +179,11 @@ def load_table(request):
                 for i in range(raw_data.count()):
                     single_data = raw_data[i]
                     consumption_total = 0
-                    for j in consumption_data[i]:
-                        # print("oil:::", consumption_data[i].get(j))
+                    for j in consumptions_data[i]:
+                        # print("oil:::", consumptions_data[i].get(j))
                         # 「逐一」將資料(耗用量)丟回字典
-                        single_data[j] = consumption_data[i].get(j)
-                        consumption_total += consumption_data[i].get(j)
+                        single_data[j] = consumptions_data[i].get(j)
+                        consumption_total += consumptions_data[i].get(j)
                     # print("single_data11111", single_data)
                     # 將計算後的耗用量丟回字典
                     single_data["consumption_total"] = consumption_total
@@ -233,9 +234,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
-                raw_data = refrigerator.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
-                                                                                     "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                                     "effusion_rate")
+                raw_data = refrigerator.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                                 "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                                 "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -249,9 +250,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
                 t_data = []
-                raw_data = airconditioner.objects.filter(company_id=company_id).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
-                                                                                       "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                                       "effusion_rate")
+                raw_data = airconditioner.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                                                                                                   "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                                   "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -537,6 +538,58 @@ def load_table(request):
                     single_data["Total_Deliver"] = '%.4f' % Total_Deliver
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
+
+
+def copy_last_year_data(request):
+    if request.method == 'GET':
+        device_id = request.GET.get('deviceId')
+        print(device_id)
+        company_value = request.GET.get('company_value')
+        print("load_table_company_value", company_value)
+        if company_value is None:
+            company_id = current_user_group_id(request)
+        else:
+            company_id = int(company_value)
+        t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+
+        # 獲取當前年份
+        this_year = datetime.now().year
+        # 獲取去年年份
+        last_year = this_year - 1
+
+        for a in t_name:
+            if a["d_name"] == "柴油發電機":
+                last_year_data = emergency_generators.objects.filter(years=last_year, company_id=company_id).values(
+                    'device_id', 'device_capacity', 'position', 'department', 'estimate',
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july',
+                    'august', 'september', 'october', 'november', 'december',
+                    'image_note', 'message_board', 'company_id', 'did_id'
+                )
+                # 將年份改為今年
+                for data in last_year_data:
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                emergency_generators.objects.bulk_create(
+                    [emergency_generators(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '燃燒設備':
+                last_year_data = combustion_equipment.objects.filter(company_id=company_id, years=last_year).values(
+                    'years', 'device_name', 'device_id', 'fuel_type', 'fuel_january',
+                    'fuel_february', 'fuel_march', 'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august',
+                    'fuel_september', 'fuel_october', 'fuel_november', 'fuel_december', 'heat_january', 'heat_february',
+                    'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
+                    'heat_october', 'heat_november', 'heat_december', 'image_note', 'message_board', 'company_id', 'did_id'
+                )
+                # 將年份改為今年
+                for data in last_year_data:
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                combustion_equipment.objects.bulk_create(
+                    [combustion_equipment(**data) for data in last_year_data]
+                )
+        # 回傳 alert 訊息
+        response_data = {'message': '資料複製完成'}
+        return JsonResponse(response_data)
 
 
 @login_required(login_url="/login/")
@@ -1696,13 +1749,13 @@ def add_title(request):
         htmlName = {
             "1": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "設備編號", "容量(𝓁)", "地點", "部門"],
+                "內容": ["序號", "設備編號", "容量(𝓁)", "地點", "部門"],
                 "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
 
             "2": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "年度", "名稱", "編號", "燃料種類"],
+                "內容": ["序號", "名稱", "編號", "燃料種類"],
                 "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
             },
