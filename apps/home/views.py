@@ -1319,6 +1319,20 @@ def employee_business_trip_add(request, company_id=None):
             tripsection_formSet = TripSectionFormSet(request.POST, request.FILES, instance=business)
             if tripsection_formSet.is_valid():
                 tripsection_formSet.save()
+                stages = request.POST.getlist('stage')
+                last_id = employee_business_trip.objects.values("id").last().get("id")
+                table_id = employee_business_trip.objects.values("did").last().get("did")
+                for stage in stages:
+                    if stage == "員工出差段數":
+                        image_paths = request.FILES.getlist('file_field1')
+                    elif stage == "員工出差":
+                        image_paths = request.FILES.getlist('file_field2')
+                    else:
+                        image_paths = []
+                    for img in image_paths:
+                        photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                        print(stage)
+                        photo.save()
                 return redirect('/carbon-system/')
             else:
                 last_data = employee_business_trip.objects.last()
