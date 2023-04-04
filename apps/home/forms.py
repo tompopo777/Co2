@@ -841,11 +841,10 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
             'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^\+?[1-9][0-9]*$', 'title': '只能輸入正整數', 'placeholder': '只能輸入正整數'}),
             'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-            'solvent_capacity_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
-            'gas_name': forms.Select(choices=SOLVENT_GAS_CHOICES),
+            'solvent_capacity_unit': forms.Select(attrs={'id': 'solvent_capacity_unit', 'style': 'width:100px'}, choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
+            'gas_name': forms.Select(attrs={'id': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
             'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
             'density': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)'}),
-            # 'density': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^\+?[1-9][0-9]*$', 'title': '只能輸入正整數', 'placeholder': '只能輸入正整數'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -1086,6 +1085,18 @@ CommuteFormSet = inlineformset_factory(employee_commute, transportation_way, fie
                                        widgets={'transportation': forms.Select(choices=TRANSPORTATION_CHOICES, attrs={'class': 'form-control'})})
 
 
+department_CHOICES = [
+    ('資材部', '資材部'),
+    ('業務部', '業務部'),
+    ('行銷部', '行銷部'),
+    ('管理部', '管理部'),
+    ('工程部', '工程部'),
+    ('客服部', '客服部'),
+    ('會計部', '會計部'),
+    ('後勤部', '後勤部'),
+    ('產品研發部', '產品研發部'),
+]
+
 # 員工出差
 class EBTform(forms.ModelForm):
     class Meta:
@@ -1098,7 +1109,8 @@ class EBTform(forms.ModelForm):
             'business_trip_number': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'department': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'department': forms.TextInput(attrs={'class': 'form-control'}),
+            'department': forms.Select(attrs={'id': 'department', 'style': 'width:300px'}, choices=department_CHOICES),
             'bt_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'rtd_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
