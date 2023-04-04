@@ -190,7 +190,7 @@
     </div>
 
     <!-- 盤查設定 -->
-    <div class="modal fade" id="settings" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true">
+    <div class="modal fade" id="settings" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -787,6 +787,8 @@
                 success: function (response) {
                     if (response.success) {
                         alert('複製成功！'); // 顯示成功訊息
+                        $("#yearInput").val(new Date().getFullYear());
+                        updateYear();
                     } else {
                         alert(response.message);
                     }
