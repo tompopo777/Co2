@@ -202,7 +202,7 @@
                     <div class="form-group row">
                         <label for="yearInput" class="col-3 col-form-label">盤查年份:</label>
                         <div class="col">
-                            <input type="text" class="form-control" id="yearInput" name="years" value="{{ years }}">
+                            <input type="text" class="form-control" id="yearInput" name="years" value="" onchange="check_year()">
                         </div>
                     </div>
                 </div>
@@ -805,5 +805,19 @@
             updateYear();
         });
     </script>
+{#    <script>#}
+{#        let yearInput = document.getElementById("yearInput");#}
+{#        console.warn(yearInput.value)#}
+{#        yearInput.addEventListener("change", function() {#}
+{#            let years_purchased = document.getElementById('years_purchased')#}
+{#            years_purchased.value = yearInput.value#}
+{#            console.warn('yearInput')#}
+{#            console.warn(yearInput.value)#}
+{#        });#}
+{#        function yearInputValue(val) {#}
+{#            let years_purchased = document.getElementById('years_purchased')#}
+{#            years_purchased.value = val;#}
+{#        }#}
+{#    </script>#}
 
 {% endblock javascripts %}

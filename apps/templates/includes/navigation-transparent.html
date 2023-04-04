@@ -71,6 +71,7 @@
                 <form action="/calculate_summary/" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" id="company_in_nav" name="company_id">
+                    <input type="hidden" id="years" name="years">
                     <div class="row d-flex align-items-center mb-3">
                         <div class="col-auto">
                             <h6>請選擇GWP版本: </h6>
@@ -135,10 +136,16 @@
     {#        });#}
     {#    </script>#}
     <script>
-        function companyID(){
+        function companyID() {
             let company_value = $("#company_dropdown").val()
             let company_in_nav = document.getElementById('company_in_nav')
             company_in_nav.value = company_value
+        }
+
+        function check_year() {
+            let yearInput = $("#yearInput").val()
+            let years = document.getElementById('years')
+            years.value = yearInput
         }
 
         /*

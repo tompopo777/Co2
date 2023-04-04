@@ -109,7 +109,7 @@ def load_table(request):
             company_id = int(company_value)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
         # 四捨五入小數點第四位
-        getcontext().prec = 4
+        # getcontext().prec = 4
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
@@ -126,6 +126,9 @@ def load_table(request):
                     consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
                                         raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
                                         raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    consumption_total = consumption_total.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    print(type(consumption_total))
+                    print(consumption_total)
                     # 抓單筆資料
                     single_data.update(raw_data[i])
                     # 將計算後的加油量丟回字典
