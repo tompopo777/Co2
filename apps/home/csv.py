@@ -381,6 +381,12 @@ def import_excel(request):
         try:
             did = request.POST.get('did')
             file = request.FILES['excel_file']
+            company_value = request.POST.get('company_id')
+            if company_value is None:
+                company_id = current_user_group_id(request)
+            else:
+                company_id = int(company_value)
+            print("load_table_company_value", company_value)
             print(file)
             print(did)
 
@@ -397,8 +403,7 @@ def import_excel(request):
             column_names = column_mapping['column_names']
             columns = column_mapping['columns']
 
-            # 取得當前用戶所屬的公司 ID
-            company_id = current_user_group_id(request)
+
 
             # 讀取Excel中的資料，並存入資料庫中
             for row in sheet.iter_rows(min_row=2):

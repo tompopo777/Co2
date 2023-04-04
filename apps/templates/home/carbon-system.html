@@ -66,7 +66,7 @@
                                 </div>
                                 <div class="col-3">
                                     <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
-{#                                    <script src="{% static 'h' %}"></script>#}
+                                    {#                                    <script src="{% static 'h' %}"></script>#}
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
                                 </div>
                                 <div class="col-3">
@@ -132,9 +132,6 @@
                                             新增
                                         </a>
                                     {% endif %}
-{#                                    <a type="button" class="btn btn-outline-light me-1" id="copyLastYear" href="{% url 'copy_last_year_data' %}">#}
-{#                                        複製去年資料#}
-{#                                    </a>#}
                                     <div class="d-flex justify-content-center">
                                         <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
                                     </div>
@@ -193,29 +190,19 @@
     </div>
 
     <!-- 盤查設定 -->
-    <div class="modal fade" id="settings" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fade" id="settings" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="row modal-header">
+                <div class="modal-header">
                     <div class="col">
                         <h5 class="modal-title text-light bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
                     </div>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row mb-3">
+                    <div class="form-group row">
                         <label for="yearInput" class="col-3 col-form-label">盤查年份:</label>
                         <div class="col">
                             <input type="text" class="form-control" id="yearInput" name="years" value="{{ years }}">
-                        </div>
-                    </div>
-                    <div class="form-group row mb-3">
-                        <label for="versionSelect" class="col-3 col-form-label">GWP 版本:</label>
-                        <div class="col">
-                            <select class="form-control custom-select" id="versionSelect" name="version">
-                                <option value="4">GWP 4</option>
-                                <option value="5">GWP 5</option>
-                                <option value="6" selected>GWP 6</option>
-                            </select>
                         </div>
                     </div>
                 </div>
@@ -282,6 +269,7 @@
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
+            endDate: new Date(),
         }).datepicker("setDate", 'now');
 
 
@@ -466,6 +454,7 @@
                     /*
                     console.log("ok")
 
+
                     {#if (typeof {{ request.session.dropdown_two }} != "undefined") {#}
                         dropdown_two_selected()
                     }
@@ -503,6 +492,7 @@
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
                     /*
+
 
                     {#if (typeof '{{ request.session.dropdown_three }}' != "undefined") {#}
                         dropdown_three_selected()
@@ -754,10 +744,13 @@
             $('#importExcel').on('change', function () {
                 let dropdown_three = document.getElementById('dropdown_three');
                 let selectedValue = dropdown_three.value;
+                let companyValue = $("#company_dropdown").val();
+
 
                 let formData = new FormData();
                 formData.append('did', selectedValue);
                 formData.append('excel_file', $('#importExcel')[0].files[0]);
+                formData.append('company_id', companyValue)
 
                 $.ajax({
                     url: "{% url 'import_excel' %}",
@@ -795,7 +788,7 @@
                     if (response.success) {
                         alert('複製成功！'); // 顯示成功訊息
                     } else {
-                        alert('複製失敗，請稍後再試。');
+                        alert(response.message);
                     }
                 }
             });

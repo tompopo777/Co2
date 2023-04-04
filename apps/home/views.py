@@ -570,6 +570,13 @@ def copy_last_year_data(request):
                     'august', 'september', 'october', 'november', 'december',
                     'image_note', 'message_board', 'company_id', 'did_id'
                 )
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': '去年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
                 # 將年份改為今年
                 for data in last_year_data:
                     data['years'] = this_year
@@ -585,6 +592,13 @@ def copy_last_year_data(request):
                     'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
                     'heat_october', 'heat_november', 'heat_december', 'image_note', 'message_board', 'company_id', 'did_id'
                 )
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': '去年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
                 # 將年份改為今年
                 for data in last_year_data:
                     data['years'] = this_year
