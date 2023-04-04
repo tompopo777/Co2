@@ -559,10 +559,10 @@ def load_table(request):
 
 
 def copy_last_year_data(request):
-    if request.method == 'GET':
-        device_id = request.GET.get('deviceId')
+    if request.method == 'POST':
+        device_id = request.POST.get('deviceId')
         print(device_id)
-        company_value = request.GET.get('company_value')
+        company_value = request.POST.get('company_value')
         if company_value is None:
             company_id = current_user_group_id(request)
         else:
