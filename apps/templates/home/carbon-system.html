@@ -775,10 +775,12 @@
         $("#copyLastYear").on("click", function () {
             let deviceId = dropdown_three.value;
             let company_value = $("#company_dropdown").val()
+            let csrf_token = "{{ csrf_token }}";
 
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: "{% url 'copy_last_year_data' %}",
+                headers: { "X-CSRFToken": csrf_token },
                 data: {
                     'deviceId': deviceId,
                     'company_value': company_value
