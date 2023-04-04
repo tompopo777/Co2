@@ -20,7 +20,7 @@
              style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
-                <code style="font-size: 20px">盤查年份: <span id="yearDisplay"></span></code>
+                <code style="font-size: 20px">盤查年度: <span id="yearDisplay"></span></code>
                 <div class="row">
                     {% if company_id == 1 %}
                         <div class="card-body">
@@ -200,9 +200,9 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group row">
-                        <label for="yearInput" class="col-3 col-form-label">盤查年份:</label>
+                        <label for="yearInput" class="col-3 col-form-label">盤查年度:</label>
                         <div class="col">
-                            <input type="text" class="form-control" id="yearInput" name="years" value="{{ years }}">
+                            <input type="text" class="form-control" id="yearInput" name="years">
                         </div>
                     </div>
                 </div>
@@ -455,6 +455,8 @@
                     console.log("ok")
 
 
+
+
                     {#if (typeof {{ request.session.dropdown_two }} != "undefined") {#}
                         dropdown_two_selected()
                     }
@@ -492,6 +494,8 @@
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
                     /*
+
+
 
 
                     {#if (typeof '{{ request.session.dropdown_three }}' != "undefined") {#}
@@ -700,9 +704,13 @@
                 let dropdown_three = document.getElementById('dropdown_three');
                 let selectedValue = dropdown_three.value;
                 let companyValue = $("#company_dropdown").val();
+                let yearInput = $("#yearInput").val()
 
-                let data = {did: selectedValue, company_id: companyValue};
-                {#console.log(data)#}
+                let data = {
+                    did: selectedValue,
+                    company_id: companyValue,
+                    yearInput: yearInput,
+                };
 
                 $.ajax({
                     url: "{% url 'export_excel' %}",
@@ -758,14 +766,17 @@
                     data: formData,
                     contentType: false,
                     processData: false,
-                    success: function (data) {
-                        alert('匯入 Excel 成功');
-                        {#console.log(data);#}
-                        // 在此處執行其他的操作，例如更新頁面資料等
+                    success: function (response) {
+                        if (response === "OK") {
+                            alert("匯入 Excel 成功！");
+                        } else {
+                            alert(response);
+                        }
                     },
                     error: function (xhr, status, error) {
                         alert('匯入 Excel 失敗');
-                        {#console.error(xhr.responseText);#}
+                        console.log(xhr.status);
+                        console.log(error);
                     },
                 });
             });
@@ -780,7 +791,7 @@
             $.ajax({
                 type: "POST",
                 url: "{% url 'copy_last_year_data' %}",
-                headers: { "X-CSRFToken": csrf_token },
+                headers: {"X-CSRFToken": csrf_token},
                 data: {
                     'deviceId': deviceId,
                     'company_value': company_value

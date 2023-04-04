@@ -32,7 +32,7 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'official_car': {
-        'columns': ['years', 'vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method', 
+        'columns': ['years', 'vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december',
                     'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july', 
@@ -247,11 +247,10 @@ COLUMN_MAPPING = {
 def export_excel(request):
     if request.method == "POST":
         did = request.POST.get('did')
-        print(did)
+        year = request.POST.get('yearInput')
         excel_did = section_two.objects.filter(did__exact=int(did))
 
         company_value = request.POST.get('company_id')
-        print("load_table_company_value", company_value)
         if company_value is None:
             company_id = current_user_group_id(request)
         else:
@@ -265,7 +264,7 @@ def export_excel(request):
         column_names = column_mapping['column_names']
 
         # 根據所需欄位清單查詢資料
-        data = globals()[table_name].objects.all().filter(company_id=company_id).values(*columns)
+        data = globals()[table_name].objects.all().filter(company_id=company_id, years=year).values(*columns)
 
         # 將查詢結果轉換為DataFrame
         df = pd.DataFrame(list(data))
@@ -386,9 +385,6 @@ def import_excel(request):
                 company_id = current_user_group_id(request)
             else:
                 company_id = int(company_value)
-            print("load_table_company_value", company_value)
-            print(file)
-            print(did)
 
             # 解析Excel檔案
             wb = load_workbook(file, data_only=True)
@@ -402,8 +398,6 @@ def import_excel(request):
             column_mapping = COLUMN_MAPPING[table_name]
             column_names = column_mapping['column_names']
             columns = column_mapping['columns']
-
-
 
             # 讀取Excel中的資料，並存入資料庫中
             for row in sheet.iter_rows(min_row=2):
