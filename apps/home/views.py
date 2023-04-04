@@ -109,7 +109,6 @@ def load_table(request):
             company_id = int(company_value)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
         # 四捨五入小數點第四位
-        getcontext().prec = 4
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
@@ -126,6 +125,7 @@ def load_table(request):
                     consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
                                         raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
                                         raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
+                    consumption_total = consumption_total.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     # 抓單筆資料
                     single_data.update(raw_data[i])
                     # 將計算後的加油量丟回字典
@@ -157,14 +157,15 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # print("Total_fuel", Total_fuel)
+                    Total_fuel = Total_fuel.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    avg_heat = avg_heat.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     # 將計算後的「合計」丟回字典
-                    single_data["Total_fuel"] = '%.4f' % Total_fuel
+                    single_data["Total_fuel"] = Total_fuel
                     for j in heat_data[i]:
                         # 「合計」後的資料(每月熱值)丟回字典
                         single_data[j] = heat_data[i].get(j)
                     # 將計算後的「平均熱值」丟回字典
-                    # single_data["avg_heat"] = round(avg_heat, 4)
-                    single_data["avg_heat"] = '%.4f' % avg_heat
+                    single_data["avg_heat"] = avg_heat
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "公務車":
@@ -228,7 +229,8 @@ def load_table(request):
 
                     single_data = raw_data[i]
                     # 將計算後的使用量丟回字典
-                    single_data["total"] = '%.4f' % consumption_total
+                    consumption_total = consumption_total.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["total"] = consumption_total
                     # 將 estimate 替換成中文
                     single_data["burn"] = "是" if single_data["burn"] else "否"
                     single_data["VOCs"] = "是" if single_data["VOCs"] else "否"
@@ -250,7 +252,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volume
+                    effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
@@ -266,7 +269,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volume
+                    effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
@@ -282,7 +286,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volume
+                    effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
@@ -298,7 +303,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volume
+                    effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
@@ -314,8 +320,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volume
-                    # single_data["effusion_volume"] = effusion_volume
+                    effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
@@ -331,7 +337,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volume
+                    effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "設備清單":
@@ -347,7 +354,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["effusion_volume"] = '%.4f' % effusion_volume
+                    effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
@@ -403,8 +411,10 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["kw_hr"] = '%.4f' % kw_hr
-                    single_data["kkw_hr"] = '%.4f' % kkw_hr
+                    kw_hr = kw_hr.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    kkw_hr = kkw_hr.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["kkw_hr"] = kw_hr
+                    single_data["kkw_hr"] = kkw_hr
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "上游運輸":
@@ -510,7 +520,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["Total_Emission"] = '%.4f' % Total_Emission
+                    Total_Emission = Total_Emission.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["Total_Emission"] = Total_Emission
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "採購原物料":
@@ -525,7 +536,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["Total_Purchase"] = '%.4f' % Total_Purchase
+                    Total_Purchase = Total_Purchase.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["Total_Purchase"] = Total_Purchase
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "產品間接排放":
@@ -540,7 +552,8 @@ def load_table(request):
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["Total_Deliver"] = '%.4f' % Total_Deliver
+                    Total_Deliver = Total_Deliver.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["Total_Deliver"] = Total_Deliver
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
 

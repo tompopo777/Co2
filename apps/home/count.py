@@ -35,49 +35,53 @@ def current_user_group_id(request):
 def calculate_summary(request):
     if request.method == "POST":
         company_value = request.POST.get('company_id')
+        years = request.POST.get('years')
+        # print('years', years)
         # print('company_value', company_value)
         # print(type(company_value))
         if company_value != '':
             company_id = int(company_value)
         else:
             company_id = current_user_group_id(request)
-        print('company_id', company_id)
         coefficient_source = request.POST.get("coefficient_source")
         gwp_version = request.POST.get("gwpVersion")
         gwp_version = int(gwp_version)
 
         company_dic = {
-            2: '建大A廠',
-            3: '建大B廠',
+            2: '雲科A廠',
+            3: '雲科B廠',
         }
         if company_id in company_dic:
             company_name = company_dic[company_id]
         else:
             company_name = ''
 
-        emergency_generators_device = emergency_generators_count(company_id, coefficient_source, gwp_version)
-        combustion_equipment_device = combustion_equipment_count(company_id, coefficient_source, gwp_version)
-        official_car_device = official_car_count(company_id, coefficient_source, gwp_version)
-        water_dispenser_device = water_dispenser_count(company_id, coefficient_source, gwp_version)
-        ice_maker_device = ice_maker_count(company_id, coefficient_source, gwp_version)
-        other_device_device = other_device_count(company_id, coefficient_source, gwp_version)
-        solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_count(company_id, coefficient_source, gwp_version)
-        personnel_inventory_device = personnel_inventory_count(company_id, coefficient_source, gwp_version)
+        emergency_generators_device = emergency_generators_count(years, company_id, coefficient_source, gwp_version)
+        combustion_equipment_device = combustion_equipment_count(years, company_id, coefficient_source, gwp_version)
+        official_car_device = official_car_count(years, company_id, coefficient_source, gwp_version)
+        water_dispenser_device = water_dispenser_count(years, company_id, coefficient_source, gwp_version)
+        ice_maker_device = ice_maker_count(years, company_id, coefficient_source, gwp_version)
+        other_device_device = other_device_count(years, company_id, coefficient_source, gwp_version)
+        solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_count(years, company_id, coefficient_source, gwp_version)
+        personnel_inventory_device = personnel_inventory_count(years, company_id, coefficient_source, gwp_version)
         output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device, personnel_inventory_device])
+        output = output.rename(columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'sum_count': '活動數據總量', 'data_unit': '數據單位', 'emission': '排放當量公噸(公噸/數據期間)', 'gas_name': '可能產生溫室氣體種類', 'coefficient': '排放係數', 'coefficient_unit': '排放係數單位', 'coefficient_source': '係數來源', 'gwp_coefficient': 'ICPP報告GWP值'})
+        new_order = ['過程或區域', '排放源設施', '原燃物料', '活動數據總量', '數據單位', '排放當量公噸(公噸/數據期間)', '可能產生溫室氣體種類', '排放係數', '排放係數單位', '係數來源', 'ICPP報告GWP值']
+        output = output.reindex(columns=new_order)
         display(output)
         response = HttpResponse(content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放量統計總表-' + company_name + '.xlsx', encoding="UTF-8")
+        response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放量統計總表-' + company_name + '_' + years + '.xlsx', encoding="UTF-8")
 
         # 匯出Excel檔案
         output.to_excel(response, index=False)
         return response
-    # return None
+        # return None
 
 
 # 發電機
-def emergency_generators_count(company_id, coefficient_source, gwp_version):
+def emergency_generators_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_data = emergency_generators.objects.filter(company_id=company_id).values('did').annotate(
+        raw_data = emergency_generators.objects.filter(years=years).filter(company_id=company_id).values('did').annotate(
             process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
             device_name=Value('柴油發電機', output_field=CharField(max_length=20)),
             fuel_type=Value('柴油', output_field=CharField(max_length=20)),
@@ -108,13 +112,9 @@ def emergency_generators_count(company_id, coefficient_source, gwp_version):
 
 
 # 燃燒設備
-def combustion_equipment_count(company_id, coefficient_source, gwp_version):
+def combustion_equipment_count(years, company_id, coefficient_source, gwp_version):
     try:
-        # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-        # gwp_version = 6
-        # print(coefficient_source)
-        # print(gwp_version)
-        raw_data = combustion_equipment.objects.filter(company_id=company_id).values('device_name', 'fuel_type').annotate(
+        raw_data = combustion_equipment.objects.filter(years=years).filter(company_id=company_id).values('device_name', 'fuel_type').annotate(
             process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
             sum_count=Cast(Sum(F('fuel_january') + F('fuel_february') + F('fuel_march') + F('fuel_april') + F('fuel_may') + F('fuel_june') + F('fuel_july') + F('fuel_august') + F('fuel_september') + F('fuel_october') + F('fuel_november') + F('fuel_december')) * 1.818 / 1000,
                            output_field=models.DecimalField(max_digits=20, decimal_places=4)),
@@ -129,17 +129,9 @@ def combustion_equipment_count(company_id, coefficient_source, gwp_version):
         raw_data = pd.DataFrame(list(raw_data))
         a_b_part = pd.merge(raw_data, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
         final = pd.merge(a_b_part, gwp, left_on='gas_name', right_on='gas_name', how='left')
-        # display(final['sum_count'])
-        # display(final['coefficient'])
-        # display(final['gwp_coefficient'])
-
-        # final['sum_count'] = final['sum_count'].apply(lambda x: Decimal(str(x)))
-        # final['coefficient'] = final['coefficient'].apply(lambda x: Decimal(str(x)))
-        # final['gwp_coefficient'] = final['gwp_coefficient'].apply(lambda x: Decimal(str(x)))
         # 將(A)、(B)、(C)轉為float才能取round
-        # final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
-        # final['emission'] = final.apply(lambda x: (Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient'])).quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP), axis=1)
-        final['emission'] = final.apply(lambda x: round(float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), 4), axis=1)
+        final['emission'] = final.apply(lambda x: (Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient'])).quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP), axis=1)
+        # final['emission'] = final.apply(lambda x: round(float(x['sum_count']) * float(x['coefficient']) * float(x['gwp_coefficient']), 4), axis=1)
         # display(final['emission'])
         new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
         final = final.reindex(columns=new_order)
@@ -152,9 +144,9 @@ def combustion_equipment_count(company_id, coefficient_source, gwp_version):
 
 
 # 公務車
-def official_car_count(company_id, coefficient_source, gwp_version):
+def official_car_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_data = official_car.objects.filter(company_id=company_id).values('vehicle_type', 'fuel_type').annotate(
+        raw_data = official_car.objects.filter(years=years).filter(company_id=company_id).values('vehicle_type', 'fuel_type').annotate(
             process_area=Value('移動式式燃燒', output_field=models.CharField(max_length=50)),
             sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
                                F('july') + F('august') + F('september') + F('october') + F('november') + F('december')) / 1000,
@@ -195,9 +187,9 @@ def official_car_count(company_id, coefficient_source, gwp_version):
 
 
 # 製冰機
-def ice_maker_count(company_id, coefficient_source, gwp_version):
+def ice_maker_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_data = pd.DataFrame(list(ice_maker.objects.filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('製冰機', output_field=models.CharField(max_length=50)),
+        raw_data = pd.DataFrame(list(ice_maker.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('製冰機', output_field=models.CharField(max_length=50)),
                                                                                                                                            data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
@@ -224,9 +216,9 @@ def ice_maker_count(company_id, coefficient_source, gwp_version):
 
 
 # 飲水機
-def water_dispenser_count(company_id, coefficient_source, gwp_version):
+def water_dispenser_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_data = pd.DataFrame(list(water_dispenser.objects.filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('飲水機', output_field=models.CharField(max_length=50)),
+        raw_data = pd.DataFrame(list(water_dispenser.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('飲水機', output_field=models.CharField(max_length=50)),
                                                                                                                                                  data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
@@ -253,9 +245,9 @@ def water_dispenser_count(company_id, coefficient_source, gwp_version):
 
 
 # 冷氣機
-def airconditioner_count(company_id, coefficient_source, gwp_version):
+def airconditioner_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_data = pd.DataFrame(list(airconditioner.objects.filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)),
+        raw_data = pd.DataFrame(list(airconditioner.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)),
                                                                                                                                                 data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
@@ -281,10 +273,10 @@ def airconditioner_count(company_id, coefficient_source, gwp_version):
 
 
 # 其他設備
-def other_device_count(company_id, coefficient_source, gwp_version):
+def other_device_count(years, company_id, coefficient_source, gwp_version):
     try:
         raw_data = pd.DataFrame(
-            list(other_device.objects.filter(company_id=company_id).values('device_name', "refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(
+            list(other_device.objects.filter(years=years).filter(company_id=company_id).values('device_name', "refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(
             dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
@@ -310,9 +302,9 @@ def other_device_count(company_id, coefficient_source, gwp_version):
 
 
 # 溶劑、噴霧劑
-def solvent_aerosol_emission_sources_count(company_id, coefficient_source, gwp_version):
+def solvent_aerosol_emission_sources_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_part = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.filter(company_id=company_id).values('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density').annotate(
+        raw_part = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.filter(years=years).filter(company_id=company_id).values('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
             device_name=Value('溶劑、噴霧劑', output_field=models.CharField(max_length=50)),
             data_unit=Value('公噸', output_field=models.CharField(max_length=50))))
@@ -359,9 +351,9 @@ def solvent_aerosol_emission_sources_count(company_id, coefficient_source, gwp_v
 
 
 # 人天清冊
-def personnel_inventory_count(company_id, coefficient_source, gwp_version):
+def personnel_inventory_count(years, company_id, coefficient_source, gwp_version):
     try:
-        employee_raw_data = pd.DataFrame(list(personnel_inventory.objects.filter(company_id=company_id).filter(classification='員工').values('did').annotate(
+        employee_raw_data = pd.DataFrame(list(personnel_inventory.objects.filter(years=years).filter(company_id=company_id).filter(classification='員工').values('did').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
             device_name=Value('人天清冊', output_field=CharField(max_length=20)),
             fuel_type=Value('水肥', output_field=CharField(max_length=20)),
@@ -370,7 +362,7 @@ def personnel_inventory_count(company_id, coefficient_source, gwp_version):
         )))
         employee_raw_data = employee_raw_data.drop(columns=['did'])
         # 員工宿舍dataframe
-        dormitory_raw_data = pd.DataFrame(list(personnel_inventory.objects.filter(company_id=2).filter(classification='員工宿舍').values(
+        dormitory_raw_data = pd.DataFrame(list(personnel_inventory.objects.filter(years=years).filter(company_id=company_id).filter(classification='員工宿舍').values(
             'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
             'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
