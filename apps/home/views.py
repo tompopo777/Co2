@@ -619,6 +619,26 @@ def copy_last_year_data(request):
                 combustion_equipment.objects.bulk_create(
                     [combustion_equipment(**data) for data in last_year_data]
                 )
+            elif a["d_name"] == '冷氣機清單':
+                last_year_data = airconditioner.objects.filter(company_id=company_id, years=last_year).values(
+                    'years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position',
+                    'years_purchased', 'filling_volume', 'refrigerant_type', 'filling_fix_volume',
+                    'effusion_rate', 'image_note', 'message_board', 'company_id', 'did_id'
+                )
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': '去年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                airconditioner.objects.bulk_create(
+                    [airconditioner(**data) for data in last_year_data]
+                )
         # 回傳 alert 訊息
         response_data = {
             'success': True,  # 也可以改為 False

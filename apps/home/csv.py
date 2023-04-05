@@ -107,11 +107,14 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'personnel_inventory': {
-        'columns': ['years', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june',
+        'columns': ['years', 'classification', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june',
                     'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
                     'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july',
                     'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'message_board'],
-        'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
+        'column_names': ['出差單號', '類型', '時數 一月', '時數 二月', '時數 三月', '時數 四月', '時數 五月', '時數 六月',
+                         '時數 七月', '時數 八月', '時數 九月', '時數 十月', '時數 十一月', '時數 十二月',
+                         '人數 一月', '人數 二月', '人數 三月', '人數 四月', '人數 五月', '人數 六月',
+                         '人數 七月', '人數 八月', '人數 九月', '人數 十月', '人數 十一月', '人數 十二月', '備註欄'],
         'prefix': '類別一_'
     },
     'employee': {
@@ -379,12 +382,16 @@ def import_excel(request):
     if request.method == 'POST':
         try:
             did = request.POST.get('did')
+            print(did)
             file = request.FILES['excel_file']
             company_value = request.POST.get('company_id')
-            if company_value is None:
+            print(type(company_value))
+
+            if company_value == 'undefined':
                 company_id = current_user_group_id(request)
             else:
                 company_id = int(company_value)
+            print("123", company_id)
 
             # 解析Excel檔案
             wb = load_workbook(file, data_only=True)

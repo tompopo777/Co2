@@ -127,11 +127,10 @@
                             <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                             <div class="mb-4">
                                 <div class="d-flex justify-content-center">
-                                    {% if "_inquire" not in user.username %}
+                                    {% if "Yuntech" not in user.username %}
                                         <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
                                             新增
                                         </a>
-                                    {% endif %}
                                     <div class="d-flex justify-content-center">
                                         <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
                                     </div>
@@ -145,6 +144,7 @@
                                         </label>
                                         <input type="file" id="importExcel" name="importExcel" style="display:none">
                                     </form>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -831,19 +831,5 @@
             updateYear();
         });
     </script>
-    {#    <script>#}
-    {#        let yearInput = document.getElementById("yearInput");#}
-    {#        console.warn(yearInput.value)#}
-    {#        yearInput.addEventListener("change", function() {#}
-    {#            let years_purchased = document.getElementById('years_purchased')#}
-    {#            years_purchased.value = yearInput.value#}
-    {#            console.warn('yearInput')#}
-    {#            console.warn(yearInput.value)#}
-    {#        });#}
-    {#        function yearInputValue(val) {#}
-    {#            let years_purchased = document.getElementById('years_purchased')#}
-    {#            years_purchased.value = val;#}
-    {#        }#}
-    {#    </script>#}
 
 {% endblock javascripts %}
