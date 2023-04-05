@@ -587,7 +587,7 @@ def copy_last_year_data(request):
                 if not last_year_data:
                     response_data = {
                         'success': False,
-                        'message': '去年沒有任何資料！'
+                        'message': f'{last_year}年沒有任何資料！'
                     }
                     return JsonResponse(response_data)
                 # 將年份改為今年
@@ -609,7 +609,7 @@ def copy_last_year_data(request):
                 if not last_year_data:
                     response_data = {
                         'success': False,
-                        'message': '去年沒有任何資料！'
+                        'message': f'{last_year}年沒有任何資料！'
                     }
                     return JsonResponse(response_data)
                 # 將年份改為今年
@@ -629,7 +629,7 @@ def copy_last_year_data(request):
                 if not last_year_data:
                     response_data = {
                         'success': False,
-                        'message': '去年沒有任何資料！'
+                        'message': f'{last_year}年沒有任何資料！'
                     }
                     return JsonResponse(response_data)
                 # 將年份改為今年
@@ -642,7 +642,7 @@ def copy_last_year_data(request):
         # 回傳 alert 訊息
         response_data = {
             'success': True,  # 也可以改為 False
-            'message': '複製成功！'
+            'message': f'{last_year}年資料複製成功！'
         }
         return JsonResponse(response_data)
 

@@ -131,19 +131,19 @@
                                         <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
                                             新增
                                         </a>
-                                    <div class="d-flex justify-content-center">
-                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
-                                    </div>
-                                    <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
-                                        匯出Excel
-                                    </a>
-                                    <form method="post" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <label for="importExcel" class="btn btn-outline-light me-1">
-                                            匯入Excel
-                                        </label>
-                                        <input type="file" id="importExcel" name="importExcel" style="display:none">
-                                    </form>
+                                        <div class="d-flex justify-content-center">
+                                            <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
+                                        </div>
+                                        <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
+                                            匯出Excel
+                                        </a>
+                                        <form method="post" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <label for="importExcel" class="btn btn-outline-light me-1">
+                                                匯入Excel
+                                            </label>
+                                            <input type="file" id="importExcel" name="importExcel" style="display:none">
+                                        </form>
                                     {% endif %}
                                 </div>
                             </div>
@@ -469,6 +469,10 @@
 
 
 
+
+
+
+
                     {#if (typeof {{ request.session.dropdown_two }} != "undefined") {#}
                         dropdown_two_selected()
                     }
@@ -509,6 +513,10 @@
 
 
 
+
+
+
+
                     {#if (typeof '{{ request.session.dropdown_three }}' != "undefined") {#}
                         dropdown_three_selected()
                     }
@@ -530,9 +538,81 @@
         var thead = document.getElementById("table").getElementsByTagName('thead')[0]
         var tr = document.getElementById("table").getElementsByTagName('tr')[0]
         var style = document.createElement('style');
+
+
+        var deviceId = dropdown_three.value;
+        var company_value = $("#company_dropdown").val()
+        var yearInput = $("#yearInput").val()
+
+        function loadtable(deviceId, company_value, yearInput) {
+            $.ajax({
+                url: "{% url 'loadtable' %}",
+                data: {
+                    'deviceId': deviceId,
+                    'company_value': company_value,
+                    'yearInput': yearInput
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (t_data) {
+                    {#console.warn(t_data);#}
+                    tbody.innerHTML = ""
+                    var id = 1;
+                    t_data.forEach((item, index) => {
+                        var trash = document.createElement('a')//加入"trash button"tag
+                        var trash_i_tag = document.createElement('i')//加入"i"tag
+                        var pencil = document.createElement('a')//加入"pencil button"tag
+                        var pencil_i_tag = document.createElement('i')//加入"i"tag
+                        {#var pic = document.createElement('a')//加入"picture button"tag#}
+                        {#var pic_i_tag = document.createElement('i')//加入"i"tag#}
+                        var row = tbody.insertRow(-1)//加入"第一筆資料"列
+                        var delete_squ = row.insertCell(-1)//加入刪除鈕框框
+                        var edit_squ = row.insertCell(-1)//加入編輯鈕框框
+                        {#var pic_squ = row.insertCell(-1)//加入照片鈕框框#}
+                        delete_squ.appendChild(trash)
+                        edit_squ.appendChild(pencil)
+                        {#pic_squ.appendChild(pic)#}
+                        trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
+                        trash.setAttribute('data-bs-toggle', 'modal')
+                        trash.setAttribute('data-bs-target', '#staticBackdrop')
+                        trash.appendChild(trash_i_tag)
+                        pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
+                        pencil.appendChild(pencil_i_tag)
+                        {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
+                        {#pic.setAttribute('data-bs-toggle', 'modal')#}
+                        {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
+                        {#pic.appendChild(pic_i_tag)#}
+                        trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
+                        pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
+                        {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
+                        var cr_id = row.insertCell(-1)//加入"序號"框框
+                        cr_id.innerHTML = id
+                        var datasheet_id = dropdown_three.value;
+                        var dropdown_one = $("#dropdown_one").val()
+                        var dropdown_two = $("#dropdown_two").val()
+                        for (const [key, value] of Object.entries((item))) {
+                            if (key === "id") {
+                                pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value + '&dropdown_one=' + dropdown_one + '&dropdown_two=' + dropdown_two)//將資料表id、選種資料id加到href裡，一起丟到後端
+                                pencil.setAttribute('id', value)//設定按鈕的id為設備id
+                                trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
+                                {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
+                                continue;
+                            }
+                            var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
+                            nuLL = value
+                            if (value == null) {
+                                nuLL = '-'
+                            }
+                            cr_c2.innerHTML = nuLL
+                        }
+                        id++;
+                    })
+                },
+            });
+        }
+
         $("#submit").on('click', function () {
             var deviceId = dropdown_three.value;
-            var company_value = $("#company_dropdown").val()
             var yearInput = $("#yearInput").val()
             //載入標題
             $.ajax({
@@ -578,77 +658,39 @@
                 },
             });
 
-
             //載入資料
             if (company_value !== 0) {
-                $.ajax({
-                    url: "{% url 'loadtable' %}",
-                    data: {
-                        'deviceId': deviceId,
-                        'company_value': company_value,
-                        'yearInput': yearInput
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (t_data) {
-                        {#console.warn(t_data);#}
-                        tbody.innerHTML = ""
-                        var id = 1;
-                        t_data.forEach((item, index) => {
-                            var trash = document.createElement('a')//加入"trash button"tag
-                            var trash_i_tag = document.createElement('i')//加入"i"tag
-                            var pencil = document.createElement('a')//加入"pencil button"tag
-                            var pencil_i_tag = document.createElement('i')//加入"i"tag
-                            {#var pic = document.createElement('a')//加入"picture button"tag#}
-                            {#var pic_i_tag = document.createElement('i')//加入"i"tag#}
-                            var row = tbody.insertRow(-1)//加入"第一筆資料"列
-                            var delete_squ = row.insertCell(-1)//加入刪除鈕框框
-                            var edit_squ = row.insertCell(-1)//加入編輯鈕框框
-                            {#var pic_squ = row.insertCell(-1)//加入照片鈕框框#}
-                            delete_squ.appendChild(trash)
-                            edit_squ.appendChild(pencil)
-                            {#pic_squ.appendChild(pic)#}
-                            trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
-                            trash.setAttribute('data-bs-toggle', 'modal')
-                            trash.setAttribute('data-bs-target', '#staticBackdrop')
-                            trash.appendChild(trash_i_tag)
-                            pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
-                            pencil.appendChild(pencil_i_tag)
-                            {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
-                            {#pic.setAttribute('data-bs-toggle', 'modal')#}
-                            {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
-                            {#pic.appendChild(pic_i_tag)#}
-                            trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
-                            pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
-                            {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
-                            var cr_id = row.insertCell(-1)//加入"序號"框框
-                            cr_id.innerHTML = id
-                            var datasheet_id = dropdown_three.value;
-                            var dropdown_one = $("#dropdown_one").val()
-                            var dropdown_two = $("#dropdown_two").val()
-                            for (const [key, value] of Object.entries((item))) {
-                                if (key === "id") {
-                                    pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value + '&dropdown_one=' + dropdown_one + '&dropdown_two=' + dropdown_two)//將資料表id、選種資料id加到href裡，一起丟到後端
-                                    pencil.setAttribute('id', value)//設定按鈕的id為設備id
-                                    trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
-                                    {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
-                                    continue;
-                                }
-                                var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
-                                nuLL = value
-                                if (value == null) {
-                                    nuLL = '-'
-                                }
-                                cr_c2.innerHTML = nuLL
-                            }
-                            id++;
-                        })
-                    },
-                });
+                loadtable(deviceId, company_value, yearInput);
             } else {
                 alert("請先選擇公司名稱")
             }
         })
+
+        $("#copyLastYear").on("click", function () {
+            let deviceId = dropdown_three.value;
+            let csrf_token = "{{ csrf_token }}";
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'copy_last_year_data' %}",
+                headers: {"X-CSRFToken": csrf_token},
+                data: {
+                    'deviceId': deviceId,
+                    'company_value': company_value
+                },
+                dataType: "json",  // 設定回傳的資料型態為 JSON
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message); // 顯示成功訊息
+                        $("#yearInput").val(new Date().getFullYear());
+                        updateYear();
+                        loadtable(deviceId, company_value, yearInput);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        });
     </script>
 
     <!--/*新增跳轉*/-->
@@ -658,7 +700,6 @@
         var addNewPage = document.getElementById("addNewPage")
         $("#submit").on('click', function () {
             var deviceId = dropdown_three.value;
-            var company_value = $("#company_dropdown").val()
             {#console.warn("新增跳轉", deviceId);#}
             $.ajax({
                 url: "{% url 'loadadd' %}",
@@ -790,33 +831,6 @@
                         console.log(error);
                     },
                 });
-            });
-        });
-
-
-        $("#copyLastYear").on("click", function () {
-            let deviceId = dropdown_three.value;
-            let company_value = $("#company_dropdown").val()
-            let csrf_token = "{{ csrf_token }}";
-
-            $.ajax({
-                type: "POST",
-                url: "{% url 'copy_last_year_data' %}",
-                headers: {"X-CSRFToken": csrf_token},
-                data: {
-                    'deviceId': deviceId,
-                    'company_value': company_value
-                },
-                dataType: "json",  // 設定回傳的資料型態為 JSON
-                success: function (response) {
-                    if (response.success) {
-                        alert('複製成功！'); // 顯示成功訊息
-                        $("#yearInput").val(new Date().getFullYear());
-                        updateYear();
-                    } else {
-                        alert(response.message);
-                    }
-                }
             });
         });
     </script>
