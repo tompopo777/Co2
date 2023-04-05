@@ -20,25 +20,26 @@
                 {% if request.user.is_authenticated %}
                     <li class="nav-item dropdown dropdown-hover mx-2">
                         <a class="nav-link ps-2 d-flex cursor-pointer align-items-center"
-                           data-bs-toggle="modal" data-bs-target="#settings" type="button">
-                            <p class="d-inline text-sm z-index-1 font-weight-bold">盤查設定</p>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown dropdown-hover mx-2">
-                        <a class="nav-link ps-2 d-flex cursor-pointer align-items-center"
                            href="/carbon-system/">
-                            <p class="d-inline text-sm z-index-1 font-weight-bold">碳盤查系統</p>
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">碳盤系統</p>
                         </a>
                     </li>
-                    <li class="nav-item dropdown dropdown-hover mx-2">
+                    <li class="nav-item dropdown dropdown-hover me-2">
                         <div class="nav-link ps-2 d-flex cursor-pointer align-items-center">
-                            <p class="d-inline text-sm z-index-1 font-weight-bold">盤查選單</p>
+                            <i class="fa-solid fa-list mb-3 me-1"></i>
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">選單</p>
                         </div>
                         <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
                             <li><a class="dropdown-item border-radius-md border-bottom text-center" id="summary" data-bs-toggle="modal" data-bs-target="#CalculateSummaryModal" href="javascript:;">產生總表</a></li>
                             <li><a class="dropdown-item border-radius-md border-bottom text-center" href="javascript:;">產生清冊</a></li>
                             <li><a class="dropdown-item border-radius-md border-bottom text-center" href="javascript:;">產生報告書</a></li>
                         </ul>
+                    </li>
+                        <a class="nav-link ps-2 d-flex cursor-pointer me-1"
+                           data-bs-toggle="modal" data-bs-target="#settings" type="button">
+                            <i class="fa-solid fa-gear me-1 mt-1"></i>
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">設定</p>
+                        </a>
                     </li>
                     <li class="nav-item ms-lg-auto nav-link nav-link-icon me-2">
                         <i class="fa-solid fa-user me-1"></i>
