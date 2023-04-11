@@ -98,7 +98,6 @@ def current_user_group_id(request):
 # 抓欄位(
 @login_required(login_url="/login/")
 def load_table(request):
-    global consumption_data
     if request.method == 'GET':
         device_id = request.GET.get('deviceId')
         company_value = request.GET.get('company_value')

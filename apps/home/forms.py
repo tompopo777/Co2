@@ -437,7 +437,7 @@ class RFform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.5'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -469,7 +469,7 @@ class ACform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '5.5'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -501,7 +501,7 @@ class VCform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '15'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -533,7 +533,7 @@ class WDform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.3'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -565,7 +565,7 @@ class IWDform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '9'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -597,7 +597,7 @@ class IMform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '16'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -629,7 +629,7 @@ class ODform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -654,7 +654,7 @@ class EXform(forms.ModelForm):
                   'replace_filling_date', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'extinguisher_type': forms.Select(choices=EXTINGUISHER_TYPE_CHOICES),
+            'extinguisher_type': forms.Select(attrs={'id': 'extinguisher_type'}, choices=EXTINGUISHER_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '選填'}),
@@ -686,7 +686,7 @@ class PIform(forms.ModelForm):
                   'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'classification': forms.Select(choices=CLASSIFICATION_CHOICES),
+            'classification': forms.Select(attrs={'id': 'classification', 'style': 'width:100px'}, choices=CLASSIFICATION_CHOICES),
             'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -735,7 +735,7 @@ class EMPform(forms.ModelForm):
                   'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'career': forms.Select(choices=CAREER_CHOICES),
+            'career': forms.Select(attrs={'id': 'career', 'style': 'width:100px'}, choices=CAREER_CHOICES),
             'employeeNum_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'employeeNum_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'employeeNum_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -1109,8 +1109,7 @@ class EBTform(forms.ModelForm):
             'business_trip_number': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'department': forms.TextInput(attrs={'class': 'form-control'}),
-            'department': forms.Select(attrs={'id': 'department', 'style': 'width:300px'}, choices=department_CHOICES),
+            'department': forms.TextInput(attrs={'class': 'form-control'}),
             'bt_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'rtd_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
