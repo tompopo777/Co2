@@ -111,7 +111,7 @@ COLUMN_MAPPING = {
                     'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
                     'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july',
                     'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'message_board'],
-        'column_names': ['出差單號', '類型', '時數 一月', '時數 二月', '時數 三月', '時數 四月', '時數 五月', '時數 六月',
+        'column_names': ['年度', '類型', '時數 一月', '時數 二月', '時數 三月', '時數 四月', '時數 五月', '時數 六月',
                          '時數 七月', '時數 八月', '時數 九月', '時數 十月', '時數 十一月', '時數 十二月',
                          '人數 一月', '人數 二月', '人數 三月', '人數 四月', '人數 五月', '人數 六月',
                          '人數 七月', '人數 八月', '人數 九月', '人數 十月', '人數 十一月', '人數 十二月', '備註欄'],

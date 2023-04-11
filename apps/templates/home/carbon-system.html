@@ -20,7 +20,7 @@
              style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
-                <code style="font-size: 20px">盤查年度: <span id="yearDisplay"></span></code>
+                <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
                 <div class="row">
                     {% if company_id == 1 %}
                         <div class="card-body">
@@ -39,7 +39,7 @@
                                     </select>
                                 </div>
                                 <div class="col-4">
-                                    <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
+                                    <label class="lead form-label ms-0" for="dropdown_one" style="color: whitesmoke">類別</label>
                                     <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)" disabled>
                                         <option value="0" name="" selected>
                                             <---請選擇類別--->
@@ -65,12 +65,12 @@
                                     </select>
                                 </div>
                                 <div class="col-3">
-                                    <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
+                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">過程區域</label>
                                     {#                                    <script src="{% static 'h' %}"></script>#}
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
                                 </div>
                                 <div class="col-3">
-                                    <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
+                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">設備</label>
                                     <select class="" id="dropdown_three" name="dropdown_three" disabled></select>
                                 </div>
                             </div>
@@ -82,7 +82,7 @@
                         <div class="card-body">
                             <div class="d-flex">
                                 <div class="col-5">
-                                    <label class="lead form-label ms-0" for="ClassName" style="color: whitesmoke">類別</label>
+                                    <label class="lead form-label ms-0" for="dropdown_one" style="color: whitesmoke">類別</label>
                                     <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)">
                                         <option value="0" name="" selected>
                                             <---請選擇類別--->
@@ -108,11 +108,11 @@
                                     </select>
                                 </div>
                                 <div class="col-4">
-                                    <label class="lead form-label" for="ProcessName" style="color: whitesmoke">過程區域</label>
+                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">過程區域</label>
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)"></select>
                                 </div>
                                 <div class="col-3">
-                                    <label class="lead form-label" for="ClassName" style="color: whitesmoke">設備</label>
+                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">設備</label>
                                     <select class="" id="dropdown_three" name="dropdown_three"></select>
                                 </div>
 
@@ -473,6 +473,7 @@
 
 
 
+
                     {#if (typeof {{ request.session.dropdown_two }} != "undefined") {#}
                         dropdown_two_selected()
                     }
@@ -510,6 +511,7 @@
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
                     /*
+
 
 
 
@@ -614,6 +616,8 @@
         $("#submit").on('click', function () {
             var deviceId = dropdown_three.value;
             var yearInput = $("#yearInput").val()
+            var company_value = $("#company_dropdown").val()
+
             //載入標題
             $.ajax({
                 url: "{% url 'loadtitle' %}",
@@ -661,6 +665,7 @@
             //載入資料
             if (company_value !== 0) {
                 loadtable(deviceId, company_value, yearInput);
+
             } else {
                 alert("請先選擇公司名稱")
             }
@@ -803,12 +808,13 @@
             // 匯入 Excel 按鈕
             $('#importExcel').on('change', function () {
                 let dropdown_three = document.getElementById('dropdown_three');
-                let selectedValue = dropdown_three.value;
+                let deviceId = dropdown_three.value;
                 let companyValue = $("#company_dropdown").val();
 
 
+
                 let formData = new FormData();
-                formData.append('did', selectedValue);
+                formData.append('did', deviceId);
                 formData.append('excel_file', $('#importExcel')[0].files[0]);
                 formData.append('company_id', companyValue)
 
@@ -821,6 +827,7 @@
                     success: function (response) {
                         if (response === "OK") {
                             alert("匯入 Excel 成功！");
+                            loadtable(deviceId, company_value, yearInput);
                         } else {
                             alert(response);
                         }
