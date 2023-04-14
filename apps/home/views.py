@@ -464,7 +464,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工出差":
                 t_data = []
-                raw_data = employee_business_trip.objects.filter(company_id=company_id).values("id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
+                raw_data = employee_business_trip.objects.filter(company_id=company_id, years=year).values("id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
                 for i in range(raw_data.count()):
                     single_data = raw_data[i]
                     id = raw_data[i].get("id")
@@ -577,12 +577,7 @@ def copy_last_year_data(request):
 
         for a in t_name:
             if a["d_name"] == "柴油發電機":
-                last_year_data = emergency_generators.objects.filter(years=last_year, company_id=company_id).values(
-                    'device_id', 'device_capacity', 'position', 'department', 'estimate',
-                    'january', 'february', 'march', 'april', 'may', 'june', 'july',
-                    'august', 'september', 'october', 'november', 'december',
-                    'image_note', 'message_board', 'company_id', 'did_id'
-                )
+                last_year_data = emergency_generators.objects.filter(years=last_year, company_id=company_id).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -592,19 +587,14 @@ def copy_last_year_data(request):
                     return JsonResponse(response_data)
                 # 將年份改為今年
                 for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
                     data['years'] = this_year
                 # 將資料儲存回資料庫中
                 emergency_generators.objects.bulk_create(
                     [emergency_generators(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '燃燒設備':
-                last_year_data = combustion_equipment.objects.filter(company_id=company_id, years=last_year).values(
-                    'years', 'device_name', 'device_id', 'fuel_type', 'fuel_january',
-                    'fuel_february', 'fuel_march', 'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august',
-                    'fuel_september', 'fuel_october', 'fuel_november', 'fuel_december', 'heat_january', 'heat_february',
-                    'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july', 'heat_august', 'heat_september',
-                    'heat_october', 'heat_november', 'heat_december', 'image_note', 'message_board', 'company_id', 'did_id'
-                )
+                last_year_data = combustion_equipment.objects.filter(company_id=company_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -614,17 +604,14 @@ def copy_last_year_data(request):
                     return JsonResponse(response_data)
                 # 將年份改為今年
                 for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
                     data['years'] = this_year
                 # 將資料儲存回資料庫中
                 combustion_equipment.objects.bulk_create(
                     [combustion_equipment(**data) for data in last_year_data]
                 )
-            elif a["d_name"] == '冷氣機清單':
-                last_year_data = airconditioner.objects.filter(company_id=company_id, years=last_year).values(
-                    'years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position',
-                    'years_purchased', 'filling_volume', 'refrigerant_type', 'filling_fix_volume',
-                    'effusion_rate', 'image_note', 'message_board', 'company_id', 'did_id'
-                )
+            elif a["d_name"] == '公務車':
+                last_year_data = official_car.objects.filter(company_id=company_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -634,11 +621,484 @@ def copy_last_year_data(request):
                     return JsonResponse(response_data)
                 # 將年份改為今年
                 for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                official_car.objects.bulk_create(
+                    [official_car(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '原物料使用':
+                last_year_data = material.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                material.objects.bulk_create(
+                    [material(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '製程添加化學品':
+                last_year_data = process.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                process.objects.bulk_create(
+                    [process(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '冰箱清單':
+                last_year_data = refrigerator.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                refrigerator.objects.bulk_create(
+                    [refrigerator(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '冷氣機清單':
+                last_year_data = airconditioner.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
                     data['years'] = this_year
                 # 將資料儲存回資料庫中
                 airconditioner.objects.bulk_create(
                     [airconditioner(**data) for data in last_year_data]
                 )
+            elif a["d_name"] == '車輛清單':
+                last_year_data = vehicle.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                vehicle.objects.bulk_create(
+                    [vehicle(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '飲水機清單':
+                last_year_data = water_dispenser.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                water_dispenser.objects.bulk_create(
+                    [water_dispenser(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '冰水機清單':
+                last_year_data = ice_water_dispenser.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                ice_water_dispenser.objects.bulk_create(
+                    [ice_water_dispenser(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '製冰機清單':
+                last_year_data = ice_maker.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                ice_maker.objects.bulk_create(
+                    [ice_maker(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '設備清單':
+                last_year_data = other_device.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                other_device.objects.bulk_create(
+                    [other_device(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '滅火器':
+                last_year_data = extinguisher.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                extinguisher.objects.bulk_create(
+                    [extinguisher(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '人添清冊':
+                last_year_data = personnel_inventory.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                personnel_inventory.objects.bulk_create(
+                    [personnel_inventory(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '委外人員清冊':
+                last_year_data = employee.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                employee.objects.bulk_create(
+                    [employee(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '廢水':
+                last_year_data = waste_water.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                waste_water.objects.bulk_create(
+                    [waste_water(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '廢汙泥':
+                last_year_data = waste_sludge.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                waste_sludge.objects.bulk_create(
+                    [waste_sludge(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '溶劑、噴霧劑':
+                last_year_data = solvent_aerosol_emission_sources.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                solvent_aerosol_emission_sources.objects.bulk_create(
+                    [solvent_aerosol_emission_sources(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == 'VOCs_1':
+                last_year_data = VOCs_one.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                VOCs_one.objects.bulk_create(
+                    [VOCs_one(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == 'VOCs_2':
+                last_year_data = VOCs_two.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                VOCs_two.objects.bulk_create(
+                    [VOCs_two(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '用電量':
+                last_year_data = electricity.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                electricity.objects.bulk_create(
+                    [electricity(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '上游運輸':
+                last_year_data = upstream_transportation.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                upstream_transportation.objects.bulk_create(
+                    [upstream_transportation(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '下游運輸':
+                last_year_data = downstream_transportation.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                downstream_transportation.objects.bulk_create(
+                    [downstream_transportation(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '員工通勤':
+                # 抓取母表資料
+                last_year_commute_data = employee_commute.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_commute_data_id = list(last_year_commute_data.values_list('id', flat=True))
+                last_year_transport_data = transportation_way.objects.filter(commute_id__in=last_year_commute_data_id).values()
+
+                # 如果去年沒有母表資料，顯示 alert 訊息
+                if not last_year_commute_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+
+                new_commute_data = []
+                commute_id_dict = {}
+
+                for data in last_year_commute_data:
+                    original_id = data['id']  # 記錄原本的id
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                    new_commute = employee_commute.objects.create(**data)
+                    commute_id_dict[original_id] = new_commute.id  # 將原本的id和新的id建立對應關係
+                    new_commute_data.append(new_commute)
+
+                # employee_commute.objects.bulk_create(new_commute_data)
+
+                # # 將資料儲存回資料庫中
+                # employee_commute.objects.bulk_create(
+                #     [employee_commute(**data) for data in last_year_commute_data]
+                # )
+
+                # new_transport_data = []
+
+                for data in last_year_transport_data:
+                    original_commute_id = data['commute_id']  # 記錄原本的commute_id
+                    data.pop('id')  # 刪除主鍵
+                    data['commute_id'] = commute_id_dict[original_commute_id]  # 使用原本的commute_id去取得新的commute_id
+                    # new_transport = transportation_way.objects.create(**data)
+                    # new_transport_data.append(new_transport)
+
+                # 儲存新的子表資料到資料庫中
+                transportation_way.objects.bulk_create(
+                    [transportation_way(**data) for data in last_year_transport_data]
+                )
+
+            elif a["d_name"] == '員工出差':
+                last_year_data = employee_business_trip.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                employee_business_trip.objects.bulk_create(
+                    [employee_business_trip(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '廢棄物':
+                last_year_data = waste.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                waste.objects.bulk_create(
+                    [waste(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '納管廢水排放量':
+                last_year_data = pipe_wastewater.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                pipe_wastewater.objects.bulk_create(
+                    [pipe_wastewater(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '採購員物料':
+                last_year_data = purchase_material.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                purchase_material.objects.bulk_create(
+                    [purchase_material(**data) for data in last_year_data]
+                )
+            elif a["d_name"] == '產品間接排放':
+                last_year_data = product_indirect_emissions.objects.filter(company_id=company_id, years=last_year).values()
+                # 如果去年沒有資料，顯示 alert 訊息
+                if not last_year_data:
+                    response_data = {
+                        'success': False,
+                        'message': f'{last_year}年沒有任何資料！'
+                    }
+                    return JsonResponse(response_data)
+                # 將年份改為今年
+                for data in last_year_data:
+                    data.pop('id')  # 刪除主鍵
+                    data['years'] = this_year
+                # 將資料儲存回資料庫中
+                product_indirect_emissions.objects.bulk_create(
+                    [product_indirect_emissions(**data) for data in last_year_data]
+                )
+
         # 回傳 alert 訊息
         response_data = {
             'success': True,  # 也可以改為 False

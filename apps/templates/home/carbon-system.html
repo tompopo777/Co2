@@ -673,6 +673,7 @@
 
         $("#copyLastYear").on("click", function () {
             let deviceId = dropdown_three.value;
+            let company_value = $("#company_dropdown").val()
             let csrf_token = "{{ csrf_token }}";
 
             $.ajax({
@@ -701,10 +702,11 @@
     <!--/*新增跳轉*/-->
     <script>
         var dropdown_three = document.getElementById("dropdown_three")
-        //add
+        var company_value = document.getElementById("company_dropdown")
         var addNewPage = document.getElementById("addNewPage")
         $("#submit").on('click', function () {
             var deviceId = dropdown_three.value;
+            var company_value = $("#company_dropdown").val()
             {#console.warn("新增跳轉", deviceId);#}
             $.ajax({
                 url: "{% url 'loadadd' %}",
