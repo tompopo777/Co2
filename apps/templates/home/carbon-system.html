@@ -128,9 +128,15 @@
                             <div class="mb-4">
                                 <div class="d-flex justify-content-center">
                                     {% if "Yuntech" not in user.username %}
-                                        <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">
-                                            新增
-                                        </a>
+                                        <form method="post" action="{% url 'loadadd' %}" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="deviceId" id="deviceId">
+                                            <input type="hidden" name="company_value" id="company_value">
+                                            <button type="submit" class="btn btn-outline-light me-1">新增</button>
+                                        </form>
+{#                                        <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">#}
+{#                                            新增#}
+{#                                        </a>#}
                                         <div class="d-flex justify-content-center">
                                             <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
                                         </div>
@@ -382,65 +388,7 @@
             $("#dropdown_three").removeAttr("disabled");
         });
 
-        // dropdown_one預選(只執行一次)
-        var dropdown_one_selected = (function () {
-            var executed = false;
-            return function () {
-                if (!executed) {
-                    executed = true;
-                    $("#dropdown_one").val(dropdown_one_val).attr("selected", "");
-                }
-            };
-        })();
-
-        // dropdown_two預選(只執行一次)
-        var dropdown_two_selected = (function () {
-            var executed = false;
-            return function () {
-                if (!executed) {
-                    executed = true;
-                    $("#dropdown_two").val(dropdown_two_val).attr("selected", "");
-                }
-            };
-        })();
-
-        // dropdown_three預選(只執行一次)
-        var dropdown_three_selected = (function () {
-            var executed = false;
-            return function () {
-                if (!executed) {
-                    executed = true;
-                    $("#dropdown_three").val(dropdown_three_val).attr("selected", "");
-                }
-            };
-        })();
-
-        // 下拉選單填值
-        /*
-        {#if (typeof {{ request.session.dropdown_three }} != "undefined") {#}
-        {#    var dropdown_one_val = {{ request.session.dropdown_one }}#}
-        {#    var dropdown_two_val = {{ request.session.dropdown_two }}#}
-        {#    var dropdown_three_val = {{ request.session.dropdown_three }}#}
-                $(document).ready(function () {
-                    console.log("type_dropdown_one_val", typeof dropdown_one_val)
-                    console.log("type_dropdown_two_val", typeof dropdown_two_val)
-                    console.log("type_dropdown_three_val", typeof dropdown_three_val)
-                    dropdown_one_selected()
-                    DropdownOne(dropdown_one_val)
-                    DropdownTwo(dropdown_two_val)
-                })
-        }*/
-
-        {#function hi(){alert('hi')}#}
-        {#$('#submit').on('click',hi());#}
-
-        // 類別>>>選擇過程區域
-        {#dropdown_one.addEventListener('change', DropdownOne(this));#}
-
         function DropdownOne(param) {
-            {#console.log("ok")#}
-            {#console.log("type", typeof param)#}
-
             if (typeof param === 'number') {
                 var currentClass = param;
             } else if (typeof param === 'string') {
@@ -464,22 +412,23 @@
                         }
                         dropdown_two.options.add(new Option(item.p_name, item.cpid));
                     })
-                    /*
-                    console.log("ok")
-
-
-
-
-
-
-
-
-                    {#if (typeof {{ request.session.dropdown_two }} != "undefined") {#}
+                    let dropdown_two_value = "{{ dropdown_two }}"
+                    if (dropdown_two_value !== "") {
+                        // dropdown_two預選(只執行一次)
+                        let dropdown_two_selected = (function () {
+                            let executed = false;
+                            return function () {
+                                if (!executed) {
+                                    executed = true;
+                                    $("#dropdown_two").val(dropdown_two_value).attr("selected", "");
+                                }
+                            };
+                        })();
                         dropdown_two_selected()
                     }
                     else {
                         $("#dropdown_two").val("0").attr("selected", "");
-                    }*/
+                    }
                 },
             });
         }
@@ -506,25 +455,27 @@
                     dropdown_three.innerHTML = ""
                     d_data.forEach((item, index) => {
                         if (index === 0) {
-                            dropdown_three.options.add(new Option('<---請選擇設備名稱--->', 0));
+                            dropdown_three.options.add(new Option('<---請選擇設備名稱--->', '0'));
                         }
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
-                    /*
-
-
-
-
-
-
-
-
-                    {#if (typeof '{{ request.session.dropdown_three }}' != "undefined") {#}
+                    let dropdown_three_value = "{{ dropdown_three }}"
+                    if (dropdown_three_value !== "") {
+                        // dropdown_three預選(只執行一次)
+                        let dropdown_three_selected = (function () {
+                            let executed = false;
+                            return function () {
+                                if (!executed) {
+                                    executed = true;
+                                    $("#dropdown_three").val(dropdown_three_value).attr("selected", "");
+                                }
+                            };
+                        })();
                         dropdown_three_selected()
                     }
                     else {
                         $("#dropdown_three").val("0").attr("selected", "");
-                    }*/
+                    }
                 },
 
             });
@@ -541,11 +492,7 @@
         var tr = document.getElementById("table").getElementsByTagName('tr')[0]
         var style = document.createElement('style');
 
-
-        var deviceId = dropdown_three.value;
-        var company_value = $("#company_dropdown").val()
-        var yearInput = $("#yearInput").val()
-
+        // 載入表格資料
         function loadtable(deviceId, company_value, yearInput) {
             $.ajax({
                 url: "{% url 'loadtable' %}",
@@ -612,18 +559,15 @@
                 },
             });
         }
-
-        $("#submit").on('click', function () {
-            var deviceId = dropdown_three.value;
-            var yearInput = $("#yearInput").val()
-            var company_value = $("#company_dropdown").val()
-
-            //載入標題
-            $.ajax({
+        //載入標題
+        function LoadTitle(deviceId, yearInput, dropdown_one_value, dropdown_two_value) {
+                $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
                     'deviceId': deviceId,
-                    'yearInput': yearInput
+                    'yearInput': yearInput,
+                    'dropdown_one': dropdown_one_value,
+                    'dropdown_two': dropdown_two_value
                 },
                 type: 'GET',
                 dataType: 'json',
@@ -661,19 +605,60 @@
                     })
                 },
             });
+            }
 
+        $(document).ready(function () {
+            let dropdown_one_value = "{{ dropdown_one }}"
+            let dropdown_two_value = "{{ dropdown_two }}"
+            let dropdown_three_value = "{{ dropdown_three }}"
+            let yearInput = 2023
+            let company_value = 2
+            if (dropdown_one_value !== "" && dropdown_two_value !== "" && dropdown_three_value !== ""){
+                // dropdown_one預選(只執行一次)
+                let dropdown_one_selected = (function () {
+                    let executed = false;
+                    return function () {
+                        if (!executed) {
+                            executed = true;
+                            $("#dropdown_one").val(dropdown_one_value).attr("selected", "");
+                        }
+                    };
+                })();
+                // dropdown_one預選(只執行一次)
+                dropdown_one_selected()
+                DropdownOne(dropdown_one_value)
+                DropdownTwo(dropdown_two_value)
+                LoadTitle(dropdown_three_value, yearInput, dropdown_one_value, dropdown_two_value);
+                loadtable(dropdown_three_value, company_value, yearInput)
+            }
+        });
+
+        $("#submit").on('click', function () {
+            let deviceId = $("#dropdown_three").val()
+            let company_value = $("#company_dropdown").val()
+            let deviceIdInput = document.getElementById('deviceId');
+            let company_valueInput = document.getElementById('company_value');
+            let yearInput = $("#yearInput").val()
+            let dropdown_one_value = $("#dropdown_one").val()
+            let dropdown_two_value = $("#dropdown_two").val()
+            //新增跳轉
+            deviceIdInput.value = deviceId;
+            company_valueInput.value = company_value;
+
+            LoadTitle(deviceId, yearInput, dropdown_one_value, dropdown_two_value);
             //載入資料
             if (company_value !== 0) {
                 loadtable(deviceId, company_value, yearInput);
-
             } else {
                 alert("請先選擇公司名稱")
             }
         })
 
         $("#copyLastYear").on("click", function () {
-            let deviceId = dropdown_three.value;
             let csrf_token = "{{ csrf_token }}";
+            let deviceId = $("#dropdown_three").val()
+            let company_value = $("#company_dropdown").val()
+            let yearInput = $("#yearInput").val()
 
             $.ajax({
                 type: "POST",
@@ -696,26 +681,6 @@
                 }
             });
         });
-    </script>
-
-    <!--/*新增跳轉*/-->
-    <script>
-        var dropdown_three = document.getElementById("dropdown_three")
-        //add
-        var addNewPage = document.getElementById("addNewPage")
-        $("#submit").on('click', function () {
-            var deviceId = dropdown_three.value;
-            {#console.warn("新增跳轉", deviceId);#}
-            $.ajax({
-                url: "{% url 'loadadd' %}",
-                data: {
-                    'deviceId': deviceId,
-                    'company_value': company_value
-                },
-                type: 'GET',
-                dataType: 'json',
-            });
-        })
     </script>
 
     <!--/*刪除該筆設備*/-->
@@ -810,6 +775,8 @@
                 let dropdown_three = document.getElementById('dropdown_three');
                 let deviceId = dropdown_three.value;
                 let companyValue = $("#company_dropdown").val();
+                {#let companyValue = document.getElementById('company_dropdown').value#}
+                let yearInput = $("#yearInput").val()
 
 
 

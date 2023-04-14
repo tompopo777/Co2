@@ -68,7 +68,7 @@ def pages(request):
 @login_required(login_url="/login/")
 def load_process(request):
     if request.method == 'GET':
-        current_class = request.GET.get('currentClass', None)
+        current_class = request.GET.get('currentClass')
         # print("000000000000000000000000000000000000000000000000000000")
         if current_class:
             # all = list(section_one.objects.all())
@@ -98,7 +98,6 @@ def current_user_group_id(request):
 # 抓欄位(
 @login_required(login_url="/login/")
 def load_table(request):
-    global consumption_data
     if request.method == 'GET':
         device_id = request.GET.get('deviceId')
         company_value = request.GET.get('company_value')
@@ -107,6 +106,7 @@ def load_table(request):
             company_id = current_user_group_id(request)
         else:
             company_id = int(company_value)
+        # print('company_id', company_id)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
         # 四捨五入小數點第四位
         # print("888888888", t_name)
@@ -413,7 +413,7 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     kw_hr = kw_hr.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     kkw_hr = kkw_hr.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
-                    single_data["kkw_hr"] = kw_hr
+                    single_data["kw_hr"] = kw_hr
                     single_data["kkw_hr"] = kkw_hr
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
@@ -1506,6 +1506,11 @@ def carbon_system(request):
         "company_id": company_id,
         "company_group": company_group
     }
+    # del request.session['dropdown_one']
+    # del request.session['dropdown_two']
+    # del request.session['dropdown_three']
+    if request.session.get('dropdown_one') and request.session.get('dropdown_two') and request.session.get('dropdown_three'):
+        context.update(request.session)
 
     # context.update(groups_query)
     # print("context: ", context)
@@ -1519,16 +1524,20 @@ def carbon_system(request):
 
 # 新增轉跳
 @login_required(login_url="/login/")
-def add_page(request, ):
-    global device_function
-    if request.method == "GET":
-        device_id = request.GET.get('deviceId')
-        company_value = request.GET.get('company_value')
-        if company_value is None:
+def add_page(request):
+    # global device_function
+    if request.method == "POST":
+        device_id = request.POST.get('deviceId')
+        company_value = request.POST.get('company_value')
+        print('device_id', device_id)
+        print('company_value', company_value)
+        if company_value == 'undefined' or company_value is None:
             company_id = current_user_group_id(request)
         else:
             company_id = int(company_value)
-        # 建立字典
+        print('company_id', company_id)
+        print('request', request.method)
+        request.method = 'GET'
         function_dic = {
             "1": emergency_generators_add(request, company_id),
             "2": combustion_equipment_add(request, company_id),
@@ -1560,10 +1569,54 @@ def add_page(request, ):
             "28": purchase_material_add(request, company_id),
             "29": product_indirect_emissions_add(request, company_id)
         }
+        device_function = None
         if function_dic.get(device_id):
             device_function = function_dic.get(device_id)
         return device_function
-        # return redirect(device_function, locals())
+    return HttpResponse('請顯選擇設備')
+    # if request.method == "GET":
+    #     device_id = request.GET.get('deviceId')
+    #     company_value = request.GET.get('company_value')
+    #     if company_value is None:
+    #         company_id = current_user_group_id(request)
+    #     else:
+    #         company_id = int(company_value)
+    #     # 建立字典
+    #     function_dic = {
+    #         "1": emergency_generators_add(request, company_id),
+    #         "2": combustion_equipment_add(request, company_id),
+    #         "3": official_car_add(request, company_id),
+    #         "4": material_add(request, company_id),
+    #         "5": process_add(request, company_id),
+    #         "6": refrigerator_add(request, company_id),
+    #         "7": airconditioner_add(request, company_id),
+    #         "8": vehicle_add(request, company_id),
+    #         "9": water_dispenser_add(request, company_id),
+    #         "10": ice_water_dispenser_add(request, company_id),
+    #         "11": ice_maker_add(request, company_id),
+    #         "12": other_device_add(request, company_id),
+    #         "13": extinguisher_add(request, company_id),
+    #         "14": personnel_inventory_add(request, company_id),
+    #         "15": employee_add(request, company_id),
+    #         "16": waste_water_add(request, company_id),
+    #         "17": waste_sludge_add(request, company_id),
+    #         "18": solvent_aerosol_emission_sources_add(request, company_id),
+    #         "19": VOCs_one_add(request, company_id),
+    #         "20": VOCs_two_add(request, company_id),
+    #         "21": electricity_add(request, company_id),
+    #         "22": upstream_transportation_add(request, company_id),
+    #         "23": downstream_transportation_add(request, company_id),
+    #         "24": employee_commute_add(request, company_id),
+    #         "25": employee_business_trip_add(request, company_id),
+    #         "26": waste_add(request, company_id),
+    #         "27": pipe_wastewater_add(request, company_id),
+    #         "28": purchase_material_add(request, company_id),
+    #         "29": product_indirect_emissions_add(request, company_id)
+    #     }
+    #     if function_dic.get(device_id):
+    #         device_function = function_dic.get(device_id)
+    #     return device_function
+    #     # return redirect(device_function, locals())
 
 
 # 編輯轉跳
@@ -1678,10 +1731,10 @@ def edit_device(request):
 # 儲存更新後的資料
 @login_required(login_url="/login/")
 def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_two):
-    if request.session.get('dropdown_one'):
-        del request.session['dropdown_one']
-        del request.session['dropdown_two']
-        del request.session['dropdown_three']
+    # if request.session.get('dropdown_one'):
+    #     del request.session['dropdown_one']
+    #     del request.session['dropdown_two']
+    #     del request.session['dropdown_three']
     modelName = {
         "1": emergency_generators,
         "2": combustion_equipment,
@@ -1734,12 +1787,12 @@ def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_t
             # ~~~
             if cancel:
                 print("cancel")
-                dropdown = {
-                    'dropdown_one': dropdown_one,
-                    'dropdown_two': dropdown_two,
-                    'dropdown_three': datasheet_id,
-                }
-                request.session.update(dropdown)
+                # dropdown = {
+                #     'dropdown_one': dropdown_one,
+                #     'dropdown_two': dropdown_two,
+                #     'dropdown_three': datasheet_id,
+                # }
+                # request.session.update(dropdown)
                 return redirect('/carbon-system/')
             try:
                 if datasheet_id in formsetName:
@@ -1813,7 +1866,19 @@ def delete_device(request):
 @login_required(login_url="/login/")
 def add_title(request):
     if request.method == 'GET':
-        device_id = request.GET.get('deviceId', None)
+        device_id = request.GET.get('deviceId')
+        dropdown_one = request.GET.get('dropdown_one')
+        dropdown_two = request.GET.get('dropdown_two')
+        dropdown_three = request.GET.get('deviceId')
+        print('dropdown_one', dropdown_one)
+        print('dropdown_two', dropdown_two)
+        print('dropdown_three', dropdown_three)
+        dropdown = {
+            'dropdown_one': dropdown_one,
+            'dropdown_two': dropdown_two,
+            'dropdown_three': dropdown_three,
+        }
+        request.session.update(dropdown)
         # 選擇title要顯示的欄位
         htmlName = {
             "1": {
