@@ -1377,7 +1377,7 @@ def ice_water_dispenser_add(request, company_id=None):
     if request.method == "POST":
         company_id = request.POST.get("company_id")
         if IWD_add.is_valid():
-            IWD_add.save(commit=False)
+            IWD_add = IWD_add.save(commit=False)
             IWD_add.company_id = company_id
             IWD_add.save()
             stage = request.POST.get('stage')
@@ -1997,6 +1997,8 @@ def add_page(request):
             company_id = int(company_value)
         print('company_id', company_id)
         print('request', request.method)
+        print('request', request.FILES)
+        print('request', request.session)
         request.method = 'GET'
         function_dic = {
             "1": emergency_generators_add(request, company_id),
