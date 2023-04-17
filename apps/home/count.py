@@ -1,19 +1,12 @@
 from urllib import request, parse
-
-import numpy as np
 import pandas as pd
 from IPython.core.display import display
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, Value, CharField
 from django.db.models.functions import Cast
 from decimal import *
-
-from django.shortcuts import redirect, render
 from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_protect
-
 from .models import *
-import re
 
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
@@ -22,30 +15,14 @@ pd.set_option('display.width', 200)
 
 # getcontext().prec = 4
 
-
-# 判斷目前使用者在哪個group
-def current_user_group_id(request):
-    groups_query = request.user.groups.values("id")
-    for groups in groups_query:
-        company_id = groups["id"]
-        return company_id
-
-
 @login_required(login_url="/login/")
 def calculate_summary(request):
     if request.method == "POST":
-        company_value = request.POST.get('company_id')
-        years = request.POST.get('years')
-        # print('years', years)
-        # print('company_value', company_value)
-        # print(type(company_value))
-        if company_value != '':
-            company_id = int(company_value)
-        else:
-            company_id = current_user_group_id(request)
         coefficient_source = request.POST.get("coefficient_source")
         gwp_version = request.POST.get("gwpVersion")
         gwp_version = int(gwp_version)
+        company_id = request.session.get('company_dropdown')
+        years = request.session.get('years')
 
         company_dic = {
             2: '雲科A廠',

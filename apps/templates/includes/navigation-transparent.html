@@ -71,8 +71,6 @@
             <div class="modal-body">
                 <form action="/calculate_summary/" method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="hidden" id="company_in_nav" name="company_id">
-                    <input type="hidden" id="years" name="years">
                     <div class="row d-flex align-items-center mb-3">
                         <div class="col-auto">
                             <h6>請選擇GWP版本: </h6>
@@ -118,45 +116,5 @@
     {#    icon#}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
-    {#    <script>#}
-    {#        $('#calculate_summary').on('click', function () {#}
-    {#var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();#}
-    {#            let coefficient_source = document.getElementById('coefficient_source_radio').value;#}
-    {#            let gwp_version = document.getElementById('gwpVersion_radio').value;#}
-    {#            $.ajax({#}
-    {#                url: "{% url 'calculate_summary' %}",#}
-    {#                data: {#}
-    {#                    'gwp_version': gwp_version,#}
-    {#                    'coefficient_source': coefficient_source,#}
-    {#'csrfmiddlewaretoken': csrftoken#}
-    {#                },#}
-    {#type: "POST",#}
-    {#                type: "GET",#}
-    {#                dataType: 'json',#}
-    {#            });#}
-    {#        });#}
-    {#    </script>#}
-    <script>
-        function companyID() {
-            let company_value = $("#company_dropdown").val()
-            let company_in_nav = document.getElementById('company_in_nav')
-            company_in_nav.value = company_value
-        }
 
-        function check_year() {
-            let yearInput = $("#yearInput").val()
-            let years = document.getElementById('years')
-            years.value = yearInput
-        }
-
-        /*
-        $(document).ready(function () {
-            let company_in_nav = document.getElementById('company_in_nav')
-            console.warn('nav', company_in_nav.value)
-            console.warn(typeof company_in_nav.value)
-        });
-         */
-
-
-    </script>
 {% endblock javascripts %}

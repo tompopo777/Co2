@@ -19,12 +19,6 @@ from apps.home.models import *
 @login_required(login_url="/login/")
 def index(request):
     context = {'segment': 'index'}
-    # dropdown = {
-    #     'dropdown_one': "dropdown_one",
-    #     'dropdown_two': "dropdown_two",
-    #     'dropdown_three': "dropdown_three",
-    # }
-    # request.session.update(dropdown)
     html_template = loader.get_template('home/index.html')
     return HttpResponse(html_template.render(context, request))
 
@@ -2144,10 +2138,6 @@ def edit_device(request):
 # 儲存更新後的資料
 @login_required(login_url="/login/")
 def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_two):
-    # if request.session.get('dropdown_one'):
-    #     del request.session['dropdown_one']
-    #     del request.session['dropdown_two']
-    #     del request.session['dropdown_three']
     modelName = {
         "1": emergency_generators,
         "2": combustion_equipment,
@@ -2196,17 +2186,6 @@ def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_t
         current_data = get_object_or_404(dbName, id=single_dataID)
         update_from = form(request.POST, request.FILES, instance=current_data)
         if request.method == 'POST':
-            cancel = request.POST.get("cancel")
-            # ~~~
-            if cancel:
-                print("cancel")
-                # dropdown = {
-                #     'dropdown_one': dropdown_one,
-                #     'dropdown_two': dropdown_two,
-                #     'dropdown_three': datasheet_id,
-                # }
-                # request.session.update(dropdown)
-                return redirect('/carbon-system/')
             try:
                 if datasheet_id in formsetName:
                     formset = formsetName.get(datasheet_id)
@@ -2271,7 +2250,6 @@ def delete_device(request):
             dbName = modelName.get(datasheet_id)
             current_data = dbName.objects.get(id=single_dataID)
             current_data.delete()  # 刪除該筆資料
-            # print("current_data::::::::::::::::::::::::", current_data)
             return JsonResponse(single_dataID, safe=False)
 
 
