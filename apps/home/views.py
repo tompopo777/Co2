@@ -2,25 +2,16 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
-import json
-import os.path
-from json import dumps
-
 import django.contrib.auth.models
-import pandas as pd
 from django import template
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from decimal import *
-from django.utils.datastructures import MultiValueDictKeyError
-from django.db import models
-from django.db.models import Count, Sum, F, Value, Subquery, CharField
 from datetime import datetime
-import apps
 from .forms import *
 from apps.home.models import *
 
@@ -1344,11 +1335,12 @@ def vehicle_add(request, company_id=None):
 
 
 @login_required(login_url="/login/")
-def water_dispenser_add(request, company_id=None):
+def water_dispenser_add(request):
     context = {}
     WD_add = WDform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
+        # print('company_value', company_id)
         if WD_add.is_valid():
             WD_add = WD_add.save(commit=False)
             WD_add.company_id = company_id
@@ -1361,12 +1353,19 @@ def water_dispenser_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
+        # company_id = company_id
         WD_add = WDform()
     context['WD_add'] = WD_add
-    context['company_id'] = company_id
+    # context['company_id'] = company_id
     return render(request, 'home/water-dispenser.html', context)
 
 
@@ -1954,132 +1953,84 @@ def product_indirect_emissions_add(request, company_id=None):
 # ~~~
 @login_required(login_url="/login/")
 def carbon_system(request):
-    if request.user.is_authenticated:
-        username = request.user.username
-        print("username: ", username)
-    groups_query = request.user.groups.values("name").first()
-    company_group = django.contrib.auth.models.Group.objects.values("id", "name")[1:]
-
-    company_id = current_user_group_id(request)
-    context = {
-        "groups_query": groups_query,
-        "company_id": company_id,
-        "company_group": company_group
-    }
-    # del request.session['dropdown_one']
-    # del request.session['dropdown_two']
-    # del request.session['dropdown_three']
-    if request.session.get('dropdown_one') and request.session.get('dropdown_two') and request.session.get('dropdown_three'):
-        context.update(request.session)
-
-    # context.update(groups_query)
-    # print("context: ", context)
-
-    # if request.session.get('dropdown_one'):
-    #     del request.session['dropdown_one']
-    #     del request.session['dropdown_two']
-    #     del request.session['dropdown_three']
-    return render(request, "home/carbon-system.html", context)
+    if request.method == 'GET':
+        if request.user.is_authenticated:
+            username = request.user.username
+            print("username: ", username)
+        groups_query = request.user.groups.values("name").first()
+        company_group = django.contrib.auth.models.Group.objects.values("id", "name")[1:]
+        company_id = current_user_group_id(request)
+        context = {
+            "groups_query": groups_query,
+            "company_id": company_id,
+            "company_group": company_group
+        }
+        # del request.session['dropdown_one']
+        # del request.session['dropdown_two']
+        # del request.session['dropdown_three']
+        # del request.session['years']
+        if request.session.get('dropdown_one') and request.session.get('dropdown_two') and request.session.get('dropdown_three'):
+            context.update(request.session)
+        return render(request, "home/carbon-system.html", context)
+    if request.method == 'POST':
+        dropdown_one = request.POST.get('dropdown_one')
+        dropdown_two = request.POST.get('dropdown_two')
+        dropdown_three = request.POST.get('dropdown_three')
+        company_dropdown = request.POST.get('company_dropdown')
+        years = request.POST.get('years')
+        if company_dropdown is None:
+            company_dropdown = current_user_group_id(request)
+        dropdown = {
+            'dropdown_one': dropdown_one,
+            'dropdown_two': dropdown_two,
+            'dropdown_three': dropdown_three,
+            'company_dropdown': company_dropdown,
+            'years': years,
+        }
+        request.session.update(dropdown)
+        return redirect('/carbon-system/')
 
 
 # 新增轉跳
 @login_required(login_url="/login/")
 def add_page(request):
-    # global device_function
-    if request.method == "POST":
-        device_id = request.POST.get('deviceId')
-        company_value = request.POST.get('company_value')
-        print('device_id', device_id)
-        print('company_value', company_value)
-        if company_value == 'undefined' or company_value is None:
-            company_id = current_user_group_id(request)
-        else:
-            company_id = int(company_value)
-        print('company_id', company_id)
-        print('request', request.method)
-        print('request', request.FILES)
-        print('request', request.session)
-        request.method = 'GET'
+    if request.method == "GET":
+        device_id = request.session.get('dropdown_three')
         function_dic = {
-            "1": emergency_generators_add(request, company_id),
-            "2": combustion_equipment_add(request, company_id),
-            "3": official_car_add(request, company_id),
-            "4": material_add(request, company_id),
-            "5": process_add(request, company_id),
-            "6": refrigerator_add(request, company_id),
-            "7": airconditioner_add(request, company_id),
-            "8": vehicle_add(request, company_id),
-            "9": water_dispenser_add(request, company_id),
-            "10": ice_water_dispenser_add(request, company_id),
-            "11": ice_maker_add(request, company_id),
-            "12": other_device_add(request, company_id),
-            "13": extinguisher_add(request, company_id),
-            "14": personnel_inventory_add(request, company_id),
-            "15": employee_add(request, company_id),
-            "16": waste_water_add(request, company_id),
-            "17": waste_sludge_add(request, company_id),
-            "18": solvent_aerosol_emission_sources_add(request, company_id),
-            "19": VOCs_one_add(request, company_id),
-            "20": VOCs_two_add(request, company_id),
-            "21": electricity_add(request, company_id),
-            "22": upstream_transportation_add(request, company_id),
-            "23": downstream_transportation_add(request, company_id),
-            "24": employee_commute_add(request, company_id),
-            "25": employee_business_trip_add(request, company_id),
-            "26": waste_add(request, company_id),
-            "27": pipe_wastewater_add(request, company_id),
-            "28": purchase_material_add(request, company_id),
-            "29": product_indirect_emissions_add(request, company_id)
+            "1": emergency_generators_add(request),
+            "2": combustion_equipment_add(request),
+            "3": official_car_add(request),
+            "4": material_add(request),
+            "5": process_add(request),
+            "6": refrigerator_add(request),
+            "7": airconditioner_add(request),
+            "8": vehicle_add(request),
+            "9": water_dispenser_add(request),
+            "10": ice_water_dispenser_add(request),
+            "11": ice_maker_add(request),
+            "12": other_device_add(request),
+            "13": extinguisher_add(request),
+            "14": personnel_inventory_add(request),
+            "15": employee_add(request),
+            "16": waste_water_add(request),
+            "17": waste_sludge_add(request),
+            "18": solvent_aerosol_emission_sources_add(request),
+            "19": VOCs_one_add(request),
+            "20": VOCs_two_add(request),
+            "21": electricity_add(request),
+            "22": upstream_transportation_add(request),
+            "23": downstream_transportation_add(request),
+            "24": employee_commute_add(request),
+            "25": employee_business_trip_add(request),
+            "26": waste_add(request),
+            "27": pipe_wastewater_add(request),
+            "28": purchase_material_add(request),
+            "29": product_indirect_emissions_add(request)
         }
         device_function = None
         if function_dic.get(device_id):
             device_function = function_dic.get(device_id)
         return device_function
-    return HttpResponse('請顯選擇設備')
-    # if request.method == "GET":
-    #     device_id = request.GET.get('deviceId')
-    #     company_value = request.GET.get('company_value')
-    #     if company_value is None:
-    #         company_id = current_user_group_id(request)
-    #     else:
-    #         company_id = int(company_value)
-    #     # 建立字典
-    #     function_dic = {
-    #         "1": emergency_generators_add(request, company_id),
-    #         "2": combustion_equipment_add(request, company_id),
-    #         "3": official_car_add(request, company_id),
-    #         "4": material_add(request, company_id),
-    #         "5": process_add(request, company_id),
-    #         "6": refrigerator_add(request, company_id),
-    #         "7": airconditioner_add(request, company_id),
-    #         "8": vehicle_add(request, company_id),
-    #         "9": water_dispenser_add(request, company_id),
-    #         "10": ice_water_dispenser_add(request, company_id),
-    #         "11": ice_maker_add(request, company_id),
-    #         "12": other_device_add(request, company_id),
-    #         "13": extinguisher_add(request, company_id),
-    #         "14": personnel_inventory_add(request, company_id),
-    #         "15": employee_add(request, company_id),
-    #         "16": waste_water_add(request, company_id),
-    #         "17": waste_sludge_add(request, company_id),
-    #         "18": solvent_aerosol_emission_sources_add(request, company_id),
-    #         "19": VOCs_one_add(request, company_id),
-    #         "20": VOCs_two_add(request, company_id),
-    #         "21": electricity_add(request, company_id),
-    #         "22": upstream_transportation_add(request, company_id),
-    #         "23": downstream_transportation_add(request, company_id),
-    #         "24": employee_commute_add(request, company_id),
-    #         "25": employee_business_trip_add(request, company_id),
-    #         "26": waste_add(request, company_id),
-    #         "27": pipe_wastewater_add(request, company_id),
-    #         "28": purchase_material_add(request, company_id),
-    #         "29": product_indirect_emissions_add(request, company_id)
-    #     }
-    #     if function_dic.get(device_id):
-    #         device_function = function_dic.get(device_id)
-    #     return device_function
-    #     # return redirect(device_function, locals())
-
 
 # 編輯轉跳
 @login_required(login_url="/login/")
@@ -2329,18 +2280,6 @@ def delete_device(request):
 def add_title(request):
     if request.method == 'GET':
         device_id = request.GET.get('deviceId')
-        dropdown_one = request.GET.get('dropdown_one')
-        dropdown_two = request.GET.get('dropdown_two')
-        dropdown_three = request.GET.get('deviceId')
-        print('dropdown_one', dropdown_one)
-        print('dropdown_two', dropdown_two)
-        print('dropdown_three', dropdown_three)
-        dropdown = {
-            'dropdown_one': dropdown_one,
-            'dropdown_two': dropdown_two,
-            'dropdown_three': dropdown_three,
-        }
-        request.session.update(dropdown)
         # 選擇title要顯示的欄位
         htmlName = {
             "1": {

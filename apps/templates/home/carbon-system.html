@@ -20,10 +20,12 @@
              style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
-                <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
-                <div class="row">
-                    {% if company_id == 1 %}
-                        <div class="card-body">
+                {% if company_id == 1 %}
+                    <div class="card-body">
+                        <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
+                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
                             <div class="d-flex">
                                 <div class="col-3">
                                     <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">公司廠別</label>
@@ -74,12 +76,17 @@
                                     <select class="" id="dropdown_three" name="dropdown_three" disabled></select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="d-flex justify-content-center">
-                            <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
-                        </div>
-                    {% else %}
-                        <div class="card-body">
+                            <div class="d-flex justify-content-center">
+                                <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
+                            </div>
+                        </form>
+                    </div>
+                {% else %}
+                    <div class="card-body">
+                        <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
+                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
                             <div class="d-flex">
                                 <div class="col-5">
                                     <label class="lead form-label ms-0" for="dropdown_one" style="color: whitesmoke">類別</label>
@@ -115,57 +122,47 @@
                                     <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">設備</label>
                                     <select class="" id="dropdown_three" name="dropdown_three"></select>
                                 </div>
-
                                 <div class="d-flex justify-content-center">
                                     <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
                                 </div>
                             </div>
-                        </div>
-                    {% endif %}
-                    <div class="d-flex">
-                        <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
-                            <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                            <div class="mb-4">
-                                <div class="d-flex justify-content-center">
-                                    {% if "Yuntech" not in user.username %}
-                                        <form method="post" action="{% url 'loadadd' %}" enctype="multipart/form-data">
-                                            {% csrf_token %}
-                                            <input type="hidden" name="deviceId" id="deviceId">
-                                            <input type="hidden" name="company_value" id="company_value">
-                                            <button type="submit" class="btn btn-outline-light me-1">新增</button>
-                                        </form>
-{#                                        <a type="button" class="btn btn-outline-light me-1" id="addNewPage" href="/new_device/">#}
-{#                                            新增#}
-{#                                        </a>#}
-                                        <div class="d-flex justify-content-center">
-                                            <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
-                                        </div>
-                                        <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
-                                            匯出Excel
-                                        </a>
-                                        <form method="post" enctype="multipart/form-data">
-                                            {% csrf_token %}
-                                            <label for="importExcel" class="btn btn-outline-light me-1">
-                                                匯入Excel
-                                            </label>
-                                            <input type="file" id="importExcel" name="importExcel" style="display:none">
-                                        </form>
-                                    {% endif %}
-                                </div>
+                        </form>
+                    </div>
+                {% endif %}
+                <div class="d-flex">
+                    <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
+                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-center">
+                                {% if "Yuntech" not in user.username %}
+                                    <form method="get" action="{% url 'loadadd' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-light me-1">新增</button>
+                                    </form>
+                                    <div class="d-flex justify-content-center">
+                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
+                                    </div>
+                                    <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
+                                        匯出Excel
+                                    </a>
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <label for="importExcel" class="btn btn-outline-light me-1">
+                                            匯入Excel
+                                        </label>
+                                        <input type="file" id="importExcel" name="importExcel" style="display:none">
+                                    </form>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
     </header>
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
         <div class="table-responsive">
-            {#            {% if request.session.dropdown_one %}#}
-            {#                {{ request.session.dropdown_one }}#}
-            {#                {{ request.session.dropdown_two }}#}
-            {#                {{ request.session.dropdown_three }}#}
-            {#            {% endif %}#}
             <table class="table table-sm" id="table">
                 <thead class="text-center" id="table_head">
 
@@ -425,8 +422,7 @@
                             };
                         })();
                         dropdown_two_selected()
-                    }
-                    else {
+                    } else {
                         $("#dropdown_two").val("0").attr("selected", "");
                     }
                 },
@@ -472,8 +468,7 @@
                             };
                         })();
                         dropdown_three_selected()
-                    }
-                    else {
+                    } else {
                         $("#dropdown_three").val("0").attr("selected", "");
                     }
                 },
@@ -559,15 +554,14 @@
                 },
             });
         }
+
         //載入標題
-        function LoadTitle(deviceId, yearInput, dropdown_one_value, dropdown_two_value) {
-                $.ajax({
+        function LoadTitle(deviceId, yearInput) {
+            $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
                     'deviceId': deviceId,
                     'yearInput': yearInput,
-                    'dropdown_one': dropdown_one_value,
-                    'dropdown_two': dropdown_two_value
                 },
                 type: 'GET',
                 dataType: 'json',
@@ -605,7 +599,7 @@
                     })
                 },
             });
-            }
+        }
 
         $(document).ready(function () {
             let dropdown_one_value = "{{ dropdown_one }}"
@@ -613,7 +607,7 @@
             let dropdown_three_value = "{{ dropdown_three }}"
             let yearInput = 2023
             let company_value = 2
-            if (dropdown_one_value !== "" && dropdown_two_value !== "" && dropdown_three_value !== ""){
+            if (dropdown_one_value !== "" && dropdown_two_value !== "" && dropdown_three_value !== "") {
                 // dropdown_one預選(只執行一次)
                 let dropdown_one_selected = (function () {
                     let executed = false;
@@ -628,7 +622,7 @@
                 dropdown_one_selected()
                 DropdownOne(dropdown_one_value)
                 DropdownTwo(dropdown_two_value)
-                LoadTitle(dropdown_three_value, yearInput, dropdown_one_value, dropdown_two_value);
+                LoadTitle(dropdown_three_value, yearInput);
                 loadtable(dropdown_three_value, company_value, yearInput)
             }
         });
@@ -639,13 +633,11 @@
             let deviceIdInput = document.getElementById('deviceId');
             let company_valueInput = document.getElementById('company_value');
             let yearInput = $("#yearInput").val()
-            let dropdown_one_value = $("#dropdown_one").val()
-            let dropdown_two_value = $("#dropdown_two").val()
             //新增跳轉
             deviceIdInput.value = deviceId;
             company_valueInput.value = company_value;
-
-            LoadTitle(deviceId, yearInput, dropdown_one_value, dropdown_two_value);
+            //載入標題
+            LoadTitle(deviceId, yearInput);
             //載入資料
             if (company_value !== 0) {
                 loadtable(deviceId, company_value, yearInput);
@@ -775,11 +767,7 @@
                 let dropdown_three = document.getElementById('dropdown_three');
                 let deviceId = dropdown_three.value;
                 let companyValue = $("#company_dropdown").val();
-                {#let companyValue = document.getElementById('company_dropdown').value#}
                 let yearInput = $("#yearInput").val()
-
-
-
                 let formData = new FormData();
                 formData.append('did', deviceId);
                 formData.append('excel_file', $('#importExcel')[0].files[0]);
@@ -812,7 +800,9 @@
         function updateYear() {
             const yearInput = document.getElementById("yearInput");
             const yearDisplay = document.getElementById("yearDisplay");
+            const hiddenYearsInput = document.getElementById("hiddenYearsInput");
             yearDisplay.textContent = yearInput.value;
+            hiddenYearsInput.value = yearInput.value;
         }
 
         window.addEventListener('load', function () {
