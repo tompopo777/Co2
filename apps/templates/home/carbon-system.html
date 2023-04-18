@@ -68,7 +68,6 @@
                                 </div>
                                 <div class="col-3">
                                     <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">過程區域</label>
-                                    {#                                    <script src="{% static 'h' %}"></script>#}
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
                                 </div>
                                 <div class="col-3">
@@ -279,6 +278,13 @@
          */
 
         {#    年度篩選器#}
+        let years = "{{ years }}"
+        let datepicker_years
+        if (years !== ""){
+            datepicker_years = years;
+        }else {
+            datepicker_years = 'now'
+        }
         $("#yearInput").datepicker({
             format: "yyyy",
             viewMode: "years",
@@ -286,7 +292,7 @@
             orientation: "bottom",
             autoclose: "true",
             endDate: new Date(),
-        }).datepicker("setDate", 'now');
+        }).datepicker("setDate", datepicker_years);
 
 
         // get the element to animate
@@ -601,12 +607,30 @@
             });
         }
 
+        /*
+
+        {#    年度篩選器#}
+        let years = "{{ years }}"
+        if (years !== ""){
+
+        }
+        $("#yearInput").datepicker({
+            format: "yyyy",
+            viewMode: "years",
+            minViewMode: "years",
+            orientation: "bottom",
+            autoclose: "true",
+            endDate: new Date(),
+        }).datepicker("setDate", 'now');
+                 */
+
         $(document).ready(function () {
             let dropdown_one_value = "{{ dropdown_one }}"
             let dropdown_two_value = "{{ dropdown_two }}"
             let dropdown_three_value = "{{ dropdown_three }}"
-            let yearInput = 2023
-            let company_value = 2
+            {#let yearInput = 2023#}
+            let yearInput = "{{ years }}"
+            let company_value = "{{ company_dropdown }}"
             if (dropdown_one_value !== "" && dropdown_two_value !== "" && dropdown_three_value !== "") {
                 // dropdown_one預選(只執行一次)
                 let dropdown_one_selected = (function () {
