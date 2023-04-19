@@ -28,8 +28,7 @@
                             </div>
                             <div class="card-body">
                                 <form action="/ice_water_dispenser_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                    <input type="hidden" name="company_id" value="{{ company_id }}">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
                                             <div class="col-4">
@@ -145,12 +144,17 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認，並新增另一筆
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
                                             </button>
                                         </div>
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
                                             <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
                                                 取消
                                             </button>
@@ -179,6 +183,16 @@
 
 
     <script>
+        {#    顯示新增成功訊息#}
+        $(document).ready(function () {
+            {% if messages %}
+                {% for message in messages %}
+                    let success_message = "{{ message }}"
+                    alert(success_message);
+                {% endfor %}
+            {% endif %}
+        });
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;

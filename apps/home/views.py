@@ -1093,11 +1093,11 @@ def copy_last_year_data(request):
 
 
 @login_required(login_url="/login/")
-def emergency_generators_add(request, company_id=None):
+def emergency_generators_add(request):
     context = {}
+    EG_add = EGform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
-        EG_add = EGform(request.POST, request.FILES)
+        company_id = request.session.get('company_dropdown')
         if EG_add.is_valid():
             EG_add = EG_add.save(commit=False)
             EG_add.company_id = company_id
@@ -1110,23 +1110,28 @@ def emergency_generators_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
         else:
             print(EG_add.errors)
     else:
-        company_id = company_id
         EG_add = EGform()
     context['EG_add'] = EG_add
-    context['company_id'] = company_id
     return render(request, 'home/emergency-generator.html', context)
 
 
 @login_required(login_url="/login/")
-def combustion_equipment_add(request, company_id=None):
+def combustion_equipment_add(request):
     context = {}
+    CE_add = CEform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
-        CE_add = CEform(request.POST, request.FILES)
+        company_id = request.session.get('company_dropdown')
         if CE_add.is_valid():
             CE_add = CE_add.save(commit=False)
             CE_add.company_id = company_id
@@ -1139,21 +1144,28 @@ def combustion_equipment_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         CE_add = CEform()
     context['CE_add'] = CE_add
-    context['company_id'] = company_id
     return render(request, 'home/combustion-equipment.html', context)
 
 
 @login_required(login_url="/login/")
-def official_car_add(request, company_id=None):
+def official_car_add(request):
     context = {}
     OffCar_add = OFform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
+        # if 'addAnother' in request.POST:
+        print(request.POST)
         if OffCar_add.is_valid():
             urea = request.POST.getlist("urea")
             OffCar_add = OffCar_add.save(commit=False)
@@ -1180,21 +1192,29 @@ def official_car_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                print("kkkkkkkkkkkkkk")
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         OffCar_add = OFform()
     context['OffCar_add'] = OffCar_add
-    context['company_id'] = company_id
     return render(request, 'home/official-car.html', context)
 
 
 @login_required(login_url="/login/")
-def material_add(request, company_id=None):
+def material_add(request):
     context = {}
     MT_add = MTform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        print(request.POST)
+
+        company_id = request.session.get('company_dropdown')
         if MT_add.is_valid():
             MT_add = MT_add.save(commit=False)
             MT_add.company_id = company_id
@@ -1207,21 +1227,26 @@ def material_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         MT_add = MTform()
     context['MT_add'] = MT_add
-    context['company_id'] = company_id
     return render(request, 'home/material.html', context)
 
 
 @login_required(login_url="/login/")
-def process_add(request, company_id=None):
+def process_add(request):
     context = {}
     PC_add = PCform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if PC_add.is_valid():
             PC_add = PC_add.save(commit=False)
             PC_add.company_id = company_id
@@ -1234,21 +1259,26 @@ def process_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         PC_add = PCform()
     context['PC_add'] = PC_add
-    context['company_id'] = company_id
     return render(request, 'home/process.html', context)
 
 
 @login_required(login_url="/login/")
-def refrigerator_add(request, company_id=None):
+def refrigerator_add(request):
     context = {}
     RF_add = RFform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if RF_add.is_valid():
             RF_add = RF_add.save(commit=False)
             RF_add.company_id = company_id
@@ -1261,23 +1291,28 @@ def refrigerator_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
         else:
             return redirect('/new_device/', {'RF_add': RF_add})
     else:
-        company_id = company_id
         RF_add = RFform()
     context['RF_add'] = RF_add
-    context['company_id'] = company_id
     return render(request, 'home/refrigerator.html', context)
 
 
 @login_required(login_url="/login/")
-def airconditioner_add(request, company_id=None):
+def airconditioner_add(request):
     context = {}
     AC_add = ACform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if AC_add.is_valid():
             AC_add = AC_add.save(commit=False)
             AC_add.company_id = company_id
@@ -1290,23 +1325,28 @@ def airconditioner_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
         else:
             return redirect('/new_device/', {'AC_add': AC_add})
     else:
-        company_id = company_id
         AC_add = ACform()
     context['AC_add'] = AC_add
-    context['company_id'] = company_id
     return render(request, 'home/airconditioner.html', context)
 
 
 @login_required(login_url="/login/")
-def vehicle_add(request, company_id=None):
+def vehicle_add(request):
     context = {}
     VC_add = VCform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if VC_add.is_valid():
             VC_add = VC_add.save(commit=False)
             VC_add.company_id = company_id
@@ -1319,12 +1359,17 @@ def vehicle_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         VC_add = VCform()
     context['VC_add'] = VC_add
-    context['company_id'] = company_id
     return render(request, 'home/vehicle.html', context)
 
 
@@ -1356,19 +1401,17 @@ def water_dispenser_add(request):
             else:
                 return redirect('/carbon-system/')
     else:
-        # company_id = company_id
         WD_add = WDform()
     context['WD_add'] = WD_add
-    # context['company_id'] = company_id
     return render(request, 'home/water-dispenser.html', context)
 
 
 @login_required(login_url="/login/")
-def ice_water_dispenser_add(request, company_id=None):
+def ice_water_dispenser_add(request):
     context = {}
     IWD_add = IWDform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if IWD_add.is_valid():
             IWD_add = IWD_add.save(commit=False)
             IWD_add.company_id = company_id
@@ -1381,21 +1424,26 @@ def ice_water_dispenser_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         IWD_add = IWDform()
     context['IWD_add'] = IWD_add
-    context['company_id'] = company_id
     return render(request, 'home/ice-water-dispenser.html', context)
 
 
 @login_required(login_url="/login/")
-def ice_maker_add(request, company_id=None):
+def ice_maker_add(request):
     context = {}
     IM_add = IMform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if IM_add.is_valid():
             IM_add = IM_add.save(commit=False)
             IM_add.company_id = company_id
@@ -1408,21 +1456,26 @@ def ice_maker_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         IM_add = IMform()
     context['IM_add'] = IM_add
-    context['company_id'] = company_id
     return render(request, 'home/ice-maker.html', context)
 
 
 @login_required(login_url="/login/")
-def other_device_add(request, company_id=None):
+def other_device_add(request):
     context = {}
     OD_add = ODform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if OD_add.is_valid():
             OD_add = OD_add.save(commit=False)
             OD_add.company_id = company_id
@@ -1435,21 +1488,26 @@ def other_device_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         OD_add = ODform()
     context['OD_add'] = OD_add
-    context['company_id'] = company_id
     return render(request, 'home/other-device.html', context)
 
 
 @login_required(login_url="/login/")
-def extinguisher_add(request, company_id=None):
+def extinguisher_add(request):
     context = {}
     EX_add = EXform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if EX_add.is_valid():
             EX_add = EX_add.save(commit=False)
             EX_add.company_id = company_id
@@ -1462,21 +1520,26 @@ def extinguisher_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         EX_add = EXform()
     context['EX_add'] = EX_add
-    context['company_id'] = company_id
     return render(request, 'home/extinguisher.html', context)
 
 
 @login_required(login_url="/login/")
-def personnel_inventory_add(request, company_id=None):
+def personnel_inventory_add(request):
     context = {}
     PI_add = PIform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if PI_add.is_valid():
             PI_add = PI_add.save(commit=False)
             PI_add.company_id = company_id
@@ -1489,21 +1552,26 @@ def personnel_inventory_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         PI_add = PIform()
     context['PI_add'] = PI_add
-    context['company_id'] = company_id
     return render(request, 'home/personnel-inventory.html', context)
 
 
 @login_required(login_url="/login/")
-def employee_add(request, company_id=None):
+def employee_add(request):
     context = {}
     EMP_add = EMPform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if EMP_add.is_valid():
             EMP_add = EMP_add.save(commit=False)
             EMP_add.company_id = company_id
@@ -1516,22 +1584,27 @@ def employee_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         EMP_add = EMPform()
     context['EMP_add'] = EMP_add
-    context['company_id'] = company_id
     return render(request, 'home/employee.html', context)
 
 
 # 廢水
 @login_required(login_url="/login/")
-def waste_water_add(request, company_id=None):
+def waste_water_add(request):
     context = {}
     waste_water_add = WASTEWATERform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if waste_water_add.is_valid():
             waste_water_add = waste_water_add.save(commit=False)
             waste_water_add.company_id = company_id
@@ -1544,22 +1617,27 @@ def waste_water_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         waste_water_add = WASTEWATERform
     context['waste_water_add'] = waste_water_add
-    context['company_id'] = company_id
     return render(request, 'home/waste-water.html', context)
 
 
 # 廢汙泥
 @login_required(login_url="/login/")
-def waste_sludge_add(request, company_id=None):
+def waste_sludge_add(request):
     context = {}
     waste_sludge_add = WasteSludgeForm(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if waste_sludge_add.is_valid():
             waste_sludge_add = waste_sludge_add.save(commit=False)
             waste_sludge_add.company_id = company_id
@@ -1572,45 +1650,52 @@ def waste_sludge_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         waste_sludge_add = WasteSludgeForm()
     context['waste_sludge_add'] = waste_sludge_add
-    context['company_id'] = company_id
     return render(request, 'home/waste-sludge.html', context)
 
 
 # 溶劑、噴霧劑
 @login_required(login_url="/login/")
-def solvent_aerosol_emission_sources_add(request, company_id=None):
+def solvent_aerosol_emission_sources_add(request):
     context = {}
     SAES_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if SAES_add.is_valid():
             solvent = SAES_add.save(commit=False)
             solvent.company_id = company_id
             solvent.save()
-            return redirect('/carbon-system/')
-        # else:
-        #     print("SAES_add表單錯誤>>>>>>>>>>>>>>>>>>>>\n", SAES_add.errors)
-        #     return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'company_id': company_id})
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         SAES_add = SolventAerosolEmissionSourcesForm()
     context['SAES_add'] = SAES_add
-    context['company_id'] = company_id
-    return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add, 'company_id': company_id})
+    return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add})
 
 
 # VOCs1表單儲存
 @login_required(login_url="/login/")
-def VOCs_one_add(request, company_id=None):
+def VOCs_one_add(request):
     context = {}
     VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if VOCs_one_add.is_valid():
             VOCs_one_add = VOCs_one_add.save(commit=False)
             VOCs_one_add.company_id = company_id
@@ -1623,22 +1708,27 @@ def VOCs_one_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         VOCs_one_add = VOCsOneForm()
     context['VOCs_one_add'] = VOCs_one_add
-    context['company_id'] = company_id
     return render(request, 'home/VOCs-one.html', context)
 
 
 # VOCs2表單儲存
 @login_required(login_url="/login/")
-def VOCs_two_add(request, company_id=None):
+def VOCs_two_add(request):
     context = {}
     VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         print("company_id", company_id)
         if VOCs_two_add.is_valid():
             VOCs_two_add = VOCs_two_add.save(commit=False)
@@ -1652,24 +1742,29 @@ def VOCs_two_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
         else:
             print("\n", VOCs_two_add.errors)
-            return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add, 'company_id': company_id})
+            return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add})
     else:
-        company_id = company_id
         VOCs_two_add = VOCsTwoForm()
     context['VOCs_two_add'] = VOCs_two_add
-    context['company_id'] = company_id
     return render(request, 'home/VOCs-two.html', context)
 
 
 @login_required(login_url="/login/")
-def electricity_add(request, company_id=None):
+def electricity_add(request):
     context = {}
     ELEC_add = ELECform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if ELEC_add.is_valid():
             ELEC_add = ELEC_add.save(commit=False)
             ELEC_add.company_id = company_id
@@ -1682,21 +1777,26 @@ def electricity_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         ELEC_add = ELECform
     context['ELEC_add'] = ELEC_add
-    context['company_id'] = company_id
     return render(request, 'home/electricity.html', context)
 
 
 @login_required(login_url="/login/")
-def upstream_transportation_add(request, company_id=None):
+def upstream_transportation_add(request):
     context = {}
     UT_add = UTform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if UT_add.is_valid():
             UT_add = UT_add.save(commit=False)
             UT_add.company_id = company_id
@@ -1719,21 +1819,26 @@ def upstream_transportation_add(request, company_id=None):
                     photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                     print(stage)
                     photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         UT_add = UTform()
     context['UT_add'] = UT_add
-    context['company_id'] = company_id
     return render(request, 'home/upstream-transportation.html', context)
 
 
 @login_required(login_url="/login/")
-def downstream_transportation_add(request, company_id=None):
+def downstream_transportation_add(request):
     context = {}
     DT_add = DTform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if DT_add.is_valid():
             DT_add = DT_add.save(commit=False)
             DT_add.company_id = company_id
@@ -1756,21 +1861,26 @@ def downstream_transportation_add(request, company_id=None):
                     photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                     print(stage)
                     photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         DT_add = DTform()
     context['DT_add'] = DT_add
-    context['company_id'] = company_id
     return render(request, 'home/downstream-transportation.html', context)
 
 
 @login_required(login_url="/login/")
-def employee_commute_add(request, company_id=None):
+def employee_commute_add(request):
     context = {}
     EC_add = ECform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if EC_add.is_valid():
             commute = EC_add.save(commit=False)
             commute.company_id = company_id
@@ -1783,21 +1893,19 @@ def employee_commute_add(request, company_id=None):
                 last_data = employee_commute.objects.last()
                 last_data.delete()
                 print("Commute_formSet>>>>>>>>>>>>>>>>>>>>\n", Commute_formSet)
-                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'company_id': company_id})
+                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
     else:
-        company_id = company_id
         EC_add = ECform()
     context['EC_add'] = EC_add
-    context['company_id'] = company_id
-    return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'company_id': company_id})
+    return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
 
 
 @login_required(login_url="/login/")
-def employee_business_trip_add(request, company_id=None):
+def employee_business_trip_add(request):
     context = {}
     EBT_add = EBTform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if EBT_add.is_valid():
             business = EBT_add.save(commit=False)
             business.company_id = company_id
@@ -1819,26 +1927,31 @@ def employee_business_trip_add(request, company_id=None):
                         photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                         print(stage)
                         photo.save()
-                return redirect('/carbon-system/')
+                # 根據前端submit input的name判斷
+                if 'addAnother' in request.POST:
+                    messages.success(request, '表單已成功提交！')
+                    print('request.method', request.method)
+                    print('表單已成功提交')
+                    return redirect('/new_device/')
+                else:
+                    return redirect('/carbon-system/')
             else:
                 last_data = employee_business_trip.objects.last()
                 last_data.delete()
                 print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", tripsection_formSet)
-                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'company_id': company_id})
+                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
     else:
         EBT_add = EBTform()
-        company_id = company_id
     context['EBT_add'] = EBT_add
-    context['company_id'] = company_id
-    return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'company_id': company_id})
+    return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
 
 
 @login_required(login_url="/login/")
-def waste_add(request, company_id=None):
+def waste_add(request):
     context = {}
     WASTE_add = WASTEform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if WASTE_add.is_valid():
             WASTE_add = WASTE_add.save(commit=False)
             WASTE_add.company_id = company_id
@@ -1851,22 +1964,27 @@ def waste_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         WASTE_add = WASTEform
     context['WASTE_add'] = WASTE_add
-    context['company_id'] = company_id
     return render(request, 'home/waste.html', context)
 
 
 # 納管廢水
 @login_required(login_url="/login/")
-def pipe_wastewater_add(request, company_id=None):
+def pipe_wastewater_add(request):
     context = {}
     PW_add = PWform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if PW_add.is_valid():
             PW_add = PW_add.save(commit=False)
             PW_add.company_id = company_id
@@ -1879,22 +1997,27 @@ def pipe_wastewater_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         PW_add = PWform()
     context['PW_add'] = PW_add
-    context['company_id'] = company_id
     return render(request, 'home/pipe-wastewater.html', context)
 
 
 # 採購原物料
 @login_required(login_url="/login/")
-def purchase_material_add(request, company_id=None):
+def purchase_material_add(request):
     context = {}
     PM_add = PMform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if PM_add.is_valid():
             PM_add = PM_add.save(commit=False)
             PM_add.company_id = company_id
@@ -1907,22 +2030,27 @@ def purchase_material_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
     else:
-        company_id = company_id
         PM_add = PMform()
     context['PM_add'] = PM_add
-    context['company_id'] = company_id
     return render(request, 'home/purchase-material.html', context)
 
 
 # 產品間接排放
 @login_required(login_url="/login/")
-def product_indirect_emissions_add(request, company_id=None):
+def product_indirect_emissions_add(request):
     context = {}
     PIE_add = PIEform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.POST.get("company_id")
+        company_id = request.session.get('company_dropdown')
         if PIE_add.is_valid():
             PIE_add = PIE_add.save(commit=False)
             PIE_add.company_id = company_id
@@ -1935,12 +2063,17 @@ def product_indirect_emissions_add(request, company_id=None):
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
                 photo.save()
-            return redirect('/carbon-system/')
-    else:
-        company_id = company_id
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                print('request.method', request.method)
+                print('表單已成功提交')
+                return redirect('/new_device/')
+            else:
+                return redirect('/carbon-system/')
+    else: 
         PIE_add = PIEform()
     context['PIE_add'] = PIE_add
-    context['company_id'] = company_id
     return render(request, 'home/product-indirect-emissions.html', context)
 
 
