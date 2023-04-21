@@ -381,10 +381,29 @@ def load_table(request):
                                                                                       "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
                                                                                       "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "廢水":
-                t_data = list(
-                    waste_water.objects.filter(company_id=company_id, years=year).values("id", "waste_water_treatment_name", "waste_water_inflow_rate", "average_inlet_COD_concentration",
-                                                                                         "average_COD_removal_rate", "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+            elif a["d_name"] == "厭氧廢水":
+                t_data = []
+                raw_data = waste_water.objects.filter(company_id=company_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri")
+                print(raw_data)
+                # 計算加油量合計
+                for i in range(raw_data.count()):
+                    single_data = {}
+                    cod_total = (((raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi")) - (raw_data[i].get("Si"))) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj"))) - raw_data[i].get("Ri")
+
+                    # print(cod_total)
+                    consumption_total = cod_total.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    # 抓單筆資料
+                    single_data.update(raw_data[i])
+                    # 將計算後的加油量丟回字典
+                    single_data["total"] = consumption_total
+                    t_data.append(single_data)
+
+                # for i in range(raw_data.count()):
+                #     cod_total = (raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi") - raw_data[i].get("Si")) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj")) - raw_data[i].get("Ri")
+                #     raw_data[i]["CH4"] = cod_total
+                # print(raw_data)
+                # t_data.append(raw_data)
+                # t_data = list(waste_water.objects.filter(company_id=company_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢汙泥":
                 t_data = list(
@@ -561,13 +580,11 @@ def load_table(request):
 def copy_last_year_data(request):
     if request.method == 'POST':
         device_id = request.POST.get('deviceId')
-        print(device_id)
         company_value = request.POST.get('company_value')
         if company_value is None:
             company_id = current_user_group_id(request)
         else:
             company_id = int(company_value)
-        print("load_table_company_value", company_value)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
 
         # 獲取當前年份
@@ -831,7 +848,7 @@ def copy_last_year_data(request):
                 employee.objects.bulk_create(
                     [employee(**data) for data in last_year_data]
                 )
-            elif a["d_name"] == '廢水':
+            elif a["d_name"] == '厭氧廢水':
                 last_year_data = waste_water.objects.filter(company_id=company_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
@@ -981,37 +998,31 @@ def copy_last_year_data(request):
                     }
                     return JsonResponse(response_data)
 
-                new_commute_data = []
                 commute_id_dict = {}
+                new_commute_data = []
+                new_transportation_data = []
 
                 for data in last_year_commute_data:
                     original_id = data['id']  # 記錄原本的id
                     data.pop('id')  # 刪除主鍵
                     data['years'] = this_year
                     new_commute = employee_commute.objects.create(**data)
-                    commute_id_dict[original_id] = new_commute.id  # 將原本的id和新的id建立對應關係
                     new_commute_data.append(new_commute)
+                    commute_id_dict[original_id] = new_commute.id  # 將原本的id和新的id建立對應關係
 
+                # 將資料儲存回資料庫中
                 # employee_commute.objects.bulk_create(new_commute_data)
 
-                # # 將資料儲存回資料庫中
-                # employee_commute.objects.bulk_create(
-                #     [employee_commute(**data) for data in last_year_commute_data]
-                # )
-
-                # new_transport_data = []
-
                 for data in last_year_transport_data:
-                    original_commute_id = data['commute_id']  # 記錄原本的commute_id
+                    original_commute_id = data['commute_id']
+                    new_commute_id = commute_id_dict[original_commute_id]
                     data.pop('id')  # 刪除主鍵
-                    data['commute_id'] = commute_id_dict[original_commute_id]  # 使用原本的commute_id去取得新的commute_id
-                    # new_transport = transportation_way.objects.create(**data)
-                    # new_transport_data.append(new_transport)
+                    data['commute_id'] = new_commute_id
+                    new_transportation = transportation_way(**data)
+                    new_transportation_data.append(new_transportation)
 
                 # 儲存新的子表資料到資料庫中
-                transportation_way.objects.bulk_create(
-                    [transportation_way(**data) for data in last_year_transport_data]
-                )
+                transportation_way.objects.bulk_create(new_transportation_data)
 
             elif a["d_name"] == '員工出差':
                 last_year_data = employee_business_trip.objects.filter(company_id=company_id, years=last_year).values()
@@ -2366,7 +2377,7 @@ def add_title(request):
 
             "16": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "廢水厭氧處理單元名稱 ", "廢水進流量(立方公尺/年)", "平均進流COD濃度(mg/L)", "平均進流COD濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "每年事業廢水之COD總量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量"],
             },
 
             "17": {

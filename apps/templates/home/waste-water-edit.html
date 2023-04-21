@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} 廢水 - 修改 {% endblock %}
+{% block title %} 厭氧廢水 - 修改 {% endblock %}
 
 {% block body_class %} waste-water {% endblock %}
 
@@ -23,7 +23,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 廢水</h3>
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 厭氧廢水</h3>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -39,40 +39,54 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢水厭氧處理單元名稱  <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_water_treatment_name }}
+                                                    <label>Pi:工業部門生產量(t/yr) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.Pi }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢水進流量(立方公尺/年)<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_water_inflow_rate }}
+                                                    <label>Wi:廢水產生量(m3/tproduct) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.Wi }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>平均進流COD濃度(mg/L)<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.average_inlet_COD_concentration }}
+                                                    <label>CODi:化學需氧量(kg COD/m3) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.CODi }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>平均COD去除率(%)<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.average_COD_removal_rate }}
+                                                    <label>每年事業廢水之COD總量<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.COD_total }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>CH4捕集系統捕集率<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.CH4_capture_system_rate }}
+                                                    <label>Si:污泥移除量(kg COD/yr) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.Si }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>燃燒設備效率<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.combustion_equipment_efficiency }}
+                                                    <label>MCFj:甲烷修正係數<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.MCFj }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>Bo:最大CH4產生量<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.Bo }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>Ri:甲烷移除量(kg CH4/yr) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.Ri }}
                                                 </div>
                                             </div>
                                         </div>
@@ -83,10 +97,18 @@
                                                     {{ form.image_note }}
                                                 </div>
                                             </div>
-                                            <div class=" ps-md-2 align-self-center">
-                                                <div class="col-1 ">
-                                                    {{ form.image_path }}
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="ps-md-2 align-self-center">
+                                                <div class="col-2" multiple="multiple">
+                                                    <input type="hidden" name="stage" value="廢水">
+                                                    <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                                 </div>
+                                            </div>
+                                            <div id="files-area">
+                                                <span id="filesList">
+                                                    <span id="files-names"></span>
+                                                </span>
                                             </div>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">

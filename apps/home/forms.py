@@ -94,7 +94,7 @@ REFRIGERANT_TYPE_CHOICES = [
 ]
 EXTINGUISHER_TYPE_CHOICES = [
     ('二氧化碳滅火器', '二氧化碳滅火器'),
-    ('潔淨滅火器HFC-227ea（FM-200、FE-227）', '潔淨滅火器HFC-227ea（FM-200、FE-227）'),
+    ('潔淨滅火器HFC-227ea（FM-200、FE-227)', '潔淨滅火器HFC-227ea（FM-200、FE-227）'),
     ('潔淨滅火器HFC-125', '潔淨滅火器HFC-125'),
 ]
 TRANSPORT_TYPE_CHOICES = [
@@ -786,17 +786,18 @@ class EMPform(forms.ModelForm):
 class WASTEWATERform(forms.ModelForm):
     class Meta:
         model = waste_water
-        fields = ('years', 'waste_water_treatment_name', 'waste_water_inflow_rate', 'average_inlet_COD_concentration',
-                  'average_COD_removal_rate', 'CH4_capture_system_rate', 'combustion_equipment_efficiency',
+        fields = ('years', 'Pi', 'Wi', 'CODi', 'COD_total', 'Si', 'MCFj', 'Bo', 'Ri',
                   'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'waste_water_treatment_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'waste_water_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'average_inlet_COD_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'average_COD_removal_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9].[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9].[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'Pi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Wi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'CODi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'COD_total': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Si': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'MCFj': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Bo': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Ri': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -1097,6 +1098,7 @@ department_CHOICES = [
     ('產品研發部', '產品研發部'),
 ]
 
+
 # 員工出差
 class EBTform(forms.ModelForm):
     class Meta:
@@ -1130,7 +1132,7 @@ TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section,
                                                     'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'})})
 
 
-#廢棄物
+# 廢棄物
 class WASTEform(forms.ModelForm):
     class Meta:
         model = waste
