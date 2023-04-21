@@ -382,16 +382,12 @@ def import_excel(request):
     if request.method == 'POST':
         try:
             did = request.POST.get('did')
-            print(did)
             file = request.FILES['excel_file']
             company_value = request.POST.get('company_id')
-            print(type(company_value))
-
             if company_value == 'undefined':
                 company_id = current_user_group_id(request)
             else:
                 company_id = int(company_value)
-            print("123", company_id)
 
             # 解析Excel檔案
             wb = load_workbook(file, data_only=True)
