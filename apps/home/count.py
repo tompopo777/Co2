@@ -64,8 +64,11 @@ def calculate_summary(request):
         other_device_device = other_device_count(years, company_id, coefficient_source, gwp_version)
         solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_count(years, company_id, coefficient_source, gwp_version)
         personnel_inventory_device = personnel_inventory_count(years, company_id, coefficient_source, gwp_version)
+        # extinguisher_device = extinguisher_count(years, company_id, coefficient_source, gwp_version)
         output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device, personnel_inventory_device])
-        output = output.rename(columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'sum_count': '活動數據總量', 'data_unit': '數據單位', 'emission': '排放當量公噸(公噸/數據期間)', 'gas_name': '可能產生溫室氣體種類', 'coefficient': '排放係數', 'coefficient_unit': '排放係數單位', 'coefficient_source': '係數來源', 'gwp_coefficient': 'ICPP報告GWP值'})
+        output = output.rename(
+            columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'sum_count': '活動數據總量', 'data_unit': '數據單位', 'emission': '排放當量公噸(公噸/數據期間)', 'gas_name': '可能產生溫室氣體種類', 'coefficient': '排放係數', 'coefficient_unit': '排放係數單位',
+                     'coefficient_source': '係數來源', 'gwp_coefficient': 'ICPP報告GWP值'})
         new_order = ['過程或區域', '排放源設施', '原燃物料', '活動數據總量', '數據單位', '排放當量公噸(公噸/數據期間)', '可能產生溫室氣體種類', '排放係數', '排放係數單位', '係數來源', 'ICPP報告GWP值']
         output = output.reindex(columns=new_order)
         display(output)
@@ -190,7 +193,8 @@ def official_car_count(years, company_id, coefficient_source, gwp_version):
 # 製冰機
 def ice_maker_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_data = pd.DataFrame(list(ice_maker.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('製冰機', output_field=models.CharField(max_length=50)),
+        raw_data = pd.DataFrame(
+            list(ice_maker.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('製冰機', output_field=models.CharField(max_length=50)),
                                                                                                                                            data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
@@ -219,7 +223,8 @@ def ice_maker_count(years, company_id, coefficient_source, gwp_version):
 # 飲水機
 def water_dispenser_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_data = pd.DataFrame(list(water_dispenser.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('飲水機', output_field=models.CharField(max_length=50)),
+        raw_data = pd.DataFrame(
+            list(water_dispenser.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('飲水機', output_field=models.CharField(max_length=50)),
                                                                                                                                                  data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
@@ -248,7 +253,8 @@ def water_dispenser_count(years, company_id, coefficient_source, gwp_version):
 # 冷氣機
 def airconditioner_count(years, company_id, coefficient_source, gwp_version):
     try:
-        raw_data = pd.DataFrame(list(airconditioner.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)),
+        raw_data = pd.DataFrame(
+            list(airconditioner.objects.filter(years=years).filter(company_id=company_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)),
                                                                                                                                                 data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
@@ -277,7 +283,8 @@ def airconditioner_count(years, company_id, coefficient_source, gwp_version):
 def other_device_count(years, company_id, coefficient_source, gwp_version):
     try:
         raw_data = pd.DataFrame(
-            list(other_device.objects.filter(years=years).filter(company_id=company_id).values('device_name', "refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(
+            list(other_device.objects.filter(years=years).filter(company_id=company_id).values('device_name', "refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+                                                                                                                                                             data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(
             dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
@@ -312,6 +319,7 @@ def solvent_aerosol_emission_sources_count(years, company_id, coefficient_source
         )
         # 溶劑名稱、添加物名稱相同的，將數量做總和
         a_part = raw_part.groupby(["solvent_name", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density", ]).agg({'solvent_amount': 'sum', 'process_area': 'first', 'device_name': 'first', 'data_unit': 'first'}).reset_index()
+
         # display(a_part)
 
         # 根據溶劑單位不同判斷相乘係數(oz要*28.3495231換算成g)
@@ -411,11 +419,36 @@ def personnel_inventory_count(years, company_id, coefficient_source, gwp_version
         print('沒有該人天清冊設備')
         pass
 
+
 # 滅火器
-# extinguisher = pd.DataFrame(list(extinguisher.objects.values('extinguisher_type').annotate(
-#     sum_count=Cast(Sum(F('chemical_weight') * F('inventory')) / 1000, output_field=models.DecimalField(max_digits=20, decimal_places=4))
-# ).order_by('extinguisher_type')))
-# display(extinguisher.to_string(index=False))
+# def extinguisher_count(years, company_id, coefficient_source, gwp_version):
+#     try:
+# coefficient_source = "質量平衡法"
+# gwp_version = 6
+# raw_data = pd.DataFrame(list(extinguisher.objects.values("extinguisher_type").annotate(
+#     process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+#     device_name=Value('滅火器', output_field=models.CharField(max_length=50)),
+#     sum_count=Cast(Sum(F('chemical_weight')*F('inventory')) / 1000, output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+#     data_unit=Value('公噸', output_field=models.CharField(max_length=50))))
+# )
+# print(raw_data)
+# a_part = raw_data
+# print(a_part)
+# coefficient_part = None
+# for query in raw_data:
+#     fuel_type = query['extinguisher_type']
+#     coefficient_data = coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause=fuel_type).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
+#     coefficient_part = pd.DataFrame(list(coefficient_data))
+# gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+# raw_data = pd.DataFrame(list(raw_data))
+# a_b_part = pd.merge(raw_data, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+# final = pd.merge(a_b_part, gwp, left_on='gas_name', right_on='gas_name', how='left')
+# final['emission'] = final.apply(lambda x: (Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient'])).quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP), axis=1)
+# new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+# final = final.reindex(columns=new_order)
+    # except:
+    #     print('沒有該滅火器設備')
+    #     pass
 #
 # # 原物料
 # material = pd.DataFrame(list(material.objects.values('material_name').annotate(
