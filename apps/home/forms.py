@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 from django.forms import inlineformset_factory
+
 MONTH_CHOICES = [
     ('1', '一月'),
     ('2', '二月'),
@@ -200,6 +201,7 @@ CLASSIFICATION_CHOICES = [
     ('員工宿舍', '員工宿舍'),
 ]
 
+
 # 前面: 存DB，後面: 顯示
 # COMPANY_CHOICES = []
 # company_name = company.objects.values("company_name")
@@ -210,6 +212,27 @@ CLASSIFICATION_CHOICES = [
 #         key = a.get("id")
 #         COMPANY_CHOICES.append((key, value))
 # print("COMPANY_CHOICES:", COMPANY_CHOICES)
+
+
+class CompanyForm(forms.ModelForm):
+    class Meta:
+        model = company
+        fields = ('company_name', 'tax_id', 'address', 'headcount', 'superintendent', 'contact_person', 'contact_telephone', 'contact_email', 'industry_classification', 'parent_code')
+        widgets = {
+            'company_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'tax_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+            'headcount': forms.TextInput(attrs={'class': 'form-control'}),
+            'superintendent': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_person': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_telephone': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_email': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'contact_email': forms.EmailField(required=True),
+            'industry_classification': forms.Select(attrs={'class': 'form-control'}, choices=[('製造業', '製造業')]),
+            # 'parent_code': forms.Select(choices=[('abc', 'abc')]),
+            # 'parent_code': forms.Select(choices=parent.objects.all()),
+            # 'parent_code': forms.ModelChoiceField(queryset=parent.objects.all()),
+        }
 
 
 # 柴油發電機
@@ -1085,7 +1108,6 @@ class ECform(forms.ModelForm):
 CommuteFormSet = inlineformset_factory(employee_commute, transportation_way, fields=('transportation',), extra=1,
                                        widgets={'transportation': forms.Select(choices=TRANSPORTATION_CHOICES, attrs={'class': 'form-control'})})
 
-
 department_CHOICES = [
     ('資材部', '資材部'),
     ('業務部', '業務部'),
@@ -1305,5 +1327,3 @@ class PIEform(forms.ModelForm):
         super(PIEform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
-
-
