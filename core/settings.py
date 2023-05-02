@@ -31,14 +31,16 @@ ASSETS_ROOT = os.getenv('ASSETS_ROOT', '/static/assets')
 # 獲取主機名
 hostname = socket.gethostname()
 
-#獲取IP
+# 獲取IP
 ip = socket.gethostbyname(hostname)
 
 ALLOWED_HOSTS = ['localhost', 'localhost:85', '127.0.0.1', env('SERVER', default='127.0.0.1'), ip]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:85', 'http://127.0.0.1', 'https://' + env('SERVER', default='127.0.0.1')]
 
-# Application definition
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_COOKIE_AGE = 15 * 60
 
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -65,7 +67,7 @@ ROOT_URLCONF = 'core.urls'
 LOGIN_REDIRECT_URL = "home"  # Route defined in home/urls.py
 LOGOUT_REDIRECT_URL = "home"  # Route defined in home/urls.py
 TEMPLATE_DIR = os.path.join(CORE_DIR, "apps/templates")  # ROOT dir for templates
-#設定欲上傳的資料要放在哪裡
+# 設定欲上傳的資料要放在哪裡
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "apps/static/assets/img/media/")
 CSRF_COOKIE_HTTPONLY = True

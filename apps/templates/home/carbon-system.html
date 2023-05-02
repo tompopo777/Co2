@@ -20,14 +20,14 @@
              style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
-                {% if company_id == 1 %}
-                    <div class="card-body">
+                {% ifequal user.groups.all.0.name '中心帳號' %}
+                    <div class="card-body px-0">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
                             <input type="hidden" id="hiddenYearsInput" name="years" readonly>
                             <div class="d-flex">
-                                <div class="col-3">
+                                <div class="col-4">
                                     <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">公司廠別</label>
                                     <select class="" id="company_dropdown" name="company_dropdown">
                                         <option value="0" name="" selected>
@@ -35,7 +35,7 @@
                                         </option>
                                         {% for company in company_group %}
                                             <option value="{{ company.id }}">
-                                                {{ company.name }}
+                                                {{ company }}
                                             </option>
                                         {% endfor %}
                                     </select>
@@ -80,7 +80,8 @@
                             </div>
                         </form>
                     </div>
-                {% else %}
+                {% endifequal %}
+                {% ifnotequal user.groups.all.0.name '中心帳號' %}
                     <div class="card-body">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -127,13 +128,13 @@
                             </div>
                         </form>
                     </div>
-                {% endif %}
+                {% endifnotequal %}
                 <div class="d-flex">
                     <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                         <div class="mb-4">
-                            <div class="d-flex justify-content-center">
-                                {% if "Yuntech" not in user.username %}
+                            {% if perms.home.add_emergency_generators %}
+                                <div class="d-flex justify-content-center" id="disable">
                                     <form method="get" action="{% url 'loadadd' %}" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-outline-light me-1">新增</button>
@@ -151,13 +152,13 @@
                                         </label>
                                         <input type="file" id="importExcel" name="importExcel" style="display:none">
                                     </form>
-                                {% endif %}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
-                </div>
             </div>
+        </div>
         </div>
     </header>
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
@@ -280,9 +281,9 @@
         {#    年度篩選器#}
         let years = "{{ years }}"
         let datepicker_years
-        if (years !== ""){
+        if (years !== "") {
             datepicker_years = years;
-        }else {
+        } else {
             datepicker_years = 'now'
         }
         $("#yearInput").datepicker({
@@ -391,7 +392,17 @@
             $("#dropdown_three").removeAttr("disabled");
         });
 
+        function disableButtons() {
+			var section = document.getElementById("disable");
+			var buttons = section.getElementsByTagName("button");
+
+			for (let i = 0; i < buttons.length; i++) {
+				buttons[i].disabled = true;
+			}
+		}
+
         function DropdownOne(param) {
+            {#disableButtons()#}
             if (typeof param === 'number') {
                 var currentClass = param;
             } else if (typeof param === 'string') {
@@ -415,7 +426,20 @@
                         }
                         dropdown_two.options.add(new Option(item.p_name, item.cpid));
                     })
-                    let dropdown_two_value = "{{ dropdown_two }}"
+                    const dropdown_two_value = "{{ dropdown_two }}";
+                    for (let option of dropdown_two.options) {
+                        if (option.value === dropdown_two_value) {
+                            option.selected = true;
+                        }
+                    }
+                    /*
+                    for (let option of dropdown_two.options) {
+                        option.selected = false;
+                    }
+                     */
+
+                    /*
+                    {#let dropdown_two_value = "{{ dropdown_two }}"#}
                     if (dropdown_two_value !== "") {
                         // dropdown_two預選(只執行一次)
                         let dropdown_two_selected = (function () {
@@ -431,6 +455,7 @@
                     } else {
                         $("#dropdown_two").val("0").attr("selected", "");
                     }
+                    */
                 },
             });
         }
@@ -439,6 +464,7 @@
         var dropdown_three = document.getElementById("dropdown_three")
 
         function DropdownTwo(param) {
+            {#disableButtons()#}
             if (typeof param === 'number') {
                 var currentProcess = param;
             } else if (typeof param === 'string') {
@@ -461,7 +487,14 @@
                         }
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
-                    let dropdown_three_value = "{{ dropdown_three }}"
+                    const dropdown_three_value = "{{ dropdown_three }}";
+                    for (let option of dropdown_three.options) {
+                        if (option.value === dropdown_three_value) {
+                            option.selected = true;
+                        }
+                    }
+                    /*
+                    {#let dropdown_three_value = "{{ dropdown_three }}"#}
                     if (dropdown_three_value !== "") {
                         // dropdown_three預選(只執行一次)
                         let dropdown_three_selected = (function () {
@@ -477,6 +510,7 @@
                     } else {
                         $("#dropdown_three").val("0").attr("selected", "");
                     }
+                    */
                 },
 
             });
@@ -494,13 +528,14 @@
         var style = document.createElement('style');
 
         // 載入表格資料
-        function loadtable(deviceId, company_value, yearInput) {
+        {#function loadtable(deviceId, company_value, yearInput) {#}
+        function loadtable() {
             $.ajax({
                 url: "{% url 'loadtable' %}",
                 data: {
-                    'deviceId': deviceId,
-                    'company_value': company_value,
-                    'yearInput': yearInput
+                    {#'deviceId': deviceId,#}
+                    {#'company_value': company_value,#}
+                    {#'yearInput': yearInput#}
                 },
                 type: 'GET',
                 dataType: 'json',
@@ -562,12 +597,12 @@
         }
 
         //載入標題
-        function LoadTitle(deviceId, yearInput) {
+        function LoadTitle() {
             $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
-                    'deviceId': deviceId,
-                    'yearInput': yearInput,
+                    {#'deviceId': deviceId,#}
+                    {#'yearInput': yearInput,#}
                 },
                 type: 'GET',
                 dataType: 'json',
@@ -630,7 +665,7 @@
             let dropdown_three_value = "{{ dropdown_three }}"
             {#let yearInput = 2023#}
             let yearInput = "{{ years }}"
-            let company_value = "{{ company_dropdown }}"
+            let company_value = "{{ factory_id }}"
             if (dropdown_one_value !== "" && dropdown_two_value !== "" && dropdown_three_value !== "") {
                 // dropdown_one預選(只執行一次)
                 let dropdown_one_selected = (function () {
@@ -646,10 +681,21 @@
                 dropdown_one_selected()
                 DropdownOne(dropdown_one_value)
                 DropdownTwo(dropdown_two_value)
-                LoadTitle(dropdown_three_value, yearInput);
-                loadtable(dropdown_three_value, company_value, yearInput)
+                {#LoadTitle(dropdown_three_value, yearInput);#}
+                LoadTitle();
+                {#loadtable(dropdown_three_value, company_value, yearInput)#}
+                loadtable()
             }
         });
+
+        function unDisableButtons() {
+			var section = document.getElementById("disable");
+			var buttons = section.getElementsByTagName("button");
+
+			for (let i = 0; i < buttons.length; i++) {
+				buttons[i].disabled = false;
+			}
+		}
 
         $("#submit").on('click', function () {
             let deviceId = $("#dropdown_three").val()
@@ -657,14 +703,16 @@
             let deviceIdInput = document.getElementById('deviceId');
             let company_valueInput = document.getElementById('company_value');
             let yearInput = $("#yearInput").val()
+            {#unDisableButtons() #}
             //新增跳轉
             deviceIdInput.value = deviceId;
             company_valueInput.value = company_value;
             //載入標題
-            LoadTitle(deviceId, yearInput);
+            {#LoadTitle(deviceId, yearInput);#}
+            LoadTitle();
             //載入資料
             if (company_value !== 0) {
-                loadtable(deviceId, company_value, yearInput);
+                loadtable();
             } else {
                 alert("請先選擇公司名稱")
             }
@@ -672,17 +720,12 @@
 
         $("#copyLastYear").on("click", function () {
             let csrf_token = "{{ csrf_token }}";
-            let deviceId = $("#dropdown_three").val()
-            let company_value = $("#company_dropdown").val()
-            let yearInput = $("#yearInput").val()
 
             $.ajax({
                 type: "POST",
                 url: "{% url 'copy_last_year_data' %}",
                 headers: {"X-CSRFToken": csrf_token},
                 data: {
-                    'deviceId': deviceId,
-                    'company_value': company_value
                 },
                 dataType: "json",  // 設定回傳的資料型態為 JSON
                 success: function (response) {
@@ -690,7 +733,7 @@
                         alert(response.message); // 顯示成功訊息
                         $("#yearInput").val(new Date().getFullYear());
                         updateYear();
-                        loadtable(deviceId, company_value, yearInput);
+                        loadtable();
                     } else {
                         alert(response.message);
                     }
@@ -705,20 +748,18 @@
         $(document).on('click', ".trash_btn", function () {
             var single_dataID = this.id;
             {#console.warn(single_dataID)#}
-            var deviceID = dropdown_three.value
-            delete_device(single_dataID, deviceID)
+            delete_device(single_dataID)
         })
     </script>
 
     <!--/*刪除function*/-->
     <script>
-        function delete_device(id, datasheet_id) {
+        function delete_device(id) {
             $(document).on('click', ".delete_btn", function () {
                 {#console.warn("single_dataID", id)#}
                 $.ajax({
                     url: "{% url 'delete_device' %}",
                     data: {
-                        'datasheet_id': datasheet_id,
                         'single_dataID': id
                     },
                     type: 'GET',
@@ -806,7 +847,7 @@
                     success: function (response) {
                         if (response === "OK") {
                             alert("匯入 Excel 成功！");
-                            loadtable(deviceId, company_value, yearInput);
+                            loadtable();
                         } else {
                             alert(response);
                         }

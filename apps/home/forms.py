@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+
 from .models import *
 from django.forms import inlineformset_factory
 
@@ -212,6 +214,23 @@ CLASSIFICATION_CHOICES = [
 #         key = a.get("id")
 #         COMPANY_CHOICES.append((key, value))
 # print("COMPANY_CHOICES:", COMPANY_CHOICES)
+
+# profile form(user)
+# class CustomUserCreationForm(UserCreationForm):
+#     company = forms.ModelChoiceField(queryset=company.objects.all())
+#     factory = forms.ModelChoiceField(queryset=factory.objects.all())
+#
+#     class Meta:
+#         model = User
+#         fields = ('username', 'password1', 'password2', 'company', 'factory')
+#
+#     # def save(self, commit=True):
+#     #     user = super().save(commit=False)
+#     #     user_profile = Profile(user=user, company=self.cleaned_data['company'], factory=self.cleaned_data['factory'])
+#     #     if commit:
+#     #         user.save()
+#     #         user_profile.save()
+#     #     return user
 
 
 class CompanyForm(forms.ModelForm):

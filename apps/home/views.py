@@ -74,32 +74,33 @@ def load_device(request):
 
 # 判斷目前使用者在哪個group
 def current_user_group_id(request):
-    groups_query = request.user.groups.values("id")
-    for groups in groups_query:
-        company_id = groups["id"]
-        return company_id
+    try:
+        user_id = request.user.id
+        print('user_id', user_id)
+        current_user = Profile.objects.filter(user_id=user_id).get()
+        factory_id = current_user.factory_id
+        # factory_name = current_user.factory
+        # print('factory_id', factory_id)
+        # print('factory_name', factory_name)
+        return factory_id
+    except:
+        pass
 
 
 # 抓欄位(
 @login_required(login_url="/login/")
 def load_table(request):
     if request.method == 'GET':
-        device_id = request.GET.get('deviceId')
-        company_value = request.GET.get('company_value')
-        year = request.GET.get('yearInput')
-        if company_value is None:
-            company_id = current_user_group_id(request)
-        else:
-            company_id = int(company_value)
-        # print('company_id', company_id)
+        device_id = request.session.get('dropdown_three')
+        year = request.session.get('years')
+        factory_id = request.session.get('factory_id')
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
-        # 四捨五入小數點第四位
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
             if a["d_name"] == "柴油發電機":
                 t_data = []
-                raw_data = emergency_generators.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_capacity", "position",
+                raw_data = emergency_generators.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_capacity", "position",
                                                                                                          "department", "estimate",
                                                                                                          "january", "february", "march", "april",
                                                                                                          "may", "june", "july", "august",
@@ -123,10 +124,10 @@ def load_table(request):
             elif a["d_name"] == "燃燒設備":
                 t_data = []
                 # 「合計」前後的資料分開
-                raw_data = combustion_equipment.objects.filter(company_id=company_id, years=year).values("id", "device_name", "device_id", "fuel_type",
+                raw_data = combustion_equipment.objects.filter(company_id=factory_id, years=year).values("id", "device_name", "device_id", "fuel_type",
                                                                                                          "fuel_january", "fuel_february", "fuel_march", "fuel_april", "fuel_may", "fuel_june",
                                                                                                          "fuel_july", "fuel_august", "fuel_september", "fuel_october", "fuel_november", "fuel_december")
-                heat_data = combustion_equipment.objects.filter(company_id=company_id, years=year).values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
+                heat_data = combustion_equipment.objects.filter(company_id=factory_id, years=year).values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
                                                                                                           "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
                 # 計算使用量合計/熱值平均
                 for i in range(raw_data.count()):
@@ -156,11 +157,11 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.filter(company_id=company_id, years=year).values("id", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
-                consumptions_data = official_car.objects.filter(company_id=company_id, years=year).values("january", "february", "march", "april", "may", "june", "july", "august",
+                raw_data = official_car.objects.filter(company_id=factory_id, years=year).values("id", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
+                consumptions_data = official_car.objects.filter(company_id=factory_id, years=year).values("january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                           "september", "october", "november", "december")
 
-                urea_data = official_car.objects.filter(company_id=company_id, years=year).values("urea_january", "urea_february", "urea_march", "urea_april",
+                urea_data = official_car.objects.filter(company_id=factory_id, years=year).values("urea_january", "urea_february", "urea_march", "urea_april",
                                                                                                   "urea_may", "urea_june", "urea_july", "urea_august",
                                                                                                   "urea_september", "urea_october", "urea_november", "urea_december")
                 # 計算耗用量合計
@@ -191,7 +192,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
-                    material.objects.filter(company_id=company_id, years=year).values("id", "material_id", "material_type", "material_name",
+                    material.objects.filter(company_id=factory_id, years=year).values("id", "material_id", "material_type", "material_name",
                                                                                       "process_add_name", "chemical_name", "chemical_formula",
                                                                                       "january", "february", "march", "april",
                                                                                       "may", "june", "july", "august",
@@ -199,12 +200,12 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製程添加化學品":
                 t_data = []
-                raw_data = process.objects.filter(company_id=company_id, years=year).values("id", "process_stage", "material_id", "process_add_name",
+                raw_data = process.objects.filter(company_id=factory_id, years=year).values("id", "process_stage", "material_id", "process_add_name",
                                                                                             "carbon_content", "burn", "VOCs",
                                                                                             "january", "february", "march", "april",
                                                                                             "may", "june", "july", "august",
                                                                                             "september", "october", "november", "december")
-                unit = process.objects.filter(company_id=company_id).values("unit")
+                unit = process.objects.filter(company_id=factory_id).values("unit")
                 # 計算使用量合計
                 for i in range(raw_data.count()):
                     consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -226,7 +227,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
-                raw_data = refrigerator.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                raw_data = refrigerator.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                                  "effusion_rate")
                 # 取單筆逸散量計算
@@ -243,7 +244,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
                 t_data = []
-                raw_data = airconditioner.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                raw_data = airconditioner.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                                    "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                                    "effusion_rate")
                 # 取單筆逸散量計算
@@ -260,7 +261,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
                 t_data = []
-                raw_data = vehicle.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                raw_data = vehicle.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                             "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                             "effusion_rate")
                 # 取單筆逸散量計算
@@ -277,7 +278,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
                 t_data = []
-                raw_data = water_dispenser.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                raw_data = water_dispenser.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                                     "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                                     "effusion_rate")
                 # 取單筆逸散量計算
@@ -294,7 +295,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
                 t_data = []
-                raw_data = ice_water_dispenser.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                raw_data = ice_water_dispenser.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                                         "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                                         "effusion_rate")
                 # 取單筆逸散量計算
@@ -311,7 +312,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
                 t_data = []
-                raw_data = ice_maker.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                raw_data = ice_maker.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                               "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                               "effusion_rate")
                 # 取單筆逸散量計算
@@ -328,7 +329,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "設備清單":
                 t_data = []
-                raw_data = other_device.objects.filter(company_id=company_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                raw_data = other_device.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                                  "effusion_rate")
                 # 取單筆逸散量計算
@@ -345,12 +346,12 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
-                    extinguisher.objects.filter(company_id=company_id, years=year).values("id", "device_id", "extinguisher_vendor", "extinguisher_type", "position", "inventory",
+                    extinguisher.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "extinguisher_vendor", "extinguisher_type", "position", "inventory",
                                                                                           "chemical_weight", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
                 t_data = list(
-                    personnel_inventory.objects.filter(company_id=company_id, years=year).values("id", "classification",
+                    personnel_inventory.objects.filter(company_id=factory_id, years=year).values("id", "classification",
                                                                                                  "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
                                                                                                  "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
                                                                                                  "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
@@ -358,7 +359,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "委外人員清冊":
                 t_data = list(
-                    employee.objects.filter(company_id=company_id, years=year).values("id", "career",
+                    employee.objects.filter(company_id=factory_id, years=year).values("id", "career",
                                                                                       "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
                                                                                       "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
                                                                                       "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
@@ -368,7 +369,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "厭氧廢水":
                 t_data = []
-                raw_data = waste_water.objects.filter(company_id=company_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri")
+                raw_data = waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri")
                 print(raw_data)
                 # 計算加油量合計
                 for i in range(raw_data.count()):
@@ -388,20 +389,20 @@ def load_table(request):
                 #     raw_data[i]["CH4"] = cod_total
                 # print(raw_data)
                 # t_data.append(raw_data)
-                # t_data = list(waste_water.objects.filter(company_id=company_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
+                # t_data = list(waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢汙泥":
                 t_data = list(
-                    waste_sludge.objects.filter(company_id=company_id, years=year).values("id", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
+                    waste_sludge.objects.filter(company_id=factory_id, years=year).values("id", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
                                                                                           "CH4_capture_system_rate", "combustion_equipment_efficiency"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
-                t_data = list(solvent_aerosol_emission_sources.objects.filter(company_id=company_id, years=year).values("id", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density"))
+                t_data = list(solvent_aerosol_emission_sources.objects.filter(company_id=factory_id, years=year).values("id", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.filter(company_id=company_id, years=year).values("id", "EMI_id", "address",
+                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "address",
                                                                                                 "january", "february", "march", "april",
                                                                                                 "may", "june", "july", "august",
                                                                                                 "september", "october", "november", "december")
@@ -423,7 +424,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "上游運輸":
                 t_data = list(
-                    upstream_transportation.objects.filter(company_id=company_id).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
+                    upstream_transportation.objects.filter(company_id=factory_id).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
                                                                                          "organizational_use_products", "customer", "supplier", "supplier_address",
                                                                                          "trade_term", "receiving_address", "delivery_address",
                                                                                          "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
@@ -433,7 +434,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "下游運輸":
                 t_data = list(
-                    downstream_transportation.objects.filter(company_id=company_id).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
+                    downstream_transportation.objects.filter(company_id=factory_id).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
                                                                                            "trade_term", "receiving_address", "delivery_address",
                                                                                            "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
                                                                                            "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
@@ -443,8 +444,8 @@ def load_table(request):
             elif a["d_name"] == "員工通勤":
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
-                pre_data = employee_commute.objects.filter(company_id=company_id, years=year).values("id", "employee_id", "department", "employee_name")
-                post_data = employee_commute.objects.filter(company_id=company_id, years=year).values("city", "township", "address", "commute_distance", "work_days")
+                pre_data = employee_commute.objects.filter(company_id=factory_id, years=year).values("id", "employee_id", "department", "employee_name")
+                post_data = employee_commute.objects.filter(company_id=factory_id, years=year).values("city", "township", "address", "commute_distance", "work_days")
                 for i in range(pre_data.count()):
                     single_data = pre_data[i]
                     id = pre_data[i].get("id")
@@ -468,7 +469,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工出差":
                 t_data = []
-                raw_data = employee_business_trip.objects.filter(company_id=company_id, years=year).values("id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
+                raw_data = employee_business_trip.objects.filter(company_id=factory_id, years=year).values("id", "business_trip_number", "employee_id", "department", "employee_name", "business_trip_location", "business_trip_date")
                 for i in range(raw_data.count()):
                     single_data = raw_data[i]
                     id = raw_data[i].get("id")
@@ -487,7 +488,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
-                raw_data = waste.objects.filter(company_id=company_id).values("id", "waste_name", "waste_weigh", "waste_date",
+                raw_data = waste.objects.filter(company_id=factory_id).values("id", "waste_name", "waste_weigh", "waste_date",
                                                                               "waste_location", "waste_disposal", "waste_disposal_vendor",
                                                                               "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
@@ -506,15 +507,15 @@ def load_table(request):
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_1":
-                t_data = list(VOCs_one.objects.filter(company_id=company_id, years=year).values("id", "emission", "concentration_ch4"))
+                t_data = list(VOCs_one.objects.filter(company_id=factory_id, years=year).values("id", "emission", "concentration_ch4"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_2":
-                t_data = list(VOCs_two.objects.filter(company_id=company_id, years=year).values("id", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
+                t_data = list(VOCs_two.objects.filter(company_id=factory_id, years=year).values("id", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
                                                                                                 "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "納管廢水排放量":
                 t_data = []
-                raw_data = pipe_wastewater.objects.filter(company_id=company_id, years=year).values("id", "pipe_id", "address", "factory", "january", "february", "march", "april", "may", "june", "july", "august",
+                raw_data = pipe_wastewater.objects.filter(company_id=factory_id, years=year).values("id", "pipe_id", "address", "factory", "january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                     "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
@@ -530,7 +531,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "採購原物料":
                 t_data = []
-                raw_data = purchase_material.objects.filter(company_id=company_id, years=year).values("id", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                raw_data = purchase_material.objects.filter(company_id=factory_id, years=year).values("id", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                       "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
@@ -546,7 +547,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "產品間接排放":
                 t_data = []
-                raw_data = product_indirect_emissions.objects.filter(company_id=company_id, years=year).values("id", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                raw_data = product_indirect_emissions.objects.filter(company_id=factory_id, years=year).values("id", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                                "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
@@ -564,12 +565,10 @@ def load_table(request):
 
 def copy_last_year_data(request):
     if request.method == 'POST':
-        device_id = request.POST.get('deviceId')
-        company_value = request.POST.get('company_value')
-        if company_value is None:
-            company_id = current_user_group_id(request)
-        else:
-            company_id = int(company_value)
+        # device_id = request.POST.get('deviceId')
+        # company_value = request.POST.get('company_value')
+        device_id = request.session.get('dropdown_three')
+        factory_id = request.session.get('factory_id')
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
 
         # 獲取當前年份
@@ -579,7 +578,7 @@ def copy_last_year_data(request):
 
         for a in t_name:
             if a["d_name"] == "柴油發電機":
-                last_year_data = emergency_generators.objects.filter(years=last_year, company_id=company_id).values()
+                last_year_data = emergency_generators.objects.filter(years=last_year, company_id=factory_id).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -596,7 +595,7 @@ def copy_last_year_data(request):
                     [emergency_generators(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '燃燒設備':
-                last_year_data = combustion_equipment.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = combustion_equipment.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -613,7 +612,7 @@ def copy_last_year_data(request):
                     [combustion_equipment(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '公務車':
-                last_year_data = official_car.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = official_car.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -630,7 +629,7 @@ def copy_last_year_data(request):
                     [official_car(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '原物料使用':
-                last_year_data = material.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = material.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -647,7 +646,7 @@ def copy_last_year_data(request):
                     [material(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '製程添加化學品':
-                last_year_data = process.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = process.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -664,7 +663,7 @@ def copy_last_year_data(request):
                     [process(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '冰箱清單':
-                last_year_data = refrigerator.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = refrigerator.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -681,7 +680,7 @@ def copy_last_year_data(request):
                     [refrigerator(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '冷氣機清單':
-                last_year_data = airconditioner.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = airconditioner.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -698,7 +697,7 @@ def copy_last_year_data(request):
                     [airconditioner(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '車輛清單':
-                last_year_data = vehicle.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = vehicle.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -715,7 +714,7 @@ def copy_last_year_data(request):
                     [vehicle(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '飲水機清單':
-                last_year_data = water_dispenser.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = water_dispenser.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -732,7 +731,7 @@ def copy_last_year_data(request):
                     [water_dispenser(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '冰水機清單':
-                last_year_data = ice_water_dispenser.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = ice_water_dispenser.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -749,7 +748,7 @@ def copy_last_year_data(request):
                     [ice_water_dispenser(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '製冰機清單':
-                last_year_data = ice_maker.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = ice_maker.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -766,7 +765,7 @@ def copy_last_year_data(request):
                     [ice_maker(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '設備清單':
-                last_year_data = other_device.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = other_device.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -783,7 +782,7 @@ def copy_last_year_data(request):
                     [other_device(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '滅火器':
-                last_year_data = extinguisher.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = extinguisher.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -800,7 +799,7 @@ def copy_last_year_data(request):
                     [extinguisher(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '人添清冊':
-                last_year_data = personnel_inventory.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = personnel_inventory.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -817,7 +816,7 @@ def copy_last_year_data(request):
                     [personnel_inventory(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '委外人員清冊':
-                last_year_data = employee.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = employee.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -834,7 +833,7 @@ def copy_last_year_data(request):
                     [employee(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '厭氧廢水':
-                last_year_data = waste_water.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = waste_water.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -851,7 +850,7 @@ def copy_last_year_data(request):
                     [waste_water(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '廢汙泥':
-                last_year_data = waste_sludge.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = waste_sludge.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -868,7 +867,7 @@ def copy_last_year_data(request):
                     [waste_sludge(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '溶劑、噴霧劑':
-                last_year_data = solvent_aerosol_emission_sources.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = solvent_aerosol_emission_sources.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -885,7 +884,7 @@ def copy_last_year_data(request):
                     [solvent_aerosol_emission_sources(**data) for data in last_year_data]
                 )
             elif a["d_name"] == 'VOCs_1':
-                last_year_data = VOCs_one.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = VOCs_one.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -902,7 +901,7 @@ def copy_last_year_data(request):
                     [VOCs_one(**data) for data in last_year_data]
                 )
             elif a["d_name"] == 'VOCs_2':
-                last_year_data = VOCs_two.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = VOCs_two.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -919,7 +918,7 @@ def copy_last_year_data(request):
                     [VOCs_two(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '用電量':
-                last_year_data = electricity.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = electricity.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -936,7 +935,7 @@ def copy_last_year_data(request):
                     [electricity(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '上游運輸':
-                last_year_data = upstream_transportation.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = upstream_transportation.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -953,7 +952,7 @@ def copy_last_year_data(request):
                     [upstream_transportation(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '下游運輸':
-                last_year_data = downstream_transportation.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = downstream_transportation.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -971,7 +970,7 @@ def copy_last_year_data(request):
                 )
             elif a["d_name"] == '員工通勤':
                 # 抓取母表資料
-                last_year_commute_data = employee_commute.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_commute_data = employee_commute.objects.filter(company_id=factory_id, years=last_year).values()
                 last_year_commute_data_id = list(last_year_commute_data.values_list('id', flat=True))
                 last_year_transport_data = transportation_way.objects.filter(commute_id__in=last_year_commute_data_id).values()
 
@@ -1010,7 +1009,7 @@ def copy_last_year_data(request):
                 transportation_way.objects.bulk_create(new_transportation_data)
 
             elif a["d_name"] == '員工出差':
-                last_year_data = employee_business_trip.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = employee_business_trip.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1027,7 +1026,7 @@ def copy_last_year_data(request):
                     [employee_business_trip(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '廢棄物':
-                last_year_data = waste.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = waste.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1044,7 +1043,7 @@ def copy_last_year_data(request):
                     [waste(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '納管廢水排放量':
-                last_year_data = pipe_wastewater.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = pipe_wastewater.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1061,7 +1060,7 @@ def copy_last_year_data(request):
                     [pipe_wastewater(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '採購員物料':
-                last_year_data = purchase_material.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = purchase_material.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1078,7 +1077,7 @@ def copy_last_year_data(request):
                     [purchase_material(**data) for data in last_year_data]
                 )
             elif a["d_name"] == '產品間接排放':
-                last_year_data = product_indirect_emissions.objects.filter(company_id=company_id, years=last_year).values()
+                last_year_data = product_indirect_emissions.objects.filter(company_id=factory_id, years=last_year).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1108,10 +1107,10 @@ def emergency_generators_add(request):
     context = {}
     EG_add = EGform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if EG_add.is_valid():
             EG_add = EG_add.save(commit=False)
-            EG_add.company_id = company_id
+            EG_add.company_id = factory_id
             EG_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1142,10 +1141,10 @@ def combustion_equipment_add(request):
     context = {}
     CE_add = CEform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if CE_add.is_valid():
             CE_add = CE_add.save(commit=False)
-            CE_add.company_id = company_id
+            CE_add.company_id = factory_id
             CE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1174,7 +1173,7 @@ def official_car_add(request):
     context = {}
     OffCar_add = OFform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         # if 'addAnother' in request.POST:
         print(request.POST)
         if OffCar_add.is_valid():
@@ -1193,7 +1192,7 @@ def official_car_add(request):
                 OffCar_add.urea_october = urea[9]
                 OffCar_add.urea_november = urea[10]
                 OffCar_add.urea_december = urea[11]
-            OffCar_add.company_id = company_id
+            OffCar_add.company_id = factory_id
             OffCar_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1225,10 +1224,10 @@ def material_add(request):
     if request.method == "POST":
         print(request.POST)
 
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if MT_add.is_valid():
             MT_add = MT_add.save(commit=False)
-            MT_add.company_id = company_id
+            MT_add.company_id = factory_id
             MT_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1257,10 +1256,10 @@ def process_add(request):
     context = {}
     PC_add = PCform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if PC_add.is_valid():
             PC_add = PC_add.save(commit=False)
-            PC_add.company_id = company_id
+            PC_add.company_id = factory_id
             PC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1289,10 +1288,10 @@ def refrigerator_add(request):
     context = {}
     RF_add = RFform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if RF_add.is_valid():
             RF_add = RF_add.save(commit=False)
-            RF_add.company_id = company_id
+            RF_add.company_id = factory_id
             RF_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1323,10 +1322,10 @@ def airconditioner_add(request):
     context = {}
     AC_add = ACform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if AC_add.is_valid():
             AC_add = AC_add.save(commit=False)
-            AC_add.company_id = company_id
+            AC_add.company_id = factory_id
             AC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1357,10 +1356,10 @@ def vehicle_add(request):
     context = {}
     VC_add = VCform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if VC_add.is_valid():
             VC_add = VC_add.save(commit=False)
-            VC_add.company_id = company_id
+            VC_add.company_id = factory_id
             VC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1389,11 +1388,11 @@ def water_dispenser_add(request):
     context = {}
     WD_add = WDform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         # print('company_value', company_id)
         if WD_add.is_valid():
             WD_add = WD_add.save(commit=False)
-            WD_add.company_id = company_id
+            WD_add.company_id = factory_id
             WD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1422,10 +1421,10 @@ def ice_water_dispenser_add(request):
     context = {}
     IWD_add = IWDform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if IWD_add.is_valid():
             IWD_add = IWD_add.save(commit=False)
-            IWD_add.company_id = company_id
+            IWD_add.company_id = factory_id
             IWD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1454,10 +1453,10 @@ def ice_maker_add(request):
     context = {}
     IM_add = IMform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if IM_add.is_valid():
             IM_add = IM_add.save(commit=False)
-            IM_add.company_id = company_id
+            IM_add.company_id = factory_id
             IM_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1486,10 +1485,10 @@ def other_device_add(request):
     context = {}
     OD_add = ODform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if OD_add.is_valid():
             OD_add = OD_add.save(commit=False)
-            OD_add.company_id = company_id
+            OD_add.company_id = factory_id
             OD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1518,10 +1517,10 @@ def extinguisher_add(request):
     context = {}
     EX_add = EXform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if EX_add.is_valid():
             EX_add = EX_add.save(commit=False)
-            EX_add.company_id = company_id
+            EX_add.company_id = factory_id
             EX_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1550,10 +1549,10 @@ def personnel_inventory_add(request):
     context = {}
     PI_add = PIform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if PI_add.is_valid():
             PI_add = PI_add.save(commit=False)
-            PI_add.company_id = company_id
+            PI_add.company_id = factory_id
             PI_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1582,10 +1581,10 @@ def employee_add(request):
     context = {}
     EMP_add = EMPform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if EMP_add.is_valid():
             EMP_add = EMP_add.save(commit=False)
-            EMP_add.company_id = company_id
+            EMP_add.company_id = factory_id
             EMP_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1615,10 +1614,10 @@ def waste_water_add(request):
     context = {}
     waste_water_add = WASTEWATERform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if waste_water_add.is_valid():
             waste_water_add = waste_water_add.save(commit=False)
-            waste_water_add.company_id = company_id
+            waste_water_add.company_id = factory_id
             waste_water_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1648,10 +1647,10 @@ def waste_sludge_add(request):
     context = {}
     waste_sludge_add = WasteSludgeForm(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if waste_sludge_add.is_valid():
             waste_sludge_add = waste_sludge_add.save(commit=False)
-            waste_sludge_add.company_id = company_id
+            waste_sludge_add.company_id = factory_id
             waste_sludge_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1681,10 +1680,10 @@ def solvent_aerosol_emission_sources_add(request):
     context = {}
     SAES_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if SAES_add.is_valid():
             solvent = SAES_add.save(commit=False)
-            solvent.company_id = company_id
+            solvent.company_id = factory_id
             solvent.save()
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
@@ -1706,10 +1705,10 @@ def VOCs_one_add(request):
     context = {}
     VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if VOCs_one_add.is_valid():
             VOCs_one_add = VOCs_one_add.save(commit=False)
-            VOCs_one_add.company_id = company_id
+            VOCs_one_add.company_id = factory_id
             VOCs_one_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1739,11 +1738,11 @@ def VOCs_two_add(request):
     context = {}
     VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         print("company_id", company_id)
         if VOCs_two_add.is_valid():
             VOCs_two_add = VOCs_two_add.save(commit=False)
-            VOCs_two_add.company_id = company_id
+            VOCs_two_add.company_id = factory_id
             VOCs_two_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1775,10 +1774,10 @@ def electricity_add(request):
     context = {}
     ELEC_add = ELECform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if ELEC_add.is_valid():
             ELEC_add = ELEC_add.save(commit=False)
-            ELEC_add.company_id = company_id
+            ELEC_add.company_id = factory_id
             ELEC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1807,10 +1806,10 @@ def upstream_transportation_add(request):
     context = {}
     UT_add = UTform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if UT_add.is_valid():
             UT_add = UT_add.save(commit=False)
-            UT_add.company_id = company_id
+            UT_add.company_id = factory_id
             UT_add.save()
             stages = request.POST.getlist('stage')
             last_id = upstream_transportation.objects.values("id").last().get("id")
@@ -1849,10 +1848,10 @@ def downstream_transportation_add(request):
     context = {}
     DT_add = DTform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if DT_add.is_valid():
             DT_add = DT_add.save(commit=False)
-            DT_add.company_id = company_id
+            DT_add.company_id = factory_id
             DT_add.save()
             stages = request.POST.getlist('stage')
             last_id = downstream_transportation.objects.values("id").last().get("id")
@@ -1891,10 +1890,10 @@ def employee_commute_add(request):
     context = {}
     EC_add = ECform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if EC_add.is_valid():
             commute = EC_add.save(commit=False)
-            commute.company_id = company_id
+            commute.company_id = factory_id
             commute.save()
             Commute_formSet = CommuteFormSet(request.POST, request.FILES, instance=commute)
             if Commute_formSet.is_valid():
@@ -1916,10 +1915,10 @@ def employee_business_trip_add(request):
     context = {}
     EBT_add = EBTform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if EBT_add.is_valid():
             business = EBT_add.save(commit=False)
-            business.company_id = company_id
+            business.company_id = factory_id
             business.save()
             tripsection_formSet = TripSectionFormSet(request.POST, request.FILES, instance=business)
             if tripsection_formSet.is_valid():
@@ -1962,10 +1961,10 @@ def waste_add(request):
     context = {}
     WASTE_add = WASTEform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if WASTE_add.is_valid():
             WASTE_add = WASTE_add.save(commit=False)
-            WASTE_add.company_id = company_id
+            WASTE_add.company_id = factory_id
             WASTE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1995,10 +1994,10 @@ def pipe_wastewater_add(request):
     context = {}
     PW_add = PWform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if PW_add.is_valid():
             PW_add = PW_add.save(commit=False)
-            PW_add.company_id = company_id
+            PW_add.company_id = factory_id
             PW_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2028,10 +2027,10 @@ def purchase_material_add(request):
     context = {}
     PM_add = PMform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if PM_add.is_valid():
             PM_add = PM_add.save(commit=False)
-            PM_add.company_id = company_id
+            PM_add.company_id = factory_id
             PM_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2061,10 +2060,10 @@ def product_indirect_emissions_add(request):
     context = {}
     PIE_add = PIEform(request.POST, request.FILES)
     if request.method == "POST":
-        company_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         if PIE_add.is_valid():
             PIE_add = PIE_add.save(commit=False)
-            PIE_add.company_id = company_id
+            PIE_add.company_id = factory_id
             PIE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2082,7 +2081,7 @@ def product_indirect_emissions_add(request):
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
-    else: 
+    else:
         PIE_add = PIEform()
     context['PIE_add'] = PIE_add
     return render(request, 'home/product-indirect-emissions.html', context)
@@ -2092,15 +2091,13 @@ def product_indirect_emissions_add(request):
 @login_required(login_url="/login/")
 def carbon_system(request):
     if request.method == 'GET':
-        if request.user.is_authenticated:
-            username = request.user.username
-            print("username: ", username)
-        groups_query = request.user.groups.values("name").first()
-        company_group = django.contrib.auth.models.Group.objects.values("id", "name")[1:]
-        company_id = current_user_group_id(request)
+        # if request.user.is_authenticated:
+        #     username = request.user.username
+        #     print("username: ", username)
+        groups_query = request.user.groups.all()
+        company_group = factory.objects.all()
         context = {
             "groups_query": groups_query,
-            "company_id": company_id,
             "company_group": company_group
         }
         # del request.session['dropdown_one']
@@ -2114,15 +2111,15 @@ def carbon_system(request):
         dropdown_one = request.POST.get('dropdown_one')
         dropdown_two = request.POST.get('dropdown_two')
         dropdown_three = request.POST.get('dropdown_three')
-        company_dropdown = request.POST.get('company_dropdown')
+        factory_id = request.POST.get('company_dropdown')
         years = request.POST.get('years')
-        if company_dropdown is None:
-            company_dropdown = current_user_group_id(request)
+        if factory_id is None:
+            factory_id = current_user_group_id(request)
         dropdown = {
             'dropdown_one': dropdown_one,
             'dropdown_two': dropdown_two,
             'dropdown_three': dropdown_three,
-            'company_dropdown': company_dropdown,
+            'factory_id': factory_id,
             'years': years,
         }
         request.session.update(dropdown)
@@ -2130,9 +2127,17 @@ def carbon_system(request):
 
 
 # 新增轉跳
+@permission_required('home.add_emergency_generators', login_url="/login/", raise_exception=True)
 @login_required(login_url="/login/")
 def add_page(request):
     if request.method == "GET":
+        # 判斷是否有權限
+        # if request.user.has_perm('home.add_emergency_generators'):
+        #     print('yes')
+        # else:
+        #     print('no')
+        # _permission = User.objects.get(username=request.user).get_all_permissions()
+        # print('_permission', _permission)
         device_id = request.session.get('dropdown_three')
         function_dic = {
             "1": emergency_generators_add(request),
@@ -2354,10 +2359,11 @@ def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_t
 
 
 # 刪除資料
+@permission_required('home.delete_emergency_generators', login_url="/login/", raise_exception=True)
 @login_required(login_url="/login/")
 def delete_device(request):
     if request.method == 'GET':
-        datasheet_id = request.GET.get('datasheet_id')
+        datasheet_id = request.session.get('dropdown_three')
         single_dataID = request.GET.get('single_dataID')
         modelName = {
             "1": emergency_generators,
@@ -2401,7 +2407,7 @@ def delete_device(request):
 @login_required(login_url="/login/")
 def add_title(request):
     if request.method == 'GET':
-        device_id = request.GET.get('deviceId')
+        device_id = request.session.get('dropdown_three')
         # 選擇title要顯示的欄位
         htmlName = {
             "1": {
