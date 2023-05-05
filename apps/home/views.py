@@ -2175,7 +2175,9 @@ def add_page(request):
             device_function = function_dic.get(device_id)
         return device_function
 
+
 # 編輯轉跳
+@permission_required('home.change_emergency_generators', login_url="/login/", raise_exception=True)
 @login_required(login_url="/login/")
 def edit_device(request):
     datasheet_id = request.GET.get('datasheet')
@@ -2586,6 +2588,11 @@ def add_title(request):
                 "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
             },
         }
+        # 如果沒有刪除、編輯權限，把編輯區拿掉
+        if not request.user.has_perm('home.add_emergency_generators'):
+            for val_dic in htmlName.values():
+                del val_dic['編輯區']
+
         if device_id in htmlName:
             title = [htmlName.get(device_id)]
             return JsonResponse(title, safe=False)

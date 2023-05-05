@@ -26,7 +26,7 @@
                             {% csrf_token %}
                             <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
                             <input type="hidden" id="hiddenYearsInput" name="years" readonly>
-                            <div class="d-flex">
+                            <div class="d-flex dropdown-area">
                                 <div class="col-4">
                                     <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">公司廠別</label>
                                     <select class="" id="company_dropdown" name="company_dropdown">
@@ -88,7 +88,7 @@
                             <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
                             <input type="hidden" id="hiddenYearsInput" name="years" readonly>
                             <div class="d-flex">
-                                <div class="col-5">
+                                <div class="col-5 dropdown-area">
                                     <label class="lead form-label ms-0" for="dropdown_one" style="color: whitesmoke">類別</label>
                                     <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)">
                                         <option value="0" name="" selected>
@@ -114,11 +114,11 @@
                                         </option>
                                     </select>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-4 dropdown-area">
                                     <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">過程區域</label>
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)"></select>
                                 </div>
-                                <div class="col-3">
+                                <div class="col-3 dropdown-area">
                                     <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">設備</label>
                                     <select class="" id="dropdown_three" name="dropdown_three"></select>
                                 </div>
@@ -134,7 +134,7 @@
                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                         <div class="mb-4">
                             {% if perms.home.add_emergency_generators %}
-                                <div class="d-flex justify-content-center" id="disable">
+                                <div class="d-flex justify-content-center" id="disable-section">
                                     <form method="get" action="{% url 'loadadd' %}" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-outline-light me-1">新增</button>
@@ -142,9 +142,9 @@
                                     <div class="d-flex justify-content-center">
                                         <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
                                     </div>
-                                    <a type="button" class="btn btn-outline-light me-1" id="exportExcel">
+                                    <button type="button" class="btn btn-outline-light me-1" id="exportExcel">
                                         匯出Excel
-                                    </a>
+                                    </button>
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <label for="importExcel" class="btn btn-outline-light me-1">
@@ -158,7 +158,6 @@
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </header>
     <div class="card card-body shadow-xl mx-3 mx-md-4 mt-n6">
@@ -392,17 +391,7 @@
             $("#dropdown_three").removeAttr("disabled");
         });
 
-        function disableButtons() {
-			var section = document.getElementById("disable");
-			var buttons = section.getElementsByTagName("button");
-
-			for (let i = 0; i < buttons.length; i++) {
-				buttons[i].disabled = true;
-			}
-		}
-
         function DropdownOne(param) {
-            {#disableButtons()#}
             if (typeof param === 'number') {
                 var currentClass = param;
             } else if (typeof param === 'string') {
@@ -432,30 +421,6 @@
                             option.selected = true;
                         }
                     }
-                    /*
-                    for (let option of dropdown_two.options) {
-                        option.selected = false;
-                    }
-                     */
-
-                    /*
-                    {#let dropdown_two_value = "{{ dropdown_two }}"#}
-                    if (dropdown_two_value !== "") {
-                        // dropdown_two預選(只執行一次)
-                        let dropdown_two_selected = (function () {
-                            let executed = false;
-                            return function () {
-                                if (!executed) {
-                                    executed = true;
-                                    $("#dropdown_two").val(dropdown_two_value).attr("selected", "");
-                                }
-                            };
-                        })();
-                        dropdown_two_selected()
-                    } else {
-                        $("#dropdown_two").val("0").attr("selected", "");
-                    }
-                    */
                 },
             });
         }
@@ -493,24 +458,6 @@
                             option.selected = true;
                         }
                     }
-                    /*
-                    {#let dropdown_three_value = "{{ dropdown_three }}"#}
-                    if (dropdown_three_value !== "") {
-                        // dropdown_three預選(只執行一次)
-                        let dropdown_three_selected = (function () {
-                            let executed = false;
-                            return function () {
-                                if (!executed) {
-                                    executed = true;
-                                    $("#dropdown_three").val(dropdown_three_value).attr("selected", "");
-                                }
-                            };
-                        })();
-                        dropdown_three_selected()
-                    } else {
-                        $("#dropdown_three").val("0").attr("selected", "");
-                    }
-                    */
                 },
 
             });
@@ -528,70 +475,89 @@
         var style = document.createElement('style');
 
         // 載入表格資料
-        {#function loadtable(deviceId, company_value, yearInput) {#}
         function loadtable() {
             $.ajax({
                 url: "{% url 'loadtable' %}",
-                data: {
-                    {#'deviceId': deviceId,#}
-                    {#'company_value': company_value,#}
-                    {#'yearInput': yearInput#}
-                },
+                data: {},
                 type: 'GET',
                 dataType: 'json',
                 success: function (t_data) {
                     {#console.warn(t_data);#}
                     tbody.innerHTML = ""
-                    var id = 1;
-                    t_data.forEach((item, index) => {
-                        var trash = document.createElement('a')//加入"trash button"tag
-                        var trash_i_tag = document.createElement('i')//加入"i"tag
-                        var pencil = document.createElement('a')//加入"pencil button"tag
-                        var pencil_i_tag = document.createElement('i')//加入"i"tag
-                        {#var pic = document.createElement('a')//加入"picture button"tag#}
-                        {#var pic_i_tag = document.createElement('i')//加入"i"tag#}
-                        var row = tbody.insertRow(-1)//加入"第一筆資料"列
-                        var delete_squ = row.insertCell(-1)//加入刪除鈕框框
-                        var edit_squ = row.insertCell(-1)//加入編輯鈕框框
-                        {#var pic_squ = row.insertCell(-1)//加入照片鈕框框#}
-                        delete_squ.appendChild(trash)
-                        edit_squ.appendChild(pencil)
-                        {#pic_squ.appendChild(pic)#}
-                        trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
-                        trash.setAttribute('data-bs-toggle', 'modal')
-                        trash.setAttribute('data-bs-target', '#staticBackdrop')
-                        trash.appendChild(trash_i_tag)
-                        pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
-                        pencil.appendChild(pencil_i_tag)
-                        {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
-                        {#pic.setAttribute('data-bs-toggle', 'modal')#}
-                        {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
-                        {#pic.appendChild(pic_i_tag)#}
-                        trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
-                        pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
-                        {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
-                        var cr_id = row.insertCell(-1)//加入"序號"框框
-                        cr_id.innerHTML = id
-                        var datasheet_id = dropdown_three.value;
-                        var dropdown_one = $("#dropdown_one").val()
-                        var dropdown_two = $("#dropdown_two").val()
-                        for (const [key, value] of Object.entries((item))) {
-                            if (key === "id") {
-                                pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value + '&dropdown_one=' + dropdown_one + '&dropdown_two=' + dropdown_two)//將資料表id、選種資料id加到href裡，一起丟到後端
-                                pencil.setAttribute('id', value)//設定按鈕的id為設備id
-                                trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
-                                {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
-                                continue;
+                    let permission = "{{ perms.home.add_emergency_generators|safe }}"
+                    if (permission === "True") {
+                        let id = 1;
+                        t_data.forEach((item, index) => {
+                            var trash = document.createElement('a')//加入"trash button"tag
+                            var trash_i_tag = document.createElement('i')//加入"i"tag
+                            var pencil = document.createElement('a')//加入"pencil button"tag
+                            var pencil_i_tag = document.createElement('i')//加入"i"tag
+                            {#var pic = document.createElement('a')//加入"picture button"tag#}
+                            {#var pic_i_tag = document.createElement('i')//加入"i"tag#}
+                            var row = tbody.insertRow(-1)//加入"第一筆資料"列
+                            var delete_squ = row.insertCell(-1)//加入刪除鈕框框
+                            var edit_squ = row.insertCell(-1)//加入編輯鈕框框
+                            {#var pic_squ = row.insertCell(-1)//加入照片鈕框框#}
+                            delete_squ.appendChild(trash)
+                            edit_squ.appendChild(pencil)
+                            {#pic_squ.appendChild(pic)#}
+                            trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
+                            trash.setAttribute('data-bs-toggle', 'modal')
+                            trash.setAttribute('data-bs-target', '#staticBackdrop')
+                            trash.appendChild(trash_i_tag)
+                            pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
+                            pencil.appendChild(pencil_i_tag)
+                            {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
+                            {#pic.setAttribute('data-bs-toggle', 'modal')#}
+                            {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
+                            {#pic.appendChild(pic_i_tag)#}
+                            trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
+                            pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
+                            {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
+                            var cr_id = row.insertCell(-1)//加入"序號"框框
+                            cr_id.innerHTML = id
+                            var datasheet_id = dropdown_three.value;
+                            var dropdown_one = $("#dropdown_one").val()
+                            var dropdown_two = $("#dropdown_two").val()
+                            for (const [key, value] of Object.entries((item))) {
+                                if (key === "id") {
+                                    pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value + '&dropdown_one=' + dropdown_one + '&dropdown_two=' + dropdown_two)//將資料表id、選種資料id加到href裡，一起丟到後端
+                                    pencil.setAttribute('id', value)//設定按鈕的id為設備id
+                                    trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
+                                    {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
+                                    continue;
+                                }
+                                var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
+                                nuLL = value
+                                if (value == null) {
+                                    nuLL = '-'
+                                }
+                                cr_c2.innerHTML = nuLL
                             }
-                            var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
-                            nuLL = value
-                            if (value == null) {
-                                nuLL = '-'
+                            id++;
+                        })
+                    } else {
+                        let id = 1;
+                        t_data.forEach((item, index) => {
+                            var row = tbody.insertRow(-1)//加入"第一筆資料"列
+                            var cr_id = row.insertCell(-1)//加入"序號"框框
+                            cr_id.innerHTML = id
+                            for (const [key, value] of Object.entries((item))) {
+                                if (key === "id") {
+                                    //如果沒有權限，刪除字典中的id欄位
+                                    delete item['id'];
+                                    continue;
+                                }
+                                var cr_c2 = row.insertCell(-1)//加入"第一筆資料"框框
+                                nuLL = value
+                                if (value == null) {
+                                    nuLL = '-'
+                                }
+                                cr_c2.innerHTML = nuLL
                             }
-                            cr_c2.innerHTML = nuLL
-                        }
-                        id++;
-                    })
+                            id++;
+                        })
+                    }
                 },
             });
         }
@@ -616,12 +582,21 @@
                             var tr_c = thead_row_category.insertCell(-1)//加入"分類"框框
                             var a = thead_row_category.appendChild(tr_c)
                             tr_c.innerHTML = key//"分類"框框填質
-                            if (i === 0) {
-                                tr_c.setAttribute('class', 'table-dark');
-                            } else if (i % 2 === 0) {
-                                tr_c.setAttribute('class', 'table-light');
+                            let permission = "{{ perms.home.add_emergency_generators|safe }}"
+                            if (permission === "True") {
+                                if (i === 0) {
+                                    tr_c.setAttribute('class', 'table-dark');
+                                } else if (i % 2 === 0) {
+                                    tr_c.setAttribute('class', 'table-light');
+                                } else {
+                                    tr_c.setAttribute('class', 'table-secondary');
+                                }
                             } else {
-                                tr_c.setAttribute('class', 'table-secondary');
+                                if (i % 2 === 0) {
+                                    tr_c.setAttribute('class', 'table-light');
+                                } else {
+                                    tr_c.setAttribute('class', 'table-secondary');
+                                }
                             }
                             tr_c.setAttribute('style', 'border-color: black')
                             value.forEach((item, index) => {
@@ -629,7 +604,9 @@
                                 thead_row_name.appendChild(cr_n)
                                 cr_n.innerHTML = item;//"標題"框框填質
                                 if (i === 0) {
-                                    cr_n.setAttribute('class', 'table-active')
+                                    if (permission === "True") {
+                                        cr_n.setAttribute('class', 'table-active')
+                                    }
                                     a.colSpan = index + 1//"分類"列第一個框框空間+1，因為"序號"欄位
                                 } else {
                                     a.colSpan = index + 1//"分類"列第一個框框空間+1
@@ -642,30 +619,10 @@
             });
         }
 
-        /*
-
-        {#    年度篩選器#}
-        let years = "{{ years }}"
-        if (years !== ""){
-
-        }
-        $("#yearInput").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-            endDate: new Date(),
-        }).datepicker("setDate", 'now');
-                 */
-
         $(document).ready(function () {
             let dropdown_one_value = "{{ dropdown_one }}"
             let dropdown_two_value = "{{ dropdown_two }}"
             let dropdown_three_value = "{{ dropdown_three }}"
-            {#let yearInput = 2023#}
-            let yearInput = "{{ years }}"
-            let company_value = "{{ factory_id }}"
             if (dropdown_one_value !== "" && dropdown_two_value !== "" && dropdown_three_value !== "") {
                 // dropdown_one預選(只執行一次)
                 let dropdown_one_selected = (function () {
@@ -681,34 +638,20 @@
                 dropdown_one_selected()
                 DropdownOne(dropdown_one_value)
                 DropdownTwo(dropdown_two_value)
-                {#LoadTitle(dropdown_three_value, yearInput);#}
                 LoadTitle();
-                {#loadtable(dropdown_three_value, company_value, yearInput)#}
                 loadtable()
             }
         });
-
-        function unDisableButtons() {
-			var section = document.getElementById("disable");
-			var buttons = section.getElementsByTagName("button");
-
-			for (let i = 0; i < buttons.length; i++) {
-				buttons[i].disabled = false;
-			}
-		}
 
         $("#submit").on('click', function () {
             let deviceId = $("#dropdown_three").val()
             let company_value = $("#company_dropdown").val()
             let deviceIdInput = document.getElementById('deviceId');
             let company_valueInput = document.getElementById('company_value');
-            let yearInput = $("#yearInput").val()
-            {#unDisableButtons() #}
             //新增跳轉
             deviceIdInput.value = deviceId;
             company_valueInput.value = company_value;
             //載入標題
-            {#LoadTitle(deviceId, yearInput);#}
             LoadTitle();
             //載入資料
             if (company_value !== 0) {
@@ -718,6 +661,23 @@
             }
         })
 
+        // 按下查詢才可操作button
+        $(".dropdown-area").change(function disableButtons() {
+            var section = document.getElementById("disable-section");
+            var buttons = section.getElementsByTagName("button");
+            var input = section.getElementsByTagName("input");
+            var exportExcel = document.getElementById("exportExcel");
+            exportExcel.disabled = true;
+            {#a.setAttribute('disabled', 'disabled')#}
+
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+            }
+            for (let i = 0; i < input.length; i++) {
+                input[i].disabled = true;
+            }
+        });
+
         $("#copyLastYear").on("click", function () {
             let csrf_token = "{{ csrf_token }}";
 
@@ -725,8 +685,7 @@
                 type: "POST",
                 url: "{% url 'copy_last_year_data' %}",
                 headers: {"X-CSRFToken": csrf_token},
-                data: {
-                },
+                data: {},
                 dataType: "json",  // 設定回傳的資料型態為 JSON
                 success: function (response) {
                     if (response.success) {

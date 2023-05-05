@@ -158,3 +158,9 @@ thead, .table {
     transform: rotate(45deg);
 }
 
+input:disabled {
+    background:#dddddd;
+}
+
+input:disabled+label{color:#ccc; outline: #dddddd !important;}
+
