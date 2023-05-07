@@ -11,20 +11,61 @@ from django.utils import timezone
 
 
 # Create your models here.
+class parent(models.Model):
+    parent_code = models.CharField(max_length=255, primary_key=True)
+    company_name = models.CharField(max_length=255)
+    # account = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.parent_code
+
+
 # 公司基本資料
 class company(models.Model):
     id = models.AutoField(primary_key=True)
-    company_name = models.CharField(max_length=255)
-    tax_id = models.IntegerField()
-    address = models.CharField(max_length=255)
-    headcount = models.IntegerField()
-    superintendent = models.CharField(max_length=30)
-    contact_person = models.CharField(max_length=30)
-    contact_telephone = models.CharField(max_length=60)
-    contact_email = models.CharField(max_length=50)
-    industry_classification = models.CharField(max_length=30)
-    corporation = models.CharField(max_length=30)
-    type = models.CharField(max_length=30)
+    company_name = models.CharField(max_length=255, verbose_name='公司名稱')
+    tax_id = models.IntegerField(verbose_name='統一編號')
+    address = models.CharField(max_length=255, verbose_name='地址')
+    headcount = models.IntegerField(verbose_name='員工人數')
+    superintendent = models.CharField(max_length=30, verbose_name='負責人')
+    contact_person = models.CharField(max_length=30, verbose_name='聯絡人')
+    contact_telephone = models.CharField(max_length=60, verbose_name='聯絡人電話')
+    contact_email = models.CharField(max_length=50, verbose_name='聯絡人信箱')
+    industry_classification = models.CharField(max_length=30, verbose_name='行業分類')
+    # parent_code = models.CharField(max_length=255)
+    parent_code = models.ForeignKey(parent, on_delete=models.CASCADE, db_column='parent_code')
+
+    def __str__(self):
+        return self.company_name
+
+
+# 廠基本資料
+class factory(models.Model):
+    id = models.AutoField(primary_key=True)
+    factory_name = models.CharField(max_length=255, verbose_name='工廠名稱')
+    tax_id = models.IntegerField(verbose_name='統一編號')
+    address = models.CharField(max_length=255, verbose_name='地址')
+    headcount = models.IntegerField(verbose_name='員工人數')
+    superintendent = models.CharField(max_length=30, verbose_name='負責人')
+    contact_person = models.CharField(max_length=30, verbose_name='聯絡人')
+    contact_telephone = models.CharField(max_length=60, verbose_name='聯絡人電話')
+    contact_email = models.CharField(max_length=50, verbose_name='聯絡人信箱')
+    industry_classification = models.CharField(max_length=30, verbose_name='行業分類')
+    company_id = models.ForeignKey(company, on_delete=models.CASCADE, db_column='company_id', verbose_name='總公司名稱')
+
+    def __str__(self):
+        return self.factory_name
+
+
+# profile資料
+class Profile(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='使用者')
+    company = models.ForeignKey(company, on_delete=models.CASCADE, db_column='company', verbose_name='該帳號屬於公司名稱')
+    factory = models.ForeignKey(factory, on_delete=models.CASCADE, db_column='factory', verbose_name='該帳號屬於廠名稱')
+
+    def __str__(self):
+        return self.user.username
 
 
 class section_one(models.Model):
