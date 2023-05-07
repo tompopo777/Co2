@@ -369,26 +369,32 @@ def load_table(request):
             elif a["d_name"] == "厭氧廢水":
                 t_data = []
                 raw_data = waste_water.objects.filter(company_id=company_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri")
-                print(raw_data)
                 # 計算加油量合計
                 for i in range(raw_data.count()):
                     single_data = {}
-                    cod_total = (((raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi")) - (raw_data[i].get("Si"))) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj"))) - raw_data[i].get("Ri")
-
-                    # print(cod_total)
-                    consumption_total = cod_total.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    Pi = "{:.10f}".format(raw_data[i].get("Pi"))
+                    Wi = "{:.10f}".format(raw_data[i].get("Wi"))
+                    CODi = "{:.10f}".format(raw_data[i].get("CODi"))
+                    COD_total = "{:.10f}".format(raw_data[i].get("COD_total"))
+                    Si = "{:.10f}".format(raw_data[i].get("Si"))
+                    MCFj = "{:.10f}".format(raw_data[i].get("MCFj"))
+                    Bo = "{:.10f}".format(raw_data[i].get("Bo"))
+                    Ri = "{:.10f}".format(raw_data[i].get("Ri"))
+                    ch4 = (((raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi")) - (raw_data[i].get("Si"))) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj"))) - raw_data[i].get("Ri")
+                    consumption_total = ch4.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     # 抓單筆資料
                     single_data.update(raw_data[i])
                     # 將計算後的加油量丟回字典
-                    single_data["total"] = consumption_total
+                    single_data["Pi"] = Pi
+                    single_data["Wi"] = Wi
+                    single_data["CODi"] = CODi
+                    single_data["COD_total"] = COD_total
+                    single_data["Si"] = Si
+                    single_data["MCFj"] = MCFj
+                    single_data["Bo"] = Bo
+                    single_data["Ri"] = Ri
+                    single_data["ch4"] = consumption_total
                     t_data.append(single_data)
-
-                # for i in range(raw_data.count()):
-                #     cod_total = (raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi") - raw_data[i].get("Si")) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj")) - raw_data[i].get("Ri")
-                #     raw_data[i]["CH4"] = cod_total
-                # print(raw_data)
-                # t_data.append(raw_data)
-                # t_data = list(waste_water.objects.filter(company_id=company_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢汙泥":
                 t_data = list(
@@ -401,7 +407,7 @@ def load_table(request):
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.filter(company_id=company_id, years=year).values("id", "EMI_id", "address",
+                raw_data = electricity.objects.filter(company_id=company_id, years=year).values("id", "EMI_id", "meter_location", "address",
                                                                                                 "january", "february", "march", "april",
                                                                                                 "may", "june", "july", "august",
                                                                                                 "september", "october", "november", "december")
@@ -996,8 +1002,6 @@ def copy_last_year_data(request):
                     commute_id_dict[original_id] = new_commute.id  # 將原本的id和新的id建立對應關係
 
                 # 將資料儲存回資料庫中
-                # employee_commute.objects.bulk_create(new_commute_data)
-
                 for data in last_year_transport_data:
                     original_commute_id = data['commute_id']
                     new_commute_id = commute_id_dict[original_commute_id]
@@ -2491,10 +2495,10 @@ def add_title(request):
                 "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
-
+            # 厭氧廢水
             "16": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "每年事業廢水之COD總量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量"],
+                "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "每年事業廢水之COD總量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量", u"CH\u2084"],
             },
 
             "17": {
@@ -2518,10 +2522,10 @@ def add_title(request):
                 "VOCs濃度": ["入口濃度", "出口濃度"],
                 u"CO\u2082排放係數": ["內設值", "自訂值"],
             },
-
+            # 用電量
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "用電量": ["序號", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+                "用電量": ["序號", "電表編號", "電表位置", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
             },
 
             "22": {
