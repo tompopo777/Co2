@@ -29,9 +29,8 @@
                             <div class="card-body">
                                 <form action="/solvent_aerosol_emission_sources_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-5">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年度 <span style="color:red; font-size:16px;">* </span></label>
@@ -45,139 +44,87 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>溶劑、噴霧劑數量(單位: {{ SAES_add.solvent_amount_unit }})<span style="color:red; font-size:16px;">* </span></label>
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-6">
+                                                    <label>溶劑、噴霧劑數量(單位: 瓶/罐)<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.solvent_amount }}
                                                 </div>
                                             </div>
-{#                                            <div class="col-1">#}
-{#                                                <div class="input-group input-group-static mb-4">#}
-{#                                                    <label>單位<span style="color:red; font-size:16px;">* </span></label>#}
-{#                                                    #}
-{#                                                </div>#}
-{#                                            </div>#}
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-6">
                                                     <label>溶劑、噴霧劑容量(單位: {{ SAES_add.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.solvent_capacity }}
                                                 </div>
                                             </div>
-{#                                            <div class="col-1">#}
-{#                                                <div class="input-group input-group-static mb-4">#}
-{#                                                    <label>單位<span style="color:red; font-size:16px;">* </span></label>#}
-{#                                                    #}
-{#                                                </div>#}
-{#                                            </div>#}
+                                        </div>
+                                        <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>逸散 / 補充量(公噸/年)<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.fugitive_recharge }}
+                                                    <label>氣體名稱<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ SAES_add.gas_name }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <br>
-                                        <div class="row mb-4">
-                                            <div class="col">
-                                                溶劑、噴霧劑添加物
-                                            </div>
-                                        </div>
-                                        {{ AdditiveFormSet.management_form }}
-                                        {{ AdditiveFormSet.non_form_errors }}
-                                        {% for a in AdditiveFormSet %}
-                                            <div id="additive_section">
-                                                <div class="row mb-4 additive" id="0">
-                                                    {% for hidden in a.hidden_fields %}
-                                                        {{ hidden }}
-                                                    {% endfor %}
-                                                    <div class="col-3">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>添加物名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.additive_name.errors }}
-                                                            {{ a.additive_name }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>添加量(單位: {{ a.additive_unit }}) <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.additive_amount.errors }}
-                                                            {{ a.additive_amount }}
-                                                        </div>
-                                                    </div>
-{#                                                    <div class="col-1">#}
-{#                                                        <div class="input-group input-group-static mb-4">#}
-{#                                                            <label>單位 <span style="color:red; font-size:16px;">* </span></label>#}
-{#                                                            {{ a.additive_unit.errors }}#}
-{#                                                            {{ a.additive_unit }}#}
-{#                                                        </div>#}
-{#                                                    </div>#}
-                                                    <div class="col-3">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>添加成份 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.additive_ingredient.errors }}
-                                                            {{ a.additive_ingredient }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-2">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>添加比例(%) <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.additive_ratio.errors }}
-                                                            {{ a.additive_ratio }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-1 d-flex align-items-center">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <a class="col" onclick="DuplicateTrip()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
-                                                            <a class="col" onclick="DeleteTrip(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
-                                        <div class="d-flex">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>上傳引用單據</label>
-                                                    {{ SAES_add.image_note }}
+                                                    <label>添加比例(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ SAES_add.gas_ratio }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>容量換算密度('oz' 預設為'1')<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ SAES_add.density }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="d-flex">
-                                            <div class="ps-md-2 align-self-center">
-                                                <div class="col-2" multiple="multiple">
-                                                    <input type="hidden" name="stage" value="溶劑、噴霧劑">
-                                                    <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
-                                                </div>
-                                            </div>
-                                            <div id="files-area">
-                                                <span id="filesList">
-                                                    <span id="files-names"></span>
-                                                </span>
+                                    </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                {{ SAES_add.image_note }}
                                             </div>
                                         </div>
-                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="form-control">
-                                                    <label>備註欄</label>
-                                                    {{ SAES_add.message_board }}
-                                                </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="ps-md-2 align-self-center">
+                                            <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="溶劑、噴霧劑">
+                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
                                         </div>
-                                        <div class="d-flex justify-content-center">
-                                            <div class="col-1">
-                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
-                                                    確認
-                                                </button>
+                                        <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-control">
+                                                <label>備註欄</label>
+                                                {{ SAES_add.message_board }}
                                             </div>
-                                            <div class="col-1">
-                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0"
-                                                        onclick="history.back()">
-                                                    取消
-                                                </button>
-                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認，並新增另一筆
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
+                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
@@ -200,9 +147,22 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
     {#    icon#}
     <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+    {#    select2#}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 
     <script>
+        {#    顯示新增成功訊息#}
+        $(document).ready(function () {
+            {% if messages %}
+                {% for message in messages %}
+                    let success_message = "{{ message }}"
+                    alert(success_message);
+                {% endfor %}
+            {% endif %}
+        });
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
@@ -215,16 +175,6 @@
 
         {#    年度篩選器#}
         $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
-
-        {#    購買年份篩選器#}
-        $("#years_purchased").datepicker({
             format: "yyyy",
             viewMode: "years",
             minViewMode: "years",
@@ -267,59 +217,8 @@
             });
         });
 
-
-        {#    新增/刪除出差段數#}
-        var additive_count = 0;
-
-        function DuplicateTrip() {
-            additive_count += 1;
-            document.getElementById("id_additive_section_set-TOTAL_FORMS").value = (additive_count + 1).toString()
-            var additive_section = document.getElementById("additive_section")
-            var first_trip = document.getElementsByClassName("additive")[0]
-            var clone = first_trip.cloneNode(true);
-            additive_section.appendChild(clone)
-            clone.id = (additive_count)
-            var input = document.querySelectorAll(".additive:last-child > div > div > input")
-            input[0].id = "id_additive_section_set-" + additive_count + "-additive_name"
-            input[0].name = "additive_section_set-" + additive_count + "-additive_name"
-            input[1].id = "id_additive_section_set-" + additive_count + "-additive_amount"
-            input[1].name = "additive_section_set-" + additive_count + "-additive_amount"
-            input[2].id = "id_additive_section_set-" + additive_count + "-additive_ingredient"
-            input[2].name = "additive_section_set-" + additive_count + "-additive_ingredient"
-            input[3].id = "id_additive_section_set-" + additive_count + "-additive_ratio"
-            input[3].name = "additive_section_set-" + additive_count + "-additive_ratio"
-            input[0].value = ""
-            input[1].value = ""
-            input[2].value = ""
-            input[3].value = ""
-            var select = document.querySelectorAll(".additive:last-child > div > div > label > select")
-            select[0].id = "id_additive_section_set-" + additive_count + "-additive_unit"
-            select[0].name = "additive_section_set-" + additive_count + "-additive_unit"
-            select[0].value = ""
-        }
-
-        function DeleteTrip(deletbutton) {
-            if (additive_count > 0) {
-                additive_count -= 1;
-                deletbutton.closest("div.additive").remove()
-                document.getElementById("id_additive_section_set-TOTAL_FORMS").value = (additive_count + 1).toString()
-                var additive = document.getElementsByClassName("additive")
-                for (let i = 0; i <= additive_count; i++) {
-                    additive[i].id = i.toString()
-                    let input = document.querySelectorAll(".additive:nth-child(" + (i + 1) + ") > div > div > input")
-                    input[0].id = ("id_additive_section_set-" + i + "-additive_name").toString()
-                    input[0].name = ("additive_section_set-" + i + "-additive_name").toString()
-                    input[1].id = ("id_additive_section_set-" + i + "-additive_amount").toString()
-                    input[1].name = ("additive_section_set-" + i + "-additive_amount").toString()
-                    input[2].id = ("id_additive_section_set-" + i + "-additive_ingredient").toString()
-                    input[2].name = ("additive_section_set-" + i + "-additive_ingredient").toString()
-                    input[3].id = ("id_additive_section_set-" + i + "-additive_ratio").toString()
-                    input[3].name = ("additive_section_set-" + i + "-additive_ratio").toString()
-                    let select = document.querySelectorAll(".additive:nth-child(" + (i + 1) + ") > div > div > label > select")
-                    select[0].id = ("id_additive_section_set-" + i + "-additive_unit").toString()
-                    select[0].name = ("additive_section_set-" + i + "-additive_unit").toString()
-                }
-            }
-        }
+        {#select2#}
+        $('#gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#solvent_capacity_unit').select2({minimumResultsForSearch: -1}).next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
     </script>
 {% endblock javascripts %}

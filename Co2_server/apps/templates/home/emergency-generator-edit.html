@@ -51,17 +51,32 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設置地點 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.position }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>所屬單位</label>
                                                     {{ form.department }}
                                                 </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check ps-1">
+                                                    {{ form.estimate }}
+                                                    <label for="{{ form.estimate.id }}">是否為推估計算</label>
+                                                </div>
+                                                {% if form.estimate.value %}
+                                                    <div class="collapse show" id="estimate-collapse">
+                                                        <label style="color: red">(公式請備註在備註欄)</label>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="collapse" id="estimate-collapse">
+                                                        <label style="color: red">(公式請備註在備註欄)</label>
+                                                    </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <br>
@@ -183,11 +198,11 @@
                                             </button>
                                         </div>
                                         <div class="col-1">
-{#                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0" name="cancel" value={{ dropdown_one }} {{ dropdown_two }} {{ datasheet_id }}>取消</button>#}
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" name="cancel" value="cancel">取消</button>
-{#                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">#}
-{#                                                取消#}
-{#                                            </button>#}
+                                            {#                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0" name="cancel" value={{ dropdown_one }} {{ dropdown_two }} {{ datasheet_id }}>取消</button>#}
+                                            {#                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" name="cancel" value="cancel">取消</button>#}
+                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                取消
+                                            </button>
                                         </div>
                                     </div>
                                 </form>

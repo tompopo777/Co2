@@ -20,12 +20,29 @@
                 {% if request.user.is_authenticated %}
                     <li class="nav-item dropdown dropdown-hover mx-2">
                         <a class="nav-link ps-2 d-flex cursor-pointer align-items-center"
-                           href="/carbon-system/" class="dropdown-item border-radius-md">
-                            碳盤查系統
+                           href="/carbon-system/">
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">碳盤系統</p>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown dropdown-hover me-2">
+                        <div class="nav-link ps-2 d-flex cursor-pointer align-items-center">
+                            <i class="fa-solid fa-list mb-3 me-1"></i>
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">選單</p>
+                        </div>
+                        <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item border-radius-md border-bottom text-center" id="summary" data-bs-toggle="modal" data-bs-target="#CalculateSummaryModal" href="javascript:;">產生總表</a></li>
+                            <li><a class="dropdown-item border-radius-md border-bottom text-center" href="javascript:;">產生清冊</a></li>
+                            <li><a class="dropdown-item border-radius-md border-bottom text-center" href="javascript:;">產生報告書</a></li>
+                        </ul>
+                    </li>
+                        <a class="nav-link ps-2 d-flex cursor-pointer me-1"
+                           data-bs-toggle="modal" data-bs-target="#settings" type="button">
+                            <i class="fa-solid fa-gear me-1 mt-1"></i>
+                            <p class="d-inline text-sm z-index-1 font-weight-bold">設定</p>
                         </a>
                     </li>
                     <li class="nav-item ms-lg-auto nav-link nav-link-icon me-2">
-                        <i class="fa-solid fa-user me-2"></i>
+                        <i class="fa-solid fa-user me-1"></i>
                         <p class="d-inline text-sm z-index-1 font-weight-bold">{{ request.user.username }}</p>
                     </li>
                     <li class="nav-item ms-lg-auto">
@@ -42,10 +59,62 @@
         </div>
     </div>
 </nav>
+
+<!-- Modal -->
+<div class="modal fade" id="CalculateSummaryModal" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="CalculateSummaryModalLabel">產生總表</h5></div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="/calculate_summary/" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row d-flex align-items-center mb-3">
+                        <div class="col-auto">
+                            <h6>請選擇GWP版本: </h6>
+                        </div>
+                        <div class="form-check form-check-inline col-auto m-0" id="gwpVersion_radio">
+                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault1" value=4>
+                            <label class="form-check-label me-2" for="flexRadioDefault1">
+                                GWP 4
+                            </label>
+                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault2" value=5>
+                            <label class="form-check-label me-2" for="flexRadioDefault2">
+                                GWP 5
+                            </label>
+                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault3" value=6 checked>
+                            <label class="form-check-label me-2" for="flexRadioDefault3">
+                                GWP 6
+                            </label>
+                        </div>
+                    </div>
+                    <div class="row d-flex align-items-center">
+                        <div class="col-auto">
+                            <h6>請選擇係數來源: </h6>
+                        </div>
+                        <div class="form-check form-check-inline col-auto m-0" id="coefficient_source_radio">
+                            <input class="form-check-input" type="radio" name="coefficient_source" id="604" value="環保署溫室氣體排放係數管理表6.0.4" checked>
+                            <label class="form-check-label me-2" for="604">
+                                環保署溫室氣體排放係數管理表6.0.4
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-danger" id="calculate_summary" data-bs-dismiss="modal">確認</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- End Navbar -->
 
 {% block javascripts %}
     {#    icon#}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+
 {% endblock javascripts %}

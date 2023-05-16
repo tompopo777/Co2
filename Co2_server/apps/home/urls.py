@@ -48,17 +48,21 @@ urlpatterns = [
                   path("ajax/device", views.load_device, name='loaddevice'),
                   path("ajax/table", views.load_table, name='loadtable'),
                   path("ajax/title", views.add_title, name='loadtitle'),
-                  path("new_device/", views.add_page, name='loadadd'),
                   path("edit_device/", views.edit_device, name='loadedit'),
                   path("chemical_dropdowm/", views.chemical_dropdowm, name='chemical_dropdowm'),
                   path("loadchemical/", views.load_chemical, name='loadchemical'),
+                  path("copy_last_year_data/", views.copy_last_year_data, name='copy_last_year_data'),
                   # Excel
                   path("export_excel/", csv.export_excel, name='export_excel'),
                   path('import_excel/', csv.import_excel, name='import_excel'),
+                  # 新增設備轉跳
+                  path("new_device/", views.add_page, name='loadadd'),
                   # 編輯設備
                   path('update_device/<str:datasheet_id>&<int:single_dataID>&<str:dropdown_one>&<str:dropdown_two>', views.update_device, name='update_device'),
                   # 刪除設備
                   path('delete_device/', views.delete_device, name='delete_device'),
+                  # 匯出總表
+                  path("calculate_summary/", count.calculate_summary, name='calculate_summary'),
                   # Matches any html file
                   re_path(r'^.*\.*', views.pages, name='pages'),
 

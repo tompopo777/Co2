@@ -9,11 +9,35 @@
     border-radius: 0 !important;
 }
 
+#settings .modal-body input.form-control, .modal-body select.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    margin-bottom: 10px;
+}
+
 label, .form-label {
     font-size: 1.3rem;
     margin-bottom: 0.5rem;
     font-weight: bold;
     color: black;
+    margin-left: 0.25rem;
+}
+
+.modal-body .label, .col-3.col-form-label {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #344767 !important;
     margin-left: 0.25rem;
 }
 
@@ -46,7 +70,7 @@ thead, .table {
 }
 
 .textarea {
-    font-weight: bold;
+    /*font-weight: bold;*/
     /* display: block; */
     width: 100%;
     padding: 0.5rem 0;
@@ -88,11 +112,11 @@ thead, .table {
     margin: auto;
 }
 
-.fa-trash-can{
+.fa-trash-can {
     color: red;
 }
 
-.fa-circle-minus{
+.fa-circle-minus {
     color: red;
 }
 
@@ -107,10 +131,11 @@ thead, .table {
     color: initial;
     display: inline-flex;
 }
-.file-block > span.name{
-		padding-right: 10px;
-		width: max-content;
-		display: inline-flex;
+
+.file-block > span.name {
+    padding-right: 10px;
+    width: max-content;
+    display: inline-flex;
 }
 
 .file-delete {
@@ -123,13 +148,19 @@ thead, .table {
     margin-right: 3px;
     cursor: pointer;
 }
-.file-delete:hover{
-		background-color: rgba(144, 163, 203, 0.2);
-		border-radius: 10px;
+
+.file-delete:hover {
+    background-color: rgba(144, 163, 203, 0.2);
+    border-radius: 10px;
 }
 
-.file-delete > span{
-		transform: rotate(45deg);
+.file-delete > span {
+    transform: rotate(45deg);
 }
 
+input:disabled {
+    background:#dddddd;
+}
+
+input:disabled+label{color:#ccc; outline: #dddddd !important;}
 

@@ -1,6 +1,10 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+
 from .models import *
+from decimal import *
 from django.forms import inlineformset_factory
+
 MONTH_CHOICES = [
     ('1', '一月'),
     ('2', '二月'),
@@ -93,30 +97,27 @@ REFRIGERANT_TYPE_CHOICES = [
     ('NH3 R-717', 'NH3 R-717')
 ]
 EXTINGUISHER_TYPE_CHOICES = [
-    ('ABC型乾粉滅火器', 'ABC型乾粉滅火器'),
-    ('KBC型乾粉滅火器', 'KBC型乾粉滅火器'),
-    ('BC型乾粉滅火器', 'BC型乾粉滅火器'),
     ('二氧化碳滅火器', '二氧化碳滅火器'),
-    ('泡沫滅火器', '泡沫滅火器'),
-    ('潔淨滅火器HFC-227ea（FM-200、FE-227）', '潔淨滅火器HFC-227ea（FM-200、FE-227）'),
+    ('潔淨滅火器HFC-227ea(FM-200、FE-227)', '潔淨滅火器HFC-227ea(FM-200、FE-227)'),
     ('潔淨滅火器HFC-125', '潔淨滅火器HFC-125'),
-    ('潔淨滅火器Novec 1230', '潔淨滅火器Novec 1230'),
-    ('潔淨滅火器Inergen（IG-541、IG-55）', '潔淨滅火器Inergen（IG-541、IG-55）'),
-    ('潔淨滅火器Ar（IG-01）HFC-236fa(FE36)', '潔淨滅火器Ar（IG-01）HFC-236fa(FE36)'),
-    ('金屬火災滅火器', '金屬火災滅火器')
 ]
 TRANSPORT_TYPE_CHOICES = [
     ('', '請選擇運輸工具'),
-    ('5.5噸以下(小型貨車)', '5.5噸以下(小型貨車)'),
-    ('7.5噸-26噸(中型貨車)', '7.5噸-26噸(中型貨車)'),
-    ('35 噸貨車(重型貨車)', '35 噸貨車(重型貨車)'),
-    ('43 噸(重型貨車)', '43 噸(重型貨車)'),
-    ('46 噸(重型貨車)', '46 噸(重型貨車)'),
-    ('拖掛車(拖架)', '拖掛車(拖架)'),
-    ('牽引車(拖頭)', '牽引車(拖頭)'),
-    ('貨櫃車-35噸（20英呎貨櫃）', '貨櫃車-35噸（20英呎貨櫃）'),
-    ('貨櫃車-43噸（40/45英呎貨櫃）', '貨櫃車-43噸（40/45英呎貨櫃）'),
-    ('平板卡車(拖車)', '平板卡車(拖車)')
+    ('營業大貨車', '營業大貨車'),
+    ('營業小貨車', '營業小貨車'),
+    ('自用大貨車', '自用大貨車'),
+    ('自用小貨車', '自用小貨車'),
+    ('3.49噸常溫貨車服務(裝載率31%，包含營業據點排放)', '3.49噸常溫貨車服務(裝載率31%，包含營業據點排放)'),
+    ('3.49噸常溫貨車服務(裝載率84%，包含營業據點排放)', '3.49噸常溫貨車服務(裝載率84%，包含營業據點排放)'),
+    ('3.5~7.4噸常溫貨車服務(裝載率82%，包含營業據點排放)', '3.5~7.4噸常溫貨車服務(裝載率82%，包含營業據點排放)'),
+    ('7.5~16噸常溫貨車服務(裝載率80%，包含營業據點排放)', '7.5~16噸常溫貨車服務(裝載率80%，包含營業據點排放)'),
+    ('3.49噸低溫貨車服務(裝載率32%，包含營業據點排放)', '3.49噸低溫貨車服務(裝載率32%，包含營業據點排放)'),
+    ('3.49噸低溫貨車服務(裝載率77%，包含營業據點排放)', '3.49噸低溫貨車服務(裝載率77%，包含營業據點排放)'),
+    ('3.5~7.4噸低溫貨車服務(裝載率41%，包含營業據點排放)', '3.5~7.4噸低溫貨車服務(裝載率41%，包含營業據點排放)'),
+    ('3.5~7.4噸低溫貨車服務(裝載率69%，包含營業據點排放)', '3.5~7.4噸低溫貨車服務(裝載率69%，包含營業據點排放)'),
+    ('7.5~16噸常溫貨車服務(裝載率65%，包含營業據點排放)', '7.5~16噸常溫貨車服務(裝載率65%，包含營業據點排放)'),
+    ('3.49噸多溫貨車服務(包含營業據點排放)', '3.49噸多溫貨車服務(包含營業據點排放)'),
+    ('以柴油動力垃圾車清除運輸一般廢棄物', '以柴油動力垃圾車清除運輸一般廢棄物')
 ]
 TRANSPORT_FUEL_CHOICES = [
     ('', '無'),
@@ -173,6 +174,45 @@ BUSINESS_TRANSPORTATION_CHOICES = [
     ('飛機', '飛機'),
     ('船舶', '船舶'),
 ]
+SOLVENT_GAS_CHOICES = [
+    ('', '-------'),
+    ('CO2', 'R744，二氧化碳，CO2'),
+    ('CH4', 'R50，甲烷，CH4'),
+    ('HFCs', 'HFC-23/R-23，三氟甲烷，CHF3'),
+    ('HFCs', 'HFC-32/R-32，二氟甲烷，CH2F2'),
+    ('HFCs', 'HFC-125/R-125，1,1,1,2,2-五氟乙烷，C2HF5'),
+    ('HFCs', 'HFC-134a/R-134a，1,1,1,2-四氟乙烷，C2H2F4'),
+    ('HFCs', 'HFC-143a/R-143a，1,1,1-三氟乙烷，C2H3F3'),
+    ('HFCs', 'HFC-152a/R-152a，1,1-二氟乙烷，C2H4F2'),
+    ('HFCs', 'HFC-227ea，1,1,1,2,3,3,3-七氟丙烷，CF3CHFCF3'),
+    ('HFCs', 'HFC-236fa，1,1,1,3,3,3-六氟丙烷，C3H2F6'),
+    ('HFCs', 'HFC-245fa，1,1,1,3,3-五氟丙烷，CHF2CH2CF3'),
+    ('HFCs', 'R401a，R22/152a/124（53/13/34）'),
+    ('HFCs', 'R401b，R22/152a/124（61/11/28）'),
+    ('HFCs', 'R404a，R125/143a/134a（44/52/4）'),
+    ('HFCs', 'R407a，R32/125/134a（20/40/40）'),
+    ('HFCs', 'R407b，R32/125/134a（10/70/20）'),
+    ('HFCs', 'R407c，R32/125/134a（23/25/52）'),
+    ('HFCs', 'R408a，R125/R143a/22（7/46/47）'),
+    ('HFCs', 'R410a，R32/125（50/50）'),
+    ('HFCs', 'R413a，R134a/218/600a'),
+    ('HFCs', 'R417a，R125/134a/600a'),
+    ('HFCs', 'R507，R125/143a（50.0/50.0）'),
+    ('HFCs', 'FX80，R32/125'),
+    ('PFCs', 'C4F10，全氟丁烷'),
+    ('SF6', 'SF6，六氟化硫')
+]
+# 原物料種類
+MATERIAL_TYPE = [
+    ('原料', '原料'),
+    ('物料', '物料')
+]
+
+# 人添清冊
+CLASSIFICATION_CHOICES = [
+    ('員工', '員工'),
+    ('員工宿舍', '員工宿舍'),
+]
 
 
 # 前面: 存DB，後面: 顯示
@@ -186,12 +226,50 @@ BUSINESS_TRANSPORTATION_CHOICES = [
 #         COMPANY_CHOICES.append((key, value))
 # print("COMPANY_CHOICES:", COMPANY_CHOICES)
 
+# profile form(user)
+# class CustomUserCreationForm(UserCreationForm):
+#     company = forms.ModelChoiceField(queryset=company.objects.all())
+#     factory = forms.ModelChoiceField(queryset=factory.objects.all())
+#
+#     class Meta:
+#         model = User
+#         fields = ('username', 'password1', 'password2', 'company', 'factory')
+#
+#     # def save(self, commit=True):
+#     #     user = super().save(commit=False)
+#     #     user_profile = Profile(user=user, company=self.cleaned_data['company'], factory=self.cleaned_data['factory'])
+#     #     if commit:
+#     #         user.save()
+#     #         user_profile.save()
+#     #     return user
+
+
+class CompanyForm(forms.ModelForm):
+    class Meta:
+        model = company
+        fields = ('company_name', 'tax_id', 'address', 'headcount', 'superintendent', 'contact_person', 'contact_telephone', 'contact_email', 'industry_classification', 'parent_code')
+        widgets = {
+            'company_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'tax_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+            'headcount': forms.TextInput(attrs={'class': 'form-control'}),
+            'superintendent': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_person': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_telephone': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_email': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'contact_email': forms.EmailField(required=True),
+            'industry_classification': forms.Select(attrs={'class': 'form-control'}, choices=[('製造業', '製造業')]),
+            # 'parent_code': forms.Select(choices=[('abc', 'abc')]),
+            # 'parent_code': forms.Select(choices=parent.objects.all()),
+            # 'parent_code': forms.ModelChoiceField(queryset=parent.objects.all()),
+        }
+
 
 # 柴油發電機
 class EGform(forms.ModelForm):
     class Meta:
         model = emergency_generators
-        fields = ('years', 'device_id', 'device_capacity', 'position', 'department',
+        fields = ('years', 'device_id', 'device_capacity', 'position', 'department', 'estimate',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
                   'november', 'december', 'image_note', 'message_board')
         widgets = {
@@ -200,6 +278,7 @@ class EGform(forms.ModelForm):
             'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '單位:公升'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
+            'estimate': forms.CheckboxInput(attrs={'class': 'form-check-input estimate', 'id': 'estimate', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#estimate-collapse', 'aria-expanded': 'false', 'aria-controls': 'estimate-collapse'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -360,7 +439,7 @@ class MTform(forms.ModelForm):
 class PCform(forms.ModelForm):
     class Meta:
         model = process
-        fields = ('years', 'process_add_name', 'chemical_name', 'chemical_formula', 'process_stage', 'material_id', 'CAS_NO',
+        fields = ('years', 'process_add_name', 'carbon_content', 'process_stage', 'material_id',
                   'burn', 'VOCs', 'unit', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september',
                   'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
@@ -368,9 +447,7 @@ class PCform(forms.ModelForm):
             'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
             'material_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name'}),
-            'chemical_name': forms.TextInput(attrs={'class': 'form-control chemical_name'}),
-            'chemical_formula': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
-            'CAS_NO': forms.TextInput(attrs={'class': 'form-control'}),
+            'carbon_content': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
             'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'VOCs': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'unit': forms.Select(choices=PROCESS_UNIT_CHOICES),
@@ -393,7 +470,6 @@ class PCform(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PCform, self).__init__(*args, **kwargs)
-        self.fields['chemical_formula'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -414,7 +490,7 @@ class RFform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.5'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -446,7 +522,7 @@ class ACform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '5.5'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -478,7 +554,7 @@ class VCform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '15'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -510,7 +586,7 @@ class WDform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.3'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -542,7 +618,7 @@ class IWDform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '9'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -574,7 +650,7 @@ class IMform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '16'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -606,7 +682,7 @@ class ODform(forms.ModelForm):
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
             'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
-            'refrigerant_type': forms.Select(choices=REFRIGERANT_TYPE_CHOICES),
+            'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
@@ -631,7 +707,7 @@ class EXform(forms.ModelForm):
                   'replace_filling_date', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'extinguisher_type': forms.Select(choices=EXTINGUISHER_TYPE_CHOICES),
+            'extinguisher_type': forms.Select(attrs={'id': 'extinguisher_type'}, choices=EXTINGUISHER_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '選填'}),
@@ -657,12 +733,13 @@ class EXform(forms.ModelForm):
 class PIform(forms.ModelForm):
     class Meta:
         model = personnel_inventory
-        fields = ('years', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
+        fields = ('years', 'classification', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
                   'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november',
                   'WKhours_december', 'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june',
                   'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
+            'classification': forms.Select(attrs={'id': 'classification', 'style': 'width:100px'}, choices=CLASSIFICATION_CHOICES),
             'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -711,7 +788,7 @@ class EMPform(forms.ModelForm):
                   'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'career': forms.Select(choices=CAREER_CHOICES),
+            'career': forms.Select(attrs={'id': 'career', 'style': 'width:100px'}, choices=CAREER_CHOICES),
             'employeeNum_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'employeeNum_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'employeeNum_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -762,17 +839,18 @@ class EMPform(forms.ModelForm):
 class WASTEWATERform(forms.ModelForm):
     class Meta:
         model = waste_water
-        fields = ('years', 'waste_water_treatment_name', 'waste_water_inflow_rate', 'average_inlet_COD_concentration',
-                  'average_COD_removal_rate', 'CH4_capture_system_rate', 'combustion_equipment_efficiency',
+        fields = ('years', 'Pi', 'Wi', 'CODi', 'COD_total', 'Si', 'MCFj', 'Bo', 'Ri',
                   'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'waste_water_treatment_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'waste_water_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'average_inlet_COD_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'average_COD_removal_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9].[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9].[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'Pi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Wi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'CODi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'COD_total': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Si': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'MCFj': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Bo': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Ri': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -810,16 +888,17 @@ class WasteSludgeForm(forms.ModelForm):
 class SolventAerosolEmissionSourcesForm(forms.ModelForm):
     class Meta:
         model = solvent_aerosol_emission_sources
-        fields = ('years', 'solvent_name', 'solvent_amount', 'solvent_amount_unit', 'solvent_capacity',
-                  'solvent_capacity_unit', 'fugitive_recharge', 'image_note', 'message_board')
+        fields = ('years', 'solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit',
+                  'gas_name', 'gas_ratio', 'density', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-            'solvent_amount_unit': forms.Select(choices=(("瓶", "瓶"), ("罐", "罐"))),
+            'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^\+?[1-9][0-9]*$', 'title': '只能輸入正整數', 'placeholder': '只能輸入正整數'}),
             'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-            'solvent_capacity_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
-            'fugitive_recharge': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'solvent_capacity_unit': forms.Select(attrs={'id': 'solvent_capacity_unit', 'style': 'width:100px'}, choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
+            'gas_name': forms.Select(attrs={'id': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
+            'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
+            'density': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -830,26 +909,17 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
-AdditiveFormSet = inlineformset_factory(solvent_aerosol_emission_sources, additive_section,
-                                        fields=('additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio'), extra=1,
-                                        widgets={'additive_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入中文名稱'}),
-                                                 'additive_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-                                                 'additive_unit': forms.Select(choices=(("毫升", "毫升"), ("公升", "公升"), ("公克", "公克"), ("oz", "oz"))),
-                                                 'additive_ingredient': forms.TextInput(attrs={'class': 'form-control'}),
-                                                 'additive_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-                                                 })
-
-
 # 發電量
 class ELECform(forms.ModelForm):
     class Meta:
         model = electricity
-        fields = ('years', 'EMI_id', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+        fields = ('years', 'EMI_id', 'address', 'meter_location', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'EMI_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
+            'meter_location': forms.TextInput(attrs={'class': 'form-control'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -1069,6 +1139,18 @@ class ECform(forms.ModelForm):
 CommuteFormSet = inlineformset_factory(employee_commute, transportation_way, fields=('transportation',), extra=1,
                                        widgets={'transportation': forms.Select(choices=TRANSPORTATION_CHOICES, attrs={'class': 'form-control'})})
 
+department_CHOICES = [
+    ('資材部', '資材部'),
+    ('業務部', '業務部'),
+    ('行銷部', '行銷部'),
+    ('管理部', '管理部'),
+    ('工程部', '工程部'),
+    ('客服部', '客服部'),
+    ('會計部', '會計部'),
+    ('後勤部', '後勤部'),
+    ('產品研發部', '產品研發部'),
+]
+
 
 # 員工出差
 class EBTform(forms.ModelForm):
@@ -1102,7 +1184,7 @@ TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section,
                                                     'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'})})
 
 
-#廢棄物
+# 廢棄物
 class WASTEform(forms.ModelForm):
     class Meta:
         model = waste
@@ -1218,12 +1300,15 @@ class PWform(forms.ModelForm):
 class PMform(forms.ModelForm):
     class Meta:
         model = purchase_material
-        fields = ('years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
+        fields = ('years', 'product_id', 'product_name', 'vendor', 'category_name', 'material_type', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
                   'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'product_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'product_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'vendor': forms.TextInput(attrs={'class': 'form-control'}),
+            'category_name': forms.Select(attrs={'id': 'category_name'}, choices=DropdownOption.objects.filter(option_group='大類名稱').values_list('option_value', 'option_label')),
+            'material_type': forms.RadioSelect(choices=MATERIAL_TYPE, attrs={'class': 'form-check-inline'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -1276,5 +1361,3 @@ class PIEform(forms.ModelForm):
         super(PIEform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
-
-

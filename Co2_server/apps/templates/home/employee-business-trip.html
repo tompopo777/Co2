@@ -28,7 +28,6 @@
                             <div class="card-body">
                                 <form action="/employee_business_trip_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
-                                    <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-4 d-flex align-items-center">
                                             <div class="col-4 ">
@@ -114,37 +113,45 @@
                                         {% endfor %}
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <div class="d-flex mb-4">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static">
                                                     <label>上傳員工出差引用單據</label>
                                                     {{ EBT_add.bt_image_note }}
                                                 </div>
                                             </div>
-                                            <div class=" ps-md-2 align-self-center">
-                                                <div class="col-1 ">
-                                                    {{ EBT_add.bt_image_path }}
+                                        </div>
+                                        <div class="d-flex mb-4">
+                                            <div class="ps-md-2 align-self-center">
+                                                <div class="col-2" multiple="multiple">
+                                                    <input type="hidden" name="stage" id="stage1" value="員工出差段數">
+                                                    <input class="form-control-file" type="file" id="attachment1" name="file_field1" multiple="multiple" accept="image/*, .pdf">
                                                 </div>
                                             </div>
+                                            <div id="files-area">
+                                                <span id="filesList1">
+                                                    <span id="files-names1"></span>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div class="d-flex">
+                                        <div class="d-flex mb-4">
                                             <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
+                                                <div class="input-group input-group-static">
                                                     <label>上傳距離引用單據</label>
                                                     {{ EBT_add.rtd_image_note }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="d-flex">
+                                        <div class="d-flex mb-4">
                                             <div class="ps-md-2 align-self-center">
                                                 <div class="col-2" multiple="multiple">
-                                                    <input type="hidden" name="stage" value="員工出差">
-                                                    <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
+                                                    <input type="hidden" name="stage" id="stage2" value="員工出差">
+                                                    <input class="form-control-file" type="file" id="attachment2" name="file_field2" multiple="multiple" accept="image/*, .pdf">
                                                 </div>
                                             </div>
                                             <div id="files-area">
-                                                    <span id="filesList">
-                                                        <span id="files-names"></span>
-                                                    </span>
+                                                <span id="filesList2">
+                                                    <span id="files-names2"></span>
+                                                </span>
                                             </div>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -157,14 +164,18 @@
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-center">
-                                            <div class="col-1">
-                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0" id="submit">
+                                            <div class="col-auto mx-3">
+                                                <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認，並新增另一筆
+                                                </button>
+                                            </div>
+                                            <div class="col-auto mx-3">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                     確認
                                                 </button>
                                             </div>
-                                            <div class="col-1">
-                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" id="cancel"
-                                                        onclick="history.back()">
+                                            <div class="col-auto mx-3">
+                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
                                                     取消
                                                 </button>
                                             </div>
@@ -193,6 +204,16 @@
 
 
     <script>
+        {#    顯示新增成功訊息#}
+        $(document).ready(function () {
+            {% if messages %}
+                {% for message in messages %}
+                    let success_message = "{{ message }}"
+                    alert(success_message);
+                {% endfor %}
+            {% endif %}
+        });
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
@@ -212,40 +233,73 @@
         }).datepicker("setDate", 'now');
 
 
-        {#    照片顯示檔名+可刪除#}
-        const dt = new DataTransfer(); // 允許操作輸入文件的文件
-        $("#attachment").on('change', function (e) {
+        {#    員工出差段數照片顯示檔名+可刪除#}
+        const dt1 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment1").on('change', function () {
             for (var i = 0; i < this.files.length; i++) {
-                let fileBloc = $('<span/>', {class: 'file-block'}),
-                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
-                fileBloc.append('<span class="file-delete"><span>+</span></span>')
-                    .append(fileName);
-                $("#filesList > #files-names").append(fileBloc);
+                let fileBloc1 = $('<span/>', {class: 'file-block'}),
+                    fileName1 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc1.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName1);
+                $("#filesList1 > #files-names1").append(fileBloc1);
             }
-            // 將文件添加到 DataTransfer 對象
+            // 將文件添加到DataTransfer對像中
             for (let file of this.files) {
-                dt.items.add(file);
+                dt1.items.add(file);
             }
-            // 添加後更新輸入文件中的文件
-            this.files = dt.files;
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt1.files;
 
-            // 創建的刪除按鈕的事件監聽器
+            // 創建的刪除按鈕的EventListener
             $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
-                // 抑製文件名的顯示
+                // 移除文件名的顯示
                 $(this).parent().remove();
-                for (let i = 0; i < dt.items.length; i++) {
-                    // 匹配文件名
-                    if (name === dt.items[i].getAsFile().name) {
-                        // 刪除DataTransfer對像中的文件
-                        dt.items.remove(i);
+                for (let i = 0; i < dt1.items.length; i++) {
+                    // 文件和名稱匹配
+                    if (name === dt1.items[i].getAsFile().name) {
+                        // 在DataTransfer對像中刪除該文件
+                        dt1.items.remove(i);
                     }
                 }
-                // 刪除後更新輸入文件中的文件
-                document.getElementById('attachment').files = dt.files;
+                // 刪除後更新輸入文件
+                document.getElementById('attachment1').files = dt1.files;
             });
         });
 
+        {#    員工出差照片顯示檔名+可刪除#}
+        const dt2 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment2").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc2 = $('<span/>', {class: 'file-block'}),
+                    fileName2 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc2.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName2);
+                $("#filesList2 > #files-names2").append(fileBloc2);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt2.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt2.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt2.items.length; i++) {
+                    // 文件和名稱匹配
+                    if (name === dt2.items[i].getAsFile().name) {
+                        // 在DataTransfer對像中刪除該文件
+                        dt2.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment2').files = dt2.files;
+            });
+        });
 
         {#    新增/刪除出差段數#}
         var trip_count = 0;
