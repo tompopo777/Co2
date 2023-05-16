@@ -76,12 +76,9 @@ def load_device(request):
 def current_user_group_id(request):
     try:
         user_id = request.user.id
-        print('user_id', user_id)
         current_user = Profile.objects.filter(user_id=user_id).get()
         factory_id = current_user.factory_id
-        # factory_name = current_user.factory
-        # print('factory_id', factory_id)
-        # print('factory_name', factory_name)
+        factory_name = current_user.factory
         return factory_id
     except:
         pass
@@ -95,6 +92,8 @@ def load_table(request):
         year = request.session.get('years')
         factory_id = request.session.get('factory_id')
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+        # print('factory_id', factory_id)
+        # print('years', year)
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
@@ -592,7 +591,7 @@ def copy_last_year_data(request):
 
         for a in t_name:
             if a["d_name"] == "柴油發電機":
-                last_year_data = emergency_generators.objects.filter(years=last_year, company_id=factory_id).values()
+                last_year_data = emergency_generators.objects.filter(years=last_year).filter(company_id=factory_id).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1071,8 +1070,8 @@ def copy_last_year_data(request):
                 pipe_wastewater.objects.bulk_create(
                     [pipe_wastewater(**data) for data in last_year_data]
                 )
-            elif a["d_name"] == '採購員物料':
-                last_year_data = purchase_material.objects.filter(company_id=factory_id, years=last_year).values()
+            elif a["d_name"] == '採購原物料':
+                last_year_data = purchase_material.objects.filter(years=last_year, company_id=factory_id).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1751,7 +1750,7 @@ def VOCs_two_add(request):
     VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
     if request.method == "POST":
         factory_id = request.session.get('factory_id')
-        print("company_id", company_id)
+        print("company_id", factory_id)
         if VOCs_two_add.is_valid():
             VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = factory_id
@@ -2124,6 +2123,7 @@ def carbon_system(request):
         dropdown_two = request.POST.get('dropdown_two')
         dropdown_three = request.POST.get('dropdown_three')
         factory_id = request.POST.get('company_dropdown')
+        print('factory_id////', factory_id)
         years = request.POST.get('years')
         if factory_id is None:
             factory_id = current_user_group_id(request)

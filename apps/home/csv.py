@@ -175,10 +175,10 @@ COLUMN_MAPPING = {
                     'special_transport_distance', 'special_transport_country', 'special_transport_type', 'special_transport_fuel', 'special_paid', 'special_trips',
                     'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'message_board'],
         'column_names': ['單號', '商品', '淨/毛重', '重量(噸)', '組織使用產品', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點',
-                         '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
-                         '海運距離(nm)', '出貨港口', '到達港口', '支付方', '趟次',
-                         '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
-                         '單趟運輸距離(km)', '出貨機場', '到達機場', '支付方', '趟次', '備註欄'],
+                         '陸運運輸距離(km)', '陸運運輸國家', '陸運交通工具', '陸運燃料', '陸運支付方', '陸運趟次',
+                         '海運運輸距離距離(nm)', '出貨港口', '到達港口', '海運支付方', '海運趟次',
+                         '特殊陸運運輸距離(km)', '特殊陸運運輸國家', '特殊陸運交通工具', '特殊陸運燃料', '特殊陸運支付方', '特殊陸運趟次',
+                         '空運運輸距離(km)', '出貨機場', '到達機場', '空運支付方', '空運趟次', '備註欄'],
         'prefix': '類別三_'
     },
     'downstream_transportation': {
@@ -249,15 +249,12 @@ COLUMN_MAPPING = {
 @require_http_methods(["POST"])
 def export_excel(request):
     if request.method == "POST":
-        did = request.POST.get('did')
-        year = request.POST.get('yearInput')
-        excel_did = section_two.objects.filter(did__exact=int(did))
-
-        company_value = request.POST.get('company_id')
-        if company_value is None:
-            company_id = current_user_group_id(request)
-        else:
-            company_id = int(company_value)
+        # did = request.POST.get('did')
+        # year = request.POST.get('yearInput')
+        device_id = request.session.get('dropdown_three')
+        year = request.session.get('years')
+        factory_id = request.session.get('factory_id')
+        excel_did = section_two.objects.filter(did__exact=int(device_id))
 
         # 取得欄位清單和欄位中文名稱
         table_name = excel_did[0].t_name
@@ -267,7 +264,7 @@ def export_excel(request):
         column_names = column_mapping['column_names']
 
         # 根據所需欄位清單查詢資料
-        data = globals()[table_name].objects.all().filter(company_id=company_id, years=year).values(*columns)
+        data = globals()[table_name].objects.all().filter(company_id=factory_id, years=year).values(*columns)
 
         # 將查詢結果轉換為DataFrame
         df = pd.DataFrame(list(data))
@@ -283,7 +280,7 @@ def export_excel(request):
             child_column_names = COLUMN_MAPPING['trip_section']['column_names']
 
             # 取得母表和子表的資料
-            mother_data = employee_business_trip.objects.all().filter(company_id=company_id, years=year).values(*mother_columns)
+            mother_data = employee_business_trip.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
             child_data = trip_section.objects.all().values(*child_columns)
 
             # 將母表和子表的資料轉換為 DataFrame
@@ -307,7 +304,7 @@ def export_excel(request):
             child_columns = COLUMN_MAPPING['transportation_way']['columns']
 
             # 取得母表和子表的資料
-            mother_data = employee_commute.objects.all().filter(company_id=company_id, years=year).values(*mother_columns)
+            mother_data = employee_commute.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
             child_data = transportation_way.objects.all().values(*child_columns)
 
             # 將母表和子表的資料轉換為 DataFrame
@@ -401,14 +398,9 @@ def export_excel(request):
 def import_excel(request):
     if request.method == 'POST':
         # 取得設備編號、公司編號、檔案
-        did = request.POST.get('did')
-        # did = request.session.get('dropdown_three')
+        did = request.session.get('dropdown_three')
+        factory_id = request.session.get('factory_id')
         file = request.FILES.get('excel_file')
-        company_value = request.POST.get('company_id')
-        if company_value == 'undefined':
-            company_id = current_user_group_id(request)
-        else:
-            company_id = int(company_value)
 
         # 檢查檔案副檔名是否為Excel或CSV
         file_type = os.path.splitext(file.name)[1]
@@ -416,9 +408,13 @@ def import_excel(request):
             if file_type == '.csv':
                 # 讀取Excel檔案
                 df = pd.read_csv(file)
+                # 將NaN值替換為空值
+                df.fillna(value='', inplace=True)
             else:
                 # 讀取Excel檔案
                 df = pd.read_excel(file)
+                # 將NaN值替換為空值
+                df.fillna(value='', inplace=True)
         else:
             response_data = {
                 'success': False,
@@ -459,7 +455,7 @@ def import_excel(request):
                     old_commute_id = data['commute_id']
                     if old_commute_id not in commute_id_dict:
                         data.pop('commute_id')
-                        data['company_id'] = company_id
+                        data['company_id'] = factory_id
                         new_mother_data = employee_commute.objects.create(**data)
                         new_commute_data.append(new_mother_data)
                         commute_id_dict[old_commute_id] = new_mother_data.id
@@ -491,7 +487,7 @@ def import_excel(request):
 
                 # 將公司編號加入dict中
                 for data in data_dict:
-                    data['company_id'] = company_id
+                    data['company_id'] = factory_id
 
                 # 將資料存入資料庫
                 model_list = [globals()[table_name](**data) for data in data_dict]
