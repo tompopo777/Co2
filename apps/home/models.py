@@ -43,19 +43,10 @@ class company(models.Model):
 class factory(models.Model):
     id = models.AutoField(primary_key=True)
     factory_name = models.CharField(max_length=255, verbose_name='工廠名稱')
-    tax_id = models.IntegerField(verbose_name='統一編號')
-    address = models.CharField(max_length=255, verbose_name='地址')
-    headcount = models.IntegerField(verbose_name='員工人數')
-    superintendent = models.CharField(max_length=30, verbose_name='負責人')
-    contact_person = models.CharField(max_length=30, verbose_name='聯絡人')
-    contact_telephone = models.CharField(max_length=60, verbose_name='聯絡人電話')
-    contact_email = models.CharField(max_length=50, verbose_name='聯絡人信箱')
-    industry_classification = models.CharField(max_length=30, verbose_name='行業分類')
     company_id = models.ForeignKey(company, on_delete=models.CASCADE, db_column='company_id', verbose_name='總公司名稱')
 
     def __str__(self):
         return self.factory_name
-
 
 # profile資料
 class Profile(models.Model):
@@ -568,7 +559,7 @@ class upstream_transportation(models.Model):
     acceptance_receipt = models.CharField(max_length=50)
     commodity_name = models.CharField(max_length=20)
     weight = models.CharField(max_length=10)
-    commodity_NW = models.FloatField()
+    commodity_NW = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     organizational_use_products = models.CharField(max_length=100)
     customer = models.CharField(max_length=50)
     supplier = models.CharField(max_length=30)
@@ -576,30 +567,30 @@ class upstream_transportation(models.Model):
     trade_term = models.CharField(max_length=10)
     receiving_address = models.CharField(max_length=100)
     delivery_address = models.CharField(max_length=100)
-    transport_distance = models.FloatField(null=True)
+    transport_distance = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     transport_country = models.CharField(max_length=20, null=True)
     paid = models.CharField(max_length=10)
     transport_type = models.CharField(max_length=20, null=True)
     transport_fuel = models.CharField(max_length=20, null=True)
-    trips = models.IntegerField(null=True)
+    trips = models.DecimalField(max_digits=20, decimal_places=0, default=0)
     image_note = models.CharField(max_length=30, null=True)
-    overseas_transport_distance = models.FloatField(null=True)
+    overseas_transport_distance = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     overseas_paid = models.CharField(max_length=10, null=True)
     overseas_delivery = models.CharField(max_length=50, null=True)
     overseas_arrive = models.CharField(max_length=50, null=True)
-    overseas_trips = models.IntegerField(null=True)
+    overseas_trips = models.DecimalField(max_digits=20, decimal_places=0, default=0)
     overseas_image_note = models.CharField(max_length=30, null=True)
-    special_transport_distance = models.FloatField(null=True)
+    special_transport_distance = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     special_transport_country = models.CharField(max_length=20, null=True)
     special_paid = models.CharField(max_length=10, null=True)
     special_transport_type = models.CharField(max_length=20, null=True)
     special_transport_fuel = models.CharField(max_length=20, null=True)
-    special_trips = models.IntegerField(null=True)
+    special_trips = models.DecimalField(max_digits=20, decimal_places=0, default=0)
     special_image_note = models.CharField(max_length=30, null=True)
-    air_transport_distance = models.FloatField(null=True)
+    air_transport_distance = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     air_delivery = models.CharField(max_length=50, null=True)
     air_arrive = models.CharField(max_length=50, null=True)
-    air_trips = models.IntegerField(null=True)
+    air_trips = models.DecimalField(max_digits=20, decimal_places=0, default=0)
     air_paid = models.CharField(max_length=10, null=True)
     air_image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
@@ -698,7 +689,7 @@ class trip_section(models.Model):
     id = models.AutoField(primary_key=True)
     departure = models.CharField(max_length=50)
     transportation = models.CharField(max_length=30)
-    distance = models.FloatField()
+    distance = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE, db_column='trip_id')
 
 
@@ -800,6 +791,9 @@ class purchase_material(models.Model):
     years = models.IntegerField(default=timezone.now().year)
     product_id = models.CharField(max_length=50)
     product_name = models.CharField(max_length=50)
+    vendor = models.CharField(max_length=50)
+    category_name = models.CharField(max_length=100, null=True)
+    material_type = models.CharField(max_length=10)
     january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     march = models.DecimalField(max_digits=20, decimal_places=4, default=0)
@@ -857,3 +851,10 @@ class coefficient_gwp(models.Model):
     version = models.IntegerField()
     years = models.IntegerField()
     gwp_coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
+
+
+class DropdownOption(models.Model):
+    id = models.AutoField(primary_key=True)
+    option_group = models.CharField(max_length=100)
+    option_value = models.CharField(max_length=100, null=True)
+    option_label = models.CharField(max_length=100, null=True)
