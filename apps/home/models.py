@@ -4,7 +4,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 # 限制文件
 from django.core import validators
 from django.utils import timezone
@@ -14,7 +14,6 @@ from django.utils import timezone
 class parent(models.Model):
     parent_code = models.CharField(max_length=255, primary_key=True)
     company_name = models.CharField(max_length=255)
-    # account = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.parent_code
@@ -32,7 +31,6 @@ class company(models.Model):
     contact_telephone = models.CharField(max_length=60, verbose_name='聯絡人電話')
     contact_email = models.CharField(max_length=50, verbose_name='聯絡人信箱')
     industry_classification = models.CharField(max_length=30, verbose_name='行業分類')
-    # parent_code = models.CharField(max_length=255)
     parent_code = models.ForeignKey(parent, on_delete=models.CASCADE, db_column='parent_code')
 
     def __str__(self):
@@ -43,14 +41,6 @@ class company(models.Model):
 class factory(models.Model):
     id = models.AutoField(primary_key=True)
     factory_name = models.CharField(max_length=255, verbose_name='工廠名稱')
-    tax_id = models.IntegerField(verbose_name='統一編號')
-    address = models.CharField(max_length=255, verbose_name='地址')
-    headcount = models.IntegerField(verbose_name='員工人數')
-    superintendent = models.CharField(max_length=30, verbose_name='負責人')
-    contact_person = models.CharField(max_length=30, verbose_name='聯絡人')
-    contact_telephone = models.CharField(max_length=60, verbose_name='聯絡人電話')
-    contact_email = models.CharField(max_length=50, verbose_name='聯絡人信箱')
-    industry_classification = models.CharField(max_length=30, verbose_name='行業分類')
     company_id = models.ForeignKey(company, on_delete=models.CASCADE, db_column='company_id', verbose_name='總公司名稱')
 
     def __str__(self):
@@ -61,11 +51,28 @@ class factory(models.Model):
 class Profile(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='使用者')
-    company = models.ForeignKey(company, on_delete=models.CASCADE, db_column='company', verbose_name='該帳號屬於公司名稱')
-    factory = models.ForeignKey(factory, on_delete=models.CASCADE, db_column='factory', verbose_name='該帳號屬於廠名稱')
+    company = models.ForeignKey(company, on_delete=models.CASCADE, null=True, db_column='company', verbose_name='該帳號屬於公司名稱')
+    factory = models.ForeignKey(factory, on_delete=models.CASCADE, null=True, db_column='factory', verbose_name='該帳號屬於廠名稱')
 
     def __str__(self):
         return self.user.username
+
+
+# # 客製權限
+# class CustomUser(AbstractUser):
+#     company = models.ForeignKey(company, on_delete=models.CASCADE)
+#     factory = models.ForeignKey(factory, on_delete=models.CASCADE, null=True, blank=True)
+
+
+# # 客製權限
+# # class CustomUser(AbstractUser):
+# class CustomUser(models.Model):
+#     # pass
+#     id = models.AutoField(primary_key=True)
+#     is_staff = models.BooleanField(default=False)
+#     is_superuser = models.BooleanField(default=False)
+#     username = models.CharField(max_length=100)
+#     company = models.ForeignKey(company, on_delete=models.CASCADE)
 
 
 class section_one(models.Model):

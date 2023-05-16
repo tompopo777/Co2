@@ -37,6 +37,8 @@ ip = socket.gethostbyname(hostname)
 ALLOWED_HOSTS = ['localhost', 'localhost:85', '127.0.0.1', env('SERVER', default='127.0.0.1'), ip]
 CSRF_TRUSTED_ORIGINS = ['http://localhost:85', 'http://127.0.0.1', 'https://' + env('SERVER', default='127.0.0.1')]
 
+DEFAULT_AUTO_FIELD ='django.db.models.BigAutoField'
+
 # SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # SESSION_COOKIE_AGE = 15 * 60
 
