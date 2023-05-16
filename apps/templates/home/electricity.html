@@ -31,19 +31,27 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年度 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ ELEC_add.years }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>電表編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ ELEC_add.EMI_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>電表位置 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ ELEC_add.meter_location }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>地址 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ ELEC_add.address }}

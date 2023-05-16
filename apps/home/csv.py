@@ -1,6 +1,8 @@
 ﻿import io
+import os
 import pandas as pd
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
@@ -35,12 +37,12 @@ COLUMN_MAPPING = {
         'columns': ['years', 'vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december',
-                    'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july', 
+                    'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july',
                     'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december'],
         'column_names': ['年度', '類別', '編號', '燃料種類', '所屬單位', '計程方式',
-                         '耗用量 一月', '耗用量 二月', '耗用量 三月', '耗用量 四月', '耗用量 五月', '耗用量 六月', 
+                         '耗用量 一月', '耗用量 二月', '耗用量 三月', '耗用量 四月', '耗用量 五月', '耗用量 六月',
                          '耗用量 七月', '耗用量 八月', '耗用量 九月', '耗用量 十月', '耗用量 十一月', '耗用量 十二月',
-                         '尿素 一月', '尿素 二月', '尿素 三月', '尿素 四月', '尿素 五月', '尿素 六月', 
+                         '尿素 一月', '尿素 二月', '尿素 三月', '尿素 四月', '尿素 五月', '尿素 六月',
                          '尿素 七月', '尿素 八月', '尿素 九月', '尿素 十月', '尿素 十一月', '尿素 十二月'],
         'prefix': '類別一_'
     },
@@ -59,45 +61,45 @@ COLUMN_MAPPING = {
         'prefix': '類別一__'
     },
     'refrigerator': {
-        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
-        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
+                    'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
         'prefix': '類別一__'
     },
     'airconditioner': {
-        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
-        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
+                    'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
         'prefix': '類別一__'
     },
     'vehicle': {
-        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
-        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
+                    'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
         'prefix': '類別一__'
     },
     'water_dispenser': {
-        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
-        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
+                    'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
         'prefix': '類別一__'
     },
     'ice_water_dispenser': {
-        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
-        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
+                    'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
         'prefix': '類別一__'
     },
     'ice_maker': {
-        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
-        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
+                    'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
         'prefix': '類別一__'
     },
     'other_device': {
-        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'filling_volume',
-                    'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
-        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
+        'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
+                    'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
+        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
         'prefix': '類別一__'
     },
     'extinguisher': {
@@ -128,10 +130,8 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'waste_water': {
-        'columns': ['years', 'waste_water_treatment_name', 'waste_water_inflow_rate', 'average_inlet_COD_concentration',
-                    'average_COD_removal_rate', 'CH4_capture_system_rate', 'combustion_equipment_efficiency', 'message_board'],
-        'column_names': ['年度', '廢水厭氧處理單元名稱 ', '廢水進流量(立方公尺/年)', '平均進流COD濃度(mg/L)', '平均進流COD濃度(mg/L)',
-                         u'CH\u2084捕集系統捕集率', '燃燒設備效率', '備註欄'],
+        'columns': ['years', 'Pi', 'Wi', 'CODi', 'COD_total', 'Si', 'MCFj', 'Bo', 'Ri', 'message_board'],
+        'column_names': ['年度', 'Pi:工業部門生產量', 'Wi:廢水產生量', 'CODi:化學需氧量', '每年事業廢水之COD總量', 'Si:污泥移除量', 'MCFj:甲烷修正係數', 'Bo:最大CH4產生量', 'Ri:甲烷移除量', '備註欄'],
         'prefix': '類別一_'
     },
     'waste_sludge': {
@@ -161,9 +161,9 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'electricity': {
-        'columns': ['years', 'EMI_id', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+        'columns': ['years', 'EMI_id', 'meter_location', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '電表編號', '地址', '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+        'column_names': ['年度', '電表編號', '電表位置', '地址', '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別二_'
     },
     'upstream_transportation': {
@@ -283,7 +283,7 @@ def export_excel(request):
             child_column_names = COLUMN_MAPPING['trip_section']['column_names']
 
             # 取得母表和子表的資料
-            mother_data = employee_business_trip.objects.all().values(*mother_columns)
+            mother_data = employee_business_trip.objects.all().filter(company_id=company_id, years=year).values(*mother_columns)
             child_data = trip_section.objects.all().values(*child_columns)
 
             # 將母表和子表的資料轉換為 DataFrame
@@ -304,57 +304,25 @@ def export_excel(request):
         elif table_name == 'employee_commute':
             # 取得母表和子表的欄位資訊
             mother_columns = COLUMN_MAPPING['employee_commute']['columns']
-            mother_column_names = COLUMN_MAPPING['employee_commute']['column_names']
             child_columns = COLUMN_MAPPING['transportation_way']['columns']
-            child_column_names = COLUMN_MAPPING['transportation_way']['column_names']
 
             # 取得母表和子表的資料
-            mother_data = employee_commute.objects.all().values(*mother_columns)
+            mother_data = employee_commute.objects.all().filter(company_id=company_id, years=year).values(*mother_columns)
             child_data = transportation_way.objects.all().values(*child_columns)
 
             # 將母表和子表的資料轉換為 DataFrame
             mother_df = pd.DataFrame(list(mother_data))
             child_df = pd.DataFrame(list(child_data))
 
-            # 將欄位名稱改成中文
-            mother_df.columns = mother_column_names
-            child_df.columns = child_column_names
-
             # 將子表的資料加入到母表的資料中
-            df = pd.merge(mother_df, child_df[['交通工具', '員工通勤編號']], on='員工通勤編號', how='left')
+            df = pd.merge(mother_df, child_df, left_on='id', right_on='commute', how='left')
 
-            # 將子表的欄位名稱加入到匯出的資料中
-            column_names = ['員工通勤編號', '年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數']
-            column_names.extend(['交通工具'])
+            df.drop(columns=['id'], inplace=True)
 
-        # elif table_name == 'solvent_aerosol_emission_sources':
-        #     # 取得母表和子表的欄位資訊
-        #     mother_columns = COLUMN_MAPPING['solvent_aerosol_emission_sources']['columns']
-        #     mother_column_names = COLUMN_MAPPING['solvent_aerosol_emission_sources']['column_names']
-        #     child_columns = COLUMN_MAPPING['additive_section']['columns']
-        #     child_column_names = COLUMN_MAPPING['additive_section']['column_names']
-        #
-        #     # 取得母表和子表的資料
-        #     mother_data = solvent_aerosol_emission_sources.objects.all().values(*mother_columns)
-        #     child_data = additive_section.objects.all().values(*child_columns)
-        #
-        #     # 將母表和子表的資料轉換為 DataFrame
-        #     mother_df = pd.DataFrame(list(mother_data))
-        #     child_df = pd.DataFrame(list(child_data))
-        #
-        #     # 將欄位名稱改成中文
-        #     mother_df.columns = mother_column_names
-        #     child_df.columns = child_column_names
-        #
-        #     # 將子表的資料加入到母表的資料中
-        #     df = pd.merge(mother_df, child_df[['添加物名稱', '添加量', '單位', '成份', '添加比例', '添加物編號']], on='添加物編號', how='left')
-        #
-        #     # 將子表的欄位名稱加入到匯出的資料中
-        #     column_names = ['添加物編號', '年度', '溶劑、噴霧劑名稱', '數量', '單位', '容量', '單位', '逸散 / 補充量(公噸/年)', '備註欄']
-        #     column_names.extend(['添加物名稱', '添加量', '單位', '成份', '添加比例'])
+            df.rename(columns={'years': '年度', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'city': '居住城市', 'township': '鄉鎮市區', 'address': '行政區公家機關地址',
+                               'commute_distance': '至公司距離(km)', 'work_days': '年工作天數', 'transportation': '交通工具', 'commute': '員工通勤編號'}, inplace=True)
 
-        # 將欄位名稱改成中文
-        df.columns = column_names
+            print(df)
 
         # 創建Excel文件
         excel_name = prefix + excel_did[0].d_name + '.xlsx'
@@ -376,52 +344,202 @@ def export_excel(request):
 
 
 # 匯入功能
+# @csrf_exempt
+# @require_http_methods(["POST"])
+# @login_required(login_url="/login/")
+# def import_excels(request):
+#     if request.method == 'POST':
+#         try:
+#             did = request.POST.get('did')
+#             file = request.FILES['excel_file']
+#             company_value = request.POST.get('company_id')
+#             if company_value == 'undefined':
+#                 company_id = current_user_group_id(request)
+#             else:
+#                 company_id = int(company_value)
+#
+#             # 解析Excel檔案
+#             wb = load_workbook(file, data_only=True)
+#             sheet = wb.active
+#
+#             # 取得目標資料表名稱
+#             section = section_two.objects.get(did=did)
+#             table_name = section.t_name
+#
+#             # 取得目標資料表的中英文欄位名稱對應
+#             column_mapping = COLUMN_MAPPING[table_name]
+#             column_names = column_mapping['column_names']
+#             columns = column_mapping['columns']
+#
+#             # 讀取Excel中的資料，並存入資料庫中
+#             for row in sheet.iter_rows(min_row=2):
+#                 data = {}
+#                 for i, cell in enumerate(row):
+#                     # 將中文欄位名稱轉換為英文欄位名稱
+#                     column_name = column_names[i]
+#                     column = columns[i]
+#                     if column == "id":
+#                         continue  # 如果欄位是id，則略過不處理
+#                     data[column] = cell.value
+#
+#                 # 添加公司 ID 到資料字典
+#                 data['company_id'] = company_id
+#
+#                 # 將資料存入資料庫
+#                 your_model_instance = globals()[table_name](**data)
+#                 your_model_instance.save()
+#
+#             messages.success(request, '匯入Excel成功')
+#             return HttpResponse('OK')
+#         except Exception as e:
+#             messages.error(request, '匯入Excel失敗')
+#             return HttpResponse(str(e), status=400)
+
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def import_excel(request):
     if request.method == 'POST':
-        try:
-            did = request.POST.get('did')
-            file = request.FILES['excel_file']
-            company_value = request.POST.get('company_id')
-            if company_value == 'undefined':
-                company_id = current_user_group_id(request)
+        # 取得設備編號、公司編號、檔案
+        did = request.POST.get('did')
+        # did = request.session.get('dropdown_three')
+        file = request.FILES.get('excel_file')
+        company_value = request.POST.get('company_id')
+        if company_value == 'undefined':
+            company_id = current_user_group_id(request)
+        else:
+            company_id = int(company_value)
+
+        # 檢查檔案副檔名是否為Excel或CSV
+        file_type = os.path.splitext(file.name)[1]
+        if file_type in ['.xlsx', '.xls', '.csv']:
+            if file_type == '.csv':
+                # 讀取Excel檔案
+                df = pd.read_csv(file)
             else:
-                company_id = int(company_value)
+                # 讀取Excel檔案
+                df = pd.read_excel(file)
+        else:
+            response_data = {
+                'success': False,
+                'message': '檔案格式不正確，請選擇Excel或CSV檔案'
+            }
+            return JsonResponse(response_data)
 
-            # 解析Excel檔案
-            wb = load_workbook(file, data_only=True)
-            sheet = wb.active
+        # 取得目標資料表名稱
+        section = section_two.objects.get(did=did)
+        table_name = section.t_name
 
-            # 取得目標資料表名稱
-            section = section_two.objects.get(did=did)
-            table_name = section.t_name
+        column_mapping = COLUMN_MAPPING[table_name]
+        column_names = column_mapping['column_names']
+        columns = column_mapping['columns']
 
-            # 取得目標資料表的中英文欄位名稱對應
-            column_mapping = COLUMN_MAPPING[table_name]
-            column_names = column_mapping['column_names']
-            columns = column_mapping['columns']
+        # 寫入資料庫
+        try:
+            if table_name == 'employee_commute':
+                # 轉換欄位名稱
+                df.rename(columns={'年度': 'years', '員工編號': 'employee_id', '部門': 'department', '姓名': 'employee_name', '居住城市': 'city', '鄉鎮市區': 'township', '行政區公家機關地址': 'address',
+                                   '至公司距離(km)': 'commute_distance', '年工作天數': 'work_days', '交通工具': 'transportation', '員工通勤編號': 'commute_id'}, inplace=True)
 
-            # 讀取Excel中的資料，並存入資料庫中
-            for row in sheet.iter_rows(min_row=2):
-                data = {}
-                for i, cell in enumerate(row):
-                    # 將中文欄位名稱轉換為英文欄位名稱
-                    column_name = column_names[i]
-                    column = columns[i]
-                    if column == "id":
-                        continue  # 如果欄位是id，則略過不處理
-                    data[column] = cell.value
+                # 分離母子表資料
 
-                # 添加公司 ID 到資料字典
-                data['company_id'] = company_id
+                mother_df = df.loc[:, ['years', 'employee_id', 'department', 'employee_name', 'city', 'township', 'address', 'commute_distance', 'work_days', 'commute_id']]
+                child_df = df.loc[:, ['commute_id', 'transportation']]
+
+                # 將df轉換成dict
+                mother_data_dict = mother_df.to_dict('records')
+                child_data_dict = child_df.to_dict('records')
+
+                commute_id_dict = {}
+                new_commute_data = []
+                new_transportation_data = []
+
+                # 將公司編號加入dict中
+                for data in mother_data_dict:
+                    old_commute_id = data['commute_id']
+                    if old_commute_id not in commute_id_dict:
+                        data.pop('commute_id')
+                        data['company_id'] = company_id
+                        new_mother_data = employee_commute.objects.create(**data)
+                        new_commute_data.append(new_mother_data)
+                        commute_id_dict[old_commute_id] = new_mother_data.id
+                    else:
+                        commute_id_dict[old_commute_id] = commute_id_dict[old_commute_id]
+
+                for data in child_data_dict:
+                    old_commute_id = data['commute_id']
+                    new_commute_id = commute_id_dict[old_commute_id]
+                    data['commute_id'] = new_commute_id
+                    new_transportation = transportation_way(**data)
+                    new_transportation_data.append(new_transportation)
+
+                # 儲存新的資料到資料庫中
+                transportation_way.objects.bulk_create(new_transportation_data)
+
+                response_data = {
+                    'success': True,
+                    'message': '匯入Excel成功'
+                }
+                return JsonResponse(response_data)
+
+            else:
+                # 將中文列名轉換為英文列名
+                df.rename(columns=dict(zip(column_names, columns)), inplace=True)
+
+                # 將df轉換成dict
+                data_dict = df.to_dict('records')
+
+                # 將公司編號加入dict中
+                for data in data_dict:
+                    data['company_id'] = company_id
 
                 # 將資料存入資料庫
-                your_model_instance = globals()[table_name](**data)
-                your_model_instance.save()
+                model_list = [globals()[table_name](**data) for data in data_dict]
+                globals()[table_name].objects.bulk_create(model_list)
 
-            messages.success(request, '匯入Excel成功')
-            return HttpResponse('OK')
-        except Exception as e:
-            messages.error(request, '匯入Excel失敗')
-            return HttpResponse(str(e), status=400)
+                response_data = {
+                    'success': True,
+                    'message': '匯入Excel成功'
+                }
+                return JsonResponse(response_data)
+
+        # 表示檔案格式不正確
+        except pd.errors.ParserError:
+            response_data = {
+                'success': False,
+                'message': '匯入Excel失敗，請檢查欄位格式是否正確。'
+            }
+            return JsonResponse(response_data)
+
+        except ValueError as error:
+            print('匯入Excel失敗，錯誤原因：', error)
+            response_data = {
+                'success': False,
+                'message': '匯入Excel失敗，請檢是否有選取設備。'
+            }
+            return JsonResponse(response_data, status=400)
+
+        except TypeError as error:
+            print('匯入Excel失敗，錯誤原因：', error)
+            response_data = {
+                'success': False,
+                'message': '匯入Excel失敗，請檢查選擇的檔案是否正確。'
+            }
+            return JsonResponse(response_data)
+
+        except KeyError as error:
+            print('匯入Excel失敗，錯誤原因：', error)
+            response_data = {
+                'success': False,
+                'message': f'匯入Excel失敗，請檢查欄位名稱是否正確。'
+            }
+            return JsonResponse(response_data)
+
+        # 其他可能性錯誤
+        except Exception as error:
+            print('匯入Excel失敗，錯誤原因：', error)
+            response_data = {
+                'success': False,
+                'message': '匯入Excel失敗，錯誤原因：' + str(error)
+            }
+            return JsonResponse(response_data)

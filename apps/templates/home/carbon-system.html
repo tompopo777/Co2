@@ -872,7 +872,7 @@
                     },
                     error: function (xhr, status, error) {
                         alert('匯出 Excel 失敗');
-                        {#console.error(xhr.responseText);#}
+                        console.log(error)
                     },
                     contentType: 'application/x-www-form-urlencoded',
                     processData: true,
@@ -898,18 +898,17 @@
                     contentType: false,
                     processData: false,
                     success: function (response) {
-                        if (response === "OK") {
-                            alert("匯入 Excel 成功！");
-                            loadtable();
+                        if (response.success) {
+                            alert(response.message); // 顯示成功訊息
+                            loadtable(deviceId, company_value, yearInput);
                         } else {
-                            alert(response);
+                            alert(response.message);
                         }
                     },
                     error: function (xhr, status, error) {
-                        alert('匯入 Excel 失敗');
-                        console.log(xhr.status);
-                        console.log(error);
-                    },
+                        alert('匯入Excel失敗，錯誤原因：' + error + '\n請檢查欄位格式是否正確');
+                        console.log(error)
+                    }
                 });
             });
         });
