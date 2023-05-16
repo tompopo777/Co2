@@ -1,4 +1,5 @@
 {% extends "layouts/base.html" %}
+{% load home_tags %}
 
 {% block title %} 碳盤查系統 {% endblock %}
 
@@ -20,7 +21,7 @@
              style="background-image: url('{{ ASSETS_ROOT }}0008020206520995_b.jpng');">
             <span class="mask bg-gradient-dark opacity-6"></span>
             <div class="container">
-                {% ifequal user.groups.all.0.name '中心帳號' %}
+                {% if request.user|has_group:'中心帳號' %}
                     <div class="card-body px-0">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -28,11 +29,72 @@
                             <input type="hidden" id="hiddenYearsInput" name="years" readonly>
                             <div class="d-flex dropdown-area">
                                 <div class="col-4">
-                                    <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">公司廠別</label>
-                                    <select class="" id="company_dropdown" name="company_dropdown">
+                                    <label class="lead form-label ms-0" for="factory_dropdown" style="color: whitesmoke">公司廠別</label>
+                                    <select class="" id="factory_dropdown" name="factory_dropdown">
+                                        <option value="0" name="" selected>
+                                            <---公司廠別--->
+                                        </option>
+                                        {% for factory in factory_group %}
+                                            <option value="{{ factory.id }}">
+                                                {{ factory }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label class="lead form-label ms-0" for="dropdown_one" style="color: whitesmoke">類別</label>
+                                    <select class="" id="dropdown_one" name="dropdown_one" onchange="DropdownOne(this)" disabled>
                                         <option value="0" name="" selected>
                                             <---請選擇類別--->
                                         </option>
+                                        <option value="1">
+                                            直接溫室氣體排放(類別一)
+                                        </option>
+                                        <option value="2">
+                                            輸入能源之間接溫室氣體排放(類別二)
+                                        </option>
+                                        <option value="3">
+                                            運輸之間接溫室氣體排放(類別三)
+                                        </option>
+                                        <option value="4">
+                                            組織使用的產品之間接溫室氣體排放(類別四)
+                                        </option>
+                                        <option value="5">
+                                            使用組織產品之間接溫室氣體排放(類別五)
+                                        </option>
+                                        <option value="6">
+                                            其他來源之間接溫室氣體排放(類別六)
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">過程區域</label>
+                                    <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
+                                </div>
+                                <div class="col-3">
+                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">設備</label>
+                                    <select class="" id="dropdown_three" name="dropdown_three" disabled></select>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <input id="submit" type="submit" value="查詢" class="btn btn-outline-light ms-1">
+                            </div>
+                        </form>
+                    </div>
+                {% elif request.user|has_group:'公司帳號' %}
+                    <div class="card-body px-0">
+                        <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
+                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
+                            <div class="d-flex dropdown-area">
+                                <div class="col-4">
+                                    <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">子廠名稱</label>
+                                    <select class="" id="company_dropdown" name="company_dropdown">
+                                        <option value="0" name="" selected>
+                                            <---子廠名稱--->
+                                        </option>
+                                        {{ company_group }}
                                         {% for company in company_group %}
                                             <option value="{{ company.id }}">
                                                 {{ company }}
@@ -80,8 +142,7 @@
                             </div>
                         </form>
                     </div>
-                {% endifequal %}
-                {% ifnotequal user.groups.all.0.name '中心帳號' %}
+                {% elif request.user|has_group:'廠帳號' %}
                     <div class="card-body">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -128,13 +189,13 @@
                             </div>
                         </form>
                     </div>
-                {% endifnotequal %}
+                {% endif %}
                 <div class="d-flex">
                     <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                         <div class="mb-4">
-                            {% if perms.home.add_emergency_generators %}
-                                <div class="d-flex justify-content-center" id="disable-section">
+                            <div class="d-flex justify-content-center" id="disable-section">
+                                {% if perms.home.add_emergency_generators %}
                                     <form method="get" action="{% url 'loadadd' %}" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-outline-light me-1">新增</button>
@@ -142,9 +203,6 @@
                                     <div class="d-flex justify-content-center">
                                         <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
                                     </div>
-                                    <button type="button" class="btn btn-outline-light me-1" id="exportExcel">
-                                        匯出Excel
-                                    </button>
                                     <form method="post" enctype="multipart/form-data">
                                         {% csrf_token %}
                                         <label for="importExcel" class="btn btn-outline-light me-1">
@@ -152,8 +210,11 @@
                                         </label>
                                         <input type="file" id="importExcel" name="importExcel" style="display:none">
                                     </form>
-                                </div>
-                            {% endif %}
+                                {% endif %}
+                                <button type="button" class="btn btn-outline-light me-1" id="exportExcel">
+                                    匯出Excel
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -385,13 +446,13 @@
 
     <script>
         // if identity is not IAI dropdown can work
-        $("#company_dropdown").change(function () {
+        $("#company_dropdown, #factory_dropdown").on('change', function () {
             $("#dropdown_one").removeAttr("disabled");
             $("#dropdown_two").removeAttr("disabled");
             $("#dropdown_three").removeAttr("disabled");
-        });
+        })
 
-        function DropdownOne(param) {
+        function DropdownOne(param, callback) {
             if (typeof param === 'number') {
                 var currentClass = param;
             } else if (typeof param === 'string') {
@@ -415,11 +476,9 @@
                         }
                         dropdown_two.options.add(new Option(item.p_name, item.cpid));
                     })
-                    const dropdown_two_value = "{{ dropdown_two }}";
-                    for (let option of dropdown_two.options) {
-                        if (option.value === dropdown_two_value) {
-                            option.selected = true;
-                        }
+                    try {
+                        callback();
+                    } catch (e) {
                     }
                 },
             });
@@ -428,8 +487,7 @@
         // 選擇過程區域>>>設備
         var dropdown_three = document.getElementById("dropdown_three")
 
-        function DropdownTwo(param) {
-            {#disableButtons()#}
+        function DropdownTwo(param, callback) {
             if (typeof param === 'number') {
                 var currentProcess = param;
             } else if (typeof param === 'string') {
@@ -452,15 +510,13 @@
                         }
                         dropdown_three.options.add(new Option(item.d_name, item.did));
                     })
-                    const dropdown_three_value = "{{ dropdown_three }}";
-                    for (let option of dropdown_three.options) {
-                        if (option.value === dropdown_three_value) {
-                            option.selected = true;
-                        }
+                    try {
+                        callback();
+                    } catch (e) {
                     }
-                },
-
+                }
             });
+
         }
 
         // 顯示table資料
@@ -623,6 +679,8 @@
             let dropdown_one_value = "{{ dropdown_one }}"
             let dropdown_two_value = "{{ dropdown_two }}"
             let dropdown_three_value = "{{ dropdown_three }}"
+            let company_value = "{{ company_id }}"
+            let factory_value = "{{ factory_id }}"
             if (dropdown_one_value !== "" && dropdown_two_value !== "" && dropdown_three_value !== "") {
                 // dropdown_one預選(只執行一次)
                 let dropdown_one_selected = (function () {
@@ -630,14 +688,51 @@
                     return function () {
                         if (!executed) {
                             executed = true;
-                            $("#dropdown_one").val(dropdown_one_value).attr("selected", "");
+                            $("#company_dropdown").val(company_value).attr("selected", "");
+                            $("#factory_dropdown").val(factory_value).attr("selected", "");
+                            $("#dropdown_one").val(dropdown_one_value).attr("selected", "").removeAttr("disabled");
+                            $("#dropdown_two").removeAttr("disabled");
+                            $("#dropdown_three").removeAttr("disabled");
                         }
                     };
                 })();
                 // dropdown_one預選(只執行一次)
                 dropdown_one_selected()
-                DropdownOne(dropdown_one_value)
-                DropdownTwo(dropdown_two_value)
+                DropdownOne(dropdown_one_value, function () {
+                    let dropdown_two_selected = (function () {
+                        let executed = false;
+                        return function () {
+                            if (!executed) {
+                                executed = true;
+                                const dropdown_two_value = "{{ dropdown_two }}";
+                                for (let option of dropdown_two.options) {
+                                    if (option.value === dropdown_two_value) {
+                                        option.selected = true;
+                                    }
+                                }
+                            }
+                        };
+                    })();
+                    dropdown_two_selected()
+                    let dropdown_three_selected = (function () {
+                        let executed = false;
+                        return function () {
+                            if (!executed) {
+                                executed = true;
+                                const dropdown_three_value = "{{ dropdown_three }}";
+                                console.warn(dropdown_three_value)
+                                for (let option of dropdown_three.options) {
+                                    if (option.value === dropdown_three_value) {
+                                        option.selected = true;
+                                    }
+                                }
+                            }
+                        };
+                    })();
+                    DropdownTwo(dropdown_two_value, function () {
+                        dropdown_three_selected()
+                    });
+                });
                 LoadTitle();
                 loadtable()
             }
@@ -645,7 +740,7 @@
 
         $("#submit").on('click', function () {
             let deviceId = $("#dropdown_three").val()
-            let company_value = $("#company_dropdown").val()
+            let company_value = $("#factory_dropdown").val()
             let deviceIdInput = document.getElementById('deviceId');
             let company_valueInput = document.getElementById('company_value');
             //新增跳轉
@@ -668,7 +763,6 @@
             var input = section.getElementsByTagName("input");
             var exportExcel = document.getElementById("exportExcel");
             exportExcel.disabled = true;
-            {#a.setAttribute('disabled', 'disabled')#}
 
             for (let i = 0; i < buttons.length; i++) {
                 buttons[i].disabled = true;
@@ -741,7 +835,7 @@
             $('#exportExcel').on('click', function () {
                 let dropdown_three = document.getElementById('dropdown_three');
                 let selectedValue = dropdown_three.value;
-                let companyValue = $("#company_dropdown").val();
+                let companyValue = $("#factory_dropdown").val();
                 let yearInput = $("#yearInput").val()
 
                 let data = {
@@ -790,7 +884,7 @@
             $('#importExcel').on('change', function () {
                 let dropdown_three = document.getElementById('dropdown_three');
                 let deviceId = dropdown_three.value;
-                let companyValue = $("#company_dropdown").val();
+                let companyValue = $("#factory_dropdown").val();
                 let yearInput = $("#yearInput").val()
                 let formData = new FormData();
                 formData.append('did', deviceId);

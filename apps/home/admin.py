@@ -44,7 +44,6 @@ class ProfileInline(admin.StackedInline):
 
 
 class MyUserAdmin(UserAdmin):
-    # add_form = CustomUserCreationForm
     inlines = [ProfileInline]
 
 

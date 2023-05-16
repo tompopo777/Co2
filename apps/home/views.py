@@ -66,7 +66,7 @@ def load_process(request):
 @login_required(login_url="/login/")
 def load_device(request):
     if request.method == 'GET':
-        current_process = request.GET.get('currentProcess', None)
+        current_process = int(request.GET.get('currentProcess'))
         if current_process:
             d_data = list(section_two.objects.filter(cpid=current_process).values("d_name", "did"))
             return JsonResponse(d_data, safe=False)
@@ -91,6 +91,16 @@ def load_table(request):
         device_id = request.session.get('dropdown_three')
         year = request.session.get('years')
         factory_id = request.session.get('factory_id')
+        company_id = request.session.get('company_id')
+        factory_id_list = []
+        # 如果是公司帳號查詢，factory_id會是None。factory_id_list就會包含該公司裡面所有的廠。
+        if factory_id is None:
+            # factory_query = factory.objects.filter(company_id__in=company_id).values('id')
+            # for query in factory_query:
+            #     factory_id_list.append(query['id'])
+            factory_id = company_id
+        # else:
+        #     factory_id_list.append(factory_id)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
         # print('factory_id', factory_id)
         # print('years', year)
@@ -99,6 +109,7 @@ def load_table(request):
         for a in t_name:
             if a["d_name"] == "柴油發電機":
                 t_data = []
+                # raw_data = emergency_generators.objects.filter(company_id__in=factory_id_list, years=year).values("id", "device_id", "device_capacity", "position",
                 raw_data = emergency_generators.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_capacity", "position",
                                                                                                          "department", "estimate",
                                                                                                          "january", "february", "march", "april",
@@ -576,6 +587,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
 
 
+@permission_required('home.add_emergency_generators', login_url="/login/", raise_exception=True)
 def copy_last_year_data(request):
     if request.method == 'POST':
         # device_id = request.POST.get('deviceId')
@@ -2105,16 +2117,22 @@ def carbon_system(request):
         # if request.user.is_authenticated:
         #     username = request.user.username
         #     print("username: ", username)
+
+        # print('user', request.user.groups.filter(name='廠帳號'))
+        # print('user', User.objects.all())
+        # print('company', company.objects.get(id=1))
+
+        # company_a_users = User.objects.filter(company=company.objects.get(company_name='Company A'))
+        # for a in request.session:
         groups_query = request.user.groups.all()
-        company_group = factory.objects.all()
+        factory_group = factory.objects.exclude(factory_name='永續發展暨建值管理中心')
+        user = Profile.objects.get(user_id=request.user.id)
+        company_group = factory.objects.filter(company_id=user.company_id)
         context = {
             "groups_query": groups_query,
+            "factory_group": factory_group,
             "company_group": company_group
         }
-        # del request.session['dropdown_one']
-        # del request.session['dropdown_two']
-        # del request.session['dropdown_three']
-        # del request.session['years']
         if request.session.get('dropdown_one') and request.session.get('dropdown_two') and request.session.get('dropdown_three'):
             context.update(request.session)
         return render(request, "home/carbon-system.html", context)
@@ -2122,16 +2140,21 @@ def carbon_system(request):
         dropdown_one = request.POST.get('dropdown_one')
         dropdown_two = request.POST.get('dropdown_two')
         dropdown_three = request.POST.get('dropdown_three')
-        factory_id = request.POST.get('company_dropdown')
-        print('factory_id////', factory_id)
+        factory_id = request.POST.get('factory_dropdown')
+        company_id = request.POST.get('company_dropdown')
         years = request.POST.get('years')
-        if factory_id is None:
-            factory_id = current_user_group_id(request)
+        if company_id is None:
+            if factory_id is None:
+                factory_id = current_user_group_id(request)
+            # factory_id = current_user_group_id(request)
+        # print('factory_id', factory_id)
+        # print('company_id', company_id)
         dropdown = {
             'dropdown_one': dropdown_one,
             'dropdown_two': dropdown_two,
             'dropdown_three': dropdown_three,
             'factory_id': factory_id,
+            'company_id': company_id,
             'years': years,
         }
         request.session.update(dropdown)
