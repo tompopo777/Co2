@@ -427,7 +427,7 @@ def load_table(request):
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "address",
+                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "address", "meter_location",
                                                                                                 "january", "february", "march", "april",
                                                                                                 "may", "june", "july", "august",
                                                                                                 "september", "october", "november", "december")
@@ -1147,8 +1147,6 @@ def emergency_generators_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1181,8 +1179,6 @@ def combustion_equipment_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1229,8 +1225,6 @@ def official_car_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 print("kkkkkkkkkkkkkk")
@@ -1262,8 +1256,6 @@ def material_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1294,8 +1286,6 @@ def process_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1326,8 +1316,6 @@ def refrigerator_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1360,8 +1348,6 @@ def airconditioner_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1394,8 +1380,6 @@ def vehicle_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1427,8 +1411,6 @@ def water_dispenser_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1459,8 +1441,6 @@ def ice_water_dispenser_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1491,8 +1471,6 @@ def ice_maker_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1523,8 +1501,6 @@ def other_device_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1555,8 +1531,6 @@ def extinguisher_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1587,8 +1561,6 @@ def personnel_inventory_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1619,8 +1591,6 @@ def employee_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1652,8 +1622,6 @@ def waste_water_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1685,8 +1653,6 @@ def waste_sludge_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1710,8 +1676,6 @@ def solvent_aerosol_emission_sources_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1743,8 +1707,6 @@ def VOCs_one_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1777,8 +1739,6 @@ def VOCs_two_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1812,8 +1772,6 @@ def electricity_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1854,8 +1812,6 @@ def upstream_transportation_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1896,8 +1852,6 @@ def downstream_transportation_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -1999,8 +1953,6 @@ def waste_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -2032,8 +1984,6 @@ def pipe_wastewater_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -2065,8 +2015,6 @@ def purchase_material_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
@@ -2098,8 +2046,6 @@ def product_indirect_emissions_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                print('request.method', request.method)
-                print('表單已成功提交')
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
