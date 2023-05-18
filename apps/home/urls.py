@@ -58,7 +58,7 @@ urlpatterns = [
                   # 新增設備轉跳
                   path("new_device/", views.add_page, name='loadadd'),
                   # 編輯設備
-                  path('update_device/<str:datasheet_id>&<int:single_dataID>&<str:dropdown_one>&<str:dropdown_two>', views.update_device, name='update_device'),
+                  path('update_device/<int:single_dataID>', views.update_device, name='update_device'),
                   # 刪除設備
                   path('delete_device/', views.delete_device, name='delete_device'),
                   # 匯出總表

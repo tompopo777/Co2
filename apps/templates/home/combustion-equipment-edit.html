@@ -23,7 +23,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype="multipart/form-data">
+                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
