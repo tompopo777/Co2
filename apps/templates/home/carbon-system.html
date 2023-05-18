@@ -571,13 +571,10 @@
                             pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
                             {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
                             var cr_id = row.insertCell(-1)//加入"序號"框框
-                            cr_id.innerHTML = id
-                            var datasheet_id = dropdown_three.value;
-                            var dropdown_one = $("#dropdown_one").val()
-                            var dropdown_two = $("#dropdown_two").val()
+                            cr_id.innerHTML = id;
                             for (const [key, value] of Object.entries((item))) {
                                 if (key === "id") {
-                                    pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value + '&dropdown_one=' + dropdown_one + '&dropdown_two=' + dropdown_two)//將資料表id、選種資料id加到href裡，一起丟到後端
+                                    pencil.setAttribute('href', '/edit_device/?single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端
                                     pencil.setAttribute('id', value)//設定按鈕的id為設備id
                                     trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
                                     {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
@@ -619,7 +616,7 @@
         }
 
         //載入標題
-        function LoadTitle() {
+        function LoadTitle(callback) {
             $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
@@ -671,6 +668,10 @@
                             i++;
                         }
                     })
+                    try {
+                        callback();
+                    } catch (e) {
+                    }
                 },
             });
         }
@@ -732,9 +733,10 @@
                     DropdownTwo(dropdown_two_value, function () {
                         dropdown_three_selected()
                     });
+                    LoadTitle(function () {
+                        loadtable()
+                    });
                 });
-                LoadTitle();
-                loadtable()
             }
         });
 
