@@ -499,11 +499,11 @@ def load_table(request):
                     single_data = raw_data[i]
                     id = raw_data[i].get("id")
                     section = trip_section.objects.filter(trip_id=id).values("transportation", "distance")
-                    transportation_dic = {"自駕汽車": 0.0, "高鐵": 0.0, "火車(電聯)": 0.0, "火車(柴聯)": 0.0, "計程車": 0.0, "機車": 0.0, "捷運": 0.0, "飛機": 0.0, "船舶": 0.0}
+                    transportation_dic = {"自駕汽車": Decimal('0'), "高鐵": Decimal('0'), "火車(電聯)": Decimal('0'), "火車(柴聯)": Decimal('0'), "計程車": Decimal('0'), "機車": Decimal('0'), "捷運": Decimal('0'), "飛機": Decimal('0'), "船舶": Decimal('0')}
                     for s in section:
                         way = s.get("transportation")
                         if way in transportation_dic:
-                            transportation_dic[way] += s.get("distance")
+                            transportation_dic[way] += (s.get("distance"))
                         for d in transportation_dic:
                             if transportation_dic.get(d) == 0:
                                 single_data[d] = None
