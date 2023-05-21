@@ -198,8 +198,6 @@
                                             </button>
                                         </div>
                                         <div class="col-1">
-                                            {#                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0" name="cancel" value={{ dropdown_one }} {{ dropdown_two }} {{ datasheet_id }}>取消</button>#}
-                                            {#                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" name="cancel" value="cancel">取消</button>#}
                                             <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
                                                 取消
                                             </button>
@@ -225,6 +223,23 @@
 
 
     <script>
+        $(document).ready(function () {
+            {% if form.errors %}
+                let error_name = "";
+                let error_input;
+                let parentDiv;
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        error_name = "{{ field.label }}"
+                        error_name = error_name.toLowerCase()
+                        error_input = document.querySelector("[name=" + error_name + "]");
+                        parentDiv = error_input.parentNode;
+                        parentDiv.classList.add("border", "border-danger", "border-3");
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        });
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;

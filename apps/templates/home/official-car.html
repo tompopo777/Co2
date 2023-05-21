@@ -27,8 +27,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-{#                                <form action="/official_car_add/" method="POST" enctype="multipart/form-data" id="official-car">#}
-                                <form action="/official_car_add/" method="POST" enctype="multipart/form-data" id="">
+                                <form action="/official_car_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
@@ -65,371 +64,171 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="accordion" id="accordionExample">
-                                            <div class="form-check accordion-item typeSelected ps-1">
-                                                <h2 class="accordion-header" id="headingOne">
-                                                    <button class="accordion-button" type="button" id="oil" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                                        {{ OffCar_add.metering_method.0 }}
-                                                    </button>
-                                                </h2>
-                                                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <div class="d-flex flex-nowrap">
-                                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                                加油量(單位：公升) <span style="color:red; font-size:16px;">* </span>
-                                                            </h5>
-                                                        </div>
-                                                        <table class="table oil">
-                                                            <thead>
-                                                            <tr>
-                                                                <th></th>
-                                                                <th>一月</th>
-                                                                <th>二月</th>
-                                                                <th>三月</th>
-                                                                <th>四月</th>
-                                                                <th>五月</th>
-                                                                <th>六月</th>
-                                                                <th>七月</th>
-                                                                <th>八月</th>
-                                                                <th>九月</th>
-                                                                <th>十月</th>
-                                                                <th>十一月</th>
-                                                                <th>十二月</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <th width="30">
-                                                                    加油量
-                                                                </th>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.january }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.february }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.march }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.april }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.may }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.june }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.july }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.august }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.september }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.october }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.november }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.december }}
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>
-                                                                    尿素
-                                                                </th>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        <input class="col-6" type="text" name="urea" value="0">
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
+                                        <div class="form-check ps-1">
+                                            {{ OffCar_add.metering_method.0 }}
+                                            {{ OffCar_add.metering_method.1 }}
+                                            {{ OffCar_add.metering_method.2 }}
+                                            <div class="" id="amountTable">
+                                                <div class="d-flex flex-nowrap">
+                                                    <h5 class="col-md-12 text-center" id="descriptionColumn" style="color: #7b809a !important;">
+                                                         <span style="color:red; font-size:16px;">* </span>
+                                                    </h5>
                                                 </div>
-                                            </div>
-
-                                            <div class="form-check accordion-item typeSelected ps-1">
-                                                <h2 class="accordion-header" id="headingTwo">
-                                                    <button class="accordion-button" type="button" id="electric" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                        {{ OffCar_add.metering_method.1 }}
-                                                    </button>
-                                                </h2>
-                                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <div class="d-flex flex-nowrap">
-                                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                                用電量(單位：度) <span style="color:red; font-size:16px;">* </span>
-                                                            </h5>
-                                                        </div>
-                                                        <table class="table electric">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>一月</th>
-                                                                <th>二月</th>
-                                                                <th>三月</th>
-                                                                <th>四月</th>
-                                                                <th>五月</th>
-                                                                <th>六月</th>
-                                                                <th>七月</th>
-                                                                <th>八月</th>
-                                                                <th>九月</th>
-                                                                <th>十月</th>
-                                                                <th>十一月</th>
-                                                                <th>十二月</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.january }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.february }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.march }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.april }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.may }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.june }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.july }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.august }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.september }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.october }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.november }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.december }}
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
+                                                {% if OffCar_add.errors %}
+                                                    <div class="col-12 text-center">
                                                     </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-check accordion-item typeSelected ps-1">
-                                                <h2 class="accordion-header" id="headingThree">
-                                                    <button class="accordion-button" type="button" id="miles" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                                        {{ OffCar_add.metering_method.2 }}
-                                                    </button>
-                                                </h2>
-                                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        <div class="d-flex flex-nowrap">
-                                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                                公里數(單位：公里) <span style="color:red; font-size:16px;">* </span>
-                                                            </h5>
-                                                        </div>
-                                                        <table class="table miles">
-                                                            <thead>
-                                                            <tr>
-                                                                <th>一月</th>
-                                                                <th>二月</th>
-                                                                <th>三月</th>
-                                                                <th>四月</th>
-                                                                <th>五月</th>
-                                                                <th>六月</th>
-                                                                <th>七月</th>
-                                                                <th>八月</th>
-                                                                <th>九月</th>
-                                                                <th>十月</th>
-                                                                <th>十一月</th>
-                                                                <th>十二月</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.january }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.february }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.march }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.april }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.may }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.june }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.july }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.august }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.september }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.october }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.november }}
-                                                                    </div>
-                                                                </td>
-                                                                <td>
-                                                                    <div class="d-flex justify-content-center">
-                                                                        {{ OffCar_add.december }}
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                                                {% endif %}
+                                                <table class="table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>一月</th>
+                                                        <th>二月</th>
+                                                        <th>三月</th>
+                                                        <th>四月</th>
+                                                        <th>五月</th>
+                                                        <th>六月</th>
+                                                        <th>七月</th>
+                                                        <th>八月</th>
+                                                        <th>九月</th>
+                                                        <th>十月</th>
+                                                        <th>十一月</th>
+                                                        <th>十二月</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr id="monthTable">
+                                                        <th width="30">
+                                                            加油量
+                                                        </th>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.january }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.february }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.march }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.april }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.may }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.june }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.july }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.august }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.september }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.october }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.november }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.december }}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="ureaTable">
+                                                        <th>
+                                                            尿素
+                                                        </th>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_january }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_february }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_march }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_april }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_may }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_june }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_july }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_august }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_september }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_october }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_november }}
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex justify-content-center">
+                                                                {{ OffCar_add.urea_december }}
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
@@ -505,6 +304,42 @@
 
 
     <script>
+
+        function handleCheckboxClick() {
+            let oil = document.getElementById("id_metering_method_0");
+            let electric = document.getElementById("id_metering_method_1");
+            let miles = document.getElementById("id_metering_method_2");
+            let amountTable = document.getElementById("amountTable");
+            let ureaTable = document.getElementById("ureaTable");
+            let descriptionColumn = document.getElementById("descriptionColumn");
+            let spanElement = document.createElement("span");
+            spanElement.innerHTML = '<span style="color:red; font-size:16px;">* </span>';
+            if (oil.checked) {
+                amountTable.style.display = "table";
+                ureaTable.style.display = "table-row";
+                descriptionColumn.innerText = ""
+                descriptionColumn.innerText = "加油量(單位：公升) "
+                descriptionColumn.prepend(spanElement);
+
+            } else if (electric.checked) {
+                amountTable.style.display = "table";
+                ureaTable.style.display = "none";
+                descriptionColumn.innerText = ""
+                descriptionColumn.innerText = "用電量(單位：度) "
+                descriptionColumn.prepend(spanElement);
+
+            } else if (miles.checked) {
+                amountTable.style.display = "table";
+                ureaTable.style.display = "none";
+                descriptionColumn.innerText = ""
+                descriptionColumn.innerText = "公里數(單位：公里) "
+                descriptionColumn.prepend(spanElement);
+
+            } else {
+                amountTable.style.display = "none";
+            }
+        }
+
         {#    顯示新增成功訊息#}
         $(document).ready(function () {
             {% if messages %}
@@ -513,6 +348,29 @@
                     alert(success_message);
                 {% endfor %}
             {% endif %}
+            // 表單錯誤提示
+            {% if OffCar_add.errors %}
+{#            {% if OffCar_add.january.errors %}#}
+                let error_name = "";
+                let error_input;
+                let parentDiv;
+                {% for field in OffCar_add %}
+                    {% for error in field.errors %}
+                        error_name = "{{ field.label }}"
+                        if (
+                            error_name==='January' || error_name==='February' || error_name==='March' || error_name==='April' ||
+                            error_name==='May' || error_name==='June' || error_name==='July' || error_name==='August' ||
+                            error_name==='September' || error_name==='October' || error_name==='November' || error_name==='December'
+                        ){
+                            error_name = error_name.toLowerCase()
+                            error_input = document.querySelector("[name=" + error_name + "]");
+                            parentDiv = error_input.parentNode;
+                            parentDiv.classList.add("border", "border-danger", "border-3");
+                        }
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+            handleCheckboxClick()
         });
 
         {#    禁止enter鍵#}
@@ -544,33 +402,19 @@
             autoclose: "true",
         }).datepicker("setDate", 'now');
 
+        // 依照checkbox選擇顯示對應框
+        document.addEventListener("DOMContentLoaded", function () {
+            let oil = document.getElementById("id_metering_method_0");
+            let electric = document.getElementById("id_metering_method_1");
+            let miles = document.getElementById("id_metering_method_2");
+            let amountTable = document.getElementById("amountTable");
+            let ureaTable = document.getElementById("ureaTable");
 
-        const form = document.getElementById('official-car');
-
-        form.addEventListener("submit", (event) => {
-            event.preventDefault(); // Prevent the default form submission
-            //get all buttons that the class name is 'accordion-button'
-            const buttons = Array.from(document.querySelectorAll(".accordion-button"));
-            const activatedClass = buttons
-                .filter((button) => {
-                    return button.getAttribute("aria-expanded") === "true";
-                })
-                .map((button) => button.id)?.[0];
-            const tables = form.querySelectorAll("#official-car table");
-            console.log(tables);
-            const supportClasses = activatedClass === 'oil' ? ['urea', 'oil'] : [activatedClass];
-
-            tables.forEach((table) => {
-                const classNames = table.classList;
-                const isSupport = supportClasses.some((className) => classNames.contains(className));
-                if (!isSupport) {
-                    table.remove();
-                }
-            });
-
-            // Submit the form
-            form.submit();
-
+            amountTable.style.display = "none";
+            ureaTable.style.display = "none";
+            oil.addEventListener("click", handleCheckboxClick);
+            electric.addEventListener("click", handleCheckboxClick);
+            miles.addEventListener("click", handleCheckboxClick);
         });
 
 

@@ -1189,29 +1189,15 @@ def combustion_equipment_add(request):
 
 
 @login_required(login_url="/login/")
+# _add標準寫法
 def official_car_add(request):
     context = {}
-    OffCar_add = OFform(request.POST, request.FILES)
+    OffCar_add = OFform()
     if request.method == "POST":
+        OffCar_add = OFform(request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
-        # if 'addAnother' in request.POST:
-        print(request.POST)
         if OffCar_add.is_valid():
-            urea = request.POST.getlist("urea")
             OffCar_add = OffCar_add.save(commit=False)
-            if urea:
-                OffCar_add.urea_january = urea[0]
-                OffCar_add.urea_february = urea[1]
-                OffCar_add.urea_march = urea[2]
-                OffCar_add.urea_april = urea[3]
-                OffCar_add.urea_may = urea[4]
-                OffCar_add.urea_june = urea[5]
-                OffCar_add.urea_july = urea[6]
-                OffCar_add.urea_august = urea[7]
-                OffCar_add.urea_september = urea[8]
-                OffCar_add.urea_october = urea[9]
-                OffCar_add.urea_november = urea[10]
-                OffCar_add.urea_december = urea[11]
             OffCar_add.company_id = factory_id
             OffCar_add.save()
             stage = request.POST.get('stage')
@@ -1227,10 +1213,9 @@ def official_car_add(request):
                 messages.success(request, '表單已成功提交！')
                 return redirect('/new_device/')
             else:
-                print("kkkkkkkkkkkkkk")
                 return redirect('/carbon-system/')
-    else:
-        OffCar_add = OFform()
+        else:
+            print("\n", OffCar_add.errors)
     context['OffCar_add'] = OffCar_add
     return render(request, 'home/official-car.html', context)
 
@@ -2159,9 +2144,8 @@ def add_page(request):
 # 編輯轉跳
 @permission_required('home.change_emergency_generators', login_url="/login/", raise_exception=True)
 @login_required(login_url="/login/")
-def edit_device(request):
+def edit_device(request, error_from=None, error_formset=None):
     datasheet_id = request.session.get('dropdown_three')
-    single_dataID = request.GET.get('single_dataID')
     modelName = {
         "1": emergency_generators,
         "2": combustion_equipment,
@@ -2209,6 +2193,8 @@ def edit_device(request):
         form = formlName.get(datasheet_id)
         formset = formsetName.get(datasheet_id)
         if request.method == 'GET':
+            single_dataID = request.GET.get('single_dataID')
+            request.session.update({'single_dataID': single_dataID})
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(instance=current_data)
 
@@ -2260,6 +2246,64 @@ def edit_device(request):
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
                 return render(request, EditDevice_page, formUpdata_name)
+        # 編輯後表單內容有誤轉跳
+        if request.method == 'POST':
+            single_dataID = request.session.get('single_dataID')
+            update_from = error_from
+
+            formUpdata_name = {
+                'form': update_from,
+                'datasheet_id': datasheet_id,
+                'single_dataID': single_dataID,
+            }
+            # 表中表情況
+            try:
+                if datasheet_id in formsetName:
+                    # update_formset = formset(instance=current_data)
+                    # update_formset = formset(request.POST, request.FILES, instance=current_data)
+                    update_formset = error_formset
+                    formUpdata_name["update_formset"] = update_formset
+
+            except:
+                pass
+
+            # 建立字典
+            htmlName = {
+                "1": "home/emergency-generator-edit.html",
+                "2": "home/combustion-equipment-edit.html",
+                "3": "home/official-car-edit.html",
+                "4": "home/material-edit.html",
+                "5": "home/process-edit.html",
+                "6": "home/refrigerator-edit.html",
+                "7": "home/airconditioner-edit.html",
+                "8": "home/vehicle-edit.html",
+                "9": "home/water-dispenser-edit.html",
+                "10": "home/ice-water-dispenser-edit.html",
+                "11": "home/ice-maker-edit.html",
+                "12": "home/other-device-edit.html",
+                "13": "home/extinguisher-edit.html",
+                "14": "home/personnel-inventory-edit.html",
+                "15": "home/employee-edit.html",
+                "16": "home/waste-water-edit.html",
+                "17": "home/waste-sludge-edit.html",
+                "18": "home/solvent-aerosol-emission-sources-edit.html",
+                "19": "home/VOCs-one-edit.html",
+                "20": "home/VOCs-two-edit.html",
+                "21": "home/electricity-edit.html",
+                "22": "home/upstream-transportation-edit.html",
+                "23": "home/downstream-transportation-edit.html",
+                "24": "home/employee-commute-edit.html",
+                "25": "home/employee-business-trip-edit.html",
+                "26": "home/waste-edit.html",
+                "27": "home/pipe-wastewater-edit.html",
+                "28": "home/purchase-material-edit.html",
+                "29": "home/product-indirect-emissions-edit.html",
+            }
+            print('轉跳')
+            if htmlName.get(datasheet_id):
+                EditDevice_page = htmlName.get(datasheet_id)
+                return render(request, EditDevice_page, formUpdata_name)
+
 
 
 # 儲存更新後的資料
@@ -2314,6 +2358,7 @@ def update_device(request, single_dataID):
         current_data = get_object_or_404(dbName, id=single_dataID)
         update_from = form(request.POST, request.FILES, instance=current_data)
         if request.method == 'POST':
+            # 表中表情況
             try:
                 if datasheet_id in formsetName:
                     formset = formsetName.get(datasheet_id)
@@ -2324,17 +2369,16 @@ def update_device(request, single_dataID):
                         return redirect('/carbon-system/', locals())
                     else:
                         print("\n", update_formset.errors)
-                        return redirect('/edit_device/?single_dataID=' + str(single_dataID), locals())
+                        return edit_device(request, update_from, update_formset)
             except:
                 pass
+            # 正常表單(非表中表)
             if update_from.is_valid():
                 update_from.save()
                 return redirect('/carbon-system/', locals())
             else:
                 print("\n", update_from.errors)
-                return redirect('/edit_device/?single_dataID=' + str(single_dataID), locals())
-        else:
-            return render(request, 'home/index.html', locals())
+                return edit_device(request, update_from)
 
 
 # 刪除資料
