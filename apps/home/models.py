@@ -857,6 +857,7 @@ class coefficient(models.Model):
     gas_name = models.CharField(max_length=50)
     coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
     coefficient_source = models.CharField(max_length=50)
+    note = models.CharField(max_length=100, null=True)
 
 
 # gwp係數表表格
@@ -868,6 +869,7 @@ class coefficient_gwp(models.Model):
     gwp_coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
 
 
+# 下拉選單
 class DropdownOption(models.Model):
     id = models.AutoField(primary_key=True)
     option_group = models.CharField(max_length=100)

@@ -47,9 +47,9 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'material': {
-        'columns': ['years', 'material_id', 'material_type', 'material_name', 'process_add_name', 'chemical_name', 'chemical_formula',
+        'columns': ['years', 'material_id', 'material_type', 'material_name', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '原物料號', '原/物料', '名稱', '化學品名稱', '化學品名', '化學式', '一月', '二月', '三月', '四月', '五月',
+        'column_names': ['年度', '原物料號', '原/物料', '名稱', '是否為化學品', '化學品名稱', '化學品名', '化學式', '一月', '二月', '三月', '四月', '五月',
                          '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別一_'
     },
@@ -105,7 +105,7 @@ COLUMN_MAPPING = {
     'extinguisher': {
         'columns': ['years', 'device_id', 'extinguisher_vendor', 'extinguisher_type', 'position', 'inventory',
                     'chemical_weight', 'using_amount', 'monthly', 'replace_filling_amount', 'replace_filling_date', 'message_board'],
-        'column_names': ['年度', '設備編號', '廠商', '類型', '擺放位置(廠別)', '庫存量', '藥劑重量(單位:kg)', '使用量數量', '使用月份', '更換/填充量', '更換/填充日期'],
+        'column_names': ['年度', '設備編號', '廠商', '類型', '擺放位置(廠別)', '庫存量', '藥劑重量(單位:kg)', '使用量數量', '使用月份', '更換/填充量', '更換/填充日期', '備註欄'],
         'prefix': '類別一_'
     },
     'personnel_inventory': {
@@ -126,7 +126,13 @@ COLUMN_MAPPING = {
                     'WKdays_july', 'WKdays_august', 'WKdays_september', 'WKdays_october', 'WKdays_november', 'WKdays_december',
                     'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july',
                     'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december', 'message_board'],
-        'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
+        'column_names': ['年度', '人員類別',
+                         '人數 一月', '人數 二月', '人數 三月', '人數 四月', '人數 五月', '人數 六月',
+                         '人數 七月', '人數 八月', '人數 九月', '人數 十月', '人數 十一月', '人數 十二月',
+                         '工作天數 一月', '工作天數 二月', '工作天數 三月', '工作天數 四月', '工作天數 五月', '工作天數 六月',
+                         '工作天數 七月', '工作天數 八月', '工作天數 九月', '工作天數 十月', '工作天數 十一月', '工作天數 十二月',
+                         '時數 一月', '時數 二月', '時數 三月', '時數 四月', '時數 五月', '時數 六月',
+                         '時數 七月', '時數 八月', '時數 九月', '時數 十月', '時數 十一月', '時數 十二月', '備註欄'],
         'prefix': '類別一_'
     },
     'waste_water': {
@@ -141,13 +147,9 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'solvent_aerosol_emission_sources': {
-        'columns': ['id', 'years', 'solvent_name', 'solvent_amount', 'solvent_amount_unit', 'solvent_capacity', 'solvent_capacity_unit', 'fugitive_recharge', 'message_board'],
-        'column_names': ['添加物編號', '年度', '溶劑、噴霧劑名稱', '數量', '單位', '容量', '單位', '逸散 / 補充量(公噸/年)', '備註欄'],
+        'columns': ['years', 'solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density', 'message_board'],
+        'column_names': ['年度', '溶劑、噴霧劑名稱', '數量', '容量', '單位', '氣體名稱', '氣體含量(%)', '密度', '備註欄'],
         'prefix': '類別一_'
-    },
-    'additive_section': {
-        'columns': ['additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio', 'additive_id'],
-        'column_names': ['添加物名稱', '添加量', '單位', '成份', '添加比例', '添加物編號'],
     },
     'VOCs_one': {
         'columns': ['years', 'emission', 'concentration_ch4', 'message_board'],
@@ -208,9 +210,11 @@ COLUMN_MAPPING = {
         'prefix': '類別四_'
     },
     'purchase_material': {
-        'columns': ['years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+        'columns': ['years', 'product_id', 'product_name', 'vendor', 'category_name', 'material_type',
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '產品編號', '產品名稱', '一月', '二月', '三月', '四月', '五月', '六月',
+        'column_names': ['年度', '產品編號', '產品名稱', '廠商', '大類名稱', '原/物料',
+                         '一月', '二月', '三月', '四月', '五月', '六月',
                          '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別四_'
     },

@@ -555,7 +555,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "採購原物料":
                 t_data = []
-                raw_data = purchase_material.objects.filter(company_id=factory_id, years=year).values("id", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                raw_data = purchase_material.objects.filter(company_id=factory_id, years=year).values("id", "product_id", "product_name", "vendor", "category_name", "material_type",
+                                                                                                      "january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                       "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
@@ -2607,7 +2608,7 @@ def add_title(request):
             # 原物料採購
             "28": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "產品編號", "產品名稱"],
+                "內容": ["序號", "產品編號", "產品名稱", "廠商", "大類名稱", "原/物料"],
                 "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
             },
 
