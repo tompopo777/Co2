@@ -1245,8 +1245,6 @@ def material_add(request):
     context = {}
     MT_add = MTform(request.POST, request.FILES)
     if request.method == "POST":
-        print(request.POST)
-
         factory_id = request.session.get('factory_id')
         if MT_add.is_valid():
             MT_add = MT_add.save(commit=False)
@@ -2215,10 +2213,8 @@ def add_page(request):
 @permission_required('home.change_emergency_generators', login_url="/login/", raise_exception=True)
 @login_required(login_url="/login/")
 def edit_device(request):
-    datasheet_id = request.GET.get('datasheet')
+    datasheet_id = request.session.get('dropdown_three')
     single_dataID = request.GET.get('single_dataID')
-    dropdown_one = request.GET.get('dropdown_one')
-    dropdown_two = request.GET.get('dropdown_two')
     modelName = {
         "1": emergency_generators,
         "2": combustion_equipment,
@@ -2273,8 +2269,6 @@ def edit_device(request):
                 'form': update_from,
                 'datasheet_id': datasheet_id,
                 'single_dataID': single_dataID,
-                "dropdown_one": dropdown_one,
-                "dropdown_two": dropdown_two,
             }
             try:
                 if datasheet_id in formsetName:
@@ -2323,7 +2317,7 @@ def edit_device(request):
 
 # 儲存更新後的資料
 @login_required(login_url="/login/")
-def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_two):
+def update_device(request, single_dataID):
     modelName = {
         "1": emergency_generators,
         "2": combustion_equipment,
@@ -2366,6 +2360,7 @@ def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_t
     formsetName = {
         "24": CommuteFormSet, "25": TripSectionFormSet
     }
+    datasheet_id = request.session.get('dropdown_three')
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
         form = formName.get(datasheet_id)
@@ -2382,7 +2377,7 @@ def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_t
                         return redirect('/carbon-system/', locals())
                     else:
                         print("\n", update_formset.errors)
-                        return redirect('/edit_device/?datasheet=' + str(datasheet_id) + '&single_dataID=' + str(single_dataID), locals())
+                        return redirect('/edit_device/?single_dataID=' + str(single_dataID), locals())
             except:
                 pass
             if update_from.is_valid():
@@ -2390,7 +2385,7 @@ def update_device(request, datasheet_id, single_dataID, dropdown_one, dropdown_t
                 return redirect('/carbon-system/', locals())
             else:
                 print("\n", update_from.errors)
-                return redirect('/edit_device/?datasheet=' + str(datasheet_id) + '&single_dataID=' + str(single_dataID), locals())
+                return redirect('/edit_device/?single_dataID=' + str(single_dataID), locals())
         else:
             return render(request, 'home/index.html', locals())
 
