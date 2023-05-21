@@ -169,12 +169,13 @@ def official_car_count(years, factory_id, coefficient_source, gwp_version):
 # ice_maker = pd.DataFrame(list(ice_maker.objects.values("device_name", "refrigerant_type", "filling_volume")))
 
 
-# 製冰機
-def ice_maker_count(years, factory_id, coefficient_source, gwp_version):
+# 冰箱
+def refrigerator_count(years, factory_id, coefficient_source, gwp_version):
     try:
-        raw_data = pd.DataFrame(
-            list(ice_maker.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('製冰機', output_field=models.CharField(max_length=50)),
-                                                                                                                                           data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+        raw_data = pd.DataFrame(list(refrigerator.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(
+            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+            device_name=Value('冰箱', output_field=models.CharField(max_length=50)),
+            data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
         # 丟掉舊欄位，為了merge時欄位不會重複
@@ -191,11 +192,68 @@ def ice_maker_count(years, factory_id, coefficient_source, gwp_version):
         final = final.rename(columns={'refrigerant_type': 'fuel_type', 'filling_volume': 'sum_count', 'gas_name_x': 'gas_name'})
         new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
         final = final.reindex(columns=new_order)
-        # display(final)
-        # display(final.shape)
         return final
-    except KeyError:
-        print('沒有該製冰機設備')
+    except:
+        print('沒有該冰箱設備')
+        pass
+
+
+# 冷氣機
+def airconditioner_count(years, factory_id, coefficient_source, gwp_version):
+    try:
+        raw_data = pd.DataFrame(
+            list(airconditioner.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)),
+                                                                                                                                                data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+        calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
+        calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
+        # 丟掉舊欄位，為了merge時欄位不會重複
+        raw_data = raw_data.drop(columns=['filling_volume'])
+        a_part = raw_data.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
+        # 用dataframe欄位去filter queryset要用'欄位名稱__in'
+        coefficient_part = pd.DataFrame(
+            list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(
+            dummy='1')
+        ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
+        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
+        final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
+        final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        final = final.rename(columns={'refrigerant_type': 'fuel_type', 'filling_volume': 'sum_count', 'gas_name_x': 'gas_name'})
+        new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        final = final.reindex(columns=new_order)
+        return final
+    except:
+        print('沒有該冷氣機設備')
+        pass
+
+
+# 車輛清單
+def vehicle_count(years, factory_id, coefficient_source, gwp_version):
+    try:
+        # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+        # gwp_version = 6
+        raw_data = pd.DataFrame(list(vehicle.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(
+            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+            device_name=Value('車輛', output_field=models.CharField(max_length=50)),
+            data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+        calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
+        calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
+        # 丟掉舊欄位，為了merge時欄位不會重複
+        raw_data = raw_data.drop(columns=['filling_volume'])
+        a_part = raw_data.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
+        # 用dataframe欄位去filter queryset要用'欄位名稱__in'
+        coefficient_part = pd.DataFrame(
+            list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(
+            dummy='1')
+        ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
+        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
+        final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
+        final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        final = final.rename(columns={'refrigerant_type': 'fuel_type', 'filling_volume': 'sum_count', 'gas_name_x': 'gas_name'})
+        new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        final = final.reindex(columns=new_order)
+        return final
+    except:
+        print('沒有該車輛設備')
         pass
 
 
@@ -229,12 +287,13 @@ def water_dispenser_count(years, factory_id, coefficient_source, gwp_version):
         pass
 
 
-# 冷氣機
-def airconditioner_count(years, factory_id, coefficient_source, gwp_version):
+# 冰水機清單
+def ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version):
     try:
-        raw_data = pd.DataFrame(
-            list(airconditioner.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)),
-                                                                                                                                                data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+        raw_data = pd.DataFrame(list(ice_water_dispenser.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(
+            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+            device_name=Value('冰水機', output_field=models.CharField(max_length=50)),
+            data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
         # 丟掉舊欄位，為了merge時欄位不會重複
@@ -251,10 +310,40 @@ def airconditioner_count(years, factory_id, coefficient_source, gwp_version):
         final = final.rename(columns={'refrigerant_type': 'fuel_type', 'filling_volume': 'sum_count', 'gas_name_x': 'gas_name'})
         new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
         final = final.reindex(columns=new_order)
-        display(final)
-        display(final.shape)
+        return final
     except:
-        print('沒有該冷氣機設備')
+        print('沒有該冰水機設備')
+        pass
+
+
+# 製冰機
+def ice_maker_count(years, factory_id, coefficient_source, gwp_version):
+    try:
+        raw_data = pd.DataFrame(list(ice_maker.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(
+            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+            device_name=Value('製冰機', output_field=models.CharField(max_length=50)),
+            data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
+        calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
+        calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
+        # 丟掉舊欄位，為了merge時欄位不會重複
+        raw_data = raw_data.drop(columns=['filling_volume'])
+        a_part = raw_data.merge(calculate, on=['refrigerant_type'], how='left').drop_duplicates()
+        # 用dataframe欄位去filter queryset要用'欄位名稱__in'
+        coefficient_part = pd.DataFrame(
+            list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['device_name']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50))))).assign(
+            dummy='1')
+        ab_part = pd.merge(a_part, coefficient_part, on='dummy', how='left').drop(columns='dummy')
+        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['refrigerant_type']).values('gas_name', 'gwp_coefficient')))
+        final = pd.merge(ab_part, gwp, left_on='refrigerant_type', right_on='gas_name', how='left')
+        final['emission'] = final.apply(lambda x: round(Decimal(x['filling_volume']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        final = final.rename(columns={'refrigerant_type': 'fuel_type', 'filling_volume': 'sum_count', 'gas_name_x': 'gas_name'})
+        new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        final = final.reindex(columns=new_order)
+        # display(final)
+        # display(final.shape)
+        return final
+    except KeyError:
+        print('沒有該製冰機設備')
         pass
 
 
@@ -262,9 +351,9 @@ def airconditioner_count(years, factory_id, coefficient_source, gwp_version):
 def other_device_count(years, factory_id, coefficient_source, gwp_version):
     try:
         raw_data = pd.DataFrame(
-            list(other_device.objects.filter(years=years).filter(company_id=factory_id).values('device_name', "refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)),
-                                                                                                                                                             data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(
-            dummy='1')
+            list(other_device.objects.filter(years=years).filter(company_id=factory_id).values('device_name', "refrigerant_type", "filling_volume").annotate(
+                process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+                data_unit=Value('公噸', output_field=models.CharField(max_length=50))))).assign(dummy='1')
         calculate = raw_data.groupby(["refrigerant_type"]).agg({'filling_volume': 'sum'}).reset_index()
         calculate['filling_volume'] = calculate['filling_volume'].apply(lambda x: round(Decimal(x) / Decimal(1000), 4))
         # 丟掉舊欄位，為了merge時欄位不會重複
@@ -399,6 +488,49 @@ def personnel_inventory_count(years, factory_id, coefficient_source, gwp_version
         pass
 
 
+# 委外人員
+def employee_count(years, factory_id, coefficient_source, gwp_version):
+    try:
+        raw_data = pd.DataFrame(list(employee.objects.filter(years=years).filter(company_id=factory_id).values('career').annotate(
+            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+            device_name=Value('委外人員清冊', output_field=CharField(max_length=20)),
+            fuel_type=Value('水肥', output_field=CharField(max_length=20)),
+            data_unit=Value('時/人', output_field=models.CharField(max_length=50)),
+            total_employeeNum=Sum(
+                F('employeeNum_january') + F('employeeNum_february') + F('employeeNum_march') + F('employeeNum_april') + F('employeeNum_may') + F('employeeNum_june') + F('employeeNum_july') + F('employeeNum_august') + F('employeeNum_september') + F('employeeNum_october') + F('employeeNum_november') + F(
+                    'employeeNum_december')),
+            total_WKdays=Sum(F('WKdays_january') + F('WKdays_february') + F('WKdays_march') + F('WKdays_april') + F('WKdays_may') + F('WKdays_june') + F('WKdays_july') + F('WKdays_august') + F('WKdays_september') + F('WKdays_october') + F('WKdays_november') + F('WKdays_december')),
+            total_WKhours=Sum(F('WKhours_january') + F('WKhours_february') + F('WKhours_march') + F('WKhours_april') + F('WKhours_may') + F('WKhours_june') + F('WKhours_july') + F('WKhours_august') + F('WKhours_september') + F('WKhours_october') + F('WKhours_november') + F('WKhours_december')),
+            sum_count=Sum(
+                F('employeeNum_january') * F('WKdays_january') * F('WKhours_january') +
+                F('employeeNum_february') * F('WKdays_february') * F('WKhours_february') +
+                F('employeeNum_march') * F('WKdays_march') * F('WKhours_march') +
+                F('employeeNum_april') * F('WKdays_april') * F('WKhours_april') +
+                F('employeeNum_may') * F('WKdays_may') * F('WKhours_may') +
+                F('employeeNum_june') * F('WKdays_june') * F('WKhours_june') +
+                F('employeeNum_july') * F('WKdays_july') * F('WKhours_july') +
+                F('employeeNum_august') * F('WKdays_august') * F('WKhours_august') +
+                F('employeeNum_september') * F('WKdays_september') * F('WKhours_september') +
+                F('employeeNum_october') * F('WKdays_october') * F('WKhours_october') +
+                F('employeeNum_november') * F('WKdays_november') * F('WKhours_november') +
+                F('employeeNum_december') * F('WKdays_december') * F('WKhours_december')),
+        )))
+        a_part = raw_data
+        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
+            coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
+        ab_part = pd.merge(a_part, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+        final = pd.merge(ab_part, gwp, on='gas_name', how='left')
+        final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        final = final.rename(columns={'extinguisher_type': 'fuel_type'})
+        new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        final = final.reindex(columns=new_order)
+        return final
+    except:
+        print('沒有該委外人員設備')
+        pass
+
+
 # 滅火器
 def extinguisher_count(years, factory_id, coefficient_source, gwp_version):
     try:
@@ -524,10 +656,28 @@ def employee_commute_count(years, factory_id, coefficient_source, gwp_version):
         a_part['sum_count'] = a_part.apply(lambda x: round(Decimal(x['commute_distance']) * Decimal(x['work_days']) * Decimal('2'), 4), axis=1)
 
         def transportations(row):
-            if row['transportation'] == '機車' or row['transportation'] == '電動機車':
-                return '機器腳踏車(汽油)'
-            else:
+            if row['transportation'] == '自駕汽車':
                 return '自用小客車(汽油)'
+            elif row['transportation'] == '高鐵':
+                return '高速鐵路運輸服務'
+            elif row['transportation'] == '火車(電聯)':
+                return '臺灣鐵路運輸服務(電聯車)'
+            elif row['transportation'] == '火車(柴聯)':
+                return '臺灣鐵路運輸服務(柴聯車)'
+            elif row['transportation'] == '計程車':
+                return '營業小客車(汽油)'
+            elif row['transportation'] == '高鐵':
+                return '高速鐵路運輸服務'
+            elif row['transportation'] == '機車':
+                return '機器腳踏車(汽油)'
+            elif row['transportation'] == '捷運':
+                return '捷運'
+            elif row['transportation'] == '飛機':
+                return '飛機'
+            elif row['transportation'] == '船舶':
+                return '船舶'
+            else:
+                return row['transportation']
 
         a_part['transportation'] = a_part.apply(transportations, axis=1)
         a_part = a_part.groupby(['transportation']).agg({'sum_count': 'sum', 'process_area': 'first', 'fuel_type': 'first', 'data_unit': 'first'}).reset_index()
@@ -555,6 +705,32 @@ def employee_business_trip_count(years, factory_id, coefficient_source, gwp_vers
             data_unit=Value('延人公里', output_field=models.CharField(max_length=50)))))
         trip_section_data = pd.DataFrame(list(trip_section.objects.values('transportation', 'distance', 'trip_id')))
         a_part = pd.merge(raw_data, trip_section_data, left_on='id', right_on='trip_id', how='left')
+
+        def transportations(row):
+            if row['transportation'] == '自駕汽車':
+                return '自用小客車(汽油)'
+            elif row['transportation'] == '高鐵':
+                return '高速鐵路運輸服務'
+            elif row['transportation'] == '火車(電聯)':
+                return '臺灣鐵路運輸服務(電聯車)'
+            elif row['transportation'] == '火車(柴聯)':
+                return '臺灣鐵路運輸服務(柴聯車)'
+            elif row['transportation'] == '計程車':
+                return '營業小客車(汽油)'
+            elif row['transportation'] == '高鐵':
+                return '高速鐵路運輸服務'
+            elif row['transportation'] == '機車':
+                return '機器腳踏車(汽油)'
+            elif row['transportation'] == '捷運':
+                return '捷運'
+            elif row['transportation'] == '飛機':
+                return '飛機'
+            elif row['transportation'] == '船舶':
+                return '船舶'
+            else:
+                return row['transportation']
+
+        a_part['transportation'] = a_part.apply(transportations, axis=1)
         a_part = a_part.groupby(['transportation']).agg({'distance': 'sum', 'process_area': 'first', 'fuel_type': 'first', 'data_unit': 'first'}).reset_index()
         a_part = a_part.rename(columns={'distance': 'sum_count'})
         coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='產品碳足跡資訊網').filter(cause__in=a_part['transportation']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
@@ -625,21 +801,25 @@ def waste_process_count(years, factory_id, coefficient_source, gwp_version):
 
 
 # 採購原物料 (第四類)
-# gwp_version = 6
-# raw_data = pd.DataFrame(list(purchase_material.objects.values('product_name').annotate(
-#     process_area=Value('組織購買原物料', output_field=models.CharField(max_length=50)),
-#     device_name=Value('原物料採購', output_field=models.CharField(max_length=50)),
-#     sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
-#                        F('july') + F('august') + F('september') + F('october') + F('november') + F('december')), output_field=models.DecimalField(max_digits=20, decimal_places=4)),
-#     data_unit=Value('公噸', output_field=models.CharField(max_length=50)))))
-# print(raw_data)
-# a_part = raw_data
-# coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='產品碳足跡資訊網').filter(cause__in=a_part['waste_disposal']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
-#     coefficient_unit=Value('公噸' + '/延噸公里', output_field=models.CharField(max_length=50)))))
-# ab_part = pd.merge(a_part, coefficient_part, left_on='waste_disposal', right_on='cause', how='left')
-# gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
-# final = pd.merge(ab_part, gwp, on='gas_name', how='left')
-# final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
-# final = final.rename(columns={'product_name': 'fuel_type'})
-# new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-# final = final.reindex(columns=new_order)
+def purchase_material_count(years, factory_id, coefficient_source, gwp_version):
+    try:
+        raw_data = pd.DataFrame(list(purchase_material.objects.filter(years=years).filter(company_id=factory_id).values('product_name', 'category_name').annotate(
+            process_area=Value('組織購買原物料', output_field=models.CharField(max_length=50)),
+            device_name=Value('原物料採購', output_field=models.CharField(max_length=50)),
+            sum_count=Cast(Sum(F('january') + F('february') + F('march') + F('april') + F('may') + F('june') +
+                               F('july') + F('august') + F('september') + F('october') + F('november') + F('december')), output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+            data_unit=Value('公噸', output_field=models.CharField(max_length=50)))))
+        a_part = raw_data
+        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='產品碳足跡資訊網').filter(cause__in=a_part['category_name']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
+            coefficient_unit=Value('公噸' + '/延噸公里', output_field=models.CharField(max_length=50)))))
+        ab_part = pd.merge(a_part, coefficient_part, left_on='category_name', right_on='cause', how='left')
+        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+        final = pd.merge(ab_part, gwp, on='gas_name', how='left')
+        final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+        final = final.rename(columns={'product_name': 'fuel_type'})
+        new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+        final = final.reindex(columns=new_order)
+        return final
+    except:
+        print('沒有該原物料採購設備')
+        pass

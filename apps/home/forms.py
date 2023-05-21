@@ -214,6 +214,34 @@ CLASSIFICATION_CHOICES = [
     ('員工宿舍', '員工宿舍'),
 ]
 
+# 廢棄物處置地點
+WASTE_LOCATION = [
+    ('臺南市永康垃圾資源回收(焚化)廠', '臺南市永康垃圾資源回收(焚化)廠'),
+    ('苗栗縣垃圾焚化廠', '苗栗縣垃圾焚化廠'),
+    ('嘉義縣鹿草垃圾焚化廠', '嘉義縣鹿草垃圾焚化廠'),
+    ('新北市八里垃圾焚化廠', '新北市八里垃圾焚化廠'),
+    ('屏東縣崁頂垃圾資源回收(焚化)廠', '屏東縣崁頂垃圾資源回收(焚化)廠'),
+    ('高雄市仁武垃圾資源回收(焚化)廠', '高雄市仁武垃圾資源回收(焚化)廠'),
+    ('高雄市岡山垃圾資源回收(焚化)廠', '高雄市岡山垃圾資源回收(焚化)廠'),
+    ('新竹市垃圾資源回收廠', '新竹市垃圾資源回收廠'),
+    ('彰化縣溪州垃圾焚化廠', '彰化縣溪州垃圾焚化廠'),
+    ('基隆市天外天垃圾資源回收(焚化)廠', '基隆市天外天垃圾資源回收(焚化)廠'),
+    ('臺中市后里資源回收廠', '臺中市后里資源回收廠'),
+    ('臺中市烏日資源回收廠', '臺中市烏日資源回收廠'),
+    ('嘉義市垃圾焚化廠', '嘉義市垃圾焚化廠'),
+    ('宜蘭縣利澤垃圾資源回收(焚化)廠', '宜蘭縣利澤垃圾資源回收(焚化)廠'),
+    ('桃園市垃圾焚化廠', '桃園市垃圾焚化廠'),
+    ('新北市樹林垃圾焚化廠', '新北市樹林垃圾焚化廠'),
+    ('新北市新店垃圾焚化廠', '新北市新店垃圾焚化廠'),
+    ('高雄市政府環境保護局南區資源回收廠', '高雄市政府環境保護局南區資源回收廠'),
+    ('高雄市政府環境保護局中區資源回收廠', '高雄市政府環境保護局中區資源回收廠'),
+    ('臺南市城西垃圾焚化廠', '臺南市城西垃圾焚化廠'),
+    ('臺中市文山垃圾焚化廠', '臺中市文山垃圾焚化廠'),
+    ('臺北市政府環境保護局北投垃圾焚化廠', '臺北市政府環境保護局北投垃圾焚化廠'),
+    ('臺北市政府環境保護局內湖垃圾焚化廠', '臺北市政府環境保護局內湖垃圾焚化廠'),
+    ('臺北市政府環境保護局木柵垃圾焚化廠', '臺北市政府環境保護局木柵垃圾焚化廠'),
+]
+
 
 # 前面: 存DB，後面: 顯示
 # COMPANY_CHOICES = []
@@ -1137,7 +1165,7 @@ class ECform(forms.ModelForm):
 
 
 CommuteFormSet = inlineformset_factory(employee_commute, transportation_way, fields=('transportation',), extra=1,
-                                       widgets={'transportation': forms.Select(choices=TRANSPORTATION_CHOICES, attrs={'class': 'form-control'})})
+                                       widgets={'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'})})
 
 department_CHOICES = [
     ('資材部', '資材部'),
@@ -1194,7 +1222,7 @@ class WASTEform(forms.ModelForm):
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_weigh': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'waste_date'}),
-            'waste_location': forms.TextInput(attrs={'class': 'form-control'}),
+            'waste_location': forms.Select(attrs={'id': 'waste_location'}, choices=WASTE_LOCATION),
             'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
             'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
