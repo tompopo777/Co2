@@ -47,17 +47,17 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'material': {
-        'columns': ['years', 'material_id', 'material_type', 'material_name', 'process_add_name', 'chemical_name', 'chemical_formula',
+        'columns': ['years', 'material_id', 'material_type', 'material_name', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '原物料號', '原/物料', '名稱', '化學品名稱', '化學品名', '化學式', '一月', '二月', '三月', '四月', '五月',
+        'column_names': ['年度', '原物料號', '原/物料', '名稱', '是否為化學品', '化學品名稱', '化學品名', '化學式', '一月', '二月', '三月', '四月', '五月',
                          '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別一_'
     },
     'process': {
         'columns': ['years', 'process_stage', 'material_id', 'process_add_name', 'carbon_content', 'burn', 'VOCs',
-                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board', 'unit'],
         'column_names': ['年度', '製程階段', '料號', '製程添加名稱', '含碳量(%)', '是否燃燒', 'VOCs',
-                         '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+                         '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄', '使用量單位'],
         'prefix': '類別一__'
     },
     'refrigerator': {
@@ -105,7 +105,7 @@ COLUMN_MAPPING = {
     'extinguisher': {
         'columns': ['years', 'device_id', 'extinguisher_vendor', 'extinguisher_type', 'position', 'inventory',
                     'chemical_weight', 'using_amount', 'monthly', 'replace_filling_amount', 'replace_filling_date', 'message_board'],
-        'column_names': ['年度', '設備編號', '廠商', '類型', '擺放位置(廠別)', '庫存量', '藥劑重量(單位:kg)', '使用量數量', '使用月份', '更換/填充量', '更換/填充日期'],
+        'column_names': ['年度', '設備編號', '廠商', '類型', '擺放位置(廠別)', '庫存量', '藥劑重量(單位:kg)', '使用量數量', '使用月份', '更換/填充量', '更換/填充日期', '備註欄'],
         'prefix': '類別一_'
     },
     'personnel_inventory': {
@@ -126,7 +126,13 @@ COLUMN_MAPPING = {
                     'WKdays_july', 'WKdays_august', 'WKdays_september', 'WKdays_october', 'WKdays_november', 'WKdays_december',
                     'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july',
                     'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december', 'message_board'],
-        'column_names': ['出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
+        'column_names': ['年度', '人員類別',
+                         '人數 一月', '人數 二月', '人數 三月', '人數 四月', '人數 五月', '人數 六月',
+                         '人數 七月', '人數 八月', '人數 九月', '人數 十月', '人數 十一月', '人數 十二月',
+                         '工作天數 一月', '工作天數 二月', '工作天數 三月', '工作天數 四月', '工作天數 五月', '工作天數 六月',
+                         '工作天數 七月', '工作天數 八月', '工作天數 九月', '工作天數 十月', '工作天數 十一月', '工作天數 十二月',
+                         '時數 一月', '時數 二月', '時數 三月', '時數 四月', '時數 五月', '時數 六月',
+                         '時數 七月', '時數 八月', '時數 九月', '時數 十月', '時數 十一月', '時數 十二月', '備註欄'],
         'prefix': '類別一_'
     },
     'waste_water': {
@@ -141,13 +147,9 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'solvent_aerosol_emission_sources': {
-        'columns': ['id', 'years', 'solvent_name', 'solvent_amount', 'solvent_amount_unit', 'solvent_capacity', 'solvent_capacity_unit', 'fugitive_recharge', 'message_board'],
-        'column_names': ['添加物編號', '年度', '溶劑、噴霧劑名稱', '數量', '單位', '容量', '單位', '逸散 / 補充量(公噸/年)', '備註欄'],
+        'columns': ['years', 'solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density', 'message_board'],
+        'column_names': ['年度', '溶劑、噴霧劑名稱', '數量', '容量', '單位', '氣體名稱', '氣體含量(%)', '密度', '備註欄'],
         'prefix': '類別一_'
-    },
-    'additive_section': {
-        'columns': ['additive_name', 'additive_amount', 'additive_unit', 'additive_ingredient', 'additive_ratio', 'additive_id'],
-        'column_names': ['添加物名稱', '添加量', '單位', '成份', '添加比例', '添加物編號'],
     },
     'VOCs_one': {
         'columns': ['years', 'emission', 'concentration_ch4', 'message_board'],
@@ -175,10 +177,10 @@ COLUMN_MAPPING = {
                     'special_transport_distance', 'special_transport_country', 'special_transport_type', 'special_transport_fuel', 'special_paid', 'special_trips',
                     'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'message_board'],
         'column_names': ['單號', '商品', '淨/毛重', '重量(噸)', '組織使用產品', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點',
-                         '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
-                         '海運距離(nm)', '出貨港口', '到達港口', '支付方', '趟次',
-                         '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
-                         '單趟運輸距離(km)', '出貨機場', '到達機場', '支付方', '趟次', '備註欄'],
+                         '陸運運輸距離(km)', '陸運運輸國家', '陸運交通工具', '陸運燃料', '陸運支付方', '陸運趟次',
+                         '海運運輸距離距離(nm)', '出貨港口', '到達港口', '海運支付方', '海運趟次',
+                         '特殊陸運運輸距離(km)', '特殊陸運運輸國家', '特殊陸運交通工具', '特殊陸運燃料', '特殊陸運支付方', '特殊陸運趟次',
+                         '空運運輸距離(km)', '出貨機場', '到達機場', '空運支付方', '空運趟次', '備註欄'],
         'prefix': '類別三_'
     },
     'downstream_transportation': {
@@ -208,9 +210,11 @@ COLUMN_MAPPING = {
         'prefix': '類別四_'
     },
     'purchase_material': {
-        'columns': ['years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+        'columns': ['years', 'product_id', 'product_name', 'vendor', 'category_name', 'material_type',
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '產品編號', '產品名稱', '一月', '二月', '三月', '四月', '五月', '六月',
+        'column_names': ['年度', '產品編號', '產品名稱', '廠商', '大類名稱', '原/物料',
+                         '一月', '二月', '三月', '四月', '五月', '六月',
                          '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別四_'
     },
@@ -249,15 +253,12 @@ COLUMN_MAPPING = {
 @require_http_methods(["POST"])
 def export_excel(request):
     if request.method == "POST":
-        did = request.POST.get('did')
-        year = request.POST.get('yearInput')
-        excel_did = section_two.objects.filter(did__exact=int(did))
-
-        company_value = request.POST.get('company_id')
-        if company_value is None:
-            company_id = current_user_group_id(request)
-        else:
-            company_id = int(company_value)
+        # did = request.POST.get('did')
+        # year = request.POST.get('yearInput')
+        device_id = request.session.get('dropdown_three')
+        year = request.session.get('years')
+        factory_id = request.session.get('factory_id')
+        excel_did = section_two.objects.filter(did__exact=int(device_id))
 
         # 取得欄位清單和欄位中文名稱
         table_name = excel_did[0].t_name
@@ -267,7 +268,7 @@ def export_excel(request):
         column_names = column_mapping['column_names']
 
         # 根據所需欄位清單查詢資料
-        data = globals()[table_name].objects.all().filter(company_id=company_id, years=year).values(*columns)
+        data = globals()[table_name].objects.all().filter(company_id=factory_id, years=year).values(*columns)
 
         # 將查詢結果轉換為DataFrame
         df = pd.DataFrame(list(data))
@@ -283,7 +284,7 @@ def export_excel(request):
             child_column_names = COLUMN_MAPPING['trip_section']['column_names']
 
             # 取得母表和子表的資料
-            mother_data = employee_business_trip.objects.all().filter(company_id=company_id, years=year).values(*mother_columns)
+            mother_data = employee_business_trip.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
             child_data = trip_section.objects.all().values(*child_columns)
 
             # 將母表和子表的資料轉換為 DataFrame
@@ -307,7 +308,7 @@ def export_excel(request):
             child_columns = COLUMN_MAPPING['transportation_way']['columns']
 
             # 取得母表和子表的資料
-            mother_data = employee_commute.objects.all().filter(company_id=company_id, years=year).values(*mother_columns)
+            mother_data = employee_commute.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
             child_data = transportation_way.objects.all().values(*child_columns)
 
             # 將母表和子表的資料轉換為 DataFrame
@@ -401,14 +402,9 @@ def export_excel(request):
 def import_excel(request):
     if request.method == 'POST':
         # 取得設備編號、公司編號、檔案
-        did = request.POST.get('did')
-        # did = request.session.get('dropdown_three')
+        did = request.session.get('dropdown_three')
+        factory_id = request.session.get('factory_id')
         file = request.FILES.get('excel_file')
-        company_value = request.POST.get('company_id')
-        if company_value == 'undefined':
-            company_id = current_user_group_id(request)
-        else:
-            company_id = int(company_value)
 
         # 檢查檔案副檔名是否為Excel或CSV
         file_type = os.path.splitext(file.name)[1]
@@ -416,9 +412,13 @@ def import_excel(request):
             if file_type == '.csv':
                 # 讀取Excel檔案
                 df = pd.read_csv(file)
+                # 將NaN值替換為空值
+                df.fillna(value='', inplace=True)
             else:
                 # 讀取Excel檔案
                 df = pd.read_excel(file)
+                # 將NaN值替換為空值
+                df.fillna(value='', inplace=True)
         else:
             response_data = {
                 'success': False,
@@ -459,7 +459,7 @@ def import_excel(request):
                     old_commute_id = data['commute_id']
                     if old_commute_id not in commute_id_dict:
                         data.pop('commute_id')
-                        data['company_id'] = company_id
+                        data['company_id'] = factory_id
                         new_mother_data = employee_commute.objects.create(**data)
                         new_commute_data.append(new_mother_data)
                         commute_id_dict[old_commute_id] = new_mother_data.id
@@ -491,7 +491,19 @@ def import_excel(request):
 
                 # 將公司編號加入dict中
                 for data in data_dict:
-                    data['company_id'] = company_id
+                    data['company_id'] = factory_id
+
+                    # # 判斷 estimate 欄位的值並轉換為布尔值
+                    # if data['estimate'] == '是':
+                    #     data['estimate'] = True
+                    # else:
+                    #     data['estimate'] = False
+                    for key, value in data.items():
+                        # 判斷值是否為'是'或'否'
+                        if value == '是':
+                            data[key] = True
+                        elif value == '否':
+                            data[key] = False
 
                 # 將資料存入資料庫
                 model_list = [globals()[table_name](**data) for data in data_dict]

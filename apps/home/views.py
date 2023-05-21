@@ -76,12 +76,9 @@ def load_device(request):
 def current_user_group_id(request):
     try:
         user_id = request.user.id
-        print('user_id', user_id)
         current_user = Profile.objects.filter(user_id=user_id).get()
         factory_id = current_user.factory_id
-        # factory_name = current_user.factory
-        # print('factory_id', factory_id)
-        # print('factory_name', factory_name)
+        factory_name = current_user.factory
         return factory_id
     except:
         pass
@@ -105,6 +102,8 @@ def load_table(request):
         # else:
         #     factory_id_list.append(factory_id)
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+        # print('factory_id', factory_id)
+        # print('years', year)
         # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
@@ -556,7 +555,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "採購原物料":
                 t_data = []
-                raw_data = purchase_material.objects.filter(company_id=factory_id, years=year).values("id", "product_id", "product_name", "january", "february", "march", "april", "may", "june", "july", "august",
+                raw_data = purchase_material.objects.filter(company_id=factory_id, years=year).values("id", "product_id", "product_name", "vendor", "category_name", "material_type",
+                                                                                                      "january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                       "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
@@ -604,7 +604,7 @@ def copy_last_year_data(request):
 
         for a in t_name:
             if a["d_name"] == "柴油發電機":
-                last_year_data = emergency_generators.objects.filter(years=last_year, company_id=factory_id).values()
+                last_year_data = emergency_generators.objects.filter(years=last_year).filter(company_id=factory_id).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1083,8 +1083,8 @@ def copy_last_year_data(request):
                 pipe_wastewater.objects.bulk_create(
                     [pipe_wastewater(**data) for data in last_year_data]
                 )
-            elif a["d_name"] == '採購員物料':
-                last_year_data = purchase_material.objects.filter(company_id=factory_id, years=last_year).values()
+            elif a["d_name"] == '採購原物料':
+                last_year_data = purchase_material.objects.filter(years=last_year, company_id=factory_id).values()
                 # 如果去年沒有資料，顯示 alert 訊息
                 if not last_year_data:
                     response_data = {
@@ -1708,7 +1708,7 @@ def VOCs_two_add(request):
     VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
     if request.method == "POST":
         factory_id = request.session.get('factory_id')
-        print("company_id", company_id)
+        print("company_id", factory_id)
         if VOCs_two_add.is_valid():
             VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = factory_id
@@ -2598,7 +2598,7 @@ def add_title(request):
             # 原物料採購
             "28": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "產品編號", "產品名稱"],
+                "內容": ["序號", "產品編號", "產品名稱", "廠商", "大類名稱", "原/物料"],
                 "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
             },
 

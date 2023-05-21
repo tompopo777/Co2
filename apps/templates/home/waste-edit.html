@@ -146,6 +146,10 @@
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    select2#}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
 
 
     <script>
@@ -160,7 +164,7 @@
 
         {#    月份篩選器#}
         $("#waste_date").datepicker({
-            format: "yyyy-mm",
+            format: "mm",
             viewMode: "months",
             minViewMode: "months",
             orientation: "bottom",
@@ -201,5 +205,6 @@
                 document.getElementById('attachment').files = dt.files;
             });
         });
+        $('#waste_location').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
     </script>
 {% endblock javascripts %}

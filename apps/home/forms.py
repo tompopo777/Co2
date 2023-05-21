@@ -101,21 +101,26 @@ REFRIGERANT_TYPE_CHOICES = [
 ]
 EXTINGUISHER_TYPE_CHOICES = [
     ('二氧化碳滅火器', '二氧化碳滅火器'),
-    ('潔淨滅火器HFC-227ea（FM-200、FE-227)', '潔淨滅火器HFC-227ea（FM-200、FE-227）'),
+    ('潔淨滅火器HFC-227ea(FM-200、FE-227)', '潔淨滅火器HFC-227ea(FM-200、FE-227)'),
     ('潔淨滅火器HFC-125', '潔淨滅火器HFC-125'),
 ]
 TRANSPORT_TYPE_CHOICES = [
     ('', '請選擇運輸工具'),
-    ('5.5噸以下(小型貨車)', '5.5噸以下(小型貨車)'),
-    ('7.5噸-26噸(中型貨車)', '7.5噸-26噸(中型貨車)'),
-    ('35 噸貨車(重型貨車)', '35 噸貨車(重型貨車)'),
-    ('43 噸(重型貨車)', '43 噸(重型貨車)'),
-    ('46 噸(重型貨車)', '46 噸(重型貨車)'),
-    ('拖掛車(拖架)', '拖掛車(拖架)'),
-    ('牽引車(拖頭)', '牽引車(拖頭)'),
-    ('貨櫃車-35噸（20英呎貨櫃）', '貨櫃車-35噸（20英呎貨櫃）'),
-    ('貨櫃車-43噸（40/45英呎貨櫃）', '貨櫃車-43噸（40/45英呎貨櫃）'),
-    ('平板卡車(拖車)', '平板卡車(拖車)')
+    ('營業大貨車', '營業大貨車'),
+    ('營業小貨車', '營業小貨車'),
+    ('自用大貨車', '自用大貨車'),
+    ('自用小貨車', '自用小貨車'),
+    ('3.49噸常溫貨車服務(裝載率31%，包含營業據點排放)', '3.49噸常溫貨車服務(裝載率31%，包含營業據點排放)'),
+    ('3.49噸常溫貨車服務(裝載率84%，包含營業據點排放)', '3.49噸常溫貨車服務(裝載率84%，包含營業據點排放)'),
+    ('3.5~7.4噸常溫貨車服務(裝載率82%，包含營業據點排放)', '3.5~7.4噸常溫貨車服務(裝載率82%，包含營業據點排放)'),
+    ('7.5~16噸常溫貨車服務(裝載率80%，包含營業據點排放)', '7.5~16噸常溫貨車服務(裝載率80%，包含營業據點排放)'),
+    ('3.49噸低溫貨車服務(裝載率32%，包含營業據點排放)', '3.49噸低溫貨車服務(裝載率32%，包含營業據點排放)'),
+    ('3.49噸低溫貨車服務(裝載率77%，包含營業據點排放)', '3.49噸低溫貨車服務(裝載率77%，包含營業據點排放)'),
+    ('3.5~7.4噸低溫貨車服務(裝載率41%，包含營業據點排放)', '3.5~7.4噸低溫貨車服務(裝載率41%，包含營業據點排放)'),
+    ('3.5~7.4噸低溫貨車服務(裝載率69%，包含營業據點排放)', '3.5~7.4噸低溫貨車服務(裝載率69%，包含營業據點排放)'),
+    ('7.5~16噸常溫貨車服務(裝載率65%，包含營業據點排放)', '7.5~16噸常溫貨車服務(裝載率65%，包含營業據點排放)'),
+    ('3.49噸多溫貨車服務(包含營業據點排放)', '3.49噸多溫貨車服務(包含營業據點排放)'),
+    ('以柴油動力垃圾車清除運輸一般廢棄物', '以柴油動力垃圾車清除運輸一般廢棄物')
 ]
 TRANSPORT_FUEL_CHOICES = [
     ('', '無'),
@@ -199,6 +204,11 @@ SOLVENT_GAS_CHOICES = [
     ('HFCs', 'FX80，R32/125'),
     ('PFCs', 'C4F10，全氟丁烷'),
     ('SF6', 'SF6，六氟化硫')
+]
+# 原物料種類
+MATERIAL_TYPE = [
+    ('原料', '原料'),
+    ('物料', '物料')
 ]
 
 # 人添清冊
@@ -1337,12 +1347,15 @@ class PWform(forms.ModelForm):
 class PMform(forms.ModelForm):
     class Meta:
         model = purchase_material
-        fields = ('years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
+        fields = ('years', 'product_id', 'product_name', 'vendor', 'category_name', 'material_type', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
                   'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'product_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'product_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'vendor': forms.TextInput(attrs={'class': 'form-control'}),
+            'category_name': forms.Select(attrs={'id': 'category_name'}, choices=DropdownOption.objects.filter(option_group='大類名稱').values_list('option_value', 'option_label')),
+            'material_type': forms.RadioSelect(choices=MATERIAL_TYPE, attrs={'class': 'form-check-inline'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
