@@ -55,9 +55,9 @@ COLUMN_MAPPING = {
     },
     'process': {
         'columns': ['years', 'process_stage', 'material_id', 'process_add_name', 'carbon_content', 'burn', 'VOCs',
-                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board', 'unit'],
         'column_names': ['年度', '製程階段', '料號', '製程添加名稱', '含碳量(%)', '是否燃燒', 'VOCs',
-                         '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+                         '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄', '使用量單位'],
         'prefix': '類別一__'
     },
     'refrigerator': {
@@ -492,6 +492,18 @@ def import_excel(request):
                 # 將公司編號加入dict中
                 for data in data_dict:
                     data['company_id'] = factory_id
+
+                    # # 判斷 estimate 欄位的值並轉換為布尔值
+                    # if data['estimate'] == '是':
+                    #     data['estimate'] = True
+                    # else:
+                    #     data['estimate'] = False
+                    for key, value in data.items():
+                        # 判斷值是否為'是'或'否'
+                        if value == '是':
+                            data[key] = True
+                        elif value == '否':
+                            data[key] = False
 
                 # 將資料存入資料庫
                 model_list = [globals()[table_name](**data) for data in data_dict]
