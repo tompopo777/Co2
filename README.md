@@ -1,2 +1,2 @@
 # carbon-footprint-survey
-碳足跡盤查
+碳排放盤查
