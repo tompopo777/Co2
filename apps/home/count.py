@@ -21,8 +21,13 @@ def calculate_summary(request):
         coefficient_source = request.POST.get("coefficient_source")
         gwp_version = request.POST.get("gwpVersion")
         gwp_version = int(gwp_version)
-        factory_id = request.session.get('company_dropdown')
+        factory_id = request.session.get('factory_id')
         years = request.session.get('years')
+
+        # print('coefficient_source:', coefficient_source)
+        # print('gwp_version:', gwp_version)
+        # print('factory_id:', factory_id)
+        # print('years:', years)
 
         company_dic = {
             2: '雲科A廠',
@@ -36,15 +41,29 @@ def calculate_summary(request):
         emergency_generators_device = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)
         combustion_equipment_device = combustion_equipment_count(years, factory_id, coefficient_source, gwp_version)
         official_car_device = official_car_count(years, factory_id, coefficient_source, gwp_version)
+        refrigerator_device = refrigerator_count(years, factory_id, coefficient_source, gwp_version)
+        airconditioner_device = airconditioner_count(years, factory_id, coefficient_source, gwp_version)
+        vehicle_device = vehicle_count(years, factory_id, coefficient_source, gwp_version)
         water_dispenser_device = water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
+        ice_water_dispenser_device = ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
         ice_maker_device = ice_maker_count(years, factory_id, coefficient_source, gwp_version)
         other_device_device = other_device_count(years, factory_id, coefficient_source, gwp_version)
         solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_count(years, factory_id, coefficient_source, gwp_version)
         personnel_inventory_device = personnel_inventory_count(years, factory_id, coefficient_source, gwp_version)
+        employee_device = employee_count(years, factory_id, coefficient_source, gwp_version)
         extinguisher_device = extinguisher_count(years, factory_id, coefficient_source, gwp_version)
         waste_water_device = waste_water_count(years, factory_id, coefficient_source, gwp_version)
         electricity_device = electricity_count(years, factory_id, coefficient_source, gwp_version)
-        output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device, personnel_inventory_device, extinguisher_device, waste_water_device, electricity_device])
+        employee_commute_device = employee_commute_count(years, factory_id, coefficient_source, gwp_version)
+        employee_business_trip_device = employee_business_trip_count(years, factory_id, coefficient_source, gwp_version)
+        waste_transport_device = waste_transport_count(years, factory_id, coefficient_source, gwp_version)
+        waste_process_device = waste_process_count(years, factory_id, coefficient_source, gwp_version)
+        purchase_material_device = purchase_material_count(years, factory_id, coefficient_source, gwp_version)
+
+        output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, refrigerator_device, airconditioner_device,
+                            vehicle_device, water_dispenser_device, ice_water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device,
+                            personnel_inventory_device, employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device,
+                            employee_business_trip_device, waste_transport_device, waste_process_device, purchase_material_device])
         output = output.rename(
             columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'sum_count': '活動數據總量', 'data_unit': '數據單位', 'emission': '排放當量公噸(公噸/數據期間)', 'gas_name': '可能產生溫室氣體種類', 'coefficient': '排放係數', 'coefficient_unit': '排放係數單位',
                      'coefficient_source': '係數來源', 'gwp_coefficient': 'ICPP報告GWP值'})
@@ -434,7 +453,7 @@ def personnel_inventory_count(years, factory_id, coefficient_source, gwp_version
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
             device_name=Value('人天清冊', output_field=CharField(max_length=20)),
             fuel_type=Value('水肥', output_field=CharField(max_length=20)),
-            data_unit=Value('時/人', output_field=models.CharField(max_length=50)),
+            data_unit=Value('年/時', output_field=models.CharField(max_length=50)),
             total_usage=Sum(F('WKhours_january') + F('WKhours_february') + F('WKhours_march') + F('WKhours_april') + F('WKhours_may') + F('WKhours_june') + F('WKhours_july') + F('WKhours_august') + F('WKhours_september') + F('WKhours_october') + F('WKhours_november') + F('WKhours_december')),
         )))
         employee_raw_data = employee_raw_data.drop(columns=['did'])
@@ -495,7 +514,7 @@ def employee_count(years, factory_id, coefficient_source, gwp_version):
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
             device_name=Value('委外人員清冊', output_field=CharField(max_length=20)),
             fuel_type=Value('水肥', output_field=CharField(max_length=20)),
-            data_unit=Value('時/人', output_field=models.CharField(max_length=50)),
+            data_unit=Value('年/時 ', output_field=models.CharField(max_length=50)),
             total_employeeNum=Sum(
                 F('employeeNum_january') + F('employeeNum_february') + F('employeeNum_march') + F('employeeNum_april') + F('employeeNum_may') + F('employeeNum_june') + F('employeeNum_july') + F('employeeNum_august') + F('employeeNum_september') + F('employeeNum_october') + F('employeeNum_november') + F(
                     'employeeNum_december')),
@@ -618,7 +637,7 @@ def electricity_count(years, factory_id, coefficient_source, gwp_version):
 # def upstream_transport_count(years, factory_id, coefficient_source, gwp_version):
 #     try:
 # gwp_version = 6
-# transport_raw_data = pd.DataFrame(list(upstream_transportation.objects.filter(paid='公司支付').filter(customer='國內').values('commodity_NW', 'transport_type', 'transport_fuel', 'transport_distance', 'trips').annotate(
+# transport_raw_data = pd.DataFrame(list(upstream_transportation.objects.filter(customer='國內').filter(paid='公司支付').values('commodity_NW', 'transport_type', 'transport_fuel', 'transport_distance', 'trips').annotate(
 #     process_area=Value('上游運輸產生之排放', output_field=models.CharField(max_length=50)),
 #     device_name=Value('陸運運輸', output_field=models.CharField(max_length=50)),
 #     sum_count=Cast(Sum(F('commodity_NW') * F('transport_distance') * F('trips')), output_field=models.DecimalField(max_digits=20, decimal_places=4)),
@@ -626,6 +645,7 @@ def electricity_count(years, factory_id, coefficient_source, gwp_version):
 # transport_raw_data['fuel_type'] = transport_raw_data.apply(lambda x: f"{x['transport_type']}({x['transport_fuel']})", axis=1)
 # transport_raw_data = transport_raw_data.groupby(['transport_type', 'transport_fuel']).agg({'process_area': 'first', 'device_name': 'first', 'fuel_type': 'first', 'sum_count': 'sum', 'data_unit': 'first'}).reset_index()
 # a_part = transport_raw_data
+# print(a_part)
 # coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='產品碳足跡資訊網').filter(cause__in=a_part['transport_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
 #             coefficient_unit=Value('公噸' + '/延噸公里', output_field=models.CharField(max_length=50)))))
 # ab_part = pd.merge(a_part, coefficient_part, left_on='transport_type', right_on='cause', how='left')
@@ -634,6 +654,7 @@ def electricity_count(years, factory_id, coefficient_source, gwp_version):
 # final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
 # new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
 # final = final.reindex(columns=new_order)
+# print(final)
 # #
 # overseas_raw_data = pd.DataFrame(list(upstream_transportation.objects.values('commodity_NW', 'overseas_transport_distance', 'overseas_trips').annotate(
 #     process_area=Value('上游運輸產生之排放', output_field=models.CharField(max_length=50)),
