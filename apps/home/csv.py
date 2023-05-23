@@ -169,14 +169,14 @@ COLUMN_MAPPING = {
         'prefix': '類別二_'
     },
     'upstream_transportation': {
-        'columns': ['acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW',
+        'columns': ['years', 'acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW',
                     'organizational_use_products', 'customer', 'supplier', 'supplier_address',
                     'trade_term', 'receiving_address', 'delivery_address',
                     'transport_distance', 'transport_country', 'transport_type', 'transport_fuel', 'paid', 'trips',
                     'overseas_transport_distance', 'overseas_delivery', 'overseas_arrive', 'overseas_paid', 'overseas_trips',
                     'special_transport_distance', 'special_transport_country', 'special_transport_type', 'special_transport_fuel', 'special_paid', 'special_trips',
                     'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'message_board'],
-        'column_names': ['單號', '商品', '淨/毛重', '重量(噸)', '組織使用產品', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點',
+        'column_names': ['年度', '單號', '商品', '淨/毛重', '重量(噸)', '組織使用產品', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點',
                          '陸運運輸距離(km)', '陸運運輸國家', '陸運交通工具', '陸運燃料', '陸運支付方', '陸運趟次',
                          '海運運輸距離距離(nm)', '出貨港口', '到達港口', '海運支付方', '海運趟次',
                          '特殊陸運運輸距離(km)', '特殊陸運運輸國家', '特殊陸運交通工具', '特殊陸運燃料', '特殊陸運支付方', '特殊陸運趟次',
@@ -184,22 +184,24 @@ COLUMN_MAPPING = {
         'prefix': '類別三_'
     },
     'downstream_transportation': {
-        'columns': ['acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW', 'customer', 'supplier', 'supplier_address',
+        'columns': ['years', 'acceptance_receipt', 'commodity_name', 'weight', 'commodity_NW',
+                    'customer', 'supplier', 'supplier_address',
                     'trade_term', 'receiving_address', 'delivery_address',
                     'transport_distance', 'transport_country', 'transport_type', 'transport_fuel', 'paid', 'trips',
                     'overseas_transport_distance', 'overseas_delivery', 'overseas_arrive', 'overseas_paid', 'overseas_trips',
                     'special_transport_distance', 'special_transport_country', 'special_transport_type', 'special_transport_fuel', 'special_paid', 'special_trips',
                     'air_transport_distance', 'air_delivery', 'air_arrive', 'air_paid', 'air_trips', 'message_board'],
-        'column_names': ['單號', '商品', '淨/毛重', '重量(噸)', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點',
-                         '單趟運輸距離(km)', '運輸國家', '交通工具', '燃料', '支付方', '趟次',
-                         '海運距離(nm)', '出貨港口', '到達港口', '支付方', '趟次',
-                         '單趟運輸距離(km)', '出貨機場', '到達機場', '支付方', '趟次', '備註欄'],
+        'column_names': ['年度', '單號', '商品', '淨/毛重', '重量(噸)', '客戶', '供應商名稱', '供應商地址', '貿易條件', '接貨地點', '送貨地點',
+                         '陸運運輸距離(km)', '陸運運輸國家', '陸運交通工具', '陸運燃料', '陸運支付方', '陸運趟次',
+                         '海運運輸距離距離(nm)', '出貨港口', '到達港口', '海運支付方', '海運趟次',
+                         '特殊陸運運輸距離(km)', '特殊陸運運輸國家', '特殊陸運交通工具', '特殊陸運燃料', '特殊陸運支付方', '特殊陸運趟次',
+                         '空運運輸距離(km)', '出貨機場', '到達機場', '空運支付方', '空運趟次', '備註欄'],
         'prefix': '類別三_'
     },
     'waste': {
-        'columns': ['waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
+        'columns': ['years', 'waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
                     'transport_type', 'transport_fuel', 'transport_distance', 'message_board'],
-        'column_names': ['名稱', '重量(噸)', '運送時間', '處置地點', '處理方式', '處理廠商名稱', '運輸方式', '運輸燃料', '運輸距離(km)', '備註欄'],
+        'column_names': ['年度', '名稱', '重量(噸)', '運送時間', '處置地點', '處理方式', '處理廠商名稱', '運輸方式', '運輸燃料', '運輸距離(km)', '備註欄'],
         'prefix': '類別四_'
     },
     'pipe_wastewater': {
@@ -226,8 +228,8 @@ COLUMN_MAPPING = {
         'prefix': '類別五_'
     },
     'employee_business_trip': {
-        'columns': ['id', 'business_trip_number', 'employee_id', 'department', 'employee_name', 'business_trip_location', 'business_trip_date'],
-        'column_names': ['出差行程編號', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期'],
+        'columns': ['id', 'years', 'business_trip_number', 'employee_id', 'department', 'employee_name', 'business_trip_location', 'business_trip_date', 'message_board'],
+        'column_names': ['出差行程編號', '年度', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期', '備註欄'],
         'prefix': '類別三_'
     },
     'trip_section': {
@@ -235,8 +237,8 @@ COLUMN_MAPPING = {
         'column_names': ['出發地', '交通工具', '距離', '出差行程編號'],
     },
     'employee_commute': {
-        'columns': ['id', 'years', 'employee_id', 'department', 'employee_name', 'city', 'township', 'address', 'commute_distance', 'work_days'],
-        'column_names': ['員工通勤編號', '年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數'],
+        'columns': ['id', 'years', 'employee_id', 'department', 'employee_name', 'city', 'township', 'address', 'commute_distance', 'work_days', 'message_board'],
+        'column_names': ['員工通勤編號', '年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數', '備註欄'],
         'prefix': '類別三_'
     },
     'transportation_way': {
@@ -279,9 +281,7 @@ def export_excel(request):
         if table_name == 'employee_business_trip':
             # 取得母表和子表的欄位資訊
             mother_columns = COLUMN_MAPPING['employee_business_trip']['columns']
-            mother_column_names = COLUMN_MAPPING['employee_business_trip']['column_names']
             child_columns = COLUMN_MAPPING['trip_section']['columns']
-            child_column_names = COLUMN_MAPPING['trip_section']['column_names']
 
             # 取得母表和子表的資料
             mother_data = employee_business_trip.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
@@ -291,16 +291,18 @@ def export_excel(request):
             mother_df = pd.DataFrame(list(mother_data))
             child_df = pd.DataFrame(list(child_data))
 
-            # 將欄位名稱改成中文
-            mother_df.columns = mother_column_names
-            child_df.columns = child_column_names
-
             # 將子表的資料加入到母表的資料中
-            df = pd.merge(mother_df, child_df[['出發地', '交通工具', '距離', '出差行程編號']], on='出差行程編號', how='left')
+            df = pd.merge(mother_df, child_df, left_on='id', right_on='trip_id', how='left')
 
-            # 將子表的欄位名稱加入到匯出的資料中
-            column_names = ['出差行程編號', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期']
-            column_names.extend(['出發地', '交通工具', '距離'])
+            df.drop(columns=['id'], inplace=True)
+            df.rename(columns={'years': '年度', 'business_trip_number': '出差單號', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'business_trip_location': '出差地點', 'business_trip_date': '啟程日期',
+                               'departure': '出發地', 'transportation': '交通工具', 'distance': '距離', 'trip_id': '出差行程編號', 'message_board': '備註欄'}, inplace=True)
+
+            # 欄位順序列表（自訂順序）
+            custom_column_order = ['年度', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期', '出發地', '交通工具', '距離', '出差行程編號', '備註欄']
+
+            # 將 DataFrame 欄位順序重新排列
+            df = df.reindex(columns=custom_column_order)
 
         elif table_name == 'employee_commute':
             # 取得母表和子表的欄位資訊
@@ -321,9 +323,13 @@ def export_excel(request):
             df.drop(columns=['id'], inplace=True)
 
             df.rename(columns={'years': '年度', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'city': '居住城市', 'township': '鄉鎮市區', 'address': '行政區公家機關地址',
-                               'commute_distance': '至公司距離(km)', 'work_days': '年工作天數', 'transportation': '交通工具', 'commute': '員工通勤編號'}, inplace=True)
+                               'commute_distance': '至公司距離(km)', 'work_days': '年工作天數', 'transportation': '交通工具', 'commute': '員工通勤編號', 'message_board': '備註欄'}, inplace=True)
 
-            print(df)
+            # 欄位順序列表（自訂順序）
+            custom_column_order = ['年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數', '交通工具', '員工通勤編號', '備註欄']
+
+            # 將 DataFrame 欄位順序重新排列
+            df = df.reindex(columns=custom_column_order)
 
         # 創建Excel文件
         excel_name = prefix + excel_did[0].d_name + '.xlsx'
@@ -344,57 +350,54 @@ def export_excel(request):
         return render(request, 'home/carbon-system.html')
 
 
-# 匯入功能
-# @csrf_exempt
-# @require_http_methods(["POST"])
-# @login_required(login_url="/login/")
-# def import_excels(request):
-#     if request.method == 'POST':
-#         try:
-#             did = request.POST.get('did')
-#             file = request.FILES['excel_file']
-#             company_value = request.POST.get('company_id')
-#             if company_value == 'undefined':
-#                 company_id = current_user_group_id(request)
-#             else:
-#                 company_id = int(company_value)
-#
-#             # 解析Excel檔案
-#             wb = load_workbook(file, data_only=True)
-#             sheet = wb.active
-#
-#             # 取得目標資料表名稱
-#             section = section_two.objects.get(did=did)
-#             table_name = section.t_name
-#
-#             # 取得目標資料表的中英文欄位名稱對應
-#             column_mapping = COLUMN_MAPPING[table_name]
-#             column_names = column_mapping['column_names']
-#             columns = column_mapping['columns']
-#
-#             # 讀取Excel中的資料，並存入資料庫中
-#             for row in sheet.iter_rows(min_row=2):
-#                 data = {}
-#                 for i, cell in enumerate(row):
-#                     # 將中文欄位名稱轉換為英文欄位名稱
-#                     column_name = column_names[i]
-#                     column = columns[i]
-#                     if column == "id":
-#                         continue  # 如果欄位是id，則略過不處理
-#                     data[column] = cell.value
-#
-#                 # 添加公司 ID 到資料字典
-#                 data['company_id'] = company_id
-#
-#                 # 將資料存入資料庫
-#                 your_model_instance = globals()[table_name](**data)
-#                 your_model_instance.save()
-#
-#             messages.success(request, '匯入Excel成功')
-#             return HttpResponse('OK')
-#         except Exception as e:
-#             messages.error(request, '匯入Excel失敗')
-#             return HttpResponse(str(e), status=400)
+# 下載公版
+@csrf_exempt
+@require_http_methods(["POST"])
+def public_version(request):
+    if request.method == 'POST':
+        # 取得設備編號、公司編號、檔案
+        device_id = request.session.get('dropdown_three')
+        excel_did = section_two.objects.filter(did__exact=int(device_id))
+
+        # 取得欄位清單和欄位中文名稱
+        table_name = excel_did[0].t_name
+        column_mapping = COLUMN_MAPPING[table_name]
+        prefix = column_mapping.get('prefix', '')
+        columns = column_mapping['columns']
+        column_names = column_mapping['column_names']
+
+        # 創建空的DataFrame
+        df = pd.DataFrame(columns=columns)
+
+        # 將欄位名稱改成中文
+        df.columns = column_names
+
+        if table_name == 'employee_business_trip':
+            column_names = ['年度', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期', '出發地', '交通工具', '距離', '出差行程編號', '備註欄']
+        elif table_name == 'employee_commute':
+            column_names = ['年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數', '交通工具', '員工通勤編號', '備註欄']
+
+        # 創建空的DataFrame
+        df = pd.DataFrame(columns=column_names)
+
+        # 創建Excel文件
+        excel_name = prefix + excel_did[0].d_name + '.xlsx'
+        output = io.BytesIO()
+        writer = pd.ExcelWriter(output, engine='xlsxwriter')
+        df.to_excel(writer, index=False, sheet_name='Sheet1')
+        writer.save()
+        output.seek(0)
+
+        # 下載 Excel 文件
+        response = HttpResponse(output.getvalue(), content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=' + parse.quote(excel_name, encoding="UTF-8")
+
+        return response
+
+    else:
+        # 呈現選擇保存位置的表格
+        return render(request, 'home/carbon-system.html')
+
 
 
 @csrf_exempt
@@ -436,14 +439,58 @@ def import_excel(request):
 
         # 寫入資料庫
         try:
-            if table_name == 'employee_commute':
+            if table_name == 'employee_business_trip':
+                # 轉換欄位名稱
+                df.rename(columns={'年度': 'years', '出差單號': 'business_trip_number', '員工編號': 'employee_id', '部門': 'department', '姓名': 'employee_name', '出差地點': 'business_trip_location', '啟程日期': 'business_trip_date',
+                                   '出發地': 'departure', '交通工具': 'transportation', '距離': 'distance', '出差行程編號': 'trip_id', '備註欄': 'message_board'}, inplace=True)
+                # 分離母子表資料
+                mother_df = df.loc[:, ['years', 'business_trip_number', 'employee_id', 'department', 'employee_name', 'business_trip_location', 'business_trip_date', 'trip_id', 'message_board']]
+                child_df = df.loc[:, ['trip_id', 'departure', 'transportation', 'distance']]
+
+                # 將df轉換成dict
+                mother_data_dict = mother_df.to_dict('records')
+                child_data_dict = child_df.to_dict('records')
+
+                trip_id_dict = {}
+                new_business_trip_data = []
+                new_trip_section_data = []
+
+                # 將公司編號加入dict中
+                for data in mother_data_dict:
+                    old_trip_id = data['trip_id']
+                    if old_trip_id not in trip_id_dict:
+                        data.pop('trip_id')
+                        data['company_id'] = factory_id
+                        new_mother_data = employee_business_trip.objects.create(**data)
+                        new_business_trip_data.append(new_mother_data)
+                        trip_id_dict[old_trip_id] = new_mother_data.id
+                    else:
+                        trip_id_dict[old_trip_id] = trip_id_dict[old_trip_id]
+
+                for data in child_data_dict:
+                    old_trip_id = data['trip_id']
+                    new_trip_id = trip_id_dict[old_trip_id]
+                    data['trip_id'] = employee_business_trip.objects.get(id=new_trip_id)
+                    new_trip = trip_section(**data)
+                    new_trip_section_data.append(new_trip)
+
+                # 儲存新的資料到資料庫中
+                trip_section.objects.bulk_create(new_trip_section_data)
+
+                response_data = {
+                    'success': True,
+                    'message': '匯入Excel成功'
+                }
+                return JsonResponse(response_data)
+
+            elif table_name == 'employee_commute':
                 # 轉換欄位名稱
                 df.rename(columns={'年度': 'years', '員工編號': 'employee_id', '部門': 'department', '姓名': 'employee_name', '居住城市': 'city', '鄉鎮市區': 'township', '行政區公家機關地址': 'address',
-                                   '至公司距離(km)': 'commute_distance', '年工作天數': 'work_days', '交通工具': 'transportation', '員工通勤編號': 'commute_id'}, inplace=True)
+                                   '至公司距離(km)': 'commute_distance', '年工作天數': 'work_days', '交通工具': 'transportation', '員工通勤編號': 'commute_id', '備註欄': 'message_board'}, inplace=True)
 
                 # 分離母子表資料
 
-                mother_df = df.loc[:, ['years', 'employee_id', 'department', 'employee_name', 'city', 'township', 'address', 'commute_distance', 'work_days', 'commute_id']]
+                mother_df = df.loc[:, ['years', 'employee_id', 'department', 'employee_name', 'city', 'township', 'address', 'commute_distance', 'work_days', 'commute_id', 'message_board']]
                 child_df = df.loc[:, ['commute_id', 'transportation']]
 
                 # 將df轉換成dict

@@ -148,6 +148,7 @@ CUSTOMER_CHOICES = [
     ('國外', '國外')
 ]
 TRADE_TERM_CHOICES = [
+    ('國內', '國內'),
     ('EXW', 'EXW 工廠交貨'),
     ('FCA', 'FCA 貨交承運人'),
     ('FAS', 'FAS 裝運港船邊交貨'),
@@ -160,10 +161,15 @@ TRADE_TERM_CHOICES = [
     ('DAP', 'DAP 目的地交貨'),
     ('DDP', 'DDP 完稅後交貨')
 ]
-PAID_CHOICES = [
+UP_PAID_CHOICES = [
+    ('公司支付', '公司支付'),
+    ('供應商支付', '供應商支付')
+]
+DOWN_PAID_CHOICES = [
     ('公司支付', '公司支付'),
     ('客戶支付', '客戶支付'),
-    ('供應商支付', '供應商支付')
+    ('公司支付(上游計算)', '公司支付(上游計算)'),
+    ('客戶支付(不計算)', '客戶支付(不計算)'),
 ]
 BUSINESS_TRANSPORTATION_CHOICES = [
     ('------', '------'),
@@ -219,30 +225,11 @@ CLASSIFICATION_CHOICES = [
 
 # 廢棄物處置地點
 WASTE_LOCATION = [
-    ('臺南市永康垃圾資源回收(焚化)廠', '臺南市永康垃圾資源回收(焚化)廠'),
-    ('苗栗縣垃圾焚化廠', '苗栗縣垃圾焚化廠'),
-    ('嘉義縣鹿草垃圾焚化廠', '嘉義縣鹿草垃圾焚化廠'),
-    ('新北市八里垃圾焚化廠', '新北市八里垃圾焚化廠'),
-    ('屏東縣崁頂垃圾資源回收(焚化)廠', '屏東縣崁頂垃圾資源回收(焚化)廠'),
-    ('高雄市仁武垃圾資源回收(焚化)廠', '高雄市仁武垃圾資源回收(焚化)廠'),
-    ('高雄市岡山垃圾資源回收(焚化)廠', '高雄市岡山垃圾資源回收(焚化)廠'),
-    ('新竹市垃圾資源回收廠', '新竹市垃圾資源回收廠'),
-    ('彰化縣溪州垃圾焚化廠', '彰化縣溪州垃圾焚化廠'),
-    ('基隆市天外天垃圾資源回收(焚化)廠', '基隆市天外天垃圾資源回收(焚化)廠'),
-    ('臺中市后里資源回收廠', '臺中市后里資源回收廠'),
-    ('臺中市烏日資源回收廠', '臺中市烏日資源回收廠'),
-    ('嘉義市垃圾焚化廠', '嘉義市垃圾焚化廠'),
-    ('宜蘭縣利澤垃圾資源回收(焚化)廠', '宜蘭縣利澤垃圾資源回收(焚化)廠'),
-    ('桃園市垃圾焚化廠', '桃園市垃圾焚化廠'),
-    ('新北市樹林垃圾焚化廠', '新北市樹林垃圾焚化廠'),
-    ('新北市新店垃圾焚化廠', '新北市新店垃圾焚化廠'),
-    ('高雄市政府環境保護局南區資源回收廠', '高雄市政府環境保護局南區資源回收廠'),
-    ('高雄市政府環境保護局中區資源回收廠', '高雄市政府環境保護局中區資源回收廠'),
-    ('臺南市城西垃圾焚化廠', '臺南市城西垃圾焚化廠'),
-    ('臺中市文山垃圾焚化廠', '臺中市文山垃圾焚化廠'),
-    ('臺北市政府環境保護局北投垃圾焚化廠', '臺北市政府環境保護局北投垃圾焚化廠'),
-    ('臺北市政府環境保護局內湖垃圾焚化廠', '臺北市政府環境保護局內湖垃圾焚化廠'),
-    ('臺北市政府環境保護局木柵垃圾焚化廠', '臺北市政府環境保護局木柵垃圾焚化廠'),
+    ('廢棄物焚化處理服務(岡山垃圾焚化廠)', '廢棄物焚化處理服務(岡山垃圾焚化廠)'),
+    ('廢棄物焚化處理服務(苗栗縣垃圾焚化廠)', '廢棄物焚化處理服務(苗栗縣垃圾焚化廠)'),
+    ('廢棄物焚化處理服務(臺南市永康垃圾資源回收(焚化)廠)', '廢棄物焚化處理服務(臺南市永康垃圾資源回收(焚化)廠)'),
+    ('廢棄物焚化處理服務(臺南市城西垃圾焚化廠)', '廢棄物焚化處理服務(臺南市城西垃圾焚化廠)'),
+    ('廢棄物焚化清理服務(南部科學工業園區-台南園區)', '廢棄物焚化清理服務(南部科學工業園區-台南園區)'),
 ]
 
 
@@ -1239,20 +1226,20 @@ class UTform(forms.ModelForm):
             'delivery_address': forms.TextInput(attrs={'class': 'form-control'}),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'transport_country': forms.TextInput(attrs={'class': 'form-control'}),
-            'paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'paid': forms.RadioSelect(choices=UP_PAID_CHOICES),
             'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
             'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
-            'overseas_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'overseas_paid': forms.RadioSelect(choices=UP_PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'overseas_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'special_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'special_transport_country': forms.TextInput(attrs={'class': 'form-control'}),
-            'special_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'special_paid': forms.RadioSelect(choices=UP_PAID_CHOICES),
             'special_transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
             'special_transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
@@ -1261,7 +1248,7 @@ class UTform(forms.ModelForm):
             'air_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'air_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'air_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'air_paid': forms.RadioSelect(choices=UP_PAID_CHOICES),
             'air_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -1322,20 +1309,20 @@ class DTform(forms.ModelForm):
             'delivery_address': forms.TextInput(attrs={'class': 'form-control'}),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'transport_country': forms.TextInput(attrs={'class': 'form-control'}),
-            'paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'paid': forms.RadioSelect(choices=DOWN_PAID_CHOICES),
             'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
             'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
-            'overseas_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'overseas_paid': forms.RadioSelect(choices=DOWN_PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'overseas_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'special_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'special_transport_country': forms.TextInput(attrs={'class': 'form-control'}),
-            'special_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'special_paid': forms.RadioSelect(choices=DOWN_PAID_CHOICES),
             'special_transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
             'special_transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
@@ -1344,7 +1331,7 @@ class DTform(forms.ModelForm):
             'air_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'air_arrive': forms.TextInput(attrs={'class': 'form-control'}),
             'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'air_paid': forms.RadioSelect(choices=PAID_CHOICES),
+            'air_paid': forms.RadioSelect(choices=DOWN_PAID_CHOICES),
             'air_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -1458,9 +1445,10 @@ TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section,
 class WASTEform(forms.ModelForm):
     class Meta:
         model = waste
-        fields = ('waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
+        fields = ('years', 'waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
                   'transport_type', 'transport_fuel', 'transport_distance', 'image_note', 'message_board')
         widgets = {
+            'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_weigh': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'waste_date'}),

@@ -210,6 +210,10 @@
                                         </label>
                                         <input type="file" id="importExcel" name="importExcel" style="display:none">
                                     </form>
+                                    <form action="{% url 'public_version' %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-outline-light me-1">下載公版</button>
+                                    </form>
                                 {% endif %}
                                 <button type="button" class="btn btn-outline-light me-1" id="exportExcel">
                                     匯出Excel
@@ -760,10 +764,10 @@
 
         // 按下查詢才可操作button
         $(".dropdown-area").change(function disableButtons() {
-            var section = document.getElementById("disable-section");
-            var buttons = section.getElementsByTagName("button");
-            var input = section.getElementsByTagName("input");
-            var exportExcel = document.getElementById("exportExcel");
+            let section = document.getElementById("disable-section");
+            let buttons = section.getElementsByTagName("button");
+            let input = section.getElementsByTagName("input");
+            let exportExcel = document.getElementById("exportExcel");
             exportExcel.disabled = true;
 
             for (let i = 0; i < buttons.length; i++) {

@@ -55,6 +55,7 @@ urlpatterns = [
                   # Excel
                   path("export_excel/", csv.export_excel, name='export_excel'),
                   path('import_excel/', csv.import_excel, name='import_excel'),
+                  path('public_version/', csv.public_version, name='public_version'),
                   # 新增設備轉跳
                   path("new_device/", views.add_page, name='loadadd'),
                   # 編輯設備
