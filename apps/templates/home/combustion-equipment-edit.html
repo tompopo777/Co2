@@ -26,7 +26,7 @@
                                 <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
@@ -40,7 +40,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
@@ -48,6 +48,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in form.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.device_id }}
@@ -57,6 +60,16 @@
                                         <br>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <br>
+                                        {% if form.errors %}
+                                            <div class="col-12 text-center">
+                                                {% if 'fuel_january' in form.errors or 'fuel_february' in form.errors or 'fuel_march' in form.errors or 'fuel_april' in form.errors or 'fuel_may' in form.errors or 'fuel_june' in form.errors or 'fuel_july' in form.errors or 'fuel_august' in form.errors or 'fuel_september' in form.errors or 'fuel_october' in form.errors or 'fuel_november' in form.errors or 'fuel_december' in form.errors or 'heat_january' in form.errors or 'heat_february' in form.errors or 'heat_march' in form.errors or 'heat_april' in form.errors or 'heat_may' in form.errors or 'heat_june' in form.errors or 'heat_july' in form.errors or 'heat_august' in form.errors or 'heat_september' in form.errors or 'heat_october' in form.errors or 'heat_november' in form.errors or 'heat_december' %}
+                                                    <li style="color: red">只能輸入正數 </li>
+                                                {% endif %}
+                                                {% for error in form.errors.數值必須大於零 %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
                                         <div class="d-flex flex-nowrap">
                                             <table class="table">
                                                 <thead>
@@ -78,7 +91,7 @@
                                                 </thead>
                                                 <tbody>
                                                 <tr>
-                                                    <th width="30">
+                                                    <th>
                                                         使用量
                                                     </th>
                                                     <td>
@@ -222,10 +235,18 @@
                                                 {{ form.image_note }}
                                             </div>
                                         </div>
-                                        <div class=" ps-md-2 align-self-center">
-                                            <div class="col-1 ">
-                                                {{ form.image_path }}
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="ps-md-2 align-self-center">
+                                            <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="燃燒設備">
+                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
+                                        </div>
+                                        <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -238,18 +259,19 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
                                             </button>
                                         </div>
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
                                             <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
                                                 取消
                                             </button>
                                         </div>
                                     </div>
                                 </form>
+
                             </div>
                         </div>
                     </div>
@@ -269,6 +291,34 @@
 
 
     <script>
+        {#    顯示使用量錯誤框#}
+        $(document).ready(function () {
+            {% if form.errors %}
+                let error_name = "";
+                let error_input;
+                let parentDiv;
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        error_name = "{{ field.label }}"
+                        error_name = error_name.replaceAll(' ', '_')
+                        if (
+                            error_name==='Fuel_january' || error_name==='Fuel_february' || error_name==='Fuel_march' || error_name==='Fuel_april' ||
+                            error_name==='Fuel_may' || error_name==='Fuel_june' || error_name==='Fuel_july' || error_name==='Fuel_august' ||
+                            error_name==='Fuel_september' || error_name==='Fuel_october' || error_name==='Fuel_november' || error_name==='Fuel_december' ||
+                            error_name==='Heat_january' || error_name==='Heat_february' || error_name==='Heat_march' || error_name==='Heat_april' ||
+                            error_name==='Heat_may' || error_name==='Heat_june' || error_name==='Heat_july' || error_name==='Heat_august' ||
+                            error_name==='Heat_september' || error_name==='Heat_october' || error_name==='Heat_november' || error_name==='Heat_december'
+                        ){
+                            error_name = error_name.toLowerCase()
+                            error_input = document.querySelector("[name=" + error_name + "]");
+                            parentDiv = error_input.parentNode;
+                            parentDiv.classList.add("border", "border-danger", "border-3");
+                        }
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+        });
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;

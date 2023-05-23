@@ -38,6 +38,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in RF_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ RF_add.device_id }}
@@ -78,12 +81,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in RF_add.filling_volume.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ RF_add.filling_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in RF_add.effusion_rate.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ RF_add.effusion_rate }}

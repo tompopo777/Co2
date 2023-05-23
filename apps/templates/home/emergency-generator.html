@@ -38,12 +38,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in EG_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EG_add.device_id }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in EG_add.device_capacity.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>發電機容量 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EG_add.device_capacity }}
@@ -79,6 +85,16 @@
                                                 耗用量(單位：公升) <span style="color:red; font-size:16px;">* </span>
                                             </h5>
                                         </div>
+                                        {% if EG_add.errors %}
+                                            <div class="col-12 text-center">
+                                                {% if 'january' in EG_add.errors  or 'february' in EG_add.errors  or 'march' in EG_add.errors  or 'april' in EG_add.errors  or 'may' in EG_add.errors  or 'june' in EG_add.errors  or 'july' in EG_add.errors  or 'august' in EG_add.errors  or 'september' in EG_add.errors  or 'october' in EG_add.errors  or 'november' in EG_add.errors  or 'december' in EG_add.errors  in EG_add.errors %}
+                                                    <li style="color: red">只能輸入正數 </li>
+                                                {% endif %}
+                                                {% for error in EG_add.errors.數值必須大於零 %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
                                         <table class="table">
                                             <thead>
                                             <tr>
@@ -238,11 +254,8 @@
                     alert(success_message);
                 {% endfor %}
             {% endif %}
-            {% if EG_add.errors %}
-                let error_name = "";
-                let error_input;
-                let parentDiv;
-                {% for field in EG_add %}
+            // 顯示錯誤框
+            {% for field in MT_add %}
                     {% for error in field.errors %}
                         error_name = "{{ field.label }}"
                         if (
@@ -256,9 +269,7 @@
                             parentDiv.classList.add("border", "border-danger", "border-3");
                         }
                     {% endfor %}
-
                 {% endfor %}
-            {% endif %}
         });
 
         {#    禁止enter鍵#}

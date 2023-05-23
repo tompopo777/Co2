@@ -48,6 +48,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in CE_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ CE_add.device_id }}
@@ -57,6 +60,16 @@
                                         <br>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <br>
+                                        {% if CE_add.errors %}
+                                            <div class="col-12 text-center">
+                                                {% if 'fuel_january' in CE_add.errors or 'fuel_february' in CE_add.errors or 'fuel_march' in CE_add.errors or 'fuel_april' in CE_add.errors or 'fuel_may' in CE_add.errors or 'fuel_june' in CE_add.errors or 'fuel_july' in CE_add.errors or 'fuel_august' in CE_add.errors or 'fuel_september' in CE_add.errors or 'fuel_october' in CE_add.errors or 'fuel_november' in CE_add.errors or 'fuel_december' in CE_add.errors or 'heat_january' in CE_add.errors or 'heat_february' in CE_add.errors or 'heat_march' in CE_add.errors or 'heat_april' in CE_add.errors or 'heat_may' in CE_add.errors or 'heat_june' in CE_add.errors or 'heat_july' in CE_add.errors or 'heat_august' in CE_add.errors or 'heat_september' in CE_add.errors or 'heat_october' in CE_add.errors or 'heat_november' in CE_add.errors or 'heat_december' %}
+                                                    <li style="color: red">只能輸入正數 </li>
+                                                {% endif %}
+                                                {% for error in CE_add.errors.數值必須大於零 %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
                                         <div class="d-flex flex-nowrap">
                                             <table class="table">
                                                 <thead>
@@ -288,6 +301,30 @@
                 {% for message in messages %}
                     let success_message = "{{ message }}"
                     alert(success_message);
+                {% endfor %}
+            {% endif %}
+            {% if CE_add.errors %}
+                let error_name = "";
+                let error_input;
+                let parentDiv;
+                {% for field in CE_add %}
+                    {% for error in field.errors %}
+                        error_name = "{{ field.label }}"
+                        error_name = error_name.replaceAll(' ', '_')
+                        if (
+                            error_name==='Fuel_january' || error_name==='Fuel_february' || error_name==='Fuel_march' || error_name==='Fuel_april' ||
+                            error_name==='Fuel_may' || error_name==='Fuel_june' || error_name==='Fuel_july' || error_name==='Fuel_august' ||
+                            error_name==='Fuel_september' || error_name==='Fuel_october' || error_name==='Fuel_november' || error_name==='Fuel_december' ||
+                            error_name==='Heat_january' || error_name==='Heat_february' || error_name==='Heat_march' || error_name==='Heat_april' ||
+                            error_name==='Heat_may' || error_name==='Heat_june' || error_name==='Heat_july' || error_name==='Heat_august' ||
+                            error_name==='Heat_september' || error_name==='Heat_october' || error_name==='Heat_november' || error_name==='Heat_december'
+                        ){
+                            error_name = error_name.toLowerCase()
+                            error_input = document.querySelector("[name=" + error_name + "]");
+                            parentDiv = error_input.parentNode;
+                            parentDiv.classList.add("border", "border-danger", "border-3");
+                        }
+                    {% endfor %}
                 {% endfor %}
             {% endif %}
         });

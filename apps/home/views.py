@@ -1304,8 +1304,6 @@ def refrigerator_add(request):
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
-        else:
-            return redirect('/new_device/', {'RF_add': RF_add})
     else:
         RF_add = RFform()
     context['RF_add'] = RF_add
@@ -1336,8 +1334,6 @@ def airconditioner_add(request):
                 return redirect('/new_device/')
             else:
                 return redirect('/carbon-system/')
-        else:
-            return redirect('/new_device/', {'AC_add': AC_add})
     else:
         AC_add = ACform()
     context['AC_add'] = AC_add
@@ -2468,7 +2464,7 @@ def add_title(request):
             # 冷媒(6~13)
             "6": {
                 "編輯區": ["刪除", "修改"],
-                "冰箱清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冰箱清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
 
             "7": {

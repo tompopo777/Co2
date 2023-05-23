@@ -52,6 +52,9 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-6">
+                                                {% for error in OffCar_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OffCar_add.device_id }}
@@ -71,11 +74,17 @@
                                             <div class="" id="amountTable">
                                                 <div class="d-flex flex-nowrap">
                                                     <h5 class="col-md-12 text-center" id="descriptionColumn" style="color: #7b809a !important;">
-                                                         <span style="color:red; font-size:16px;">* </span>
+                                                        <span style="color:red; font-size:16px;">* </span>
                                                     </h5>
                                                 </div>
                                                 {% if OffCar_add.errors %}
                                                     <div class="col-12 text-center">
+                                                        {% if 'january' in OffCar_add.errors  or 'february' in OffCar_add.errors  or 'march' in OffCar_add.errors  or 'april' in OffCar_add.errors  or 'may' in OffCar_add.errors  or 'june' in OffCar_add.errors  or 'july' in OffCar_add.errors  or 'august' in OffCar_add.errors  or 'september' in OffCar_add.errors  or 'october' in OffCar_add.errors  or 'november' in OffCar_add.errors  or 'december' in OffCar_add.errors  in OffCar_add.errors or 'urea_january' in OffCar_add.errors or 'urea_february' in OffCar_add.errors or 'urea_march' in OffCar_add.errors or 'urea_april' in OffCar_add.errors or 'urea_may' in OffCar_add.errors or 'urea_june' in OffCar_add.errors or 'urea_july' in OffCar_add.errors or 'urea_august' in OffCar_add.errors or 'urea_september' in OffCar_add.errors or 'urea_october' in OffCar_add.errors or 'urea_november' in OffCar_add.errors or 'urea_december' %}
+                                                            <li style="color: red">只能輸入正數</li>
+                                                        {% endif %}
+                                                        {% for error in OffCar_add.errors.數值必須大於零 %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                     </div>
                                                 {% endif %}
                                                 <table class="table">
@@ -350,18 +359,22 @@
             {% endif %}
             // 表單錯誤提示
             {% if OffCar_add.errors %}
-{#            {% if OffCar_add.january.errors %}#}
                 let error_name = "";
                 let error_input;
                 let parentDiv;
                 {% for field in OffCar_add %}
                     {% for error in field.errors %}
                         error_name = "{{ field.label }}"
+                        console.warn(error_name)
+                        error_name = error_name.replaceAll(' ', '_')
                         if (
-                            error_name==='January' || error_name==='February' || error_name==='March' || error_name==='April' ||
-                            error_name==='May' || error_name==='June' || error_name==='July' || error_name==='August' ||
-                            error_name==='September' || error_name==='October' || error_name==='November' || error_name==='December'
-                        ){
+                            error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                            error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                            error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December' ||
+                            error_name === 'Urea_january' || error_name === 'Urea_february' || error_name === 'Urea_march' || error_name === 'Urea_april' ||
+                            error_name === 'Urea_may' || error_name === 'Urea_june' || error_name === 'Urea_july' || error_name === 'Urea_august' ||
+                            error_name === 'Urea_september' || error_name === 'Urea_october' || error_name === 'Urea_november' || error_name === 'Urea_december'
+                        ) {
                             error_name = error_name.toLowerCase()
                             error_input = document.querySelector("[name=" + error_name + "]");
                             parentDiv = error_input.parentNode;
@@ -370,6 +383,7 @@
                     {% endfor %}
                 {% endfor %}
             {% endif %}
+
             handleCheckboxClick()
         });
 

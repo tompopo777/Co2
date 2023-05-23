@@ -721,7 +721,7 @@
                             if (!executed) {
                                 executed = true;
                                 const dropdown_three_value = "{{ dropdown_three }}";
-                                console.warn(dropdown_three_value)
+                                {#console.warn(dropdown_three_value)#}
                                 for (let option of dropdown_three.options) {
                                     if (option.value === dropdown_three_value) {
                                         option.selected = true;

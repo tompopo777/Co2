@@ -38,6 +38,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in IWD_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ IWD_add.device_id }}
@@ -78,12 +81,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in IWD_add.filling_volume.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ IWD_add.filling_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in IWD_add.effusion_rate.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ IWD_add.effusion_rate }}
@@ -124,14 +133,14 @@
                                     <div class="d-flex">
                                         <div class="ps-md-2 align-self-center">
                                             <div class="col-2" multiple="multiple">
-                                                <input type="hidden" name="stage" value="冰水機清單">
+                                                <input type="hidden" name="stage" value="冰箱">
                                                 <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
                                         </div>
                                         <div id="files-area">
-                                            <span id="filesList">
-                                                <span id="files-names"></span>
-                                            </span>
+            <span id="filesList">
+                <span id="files-names"></span>
+            </span>
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">

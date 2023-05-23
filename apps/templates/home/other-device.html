@@ -28,8 +28,7 @@
                             </div>
                             <div class="card-body">
                                 <form action="/other_device_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                    <input type="hidden" name="company_id" value="{{ company_id }}">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
                                             <div class="col-4">
@@ -39,6 +38,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in OD_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OD_add.device_id }}
@@ -79,12 +81,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in OD_add.filling_volume.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OD_add.filling_volume }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in OD_add.effusion_rate.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OD_add.effusion_rate }}
@@ -125,7 +133,7 @@
                                     <div class="d-flex">
                                         <div class="ps-md-2 align-self-center">
                                             <div class="col-2" multiple="multiple">
-                                                <input type="hidden" name="stage" value="設備清單">
+                                                <input type="hidden" name="stage" value="冰箱">
                                                 <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
                                         </div>
@@ -145,12 +153,17 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認，並新增另一筆
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
                                             </button>
                                         </div>
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
                                             <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
                                                 取消
                                             </button>

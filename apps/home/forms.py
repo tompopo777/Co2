@@ -305,9 +305,8 @@ class EGform(forms.ModelForm):
                   'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '單位:公升'}),
-            # 'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '單位:公升'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'estimate': forms.CheckboxInput(attrs={'class': 'form-check-input estimate', 'id': 'estimate', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#estimate-collapse', 'aria-expanded': 'false', 'aria-controls': 'estimate-collapse'}),
@@ -333,11 +332,32 @@ class EGform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
-    # def clean_device_id(self):
-    #     device_id = self.cleaned_data.get('device_id')
-    #     if emergency_generators.objects.filter(device_id=device_id):
-    #         raise forms.ValidationError("設備編號重複!")
-    #     return device_id
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_device_capacity(self):
+        device_capacity = self.cleaned_data.get('device_capacity')
+        if device_capacity < 0:
+            raise forms.ValidationError("只能輸入正整數")
+        elif device_capacity == 0:
+            raise forms.ValidationError("輸入數值不得為零")
+        return device_capacity
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
 
 
 # 燃燒設備
@@ -352,7 +372,7 @@ class CEform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'fuel_type': forms.Select(choices=CE_FUEL_TYPE_CHOICES),
             'fuel_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'fuel_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -387,6 +407,27 @@ class CEform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['fuel_january', 'fuel_february', 'fuel_march', 'fuel_april', 'fuel_may', 'fuel_june',
+                  'fuel_july', 'fuel_august', 'fuel_september', 'fuel_october', 'fuel_november', 'fuel_december',
+                  'heat_january', 'heat_february', 'heat_march', 'heat_april', 'heat_may', 'heat_june',
+                  'heat_july', 'heat_august', 'heat_september', 'heat_october', 'heat_november', 'heat_december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
+
 
 # 公務車
 class OFform(forms.ModelForm):
@@ -401,8 +442,7 @@ class OFform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
-            # 'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
             'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES, attrs={'class': 'form-check-input'}),
@@ -440,6 +480,27 @@ class OFform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december',
+                  'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june',
+                  'urea_july', 'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
+
 
 # 原物料使用
 class MTform(forms.ModelForm):
@@ -450,7 +511,7 @@ class MTform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'material_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'material_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'material_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 原料/物料'}),
             'chemical': forms.CheckboxInput(attrs={'class': 'form-check-input chemical', 'id': 'chemical', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
@@ -481,6 +542,24 @@ class MTform(forms.ModelForm):
         self.fields['message_board'].required = False
         # self.fields['material_id'].validators[]
 
+    def clean_material_id(self):
+        material_id = self.cleaned_data.get('material_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return material_id
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+        return cleaned_data
+
 
 # 製成添加物
 class PCform(forms.ModelForm):
@@ -492,9 +571,9 @@ class PCform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
-            'material_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'material_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name'}),
-            'carbon_content': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,2})?$', 'title': '只能輸入正實數(小數點後兩位)', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
+            'carbon_content': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
             'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'VOCs': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
             'unit': forms.Select(choices=PROCESS_UNIT_CHOICES),
@@ -520,6 +599,30 @@ class PCform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_material_id(self):
+        material_id = self.cleaned_data.get('material_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return material_id
+
+    def clean_carbon_content(self):
+        carbon_content = self.cleaned_data.get('carbon_content')
+        if not re.match(r'^[0-9]+(.[0-9]{0,2})?$', str(carbon_content)):
+            raise forms.ValidationError("只能輸入正實數(小數點後兩位)", 'invalid')
+        return carbon_content
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+        return cleaned_data
+
 
 # 冰箱清單
 class RFform(forms.ModelForm):
@@ -529,14 +632,14 @@ class RFform(forms.ModelForm):
                   'filling_volume', 'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
-            'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.5'}),
+            'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.5', 'placeholder': "只能輸入正實數(小數點後四位)"}),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -552,6 +655,24 @@ class RFform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_filling_volume(self):
+        filling_volume = self.cleaned_data.get('filling_volume')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(filling_volume)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return filling_volume
+
+    def clean_effusion_rate(self):
+        effusion_rate = self.cleaned_data.get('effusion_rate')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return effusion_rate
+
 
 # 冷氣清單
 class ACform(forms.ModelForm):
@@ -561,14 +682,14 @@ class ACform(forms.ModelForm):
                   'filling_volume', 'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
-            'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '5.5'}),
+            'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '5.5', 'placeholder': "只能輸入正實數(小數點後四位)"}),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -584,6 +705,23 @@ class ACform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_filling_volume(self):
+        filling_volume = self.cleaned_data.get('filling_volume')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(filling_volume)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return filling_volume
+
+    def clean_effusion_rate(self):
+        effusion_rate = self.cleaned_data.get('effusion_rate')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return effusion_rate
 
 # 車輛清單
 class VCform(forms.ModelForm):
@@ -593,14 +731,14 @@ class VCform(forms.ModelForm):
                   'filling_volume', 'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
-            'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '15'}),
+            'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '15', 'placeholder': "只能輸入正實數(小數點後四位)"}),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -616,6 +754,23 @@ class VCform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_filling_volume(self):
+        filling_volume = self.cleaned_data.get('filling_volume')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(filling_volume)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return filling_volume
+
+    def clean_effusion_rate(self):
+        effusion_rate = self.cleaned_data.get('effusion_rate')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return effusion_rate
 
 # 飲水機清單
 class WDform(forms.ModelForm):
@@ -625,14 +780,14 @@ class WDform(forms.ModelForm):
                   'filling_volume', 'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
-            'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.3'}),
+            'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '0.3', 'placeholder': "只能輸入正實數(小數點後四位)"}),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -648,6 +803,23 @@ class WDform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_filling_volume(self):
+        filling_volume = self.cleaned_data.get('filling_volume')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(filling_volume)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return filling_volume
+
+    def clean_effusion_rate(self):
+        effusion_rate = self.cleaned_data.get('effusion_rate')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return effusion_rate
 
 # 冰水機清單
 class IWDform(forms.ModelForm):
@@ -657,14 +829,14 @@ class IWDform(forms.ModelForm):
                   'filling_volume', 'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
-            'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '9'}),
+            'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '9', 'placeholder': "只能輸入正實數(小數點後四位)"}),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -680,6 +852,23 @@ class IWDform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_filling_volume(self):
+        filling_volume = self.cleaned_data.get('filling_volume')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(filling_volume)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return filling_volume
+
+    def clean_effusion_rate(self):
+        effusion_rate = self.cleaned_data.get('effusion_rate')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return effusion_rate
 
 # 製冰機清單
 class IMform(forms.ModelForm):
@@ -689,14 +878,14 @@ class IMform(forms.ModelForm):
                   'filling_volume', 'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
-            'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '16'}),
+            'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'value': '16', 'placeholder': "只能輸入正實數(小數點後四位)"}),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -712,6 +901,23 @@ class IMform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_filling_volume(self):
+        filling_volume = self.cleaned_data.get('filling_volume')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(filling_volume)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return filling_volume
+
+    def clean_effusion_rate(self):
+        effusion_rate = self.cleaned_data.get('effusion_rate')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return effusion_rate
 
 # 設備清單
 class ODform(forms.ModelForm):
@@ -721,14 +927,14 @@ class ODform(forms.ModelForm):
                   'filling_volume', 'effusion_rate', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
-            'filling_volume': forms.TextInput(attrs={'class': 'form-control'}),
-            'effusion_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
+            'effusion_rate': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:150px'}, choices=REFRIGERANT_TYPE_CHOICES),
             'filling_fix_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若有維修，則規格填充量不必填'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -744,6 +950,23 @@ class ODform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_filling_volume(self):
+        filling_volume = self.cleaned_data.get('filling_volume')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(filling_volume)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return filling_volume
+
+    def clean_effusion_rate(self):
+        effusion_rate = self.cleaned_data.get('effusion_rate')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return effusion_rate
 
 # 滅火器
 class EXform(forms.ModelForm):
@@ -755,7 +978,7 @@ class EXform(forms.ModelForm):
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'extinguisher_type': forms.Select(attrs={'id': 'extinguisher_type'}, choices=EXTINGUISHER_TYPE_CHOICES),
-            'device_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '選填'}),
             'chemical_weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
@@ -1347,15 +1570,12 @@ class PWform(forms.ModelForm):
 class PMform(forms.ModelForm):
     class Meta:
         model = purchase_material
-        fields = ('years', 'product_id', 'product_name', 'vendor', 'category_name', 'material_type', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
+        fields = ('years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
                   'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'product_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'product_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'vendor': forms.TextInput(attrs={'class': 'form-control'}),
-            'category_name': forms.Select(attrs={'id': 'category_name'}, choices=DropdownOption.objects.filter(option_group='大類名稱').values_list('option_value', 'option_label')),
-            'material_type': forms.RadioSelect(choices=MATERIAL_TYPE, attrs={'class': 'form-check-inline'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),

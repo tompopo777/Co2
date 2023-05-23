@@ -225,7 +225,7 @@ class process(models.Model):
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=5, db_column='did_id')
     years = models.IntegerField(default=timezone.now().year)
     process_add_name = models.CharField(max_length=20)
-    carbon_content = models.DecimalField(max_digits=20, decimal_places=4)
+    carbon_content = models.DecimalField(max_digits=20, decimal_places=2)
     process_stage = models.CharField(max_length=20)
     material_id = models.CharField(max_length=30)
     CAS_NO = models.CharField(max_length=20)
