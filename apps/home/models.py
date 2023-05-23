@@ -399,7 +399,7 @@ class extinguisher(models.Model):
     position = models.CharField(max_length=100)
     extinguisher_vendor = models.CharField(max_length=30, null=True)
     chemical_weight = models.DecimalField(max_digits=20, decimal_places=4, default=0)
-    inventory = models.DecimalField(max_digits=20, decimal_places=0, default=0)
+    inventory = models.DecimalField(max_digits=20, decimal_places=0)
     using_amount = models.IntegerField()
     monthly = models.CharField(max_length=20)
     replace_filling_amount = models.FloatField()
