@@ -153,22 +153,18 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-auto mx-3">
-                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
-                                                確認，並新增另一筆
-                                            </button>
+                                            <div class="col-1">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認
+                                                </button>
+                                            </div>
+                                            <div class="col-1">
+                                                <button type="button"  class="btn bg-gradient-secondary mt-3 mb-0"
+                                                        onclick="history.back()">
+                                                    取消
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="col-auto mx-3">
-                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
-                                                確認
-                                            </button>
-                                        </div>
-                                        <div class="col-auto mx-3">
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
-                                                取消
-                                            </button>
-                                        </div>
-                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -209,7 +205,7 @@
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
 
         {#    購買年份篩選器#}
@@ -219,7 +215,7 @@
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
 
         {#    照片顯示檔名+可刪除#}

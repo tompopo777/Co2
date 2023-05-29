@@ -87,12 +87,12 @@
                                         </div>
                                         {% if form.errors %}
                                             <div class="col-12 text-center">
-                                            {% if 'january' in form.errors  or 'february' in form.errors  or 'march' in form.errors  or 'april' in form.errors  or 'may' in form.errors  or 'june' in form.errors  or 'july' in form.errors  or 'august' in form.errors  or 'september' in form.errors  or 'october' in form.errors  or 'november' in form.errors  or 'december' in form.errors  in form.errors %}
-                                                <li style="color: red">只能輸入正數 </li>
-                                            {% endif %}
-                                            {% for error in form.errors.數值必須大於零 %}
-                                                <li style="color: red">{{ error }}</li>
-                                            {% endfor %}
+                                                {% if 'january' in form.errors  or 'february' in form.errors  or 'march' in form.errors  or 'april' in form.errors  or 'may' in form.errors  or 'june' in form.errors  or 'july' in form.errors  or 'august' in form.errors  or 'september' in form.errors  or 'october' in form.errors  or 'november' in form.errors  or 'december' in form.errors  in form.errors %}
+                                                    <li style="color: red">只能輸入正數</li>
+                                                {% endif %}
+                                                {% for error in form.errors.數值必須大於零 %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                             </div>
                                         {% endif %}
                                         <table class="table">
@@ -221,7 +221,7 @@
                                             </button>
                                         </div>
                                     </div>
-                        </form>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -250,10 +250,10 @@
                     {% for error in field.errors %}
                         error_name = "{{ field.label }}"
                         if (
-                            error_name==='January' || error_name==='February' || error_name==='March' || error_name==='April' ||
-                            error_name==='May' || error_name==='June' || error_name==='July' || error_name==='August' ||
-                            error_name==='September' || error_name==='October' || error_name==='November' || error_name==='December'
-                        ){
+                            error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                            error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                            error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
+                        ) {
                             error_name = error_name.toLowerCase()
                             error_input = document.querySelector("[name=" + error_name + "]");
                             parentDiv = error_input.parentNode;
@@ -261,7 +261,7 @@
                         }
                     {% endfor %}
                 {% endfor %}
-    {% endif %}
+            {% endif %}
 
         });
 
@@ -282,7 +282,7 @@
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
 
         {#    照片顯示檔名+可刪除#}

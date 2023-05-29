@@ -972,8 +972,8 @@ class EXform(forms.ModelForm):
             'inventory': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'using_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
             'monthly': forms.TextInput(attrs={'class': 'form-control', 'id': 'monthly'}),
-            'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'replace_filling_date'}),
+            'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入數字，無更換/填充則無需填寫'}),
+            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'replace_filling_date', 'placeholder': '無更換/填充則無需填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄'})
         }
@@ -982,6 +982,8 @@ class EXform(forms.ModelForm):
         super(EXform, self).__init__(*args, **kwargs)
         self.fields['device_id'].required = False
         self.fields['extinguisher_vendor'].required = False
+        self.fields['replace_filling_amount'].required = False
+        self.fields['replace_filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
