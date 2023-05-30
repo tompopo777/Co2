@@ -53,9 +53,9 @@ urlpatterns = [
                   path("loadchemical/", views.load_chemical, name='loadchemical'),
                   # path("copy_last_year_data/", views.copy_last_year_data, name='copy_last_year_data'),
                   # Excel
-                  path("export_excel/", csv.export_excel, name='export_excel'),
+                  # path("export_excel/", csv.export_excel, name='export_excel'),
                   path('import_excel/', csv.import_excel, name='import_excel'),
-                  path('public_version/', csv.public_version, name='public_version'),
+                  # path('public_version/', csv.public_version, name='public_version'),
                   # # 新增設備轉跳
                   # path("new_device/", views.add_page, name='loadadd'),
                   # 新增設備轉跳

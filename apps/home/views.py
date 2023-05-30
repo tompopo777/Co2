@@ -1686,8 +1686,8 @@ def waste_sludge_add(request):
             waste_sludge_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
-            last_id = waste_sludge_add.objects.values("id").last().get("id")
-            table_id = waste_sludge_add.objects.values("did").last().get("did")
+            last_id = waste_sludge.objects.values("id").last().get("id")
+            table_id = waste_sludge.objects.values("did").last().get("did")
             for img in image_path:
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
@@ -2203,18 +2203,10 @@ def bar_action(request):
             message = copy_last_year_data(request)
             print('message', message)
             return carbon_system(request, message)
-        if 'import_excel' in request.GET:
-            message = import_excel(request)
-            print('message', message)
-            return carbon_system(request, message)
         if 'public_version' in request.GET:
-            message = public_version(request)
-            print('message', message)
-            return carbon_system(request, message)
+            return public_version(request)
         if 'export_excel' in request.GET:
-            message = export_excel(request)
-            print('message', message)
-            return carbon_system(request, message)
+            return export_excel(request)
 
 
 # 編輯轉跳

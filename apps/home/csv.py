@@ -399,11 +399,10 @@ def public_version(request):
         return render(request, 'home/carbon-system.html')
 
 
-
 @csrf_exempt
-@require_http_methods(["GET"])
+@require_http_methods(["POST"])
 def import_excel(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
         # 取得設備編號、公司編號、檔案
         did = request.session.get('dropdown_three')
         factory_id = request.session.get('factory_id')
@@ -540,17 +539,15 @@ def import_excel(request):
                 for data in data_dict:
                     data['company_id'] = factory_id
 
-                    # # 判斷 estimate 欄位的值並轉換為布尔值
-                    # if data['estimate'] == '是':
-                    #     data['estimate'] = True
-                    # else:
-                    #     data['estimate'] = False
                     for key, value in data.items():
                         # 判斷值是否為'是'或'否'
                         if value == '是':
                             data[key] = True
                         elif value == '否':
                             data[key] = False
+                        elif pd.isna(value) or value == '':  # 檢查是否為 NaN 或空白儲存格
+                            data[key] = None  # 將值設為 None，而不是儲存空白值
+
 
                 # 將資料存入資料庫
                 model_list = [globals()[table_name](**data) for data in data_dict]

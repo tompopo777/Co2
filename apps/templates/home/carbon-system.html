@@ -200,28 +200,28 @@
                                         {% csrf_token %}
                                         <button type="submit" name="add_page" class="btn btn-outline-light me-1">新增</button>
                                         <button type="submit" name="copy_last_year" class="btn btn-outline-light me-1">複製去年資料</button>
-                                        <button type="submit" name="import_excel" class="btn btn-outline-light me-1">匯入Excel</button>
                                         <button type="submit" name="public_version" class="btn btn-outline-light me-1">下載公版</button>
+                                    </form>
+                                    <form method="post" action="{% url 'import_excel' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <label for="importExcel" class="btn btn-outline-light me-1">
+                                            匯入Excel
+                                        </label>
+                                        <input type="file" id="importExcel" name="importExcel" style="display:none">
+                                    </form>
+                                {% endif %}
+                                    <form method="GET" action="{% url 'bar_action' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
                                         <button type="submit" name="export_excel" class="btn btn-outline-light me-1">匯出Excel</button>
                                     </form>
-{#                                    <div class="d-flex justify-content-center">#}
-{#                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">#}
-{#                                    </div>#}
-{#                                    <form method="post" enctype="multipart/form-data">#}
-{#                                        {% csrf_token %}#}
-{#                                        <label for="importExcel" class="btn btn-outline-light me-1">#}
-{#                                            匯入Excel#}
-{#                                        </label>#}
-{#                                        <input type="file" id="importExcel" name="importExcel" style="display:none">#}
-{#                                    </form>#}
-{#                                    <form action="{% url 'public_version' %}" method="post">#}
-{#                                        {% csrf_token %}#}
-{#                                        <button type="submit" class="btn btn-outline-light me-1">下載公版</button>#}
-{#                                    </form>#}
-                                {% endif %}
-                                <button type="button" class="btn btn-outline-light me-1" id="exportExcel">
-                                    匯出Excel
-                                </button>
+                                {#                                    <div class="d-flex justify-content-center">#}
+                                {#                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">#}
+                                {#                                    </div>#}
+
+                                {#                                    <form action="{% url 'public_version' %}" method="post">#}
+                                {#                                        {% csrf_token %}#}
+                                {#                                        <button type="submit" class="btn btn-outline-light me-1">下載公版</button>#}
+                                {#                                    </form>#}
                             </div>
                         </div>
                     </div>
@@ -747,24 +747,9 @@
                 });
             }
             let copy_last_year = "{{ message }}" // 顯示成功訊息
-            if(copy_last_year !== ""){
+            if (copy_last_year !== "") {
                 alert(copy_last_year); // 顯示成功訊息
                 console.warn('copy_last_year', copy_last_year)
-            }
-            let import_excel = "{{ message }}" // 顯示成功訊息
-            if(import_excel !== ""){
-                alert(import_excel); // 顯示成功訊息
-                console.warn('import_excel', import_excel)
-            }
-            let public_version = "{{ message }}" // 顯示成功訊息
-            if(public_version !== ""){
-                alert(public_version); // 顯示成功訊息
-                console.warn('public_version', public_version)
-            }
-            let export_excel = "{{ message }}" // 顯示成功訊息
-            if(export_excel !== ""){
-                alert(export_excel); // 顯示成功訊息
-                console.warn('export_excel', export_excel)
             }
         });
 
@@ -802,8 +787,8 @@
             }
         });
 
-    /*    $("#copyLastYear").on("click", function () {
-            {#let csrf_token = "{{ csrf_token }}";#}
+        /*    $("#copyLastYear").on("click", function () {
+{#let csrf_token = "{{ csrf_token }}";#}
 
             $.ajax({
                 type: "POST",
@@ -861,7 +846,9 @@
 
     <!-- Excel -->
     <script>
+
         $(document).ready(function () {
+            /*
             // 匯出 Excel 按鈕
             $('#exportExcel').on('click', function () {
                 let dropdown_three = document.getElementById('dropdown_three');
@@ -876,7 +863,7 @@
                 };
 
                 $.ajax({
-                    url: "{% url 'export_excel' %}",
+                    url: "{ url 'export_excel' %}",
                     type: "POST",
                     data: data,
                     xhrFields: {
@@ -910,6 +897,7 @@
                     cache: false
                 });
             });
+            */
 
             // 匯入 Excel 按鈕
             $('#importExcel').on('change', function () {
@@ -923,7 +911,7 @@
                 formData.append('company_id', companyValue)
 
                 $.ajax({
-                    url: "{% url 'import_excel' %}",
+                    url: "/import_excel/",
                     type: "POST",
                     data: formData,
                     contentType: false,
