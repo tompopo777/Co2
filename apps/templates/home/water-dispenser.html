@@ -167,12 +167,12 @@
                                             </button>
                                         </div>
                                         <div class="col-auto mx-3">
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
-    </form>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -196,11 +196,11 @@
 
     <script>
         {#    顯示新增成功訊息#}
-        $(document).ready(function() {
+        $(document).ready(function () {
             {% if messages %}
                 {% for message in messages %}
                     let success_message = "{{ message }}"
-                        alert(success_message);
+                    alert(success_message);
                 {% endfor %}
             {% endif %}
         });
