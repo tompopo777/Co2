@@ -195,33 +195,19 @@
                         <hr style="height:2px;border-width:0;color:gray;background-color:gray">
                         <div class="mb-4">
                             <div class="d-flex justify-content-center" id="disable-section">
-                                {% if perms.home.add_emergency_generators %}
-                                    <form method="GET" action="{% url 'bar_action' %}" enctype="multipart/form-data">
-                                        {% csrf_token %}
+                                <form method="GET" action="{% url 'bar_action' %}" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    {% if perms.home.add_emergency_generators %}
                                         <button type="submit" name="add_page" class="btn btn-outline-light me-1">新增</button>
                                         <button type="submit" name="copy_last_year" class="btn btn-outline-light me-1">複製去年資料</button>
                                         <button type="submit" name="public_version" class="btn btn-outline-light me-1">下載公版</button>
-                                    </form>
-                                    <form method="post" action="{% url 'import_excel' %}" enctype="multipart/form-data">
-                                        {% csrf_token %}
                                         <label for="importExcel" class="btn btn-outline-light me-1">
                                             匯入Excel
                                         </label>
                                         <input type="file" id="importExcel" name="importExcel" style="display:none">
-                                    </form>
-                                {% endif %}
-                                    <form method="GET" action="{% url 'bar_action' %}" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <button type="submit" name="export_excel" class="btn btn-outline-light me-1">匯出Excel</button>
-                                    </form>
-                                {#                                    <div class="d-flex justify-content-center">#}
-                                {#                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">#}
-                                {#                                    </div>#}
-
-                                {#                                    <form action="{% url 'public_version' %}" method="post">#}
-                                {#                                        {% csrf_token %}#}
-                                {#                                        <button type="submit" class="btn btn-outline-light me-1">下載公版</button>#}
-                                {#                                    </form>#}
+                                    {% endif %}
+                                    <button type="submit" name="export_excel" class="btn btn-outline-light me-1">匯出Excel</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -776,8 +762,6 @@
             let section = document.getElementById("disable-section");
             let buttons = section.getElementsByTagName("button");
             let input = section.getElementsByTagName("input");
-            let exportExcel = document.getElementById("exportExcel");
-            exportExcel.disabled = true;
 
             for (let i = 0; i < buttons.length; i++) {
                 buttons[i].disabled = true;
@@ -786,29 +770,6 @@
                 input[i].disabled = true;
             }
         });
-
-        /*    $("#copyLastYear").on("click", function () {
-{#let csrf_token = "{{ csrf_token }}";#}
-
-            $.ajax({
-                type: "POST",
-                {#url: "{% url 'copy_last_year_data' %}",#}
-                headers: {"X-CSRFToken": csrf_token},
-                data: {},
-                dataType: "json",  // 設定回傳的資料型態為 JSON
-                success: function (response) {
-                    if (response.success) {
-                        alert(response.message); // 顯示成功訊息
-                        $("#yearInput").val(new Date().getFullYear());
-                        updateYear();
-                        loadtable();
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            });
-        });
-        */
     </script>
 
     <!--/*刪除該筆設備*/-->
@@ -848,57 +809,6 @@
     <script>
 
         $(document).ready(function () {
-            /*
-            // 匯出 Excel 按鈕
-            $('#exportExcel').on('click', function () {
-                let dropdown_three = document.getElementById('dropdown_three');
-                let selectedValue = dropdown_three.value;
-                let companyValue = $("#factory_dropdown").val();
-                let yearInput = $("#yearInput").val()
-
-                let data = {
-                    did: selectedValue,
-                    company_id: companyValue,
-                    yearInput: yearInput,
-                };
-
-                $.ajax({
-                    url: "{ url 'export_excel' %}",
-                    type: "POST",
-                    data: data,
-                    xhrFields: {
-                        responseType: 'blob'
-                    },
-                    success: function (blob, status, xhr) {
-                        var filename = '';
-                        var contentDisposition = xhr.getResponseHeader('Content-Disposition');
-                        if (contentDisposition && contentDisposition.indexOf('attachment') !== -1) {
-                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                            var matches = filenameRegex.exec(contentDisposition);
-                            if (matches != null && matches[1]) {
-                                filename = decodeURI(matches[1].replace(/['"]/g, ''));
-                            }
-                        }
-
-                        var downloadLink = document.createElement('a');
-                        downloadLink.href = window.URL.createObjectURL(blob);
-                        downloadLink.download = filename || 'download.xlsx';
-                        downloadLink.style.display = 'none';
-                        document.body.appendChild(downloadLink);
-                        downloadLink.click();
-                        document.body.removeChild(downloadLink);
-                    },
-                    error: function (xhr, status, error) {
-                        alert('匯出 Excel 失敗');
-                        console.log(error)
-                    },
-                    contentType: 'application/x-www-form-urlencoded',
-                    processData: true,
-                    cache: false
-                });
-            });
-            */
-
             // 匯入 Excel 按鈕
             $('#importExcel').on('change', function () {
                 let dropdown_three = document.getElementById('dropdown_three');
