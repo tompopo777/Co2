@@ -2425,6 +2425,7 @@ def update_device(request, single_dataID):
         form = formName.get(datasheet_id)
         current_data = get_object_or_404(dbName, id=single_dataID)
         update_from = form(request.POST, request.FILES, instance=current_data)
+
         if request.method == 'POST':
             # 表中表情況
             try:

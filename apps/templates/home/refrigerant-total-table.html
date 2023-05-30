@@ -139,9 +139,9 @@
                                             </button>
                                         </div>
                                         <div class="col-1">
-                                            <button type="cancel" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -166,7 +166,7 @@
     <script>
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
-            if (code == 13) {
+            if (code === 13) {
                 e.preventDefault();
                 return false;
             }
