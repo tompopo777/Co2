@@ -196,24 +196,28 @@
                         <div class="mb-4">
                             <div class="d-flex justify-content-center" id="disable-section">
                                 {% if perms.home.add_emergency_generators %}
-                                    <form method="get" action="{% url 'loadadd' %}" enctype="multipart/form-data">
+                                    <form method="GET" action="{% url 'bar_action' %}" enctype="multipart/form-data">
                                         {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-light me-1">新增</button>
+                                        <button type="submit" name="add_page" class="btn btn-outline-light me-1">新增</button>
+                                        <button type="submit" name="copy_last_year" class="btn btn-outline-light me-1">複製去年資料</button>
+                                        <button type="submit" name="import_excel" class="btn btn-outline-light me-1">匯入Excel</button>
+                                        <button type="submit" name="public_version" class="btn btn-outline-light me-1">下載公版</button>
+                                        <button type="submit" name="export_excel" class="btn btn-outline-light me-1">匯出Excel</button>
                                     </form>
-                                    <div class="d-flex justify-content-center">
-                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
-                                    </div>
-                                    <form method="post" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <label for="importExcel" class="btn btn-outline-light me-1">
-                                            匯入Excel
-                                        </label>
-                                        <input type="file" id="importExcel" name="importExcel" style="display:none">
-                                    </form>
-                                    <form action="{% url 'public_version' %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-light me-1">下載公版</button>
-                                    </form>
+{#                                    <div class="d-flex justify-content-center">#}
+{#                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">#}
+{#                                    </div>#}
+{#                                    <form method="post" enctype="multipart/form-data">#}
+{#                                        {% csrf_token %}#}
+{#                                        <label for="importExcel" class="btn btn-outline-light me-1">#}
+{#                                            匯入Excel#}
+{#                                        </label>#}
+{#                                        <input type="file" id="importExcel" name="importExcel" style="display:none">#}
+{#                                    </form>#}
+{#                                    <form action="{% url 'public_version' %}" method="post">#}
+{#                                        {% csrf_token %}#}
+{#                                        <button type="submit" class="btn btn-outline-light me-1">下載公版</button>#}
+{#                                    </form>#}
                                 {% endif %}
                                 <button type="button" class="btn btn-outline-light me-1" id="exportExcel">
                                     匯出Excel
@@ -742,6 +746,26 @@
                     });
                 });
             }
+            let copy_last_year = "{{ message }}" // 顯示成功訊息
+            if(copy_last_year !== ""){
+                alert(copy_last_year); // 顯示成功訊息
+                console.warn('copy_last_year', copy_last_year)
+            }
+            let import_excel = "{{ message }}" // 顯示成功訊息
+            if(import_excel !== ""){
+                alert(import_excel); // 顯示成功訊息
+                console.warn('import_excel', import_excel)
+            }
+            let public_version = "{{ message }}" // 顯示成功訊息
+            if(public_version !== ""){
+                alert(public_version); // 顯示成功訊息
+                console.warn('public_version', public_version)
+            }
+            let export_excel = "{{ message }}" // 顯示成功訊息
+            if(export_excel !== ""){
+                alert(export_excel); // 顯示成功訊息
+                console.warn('export_excel', export_excel)
+            }
         });
 
         $("#submit").on('click', function () {
@@ -778,12 +802,12 @@
             }
         });
 
-        $("#copyLastYear").on("click", function () {
-            let csrf_token = "{{ csrf_token }}";
+    /*    $("#copyLastYear").on("click", function () {
+            {#let csrf_token = "{{ csrf_token }}";#}
 
             $.ajax({
                 type: "POST",
-                url: "{% url 'copy_last_year_data' %}",
+                {#url: "{% url 'copy_last_year_data' %}",#}
                 headers: {"X-CSRFToken": csrf_token},
                 data: {},
                 dataType: "json",  // 設定回傳的資料型態為 JSON
@@ -799,6 +823,7 @@
                 }
             });
         });
+        */
     </script>
 
     <!--/*刪除該筆設備*/-->

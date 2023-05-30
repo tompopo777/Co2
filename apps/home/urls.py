@@ -51,13 +51,15 @@ urlpatterns = [
                   path("edit_device/", views.edit_device, name='loadedit'),
                   path("chemical_dropdowm/", views.chemical_dropdowm, name='chemical_dropdowm'),
                   path("loadchemical/", views.load_chemical, name='loadchemical'),
-                  path("copy_last_year_data/", views.copy_last_year_data, name='copy_last_year_data'),
+                  # path("copy_last_year_data/", views.copy_last_year_data, name='copy_last_year_data'),
                   # Excel
                   path("export_excel/", csv.export_excel, name='export_excel'),
                   path('import_excel/', csv.import_excel, name='import_excel'),
                   path('public_version/', csv.public_version, name='public_version'),
+                  # # 新增設備轉跳
+                  # path("new_device/", views.add_page, name='loadadd'),
                   # 新增設備轉跳
-                  path("new_device/", views.add_page, name='loadadd'),
+                  path("bar_action/", views.bar_action, name='bar_action'),
                   # 編輯設備
                   path('update_device/<int:single_dataID>', views.update_device, name='update_device'),
                   # 刪除設備

@@ -9,7 +9,7 @@ from django.shortcuts import render
 from urllib import parse
 from django.contrib import messages
 from openpyxl import load_workbook
-from .views import current_user_group_id
+# from .views import current_user_group_id
 
 from .models import *
 
@@ -252,9 +252,9 @@ COLUMN_MAPPING = {
 
 # 匯出功能
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["GET"])
 def export_excel(request):
-    if request.method == "POST":
+    if request.method == "GET":
         # did = request.POST.get('did')
         # year = request.POST.get('yearInput')
         device_id = request.session.get('dropdown_three')
@@ -352,9 +352,9 @@ def export_excel(request):
 
 # 下載公版
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["GET"])
 def public_version(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         # 取得設備編號、公司編號、檔案
         device_id = request.session.get('dropdown_three')
         excel_did = section_two.objects.filter(did__exact=int(device_id))
@@ -401,9 +401,9 @@ def public_version(request):
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
+@require_http_methods(["GET"])
 def import_excel(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
         # 取得設備編號、公司編號、檔案
         did = request.session.get('dropdown_three')
         factory_id = request.session.get('factory_id')
