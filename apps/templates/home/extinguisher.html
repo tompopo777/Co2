@@ -92,13 +92,13 @@
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器更換/填充數量 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>滅火器更換/填充數量 </label>
                                                     {{ EX_add.replace_filling_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>更換/填充日期 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    <label>更換/填充日期 </label>
                                                     {{ EX_add.replace_filling_date }}
                                                 </div>
                                             </div>
@@ -129,6 +129,9 @@
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
+                                                    {% for error in EX_add.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
                                                     {{ EX_add.message_board }}
                                                 </div>
                                             </div>
@@ -220,7 +223,7 @@
             minViewMode: "days",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        })
 
         $('#extinguisher_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
     </script>

@@ -345,6 +345,9 @@
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
+                                                    {% for error in form.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
                                                     {{ form.message_board }}
                                                 </div>
                                             </div>
@@ -393,10 +396,10 @@
 
         {#    陸運照片顯示檔名+可刪除#}
         const dt1 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
-        $("#attachment1").on('change', function(){
-            for(var i = 0; i < this.files.length; i++){
+        $("#attachment1").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
                 let fileBloc1 = $('<span/>', {class: 'file-block'}),
-                     fileName1 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                    fileName1 = $('<span/>', {class: 'name', text: this.files.item(i).name});
                 fileBloc1.append('<span class="file-delete"><span>+</span></span>')
                     .append(fileName1);
                 $("#filesList1 > #files-names1").append(fileBloc1);
@@ -409,13 +412,13 @@
             this.files = dt1.files;
 
             // 創建的刪除按鈕的EventListener
-            $('span.file-delete').click(function(){
+            $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
                 // 移除文件名的顯示
                 $(this).parent().remove();
-                for(let i = 0; i < dt1.items.length; i++){
+                for (let i = 0; i < dt1.items.length; i++) {
                     // 文件和名稱匹配
-                    if(name === dt1.items[i].getAsFile().name){
+                    if (name === dt1.items[i].getAsFile().name) {
                         // 在DataTransfer對像中刪除該文件
                         dt1.items.remove(i);
                     }
@@ -427,10 +430,10 @@
 
         {#    海運照片顯示檔名+可刪除#}
         const dt2 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
-        $("#attachment2").on('change', function(){
-            for(var i = 0; i < this.files.length; i++){
+        $("#attachment2").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
                 let fileBloc2 = $('<span/>', {class: 'file-block'}),
-                     fileName2 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                    fileName2 = $('<span/>', {class: 'name', text: this.files.item(i).name});
                 fileBloc2.append('<span class="file-delete"><span>+</span></span>')
                     .append(fileName2);
                 $("#filesList2 > #files-names2").append(fileBloc2);
@@ -443,13 +446,13 @@
             this.files = dt2.files;
 
             // 創建的刪除按鈕的EventListener
-            $('span.file-delete').click(function(){
+            $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
                 // 移除文件名的顯示
                 $(this).parent().remove();
-                for(let i = 0; i < dt2.items.length; i++){
+                for (let i = 0; i < dt2.items.length; i++) {
                     // 文件和名稱匹配
-                    if(name === dt2.items[i].getAsFile().name){
+                    if (name === dt2.items[i].getAsFile().name) {
                         // 在DataTransfer對像中刪除該文件
                         dt2.items.remove(i);
                     }
@@ -461,10 +464,10 @@
 
         {#    特殊陸運照片顯示檔名+可刪除#}
         const dt3 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
-        $("#attachment3").on('change', function(){
-            for(var i = 0; i < this.files.length; i++){
+        $("#attachment3").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
                 let fileBloc3 = $('<span/>', {class: 'file-block'}),
-                     fileName3 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                    fileName3 = $('<span/>', {class: 'name', text: this.files.item(i).name});
                 fileBloc3.append('<span class="file-delete"><span>+</span></span>')
                     .append(fileName3);
                 $("#filesList3 > #files-names3").append(fileBloc3);
@@ -477,13 +480,13 @@
             this.files = dt3.files;
 
             // 創建的刪除按鈕的EventListener
-            $('span.file-delete').click(function(){
+            $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
                 // 移除文件名的顯示
                 $(this).parent().remove();
-                for(let i = 0; i < dt3.items.length; i++){
+                for (let i = 0; i < dt3.items.length; i++) {
                     // 文件和名稱匹配
-                    if(name === dt3.items[i].getAsFile().name){
+                    if (name === dt3.items[i].getAsFile().name) {
                         // 在DataTransfer對像中刪除該文件
                         dt3.items.remove(i);
                     }
@@ -495,10 +498,10 @@
 
         {#    空運照片顯示檔名+可刪除#}
         const dt4 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
-        $("#attachment4").on('change', function(){
-            for(var i = 0; i < this.files.length; i++){
+        $("#attachment4").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
                 let fileBloc4 = $('<span/>', {class: 'file-block'}),
-                     fileName4 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                    fileName4 = $('<span/>', {class: 'name', text: this.files.item(i).name});
                 fileBloc4.append('<span class="file-delete"><span>+</span></span>')
                     .append(fileName4);
                 $("#filesList4 > #files-names4").append(fileBloc4);
@@ -511,13 +514,13 @@
             this.files = dt4.files;
 
             // 創建的刪除按鈕的EventListener
-            $('span.file-delete').click(function(){
+            $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
                 // 移除文件名的顯示
                 $(this).parent().remove();
-                for(let i = 0; i < dt4.items.length; i++){
+                for (let i = 0; i < dt4.items.length; i++) {
                     // 文件和名稱匹配
-                    if(name === dt4.items[i].getAsFile().name){
+                    if (name === dt4.items[i].getAsFile().name) {
                         // 在DataTransfer對像中刪除該文件
                         dt4.items.remove(i);
                     }

@@ -88,6 +88,9 @@
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
+                                                    {% for error in form.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
                                                     {{ form.message_board }}
                                                 </div>
                                             </div>
@@ -143,7 +146,7 @@
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
 
         {#    購買年份篩選器#}
@@ -153,7 +156,7 @@
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
 
         {#    照片顯示檔名+可刪除#}

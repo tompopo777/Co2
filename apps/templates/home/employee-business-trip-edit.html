@@ -169,6 +169,9 @@
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
+                                                    {% for error in form.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
                                                     {{ form.message_board }}
                                                 </div>
                                             </div>
@@ -225,7 +228,7 @@
             minViewMode: "days",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
         {#    員工出差段數照片顯示檔名+可刪除#}
         const dt1 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作

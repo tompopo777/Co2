@@ -216,7 +216,7 @@ def load_table(request):
                                                                                             "january", "february", "march", "april",
                                                                                             "may", "june", "july", "august",
                                                                                             "september", "october", "november", "december")
-                unit = process.objects.filter(company_id=factory_id).values("unit")
+                unit = process.objects.filter(company_id=factory_id, years=year).values("unit")
                 # 計算使用量合計
                 for i in range(raw_data.count()):
                     consumption_total = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
@@ -338,7 +338,7 @@ def load_table(request):
                     single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "設備清單":
+            elif a["d_name"] == "其他設備清單":
                 t_data = []
                 raw_data = other_device.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
@@ -427,7 +427,7 @@ def load_table(request):
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "address", "meter_location",
+                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "meter_location", "address",
                                                                                                 "january", "february", "march", "april",
                                                                                                 "may", "june", "july", "august",
                                                                                                 "september", "october", "november", "december")
@@ -449,7 +449,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "上游運輸":
                 t_data = list(
-                    upstream_transportation.objects.filter(company_id=factory_id).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
+                    upstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
                                                                                          "organizational_use_products", "customer", "supplier", "supplier_address",
                                                                                          "trade_term", "receiving_address", "delivery_address",
                                                                                          "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
@@ -459,7 +459,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "下游運輸":
                 t_data = list(
-                    downstream_transportation.objects.filter(company_id=factory_id).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
+                    downstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
                                                                                            "trade_term", "receiving_address", "delivery_address",
                                                                                            "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
                                                                                            "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
@@ -513,7 +513,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
-                raw_data = waste.objects.filter(company_id=factory_id).values("id", "waste_name", "waste_weigh", "waste_date",
+                raw_data = waste.objects.filter(company_id=factory_id, years=year).values("id", "waste_name", "waste_weigh", "waste_date",
                                                                               "waste_location", "waste_disposal", "waste_disposal_vendor",
                                                                               "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):

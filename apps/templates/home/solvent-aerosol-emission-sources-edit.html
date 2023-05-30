@@ -107,6 +107,9 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
+                                                {% for error in form.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 {{ form.message_board }}
                                             </div>
                                         </div>
@@ -167,7 +170,7 @@
             minViewMode: "years",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
 
         {#    照片顯示檔名+可刪除#}
@@ -206,6 +209,6 @@
 
         {#select2#}
         $('#gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
-        $('#solvent_capacity_unit').select2({minimumResultsForSearch : -1}).next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#solvent_capacity_unit').select2({minimumResultsForSearch: -1}).next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
     </script>
 {% endblock javascripts %}
