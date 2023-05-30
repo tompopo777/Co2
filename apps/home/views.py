@@ -1686,8 +1686,8 @@ def waste_sludge_add(request):
             waste_sludge_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
-            last_id = waste_sludge_add.objects.values("id").last().get("id")
-            table_id = waste_sludge_add.objects.values("did").last().get("did")
+            last_id = waste_sludge.objects.values("id").last().get("id")
+            table_id = waste_sludge.objects.values("did").last().get("did")
             for img in image_path:
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
@@ -2375,7 +2375,6 @@ def edit_device(request, error_from=None, error_formset=None):
                 "28": "home/purchase-material-edit.html",
                 "29": "home/product-indirect-emissions-edit.html",
             }
-            print('轉跳')
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
                 return render(request, EditDevice_page, formUpdata_name)
