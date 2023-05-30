@@ -289,23 +289,35 @@
 
 
         {#    照片顯示檔名+可刪除#}
-        const dt = new DataTransfer(); // 允許操作輸入文件的文件
         $("#attachment").on('change', function (e) {
-            for (var i = 0; i < this.files.length; i++) {
-                let fileBloc = $('<span/>', {class: 'file-block'}),
-                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
-                fileBloc.append('<span class="file-delete"><span>+</span></span>')
-                    .append(fileName);
-                $("#filesList > #files-names").append(fileBloc);
+            let allowedTypes = ['image/jpeg', 'image/png', 'application/pdf']; // 允許的檔案類型
+            let filesList = $("#filesList > #files-names");
+            let dt = new DataTransfer(); // 允許操作輸入文件的文件
+
+            for (let i = 0; i < this.files.length; i++) {
+                let file = this.files[i];
+                let fileType = file.type;
+
+                // 檢查檔案類型是否為允許的類型
+                if (allowedTypes.includes(fileType)) {
+                    let fileBloc = $('<span/>', {class: 'file-block'}),
+                        fileName = $('<span/>', {class: 'name', text: file.name});
+                    fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                        .append(fileName);
+                    filesList.append(fileBloc);
+
+                    // 將文件添加到 DataTransfer 對象
+                    dt.items.add(file);
+                } else {
+                    // 不是允許的檔案類型，顯示警告
+                    alert("無效的檔案類型: " + file.name);
+                }
             }
-            // 將文件添加到 DataTransfer 對象
-            for (let file of this.files) {
-                dt.items.add(file);
-            }
-            // 添加後更新輸入文件中的文件
+
+            // 更新輸入文件中的文件
             this.files = dt.files;
 
-            // 創建的刪除按鈕的事件監聽器
+            // 創建刪除按鈕的事件監聽器
             $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
                 // 抑製文件名的顯示
@@ -313,7 +325,7 @@
                 for (let i = 0; i < dt.items.length; i++) {
                     // 匹配文件名
                     if (name === dt.items[i].getAsFile().name) {
-                        // 刪除DataTransfer對像中的文件
+                        // 刪除 DataTransfer 對像中的文件
                         dt.items.remove(i);
                     }
                 }

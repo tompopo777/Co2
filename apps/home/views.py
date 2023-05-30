@@ -2203,18 +2203,10 @@ def bar_action(request):
             message = copy_last_year_data(request)
             print('message', message)
             return carbon_system(request, message)
-        if 'import_excel' in request.GET:
-            message = import_excel(request)
-            print('message', message)
-            return carbon_system(request, message)
         if 'public_version' in request.GET:
-            message = public_version(request)
-            print('message', message)
-            return carbon_system(request, message)
+            return public_version(request)
         if 'export_excel' in request.GET:
-            message = export_excel(request)
-            print('message', message)
-            return carbon_system(request, message)
+            return export_excel(request)
 
 
 # 編輯轉跳

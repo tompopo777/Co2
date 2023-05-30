@@ -1286,6 +1286,7 @@ class UTform(forms.ModelForm):
         self.fields['message_board'].required = False
 
 
+
 # 下游運輸
 class DTform(forms.ModelForm):
     class Meta:
@@ -1560,12 +1561,15 @@ class PWform(forms.ModelForm):
 class PMform(forms.ModelForm):
     class Meta:
         model = purchase_material
-        fields = ('years', 'product_id', 'product_name', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
+        fields = ('years', 'product_id', 'product_name', 'vendor', 'category_name', 'material_type', 'january', 'february', 'march', 'april', 'may', 'june', 'july',
                   'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
             'product_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'product_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'vendor': forms.TextInput(attrs={'class': 'form-control'}),
+            'category_name': forms.Select(choices=DropdownOption.objects.filter(option_group='大類名稱').values_list('option_value', 'option_label')),
+            'material_type': forms.Select(choices=MATERIAL_TYPE),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),

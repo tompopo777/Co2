@@ -88,7 +88,7 @@
                                         {% if EG_add.errors %}
                                             <div class="col-12 text-center">
                                                 {% if 'january' in EG_add.errors  or 'february' in EG_add.errors  or 'march' in EG_add.errors  or 'april' in EG_add.errors  or 'may' in EG_add.errors  or 'june' in EG_add.errors  or 'july' in EG_add.errors  or 'august' in EG_add.errors  or 'september' in EG_add.errors  or 'october' in EG_add.errors  or 'november' in EG_add.errors  or 'december' in EG_add.errors  in EG_add.errors %}
-                                                    <li style="color: red">只能輸入正數 </li>
+                                                    <li style="color: red">只能輸入正數</li>
                                                 {% endif %}
                                                 {% for error in EG_add.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
@@ -259,20 +259,20 @@
             {% endif %}
             // 顯示錯誤框
             {% for field in EG_add %}
-                    {% for error in field.errors %}
-                        error_name = "{{ field.label }}"
-                        if (
-                            error_name==='January' || error_name==='February' || error_name==='March' || error_name==='April' ||
-                            error_name==='May' || error_name==='June' || error_name==='July' || error_name==='August' ||
-                            error_name==='September' || error_name==='October' || error_name==='November' || error_name==='December'
-                        ){
-                            error_name = error_name.toLowerCase()
-                            error_input = document.querySelector("[name=" + error_name + "]");
-                            parentDiv = error_input.parentNode;
-                            parentDiv.classList.add("border", "border-danger", "border-3");
-                        }
-                    {% endfor %}
+                {% for error in field.errors %}
+                    error_name = "{{ field.label }}"
+                    if (
+                        error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                        error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                        error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
+                    ) {
+                        error_name = error_name.toLowerCase()
+                        error_input = document.querySelector("[name=" + error_name + "]");
+                        parentDiv = error_input.parentNode;
+                        parentDiv.classList.add("border", "border-danger", "border-3");
+                    }
                 {% endfor %}
+            {% endfor %}
         });
 
         {#    禁止enter鍵#}
@@ -296,23 +296,35 @@
 
 
         {#    照片顯示檔名+可刪除#}
-        const dt = new DataTransfer(); // 允許操作輸入文件的文件
         $("#attachment").on('change', function (e) {
-            for (var i = 0; i < this.files.length; i++) {
-                let fileBloc = $('<span/>', {class: 'file-block'}),
-                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
-                fileBloc.append('<span class="file-delete"><span>+</span></span>')
-                    .append(fileName);
-                $("#filesList > #files-names").append(fileBloc);
+            let allowedTypes = ['image/jpeg', 'image/png', 'application/pdf']; // 允許的檔案類型
+            let filesList = $("#filesList > #files-names");
+            let dt = new DataTransfer(); // 允許操作輸入文件的文件
+
+            for (let i = 0; i < this.files.length; i++) {
+                let file = this.files[i];
+                let fileType = file.type;
+
+                // 檢查檔案類型是否為允許的類型
+                if (allowedTypes.includes(fileType)) {
+                    let fileBloc = $('<span/>', {class: 'file-block'}),
+                        fileName = $('<span/>', {class: 'name', text: file.name});
+                    fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                        .append(fileName);
+                    filesList.append(fileBloc);
+
+                    // 將文件添加到 DataTransfer 對象
+                    dt.items.add(file);
+                } else {
+                    // 不是允許的檔案類型，顯示警告
+                    alert("只能選擇圖片檔或PDF檔，無效的檔案類型: " + file.name);
+                }
             }
-            // 將文件添加到 DataTransfer 對象
-            for (let file of this.files) {
-                dt.items.add(file);
-            }
-            // 添加後更新輸入文件中的文件
+
+            // 更新輸入文件中的文件
             this.files = dt.files;
 
-            // 創建的刪除按鈕的事件監聽器
+            // 創建刪除按鈕的事件監聽器
             $('span.file-delete').click(function () {
                 let name = $(this).next('span.name').text();
                 // 抑製文件名的顯示
@@ -320,7 +332,7 @@
                 for (let i = 0; i < dt.items.length; i++) {
                     // 匹配文件名
                     if (name === dt.items[i].getAsFile().name) {
-                        // 刪除DataTransfer對像中的文件
+                        // 刪除 DataTransfer 對像中的文件
                         dt.items.remove(i);
                     }
                 }
@@ -328,5 +340,7 @@
                 document.getElementById('attachment').files = dt.files;
             });
         });
+
+
     </script>
 {% endblock javascripts %}
