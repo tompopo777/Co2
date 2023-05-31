@@ -38,12 +38,12 @@ COLUMN_MAPPING = {
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december',
                     'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july',
-                    'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december'],
+                    'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december', 'message_board'],
         'column_names': ['年度', '類別', '編號', '燃料種類', '所屬單位', '計程方式',
                          '耗用量 一月', '耗用量 二月', '耗用量 三月', '耗用量 四月', '耗用量 五月', '耗用量 六月',
                          '耗用量 七月', '耗用量 八月', '耗用量 九月', '耗用量 十月', '耗用量 十一月', '耗用量 十二月',
                          '尿素 一月', '尿素 二月', '尿素 三月', '尿素 四月', '尿素 五月', '尿素 六月',
-                         '尿素 七月', '尿素 八月', '尿素 九月', '尿素 十月', '尿素 十一月', '尿素 十二月'],
+                         '尿素 七月', '尿素 八月', '尿素 九月', '尿素 十月', '尿素 十一月', '尿素 十二月', '備註欄'],
         'prefix': '類別一_'
     },
     'material': {
