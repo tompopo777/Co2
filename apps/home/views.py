@@ -21,6 +21,12 @@ from .csv import *
 def index(request):
     context = {'segment': 'index'}
     html_template = loader.get_template('home/index.html')
+    if request.user.groups.filter(name='公司帳號').exists():
+        pass
+    else:
+        current_user = Profile.objects.filter(user_id=request.user.id).get()
+        factory_id = current_user.factory_id
+        request.session.update({'factory_id': factory_id})
     return HttpResponse(html_template.render(context, request))
 
 
@@ -91,21 +97,12 @@ def load_table(request):
     if request.method == 'GET':
         device_id = request.session.get('dropdown_three')
         year = request.session.get('years')
-        factory_id = request.session.get('factory_id')
-        company_id = request.session.get('company_id')
-        factory_id_list = []
-        # 如果是公司帳號查詢，factory_id會是None。factory_id_list就會包含該公司裡面所有的廠。
-        if factory_id is None:
-            # factory_query = factory.objects.filter(company_id__in=company_id).values('id')
-            # for query in factory_query:
-            #     factory_id_list.append(query['id'])
-            factory_id = company_id
-        # else:
-        #     factory_id_list.append(factory_id)
+        # 判斷使用者是否為公司帳號。
+        if request.user.groups.filter(name='公司帳號').exists():
+            factory_id = request.session.get('company_id')
+        else:
+            factory_id = request.session.get('factory_id')
         t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
-        # print('factory_id', factory_id)
-        # print('years', year)
-        # print("888888888", t_name)
         # 從db撈每張表要顯示的值
         for a in t_name:
             if a["d_name"] == "柴油發電機":
@@ -1208,7 +1205,7 @@ def emergency_generators_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/emergency_generators_add/')
             else:
                 return redirect('/carbon-system/')
         else:
@@ -1240,7 +1237,7 @@ def combustion_equipment_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/combustion_equipment_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1272,7 +1269,7 @@ def official_car_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/official_car_add/')
             else:
                 return redirect('/carbon-system/')
         else:
@@ -1302,7 +1299,7 @@ def material_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/material_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1332,7 +1329,7 @@ def process_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/process_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1362,7 +1359,7 @@ def refrigerator_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/refrigerator_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1392,7 +1389,7 @@ def airconditioner_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/airconditioner_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1422,7 +1419,7 @@ def vehicle_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/vehicle_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1453,7 +1450,7 @@ def water_dispenser_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/water_dispenser_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1483,7 +1480,7 @@ def ice_water_dispenser_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/ice_water_dispenser_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1513,7 +1510,7 @@ def ice_maker_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/ice_maker_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1543,7 +1540,7 @@ def other_device_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/other_device_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1573,7 +1570,7 @@ def extinguisher_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/extinguisher_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1603,7 +1600,7 @@ def personnel_inventory_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/personnel_inventory_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1633,7 +1630,7 @@ def employee_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/employee_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1664,7 +1661,7 @@ def waste_water_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/waste_water_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1695,7 +1692,7 @@ def waste_sludge_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/waste_sludge_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1718,7 +1715,7 @@ def solvent_aerosol_emission_sources_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/solvent_aerosol_emission_sources_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1749,7 +1746,7 @@ def VOCs_one_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/VOCs_one_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1781,7 +1778,7 @@ def VOCs_two_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/VOCs_two_add/')
             else:
                 return redirect('/carbon-system/')
         else:
@@ -1793,6 +1790,7 @@ def VOCs_two_add(request):
     return render(request, 'home/VOCs-two.html', context)
 
 
+# 用電量
 @login_required(login_url="/login/")
 def electricity_add(request):
     context = {}
@@ -1814,7 +1812,7 @@ def electricity_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/electricity_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1823,6 +1821,7 @@ def electricity_add(request):
     return render(request, 'home/electricity.html', context)
 
 
+# 上游運輸
 @login_required(login_url="/login/")
 def upstream_transportation_add(request):
     context = {}
@@ -1854,7 +1853,7 @@ def upstream_transportation_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/upstream_transportation_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1863,6 +1862,7 @@ def upstream_transportation_add(request):
     return render(request, 'home/upstream-transportation.html', context)
 
 
+# 下游運輸
 @login_required(login_url="/login/")
 def downstream_transportation_add(request):
     context = {}
@@ -1894,7 +1894,7 @@ def downstream_transportation_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/downstream_transportation_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -1916,7 +1916,20 @@ def employee_commute_add(request):
             Commute_formSet = CommuteFormSet(request.POST, request.FILES, instance=commute)
             if Commute_formSet.is_valid():
                 Commute_formSet.save()
-                return redirect('/carbon-system/')
+                stage = request.POST.get('stage')
+                image_path = request.FILES.getlist('file_field')
+                last_id = employee_commute.objects.values("id").last().get("id")
+                table_id = employee_commute.objects.values("did").last().get("did")
+                for img in image_path:
+                    photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                    print(stage)
+                    photo.save()
+                # 根據前端submit input的name判斷
+                if 'addAnother' in request.POST:
+                    messages.success(request, '表單已成功提交！')
+                    return redirect('/employee_commute_add/')
+                else:
+                    return redirect('/carbon-system/')
             else:
                 last_data = employee_commute.objects.last()
                 last_data.delete()
@@ -1960,7 +1973,7 @@ def employee_business_trip_add(request):
                     messages.success(request, '表單已成功提交！')
                     print('request.method', request.method)
                     print('表單已成功提交')
-                    return redirect('/new_device/')
+                    return redirect('/employee_business_trip_add/')
                 else:
                     return redirect('/carbon-system/')
             else:
@@ -1995,7 +2008,7 @@ def waste_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/waste_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -2026,7 +2039,7 @@ def pipe_wastewater_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/pipe_wastewater_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -2057,7 +2070,7 @@ def purchase_material_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/purchase_material_add/')
             else:
                 return redirect('/carbon-system/')
     else:
@@ -2088,7 +2101,7 @@ def product_indirect_emissions_add(request):
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/new_device/')
+                return redirect('/product_indirect_emissions_add/')
             else:
                 return redirect('/carbon-system/')
     else:

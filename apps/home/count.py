@@ -1,3 +1,4 @@
+import datetime
 from urllib import request, parse
 import pandas as pd
 from IPython.core.display import display
@@ -21,21 +22,19 @@ def calculate_summary(request):
         coefficient_source = request.POST.get("coefficient_source")
         gwp_version = request.POST.get("gwpVersion")
         gwp_version = int(gwp_version)
-        factory_id = request.session.get('factory_id')
-        years = request.session.get('years')
-
-        # print('coefficient_source:', coefficient_source)
-        # print('gwp_version:', gwp_version)
-        # print('factory_id:', factory_id)
-        # print('years:', years)
-
-        company_dic = {
-            2: '雲科A廠',
-            3: '雲科B廠',
-        }
-        if factory_id in company_dic:
-            company_name = company_dic[factory_id]
+        # 判斷使用者是否為公司帳號。
+        if request.user.groups.filter(name='公司帳號').exists():
+            factory_id = request.session.get('company_id')
         else:
+            factory_id = request.session.get('factory_id')
+        years = request.session.get('years')
+        if years is None:
+            years = str(datetime.date.today().year)
+
+        try:
+            company_name = str(factory.objects.filter(id=factory_id).get())
+            print('company_name', company_name)
+        except:
             company_name = ''
 
         emergency_generators_device = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)

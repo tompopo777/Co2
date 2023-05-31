@@ -402,7 +402,7 @@ class extinguisher(models.Model):
     inventory = models.DecimalField(max_digits=20, decimal_places=0)
     using_amount = models.IntegerField()
     monthly = models.CharField(max_length=20)
-    replace_filling_amount = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    replace_filling_amount = models.DecimalField(max_digits=20, decimal_places=0)
     replace_filling_date = models.CharField(max_length=20, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
