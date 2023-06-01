@@ -284,17 +284,6 @@
             }
         });
 
-
-        {#    年度篩選器#}
-        $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
-
         {#    照片顯示檔名+可刪除#}
         $("#attachment").on('change', function (e) {
             let allowedTypes = ['image/jpeg', 'image/png', 'application/pdf']; // 允許的檔案類型
