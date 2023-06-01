@@ -46,6 +46,7 @@ class factory(models.Model):
     def __str__(self):
         return self.factory_name
 
+
 # profile資料
 class Profile(models.Model):
     id = models.AutoField(primary_key=True)

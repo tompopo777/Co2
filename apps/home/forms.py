@@ -292,6 +292,7 @@ class EGform(forms.ModelForm):
                   'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
+            # 'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years', 'disabled': True}),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '單位:公升'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
@@ -313,8 +314,9 @@ class EGform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄(最多可輸入255個字元)'}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(EGform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['department'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
@@ -389,8 +391,9 @@ class CEform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '熱值註解!'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(CEform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -461,8 +464,9 @@ class OFform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['department'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
@@ -520,8 +524,9 @@ class MTform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(MTform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['process_add_name'].required = False
         self.fields['chemical_name'].required = False
         self.fields['chemical_formula'].required = False
@@ -581,8 +586,9 @@ class PCform(forms.ModelForm):
 
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(PCform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -633,8 +639,9 @@ class RFform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(RFform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -683,8 +690,9 @@ class ACform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(ACform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -732,8 +740,9 @@ class VCform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(VCform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -781,8 +790,9 @@ class WDform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(WDform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -830,8 +840,9 @@ class IWDform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(IWDform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -879,8 +890,9 @@ class IMform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(IMform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -928,8 +940,9 @@ class ODform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(ODform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -978,8 +991,9 @@ class EXform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(EXform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['device_id'].required = False
         self.fields['extinguisher_vendor'].required = False
         self.fields['replace_filling_amount'].required = False
@@ -1027,8 +1041,9 @@ class PIform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(PIform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1088,8 +1103,9 @@ class EMPform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(EMPform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1114,8 +1130,9 @@ class WASTEWATERform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(WASTEWATERform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1137,8 +1154,9 @@ class WasteSludgeForm(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(WasteSludgeForm, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1162,8 +1180,9 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(SolventAerosolEmissionSourcesForm, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1195,8 +1214,9 @@ class ELECform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(ELECform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1390,8 +1410,9 @@ class ECform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(ECform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1465,8 +1486,9 @@ class WASTEform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(WASTEform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['transport_type'].required = False
         self.fields['transport_fuel'].required = False
         self.fields['transport_distance'].required = False
@@ -1486,8 +1508,9 @@ class VOCsOneForm(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(VOCsOneForm, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['message_board'].required = False
 
 
@@ -1513,8 +1536,9 @@ class VOCsTwoForm(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(VOCsTwoForm, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['concentration_entrance'].required = False
         self.fields['concentration_exit'].required = False
         self.fields['builtIn_rate'].required = False
@@ -1551,8 +1575,9 @@ class PWform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(PWform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1586,8 +1611,9 @@ class PMform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(PMform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1618,7 +1644,8 @@ class PIEform(forms.ModelForm):
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'}),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(PIEform, self).__init__(*args, **kwargs)
+        self.fields['years'].initial = request.session.get('years')
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False

@@ -1187,8 +1187,10 @@ def copy_last_year_data(request):
 @login_required(login_url="/login/")
 def emergency_generators_add(request):
     context = {}
-    EG_add = EGform(request.POST, request.FILES)
+    EG_add = EGform(request)
+    # EG_add = EGform()
     if request.method == "POST":
+        EG_add = EGform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EG_add.is_valid():
             EG_add = EG_add.save(commit=False)
@@ -1209,9 +1211,7 @@ def emergency_generators_add(request):
             else:
                 return redirect('/carbon-system/')
         else:
-            print(EG_add.errors)
-    else:
-        EG_add = EGform()
+            print("\n", EG_add.errors)
     context['EG_add'] = EG_add
     return render(request, 'home/emergency-generator.html', context)
 
@@ -1219,8 +1219,9 @@ def emergency_generators_add(request):
 @login_required(login_url="/login/")
 def combustion_equipment_add(request):
     context = {}
-    CE_add = CEform(request.POST, request.FILES)
+    CE_add = CEform(request)
     if request.method == "POST":
+        CE_add = CEform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if CE_add.is_valid():
             CE_add = CE_add.save(commit=False)
@@ -1240,8 +1241,8 @@ def combustion_equipment_add(request):
                 return redirect('/combustion_equipment_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        CE_add = CEform()
+        else:
+            print("\n", CE_add.errors)
     context['CE_add'] = CE_add
     return render(request, 'home/combustion-equipment.html', context)
 
@@ -1250,9 +1251,9 @@ def combustion_equipment_add(request):
 # _add標準寫法
 def official_car_add(request):
     context = {}
-    OffCar_add = OFform()
+    OffCar_add = OFform(request)
     if request.method == "POST":
-        OffCar_add = OFform(request.POST, request.FILES)
+        OffCar_add = OFform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if OffCar_add.is_valid():
             OffCar_add = OffCar_add.save(commit=False)
@@ -1281,8 +1282,9 @@ def official_car_add(request):
 @login_required(login_url="/login/")
 def material_add(request):
     context = {}
-    MT_add = MTform(request.POST, request.FILES)
+    MT_add = MTform(request)
     if request.method == "POST":
+        MT_add = MTform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if MT_add.is_valid():
             MT_add = MT_add.save(commit=False)
@@ -1302,8 +1304,8 @@ def material_add(request):
                 return redirect('/material_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        MT_add = MTform()
+        else:
+            print("\n", MT_add.errors)
     context['MT_add'] = MT_add
     return render(request, 'home/material.html', context)
 
@@ -1311,8 +1313,9 @@ def material_add(request):
 @login_required(login_url="/login/")
 def process_add(request):
     context = {}
-    PC_add = PCform(request.POST, request.FILES)
+    PC_add = PCform(request)
     if request.method == "POST":
+        PC_add = PCform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if PC_add.is_valid():
             PC_add = PC_add.save(commit=False)
@@ -1332,8 +1335,8 @@ def process_add(request):
                 return redirect('/process_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        PC_add = PCform()
+        else:
+            print("\n", PC_add.errors)
     context['PC_add'] = PC_add
     return render(request, 'home/process.html', context)
 
@@ -1341,8 +1344,9 @@ def process_add(request):
 @login_required(login_url="/login/")
 def refrigerator_add(request):
     context = {}
-    RF_add = RFform(request.POST, request.FILES)
+    RF_add = RFform(request)
     if request.method == "POST":
+        RF_add = RFform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if RF_add.is_valid():
             RF_add = RF_add.save(commit=False)
@@ -1362,8 +1366,8 @@ def refrigerator_add(request):
                 return redirect('/refrigerator_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        RF_add = RFform()
+        else:
+            print("\n", RF_add.errors)
     context['RF_add'] = RF_add
     return render(request, 'home/refrigerator.html', context)
 
@@ -1371,8 +1375,9 @@ def refrigerator_add(request):
 @login_required(login_url="/login/")
 def airconditioner_add(request):
     context = {}
-    AC_add = ACform(request.POST, request.FILES)
+    AC_add = ACform(request)
     if request.method == "POST":
+        AC_add = ACform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if AC_add.is_valid():
             AC_add = AC_add.save(commit=False)
@@ -1392,8 +1397,8 @@ def airconditioner_add(request):
                 return redirect('/airconditioner_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        AC_add = ACform()
+        else:
+            print("\n", AC_add.errors)
     context['AC_add'] = AC_add
     return render(request, 'home/airconditioner.html', context)
 
@@ -1401,8 +1406,9 @@ def airconditioner_add(request):
 @login_required(login_url="/login/")
 def vehicle_add(request):
     context = {}
-    VC_add = VCform(request.POST, request.FILES)
+    VC_add = VCform(request)
     if request.method == "POST":
+        VC_add = VCform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if VC_add.is_valid():
             VC_add = VC_add.save(commit=False)
@@ -1422,8 +1428,8 @@ def vehicle_add(request):
                 return redirect('/vehicle_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        VC_add = VCform()
+        else:
+            print("\n", VC_add.errors)
     context['VC_add'] = VC_add
     return render(request, 'home/vehicle.html', context)
 
@@ -1431,10 +1437,10 @@ def vehicle_add(request):
 @login_required(login_url="/login/")
 def water_dispenser_add(request):
     context = {}
-    WD_add = WDform(request.POST, request.FILES)
+    WD_add = WDform(request)
     if request.method == "POST":
+        WD_add = WDform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
-        # print('company_value', company_id)
         if WD_add.is_valid():
             WD_add = WD_add.save(commit=False)
             WD_add.company_id = factory_id
@@ -1453,8 +1459,8 @@ def water_dispenser_add(request):
                 return redirect('/water_dispenser_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        WD_add = WDform()
+        else:
+            print("\n", WD_add.errors)
     context['WD_add'] = WD_add
     return render(request, 'home/water-dispenser.html', context)
 
@@ -1462,8 +1468,9 @@ def water_dispenser_add(request):
 @login_required(login_url="/login/")
 def ice_water_dispenser_add(request):
     context = {}
-    IWD_add = IWDform(request.POST, request.FILES)
+    IWD_add = IWDform(request)
     if request.method == "POST":
+        IWD_add = IWDform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if IWD_add.is_valid():
             IWD_add = IWD_add.save(commit=False)
@@ -1483,8 +1490,8 @@ def ice_water_dispenser_add(request):
                 return redirect('/ice_water_dispenser_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        IWD_add = IWDform()
+        else:
+            print("\n", IWD_add.errors)
     context['IWD_add'] = IWD_add
     return render(request, 'home/ice-water-dispenser.html', context)
 
@@ -1492,8 +1499,9 @@ def ice_water_dispenser_add(request):
 @login_required(login_url="/login/")
 def ice_maker_add(request):
     context = {}
-    IM_add = IMform(request.POST, request.FILES)
+    IM_add = IMform(request)
     if request.method == "POST":
+        IM_add = IMform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if IM_add.is_valid():
             IM_add = IM_add.save(commit=False)
@@ -1513,8 +1521,8 @@ def ice_maker_add(request):
                 return redirect('/ice_maker_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        IM_add = IMform()
+        else:
+            print("\n", IM_add.errors)
     context['IM_add'] = IM_add
     return render(request, 'home/ice-maker.html', context)
 
@@ -1522,8 +1530,9 @@ def ice_maker_add(request):
 @login_required(login_url="/login/")
 def other_device_add(request):
     context = {}
-    OD_add = ODform(request.POST, request.FILES)
+    OD_add = ODform(request)
     if request.method == "POST":
+        OD_add = ODform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if OD_add.is_valid():
             OD_add = OD_add.save(commit=False)
@@ -1543,8 +1552,8 @@ def other_device_add(request):
                 return redirect('/other_device_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        OD_add = ODform()
+        else:
+            print("\n", OD_add.errors)
     context['OD_add'] = OD_add
     return render(request, 'home/other-device.html', context)
 
@@ -1552,8 +1561,9 @@ def other_device_add(request):
 @login_required(login_url="/login/")
 def extinguisher_add(request):
     context = {}
-    EX_add = EXform(request.POST, request.FILES)
+    EX_add = EXform(request)
     if request.method == "POST":
+        EX_add = EXform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EX_add.is_valid():
             EX_add = EX_add.save(commit=False)
@@ -1573,8 +1583,8 @@ def extinguisher_add(request):
                 return redirect('/extinguisher_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        EX_add = EXform()
+        else:
+            print("\n", EX_add.errors)
     context['EX_add'] = EX_add
     return render(request, 'home/extinguisher.html', context)
 
@@ -1582,8 +1592,9 @@ def extinguisher_add(request):
 @login_required(login_url="/login/")
 def personnel_inventory_add(request):
     context = {}
-    PI_add = PIform(request.POST, request.FILES)
+    PI_add = PIform(request)
     if request.method == "POST":
+        PI_add = PIform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if PI_add.is_valid():
             PI_add = PI_add.save(commit=False)
@@ -1603,8 +1614,8 @@ def personnel_inventory_add(request):
                 return redirect('/personnel_inventory_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        PI_add = PIform()
+        else:
+            print("\n", PI_add.errors)
     context['PI_add'] = PI_add
     return render(request, 'home/personnel-inventory.html', context)
 
@@ -1612,8 +1623,9 @@ def personnel_inventory_add(request):
 @login_required(login_url="/login/")
 def employee_add(request):
     context = {}
-    EMP_add = EMPform(request.POST, request.FILES)
+    EMP_add = EMPform(request)
     if request.method == "POST":
+        EMP_add = EMPform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EMP_add.is_valid():
             EMP_add = EMP_add.save(commit=False)
@@ -1633,8 +1645,8 @@ def employee_add(request):
                 return redirect('/employee_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        EMP_add = EMPform()
+        else:
+            print("\n", EMP_add.errors)
     context['EMP_add'] = EMP_add
     return render(request, 'home/employee.html', context)
 
@@ -1643,8 +1655,9 @@ def employee_add(request):
 @login_required(login_url="/login/")
 def waste_water_add(request):
     context = {}
-    waste_water_add = WASTEWATERform(request.POST, request.FILES)
+    waste_water_add = WASTEWATERform(request)
     if request.method == "POST":
+        waste_water_add = WASTEWATERform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if waste_water_add.is_valid():
             waste_water_add = waste_water_add.save(commit=False)
@@ -1664,8 +1677,8 @@ def waste_water_add(request):
                 return redirect('/waste_water_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        waste_water_add = WASTEWATERform
+        else:
+            print("\n", waste_water_add.errors)
     context['waste_water_add'] = waste_water_add
     return render(request, 'home/waste-water.html', context)
 
@@ -1674,8 +1687,9 @@ def waste_water_add(request):
 @login_required(login_url="/login/")
 def waste_sludge_add(request):
     context = {}
-    waste_sludge_add = WasteSludgeForm(request.POST, request.FILES)
+    waste_sludge_add = WasteSludgeForm(request)
     if request.method == "POST":
+        waste_sludge_add = WasteSludgeForm(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if waste_sludge_add.is_valid():
             waste_sludge_add = waste_sludge_add.save(commit=False)
@@ -1695,8 +1709,8 @@ def waste_sludge_add(request):
                 return redirect('/waste_sludge_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        waste_sludge_add = WasteSludgeForm()
+        else:
+            print("\n", waste_sludge_add.errors)
     context['waste_sludge_add'] = waste_sludge_add
     return render(request, 'home/waste-sludge.html', context)
 
@@ -1705,8 +1719,9 @@ def waste_sludge_add(request):
 @login_required(login_url="/login/")
 def solvent_aerosol_emission_sources_add(request):
     context = {}
-    SAES_add = SolventAerosolEmissionSourcesForm(request.POST, request.FILES)
+    SAES_add = SolventAerosolEmissionSourcesForm(request)
     if request.method == "POST":
+        SAES_add = SolventAerosolEmissionSourcesForm(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if SAES_add.is_valid():
             solvent = SAES_add.save(commit=False)
@@ -1718,8 +1733,8 @@ def solvent_aerosol_emission_sources_add(request):
                 return redirect('/solvent_aerosol_emission_sources_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        SAES_add = SolventAerosolEmissionSourcesForm()
+        else:
+            print("\n", SAES_add.errors)
     context['SAES_add'] = SAES_add
     return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add})
 
@@ -1728,8 +1743,9 @@ def solvent_aerosol_emission_sources_add(request):
 @login_required(login_url="/login/")
 def VOCs_one_add(request):
     context = {}
-    VOCs_one_add = VOCsOneForm(request.POST, request.FILES)
+    VOCs_one_add = VOCsOneForm(request)
     if request.method == "POST":
+        VOCs_one_add = VOCsOneForm(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if VOCs_one_add.is_valid():
             VOCs_one_add = VOCs_one_add.save(commit=False)
@@ -1749,8 +1765,8 @@ def VOCs_one_add(request):
                 return redirect('/VOCs_one_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        VOCs_one_add = VOCsOneForm()
+        else:
+            print("\n", VOCs_one_add.errors)
     context['VOCs_one_add'] = VOCs_one_add
     return render(request, 'home/VOCs-one.html', context)
 
@@ -1759,10 +1775,10 @@ def VOCs_one_add(request):
 @login_required(login_url="/login/")
 def VOCs_two_add(request):
     context = {}
-    VOCs_two_add = VOCsTwoForm(request.POST, request.FILES)
+    VOCs_two_add = VOCsTwoForm(request)
     if request.method == "POST":
+        VOCs_two_add = VOCsTwoForm(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
-        print("company_id", factory_id)
         if VOCs_two_add.is_valid():
             VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = factory_id
@@ -1783,9 +1799,6 @@ def VOCs_two_add(request):
                 return redirect('/carbon-system/')
         else:
             print("\n", VOCs_two_add.errors)
-            return render(request, 'home/VOCs-two.html', {'VOCs_two_add': VOCs_two_add})
-    else:
-        VOCs_two_add = VOCsTwoForm()
     context['VOCs_two_add'] = VOCs_two_add
     return render(request, 'home/VOCs-two.html', context)
 
@@ -1794,8 +1807,9 @@ def VOCs_two_add(request):
 @login_required(login_url="/login/")
 def electricity_add(request):
     context = {}
-    ELEC_add = ELECform(request.POST, request.FILES)
+    ELEC_add = ELECform(request)
     if request.method == "POST":
+        ELEC_add = ELECform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if ELEC_add.is_valid():
             ELEC_add = ELEC_add.save(commit=False)
@@ -1815,8 +1829,8 @@ def electricity_add(request):
                 return redirect('/electricity_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        ELEC_add = ELECform
+        else:
+            print("\n", ELEC_add.errors)
     context['ELEC_add'] = ELEC_add
     return render(request, 'home/electricity.html', context)
 
@@ -1825,8 +1839,9 @@ def electricity_add(request):
 @login_required(login_url="/login/")
 def upstream_transportation_add(request):
     context = {}
-    UT_add = UTform(request.POST, request.FILES)
+    UT_add = UTform()
     if request.method == "POST":
+        UT_add = UTform(request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if UT_add.is_valid():
             UT_add = UT_add.save(commit=False)
@@ -1856,8 +1871,8 @@ def upstream_transportation_add(request):
                 return redirect('/upstream_transportation_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        UT_add = UTform()
+        else:
+            print("\n", UT_add.errors)
     context['UT_add'] = UT_add
     return render(request, 'home/upstream-transportation.html', context)
 
@@ -1866,8 +1881,9 @@ def upstream_transportation_add(request):
 @login_required(login_url="/login/")
 def downstream_transportation_add(request):
     context = {}
-    DT_add = DTform(request.POST, request.FILES)
+    DT_add = DTform()
     if request.method == "POST":
+        DT_add = DTform(request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if DT_add.is_valid():
             DT_add = DT_add.save(commit=False)
@@ -1897,8 +1913,8 @@ def downstream_transportation_add(request):
                 return redirect('/downstream_transportation_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        DT_add = DTform()
+        else:
+            print("\n", DT_add.errors)
     context['DT_add'] = DT_add
     return render(request, 'home/downstream-transportation.html', context)
 
@@ -1906,8 +1922,9 @@ def downstream_transportation_add(request):
 @login_required(login_url="/login/")
 def employee_commute_add(request):
     context = {}
-    EC_add = ECform(request.POST, request.FILES)
+    EC_add = ECform(request)
     if request.method == "POST":
+        EC_add = ECform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EC_add.is_valid():
             commute = EC_add.save(commit=False)
@@ -1935,8 +1952,8 @@ def employee_commute_add(request):
                 last_data.delete()
                 print("Commute_formSet>>>>>>>>>>>>>>>>>>>>\n", Commute_formSet)
                 return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
-    else:
-        EC_add = ECform()
+        else:
+            print("\n", EC_add.errors)
     context['EC_add'] = EC_add
     return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
 
@@ -1944,8 +1961,9 @@ def employee_commute_add(request):
 @login_required(login_url="/login/")
 def employee_business_trip_add(request):
     context = {}
-    EBT_add = EBTform(request.POST, request.FILES)
+    EBT_add = EBTform()
     if request.method == "POST":
+        EBT_add = EBTform(request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EBT_add.is_valid():
             business = EBT_add.save(commit=False)
@@ -1981,8 +1999,8 @@ def employee_business_trip_add(request):
                 last_data.delete()
                 print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", tripsection_formSet)
                 return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
-    else:
-        EBT_add = EBTform()
+        else:
+            print("\n", EBT_add.errors)
     context['EBT_add'] = EBT_add
     return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
 
@@ -1990,8 +2008,9 @@ def employee_business_trip_add(request):
 @login_required(login_url="/login/")
 def waste_add(request):
     context = {}
-    WASTE_add = WASTEform(request.POST, request.FILES)
+    WASTE_add = WASTEform(request)
     if request.method == "POST":
+        WASTE_add = WASTEform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if WASTE_add.is_valid():
             WASTE_add = WASTE_add.save(commit=False)
@@ -2011,8 +2030,8 @@ def waste_add(request):
                 return redirect('/waste_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        WASTE_add = WASTEform
+        else:
+            print("\n", WASTE_add.errors)
     context['WASTE_add'] = WASTE_add
     return render(request, 'home/waste.html', context)
 
@@ -2021,8 +2040,9 @@ def waste_add(request):
 @login_required(login_url="/login/")
 def pipe_wastewater_add(request):
     context = {}
-    PW_add = PWform(request.POST, request.FILES)
+    PW_add = PWform(request)
     if request.method == "POST":
+        PW_add = PWform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if PW_add.is_valid():
             PW_add = PW_add.save(commit=False)
@@ -2042,8 +2062,8 @@ def pipe_wastewater_add(request):
                 return redirect('/pipe_wastewater_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        PW_add = PWform()
+        else:
+            print("\n", PW_add.errors)
     context['PW_add'] = PW_add
     return render(request, 'home/pipe-wastewater.html', context)
 
@@ -2052,8 +2072,9 @@ def pipe_wastewater_add(request):
 @login_required(login_url="/login/")
 def purchase_material_add(request):
     context = {}
-    PM_add = PMform(request.POST, request.FILES)
+    PM_add = PMform(request)
     if request.method == "POST":
+        PM_add = PMform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if PM_add.is_valid():
             PM_add = PM_add.save(commit=False)
@@ -2073,8 +2094,8 @@ def purchase_material_add(request):
                 return redirect('/purchase_material_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        PM_add = PMform()
+        else:
+            print("\n", PM_add.errors)
     context['PM_add'] = PM_add
     return render(request, 'home/purchase-material.html', context)
 
@@ -2083,8 +2104,9 @@ def purchase_material_add(request):
 @login_required(login_url="/login/")
 def product_indirect_emissions_add(request):
     context = {}
-    PIE_add = PIEform(request.POST, request.FILES)
+    PIE_add = PIEform(request)
     if request.method == "POST":
+        PIE_add = PIEform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if PIE_add.is_valid():
             PIE_add = PIE_add.save(commit=False)
@@ -2104,8 +2126,8 @@ def product_indirect_emissions_add(request):
                 return redirect('/product_indirect_emissions_add/')
             else:
                 return redirect('/carbon-system/')
-    else:
-        PIE_add = PIEform()
+        else:
+            print("\n", PIE_add.errors)
     context['PIE_add'] = PIE_add
     return render(request, 'home/product-indirect-emissions.html', context)
 
@@ -2149,7 +2171,7 @@ def carbon_system(request, message=None):
             if factory_id is None:
                 factory_id = current_user_group_id(request)
             # factory_id = current_user_group_id(request)
-        # print('factory_id', factory_id)
+        print('factory_id', factory_id)
         # print('company_id', company_id)
         dropdown = {
             'dropdown_one': dropdown_one,
