@@ -21,8 +21,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 原物料使用</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 原物料使用</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -30,19 +30,13 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ MT_add.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ MT_add.material_name }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 {% for error in MT_add.material_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -51,7 +45,7 @@
                                                     {{ MT_add.material_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ MT_add.material_type }}
@@ -99,7 +93,7 @@
                                         {% if MT_add.errors %}
                                             <div class="col-12 text-center">
                                                 {% if 'january' in MT_add.errors  or 'february' in MT_add.errors  or 'march' in MT_add.errors  or 'april' in MT_add.errors  or 'may' in MT_add.errors  or 'june' in MT_add.errors  or 'july' in MT_add.errors  or 'august' in MT_add.errors  or 'september' in MT_add.errors  or 'october' in MT_add.errors  or 'november' in MT_add.errors  or 'december' in MT_add.errors  in MT_add.errors %}
-                                                    <li style="color: red">只能輸入正數 </li>
+                                                    <li style="color: red">只能輸入正數</li>
                                                 {% endif %}
                                                 {% for error in MT_add.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
@@ -277,20 +271,20 @@
             {% endif %}
             // 顯示錯誤框
             {% for field in MT_add %}
-                    {% for error in field.errors %}
-                        error_name = "{{ field.label }}"
-                        if (
-                            error_name==='January' || error_name==='February' || error_name==='March' || error_name==='April' ||
-                            error_name==='May' || error_name==='June' || error_name==='July' || error_name==='August' ||
-                            error_name==='September' || error_name==='October' || error_name==='November' || error_name==='December'
-                        ){
-                            error_name = error_name.toLowerCase()
-                            error_input = document.querySelector("[name=" + error_name + "]");
-                            parentDiv = error_input.parentNode;
-                            parentDiv.classList.add("border", "border-danger", "border-3");
-                        }
-                    {% endfor %}
+                {% for error in field.errors %}
+                    error_name = "{{ field.label }}"
+                    if (
+                        error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                        error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                        error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
+                    ) {
+                        error_name = error_name.toLowerCase()
+                        error_input = document.querySelector("[name=" + error_name + "]");
+                        parentDiv = error_input.parentNode;
+                        parentDiv.classList.add("border", "border-danger", "border-3");
+                    }
                 {% endfor %}
+            {% endfor %}
         });
 
         {#    禁止enter鍵#}

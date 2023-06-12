@@ -21,8 +21,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 滅火器</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 滅火器</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -30,12 +30,6 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row my-3">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ EX_add.years }}
-                                                </div>
-                                            </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;"></span></label>
@@ -48,45 +42,43 @@
                                                     {{ EX_add.extinguisher_vendor }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row  my-3">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ EX_add.extinguisher_type }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器擺放位置(廠別) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EX_add.position }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row my-3">
-                                            <div class="col-6">
+                                        <div class="row  my-3">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>滅火器類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ EX_add.extinguisher_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EX_add.chemical_weight }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>庫存量 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EX_add.inventory }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row  my-3">
+                                        <div class="row my-3">
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器使用數量 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>滅火器使用數量 </label>
                                                     {{ EX_add.using_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>使用月份 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    <label>使用月份 </label>
                                                     {{ EX_add.monthly }}
                                                 </div>
                                             </div>
@@ -205,7 +197,7 @@
             minViewMode: "months",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
         {#    日期篩選器#}
         $("#replace_filling_date").datepicker({
@@ -217,6 +209,29 @@
         })
 
         $('#extinguisher_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+
+        {#    使用月份、更換/填充日期，disabled#}
+        let using_amount = document.getElementById('id_using_amount')
+        let monthly = document.getElementById('monthly')
+        using_amount.addEventListener('input', function () {
+            if (using_amount.value !== '') {
+                monthly.disabled = false;
+            } else {
+                monthly.value = ""
+                monthly.disabled = true;
+            }
+        });
+        let replace_filling_amount = document.getElementById('id_replace_filling_amount')
+        let replace_filling_date = document.getElementById('replace_filling_date')
+        replace_filling_amount.addEventListener('input', function () {
+            if (replace_filling_amount.value !== '') {
+                replace_filling_date.disabled = false;
+            } else {
+                replace_filling_date.value = ""
+                replace_filling_date.disabled = true;
+            }
+        });
+
     </script>
 
 {% endblock javascripts %}

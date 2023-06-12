@@ -22,36 +22,16 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 公務車</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 公務車</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <form action="/official_car_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ OffCar_add.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>車輛類別 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ OffCar_add.vehicle_type }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ OffCar_add.fuel_type }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
                                                 {% for error in OffCar_add.device_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -60,10 +40,22 @@
                                                     {{ OffCar_add.device_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>所屬單位</label>
                                                     {{ OffCar_add.department }}
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>車輛類別 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ OffCar_add.vehicle_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ OffCar_add.fuel_type }}
                                                 </div>
                                             </div>
                                         </div>
@@ -401,13 +393,13 @@
 
 
         {#    年度篩選器#}
-{#        $("#years").datepicker({#}
-{#            format: "yyyy",#}
-{#            viewMode: "years",#}
-{#            minViewMode: "years",#}
-{#            orientation: "bottom",#}
-{#            autoclose: "true",#}
-{#        }).datepicker("setDate", 'now');#}
+        {#        $("#years").datepicker({#}
+        {#            format: "yyyy",#}
+        {#            viewMode: "years",#}
+        {#            minViewMode: "years",#}
+        {#            orientation: "bottom",#}
+        {#            autoclose: "true",#}
+        {#        }).datepicker("setDate", 'now');#}
 
 
         {#    購買年份篩選器#}

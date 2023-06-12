@@ -190,26 +190,22 @@
                         </form>
                     </div>
                 {% endif %}
-                <div class="d-flex">
-                    <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
-                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-center" id="disable-section">
-                                <form method="GET" action="{% url 'bar_action' %}" enctype="multipart/form-data">
-                                    {% csrf_token %}
-                                    {% if perms.home.add_emergency_generators %}
-                                        <button type="submit" name="add_page" class="btn btn-outline-light me-1">新增</button>
-                                        <button type="submit" name="copy_last_year" class="btn btn-outline-light me-1">複製去年資料</button>
-                                        <button type="submit" name="public_version" class="btn btn-outline-light me-1">下載公版</button>
-                                        <label for="importExcel" class="btn btn-outline-light me-1">
-                                            匯入Excel
-                                        </label>
-                                        <input type="file" id="importExcel" name="importExcel" style="display:none">
-                                    {% endif %}
-                                    <button type="submit" name="export_excel" class="btn btn-outline-light me-1">匯出Excel</button>
-                                </form>
-                            </div>
-                        </div>
+                <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
+                    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                    <div class="d-flex justify-content-center mb-4" id="disable-section">
+                        <form method="GET" action="{% url 'bar_action' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% if perms.home.add_emergency_generators %}
+                                <button type="submit" name="add_page" class="btn btn-outline-light me-4">新增</button>
+                                <button type="submit" name="copy_last_year" class="btn btn-outline-light me-4">複製去年資料</button>
+                                <button type="submit" name="public_version" class="btn btn-outline-light me-4">下載公版</button>
+                                <label for="importExcel" class="btn btn-outline-light me-4">
+                                    匯入Excel
+                                </label>
+                                <input type="file" id="importExcel" name="importExcel" style="display:none">
+                            {% endif %}
+                            <button type="submit" name="export_excel" class="btn btn-outline-light me-4">匯出Excel</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -229,14 +225,19 @@
     </div>
 
     <!-- Modal -->
+
+    <!-- 刪除資料 -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        {#    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">#}
+        {#    <div class="modal fade" id="staticBackdrop" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
+        <div class="modal-dialog modal-dialog-centered">
+            {#        <div class="modal-dialog">#}
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="staticBackdropLabel">注意!!!</h5></div>
                 </div>
                 <div class="modal-body d-flex justify-content-center">
-                    <h6>是否刪除此筆資料</h6>
+                    <h6>確認刪除所選資料</h6>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
@@ -322,6 +323,12 @@
 
 
     <script>
+        var myModalEl = document.getElementById('staticBackdrop')
+        myModalEl.addEventListener('show.bs.modal', function (event) {
+            // do something...
+            {#console.warn('pl')#}
+        })
+
         {#下拉選單樣式#}
         /*
         $(document).ready(function () {
@@ -538,8 +545,7 @@
                     if (permission === "True") {
                         let id = 1;
                         t_data.forEach((item, index) => {
-                            var trash = document.createElement('a')//加入"trash button"tag
-                            var trash_i_tag = document.createElement('i')//加入"i"tag
+                            var trash = document.createElement('input')//加入"trash checkbox"tag
                             var pencil = document.createElement('a')//加入"pencil button"tag
                             var pencil_i_tag = document.createElement('i')//加入"i"tag
                             {#var pic = document.createElement('a')//加入"picture button"tag#}
@@ -551,19 +557,16 @@
                             delete_squ.appendChild(trash)
                             edit_squ.appendChild(pencil)
                             {#pic_squ.appendChild(pic)#}
-                            trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
-                            trash.setAttribute('data-bs-toggle', 'modal')
-                            trash.setAttribute('data-bs-target', '#staticBackdrop')
-                            trash.appendChild(trash_i_tag)
+
+                            trash.setAttribute('class', 'delete_checkbox')
+                            trash.setAttribute('type', 'checkbox')
                             pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
                             pencil.appendChild(pencil_i_tag)
                             {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
                             {#pic.setAttribute('data-bs-toggle', 'modal')#}
                             {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
                             {#pic.appendChild(pic_i_tag)#}
-                            trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
                             pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
-                            {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
                             var cr_id = row.insertCell(-1)//加入"序號"框框
                             cr_id.innerHTML = id;
                             for (const [key, value] of Object.entries((item))) {
@@ -649,7 +652,18 @@
                             value.forEach((item, index) => {
                                 var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框
                                 thead_row_name.appendChild(cr_n)
-                                cr_n.innerHTML = item;//"標題"框框填質
+                                if(item !== '刪除'){
+                                    cr_n.innerHTML = item;//"標題"框框填質
+                                }else {
+                                    let trash = document.createElement('a')//加入"trash button"tag
+                                    cr_n.appendChild(trash)
+
+                                    trash.innerHTML = item;
+                                    trash.setAttribute('class', 'table-active text-danger btn p-0 m-0 blink')
+                                    trash.setAttribute('data-bs-toggle', 'modal')
+                                    trash.setAttribute('data-bs-target', '#staticBackdrop')
+                                    trash.setAttribute('style', 'font-size: 17.3px')
+                                }
                                 if (i === 0) {
                                     if (permission === "True") {
                                         cr_n.setAttribute('class', 'table-active')
@@ -772,36 +786,34 @@
         });
     </script>
 
+
     <!--/*刪除該筆設備*/-->
     <script>
-        var dropdown_three = document.getElementById("dropdown_three")
-        $(document).on('click', ".trash_btn", function () {
-            var single_dataID = this.id;
-            {#console.warn(single_dataID)#}
-            delete_device(single_dataID)
-        })
-    </script>
+        $(document).on('click', ".delete_btn", function () {
+            let delete_checkbox = document.getElementsByClassName('delete_checkbox')
+            let delete_str = ""
+            for(let i=0; i<delete_checkbox.length; i++){
+                if(delete_checkbox[i].checked){
+                    delete_str += delete_checkbox[i].id + " "
+                }
+            }
 
-    <!--/*刪除function*/-->
-    <script>
-        function delete_device(id) {
-            $(document).on('click', ".delete_btn", function () {
-                {#console.warn("single_dataID", id)#}
-                $.ajax({
-                    url: "{% url 'delete_device' %}",
-                    data: {
-                        'single_dataID': id
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (single_dataID) {
-                        var single_data = document.getElementById(single_dataID)
-                        {#console.warn(">>>>>>>>>>>", single_data)#}
+            $.ajax({
+                url: "{% url 'delete_device' %}",
+                data: {
+                    'delete_str': delete_str
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (delete_list) {
+                    console.warn('delete_list', delete_list)
+                    for (let i = 0; i < delete_list.length; i++) {
+                        let single_data = document.getElementById(delete_list[i])
                         single_data.closest("tr").remove()
                     }
-                });
-            })
-        }
+                }
+            });
+        })
     </script>
 
 

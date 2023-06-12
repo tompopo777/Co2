@@ -85,7 +85,7 @@ def current_user_group_id(request):
         user_id = request.user.id
         current_user = Profile.objects.filter(user_id=user_id).get()
         factory_id = current_user.factory_id
-        factory_name = current_user.factory
+        # factory_name = current_user.factory
         return factory_id
     except:
         pass
@@ -1188,13 +1188,13 @@ def copy_last_year_data(request):
 def emergency_generators_add(request):
     context = {}
     EG_add = EGform(request)
-    # EG_add = EGform()
     if request.method == "POST":
         EG_add = EGform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EG_add.is_valid():
             EG_add = EG_add.save(commit=False)
             EG_add.company_id = factory_id
+            EG_add.years = request.session.get('years')
             EG_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1213,6 +1213,7 @@ def emergency_generators_add(request):
         else:
             print("\n", EG_add.errors)
     context['EG_add'] = EG_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/emergency-generator.html', context)
 
 
@@ -1226,6 +1227,7 @@ def combustion_equipment_add(request):
         if CE_add.is_valid():
             CE_add = CE_add.save(commit=False)
             CE_add.company_id = factory_id
+            CE_add.years = request.session.get('years')
             CE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1244,6 +1246,7 @@ def combustion_equipment_add(request):
         else:
             print("\n", CE_add.errors)
     context['CE_add'] = CE_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/combustion-equipment.html', context)
 
 
@@ -1258,6 +1261,7 @@ def official_car_add(request):
         if OffCar_add.is_valid():
             OffCar_add = OffCar_add.save(commit=False)
             OffCar_add.company_id = factory_id
+            OffCar_add.years = request.session.get('years')
             OffCar_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1276,6 +1280,7 @@ def official_car_add(request):
         else:
             print("\n", OffCar_add.errors)
     context['OffCar_add'] = OffCar_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/official-car.html', context)
 
 
@@ -1289,6 +1294,7 @@ def material_add(request):
         if MT_add.is_valid():
             MT_add = MT_add.save(commit=False)
             MT_add.company_id = factory_id
+            MT_add.years = request.session.get('years')
             MT_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1307,6 +1313,7 @@ def material_add(request):
         else:
             print("\n", MT_add.errors)
     context['MT_add'] = MT_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/material.html', context)
 
 
@@ -1320,6 +1327,7 @@ def process_add(request):
         if PC_add.is_valid():
             PC_add = PC_add.save(commit=False)
             PC_add.company_id = factory_id
+            PC_add.years = request.session.get('years')
             PC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1338,6 +1346,7 @@ def process_add(request):
         else:
             print("\n", PC_add.errors)
     context['PC_add'] = PC_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/process.html', context)
 
 
@@ -1351,6 +1360,7 @@ def refrigerator_add(request):
         if RF_add.is_valid():
             RF_add = RF_add.save(commit=False)
             RF_add.company_id = factory_id
+            RF_add.years = request.session.get('years')
             RF_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1369,6 +1379,7 @@ def refrigerator_add(request):
         else:
             print("\n", RF_add.errors)
     context['RF_add'] = RF_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/refrigerator.html', context)
 
 
@@ -1382,6 +1393,7 @@ def airconditioner_add(request):
         if AC_add.is_valid():
             AC_add = AC_add.save(commit=False)
             AC_add.company_id = factory_id
+            AC_add.years = request.session.get('years')
             AC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1400,6 +1412,7 @@ def airconditioner_add(request):
         else:
             print("\n", AC_add.errors)
     context['AC_add'] = AC_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/airconditioner.html', context)
 
 
@@ -1413,6 +1426,7 @@ def vehicle_add(request):
         if VC_add.is_valid():
             VC_add = VC_add.save(commit=False)
             VC_add.company_id = factory_id
+            VC_add.years = request.session.get('years')
             VC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1431,6 +1445,7 @@ def vehicle_add(request):
         else:
             print("\n", VC_add.errors)
     context['VC_add'] = VC_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/vehicle.html', context)
 
 
@@ -1444,6 +1459,7 @@ def water_dispenser_add(request):
         if WD_add.is_valid():
             WD_add = WD_add.save(commit=False)
             WD_add.company_id = factory_id
+            WD_add.years = request.session.get('years')
             WD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1462,6 +1478,7 @@ def water_dispenser_add(request):
         else:
             print("\n", WD_add.errors)
     context['WD_add'] = WD_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/water-dispenser.html', context)
 
 
@@ -1475,6 +1492,7 @@ def ice_water_dispenser_add(request):
         if IWD_add.is_valid():
             IWD_add = IWD_add.save(commit=False)
             IWD_add.company_id = factory_id
+            IWD_add.years = request.session.get('years')
             IWD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1493,6 +1511,7 @@ def ice_water_dispenser_add(request):
         else:
             print("\n", IWD_add.errors)
     context['IWD_add'] = IWD_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/ice-water-dispenser.html', context)
 
 
@@ -1506,6 +1525,7 @@ def ice_maker_add(request):
         if IM_add.is_valid():
             IM_add = IM_add.save(commit=False)
             IM_add.company_id = factory_id
+            IM_add.years = request.session.get('years')
             IM_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1524,6 +1544,7 @@ def ice_maker_add(request):
         else:
             print("\n", IM_add.errors)
     context['IM_add'] = IM_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/ice-maker.html', context)
 
 
@@ -1537,6 +1558,7 @@ def other_device_add(request):
         if OD_add.is_valid():
             OD_add = OD_add.save(commit=False)
             OD_add.company_id = factory_id
+            OD_add.years = request.session.get('years')
             OD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1555,6 +1577,7 @@ def other_device_add(request):
         else:
             print("\n", OD_add.errors)
     context['OD_add'] = OD_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/other-device.html', context)
 
 
@@ -1568,6 +1591,7 @@ def extinguisher_add(request):
         if EX_add.is_valid():
             EX_add = EX_add.save(commit=False)
             EX_add.company_id = factory_id
+            EX_add.years = request.session.get('years')
             EX_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1586,6 +1610,7 @@ def extinguisher_add(request):
         else:
             print("\n", EX_add.errors)
     context['EX_add'] = EX_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/extinguisher.html', context)
 
 
@@ -1599,6 +1624,7 @@ def personnel_inventory_add(request):
         if PI_add.is_valid():
             PI_add = PI_add.save(commit=False)
             PI_add.company_id = factory_id
+            PI_add.years = request.session.get('years')
             PI_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1617,6 +1643,7 @@ def personnel_inventory_add(request):
         else:
             print("\n", PI_add.errors)
     context['PI_add'] = PI_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/personnel-inventory.html', context)
 
 
@@ -1630,6 +1657,7 @@ def employee_add(request):
         if EMP_add.is_valid():
             EMP_add = EMP_add.save(commit=False)
             EMP_add.company_id = factory_id
+            EMP_add.years = request.session.get('years')
             EMP_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1648,6 +1676,7 @@ def employee_add(request):
         else:
             print("\n", EMP_add.errors)
     context['EMP_add'] = EMP_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/employee.html', context)
 
 
@@ -1662,6 +1691,7 @@ def waste_water_add(request):
         if waste_water_add.is_valid():
             waste_water_add = waste_water_add.save(commit=False)
             waste_water_add.company_id = factory_id
+            waste_water_add.years = request.session.get('years')
             waste_water_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1680,6 +1710,7 @@ def waste_water_add(request):
         else:
             print("\n", waste_water_add.errors)
     context['waste_water_add'] = waste_water_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/waste-water.html', context)
 
 
@@ -1694,6 +1725,7 @@ def waste_sludge_add(request):
         if waste_sludge_add.is_valid():
             waste_sludge_add = waste_sludge_add.save(commit=False)
             waste_sludge_add.company_id = factory_id
+            waste_sludge_add.years = request.session.get('years')
             waste_sludge_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1712,6 +1744,7 @@ def waste_sludge_add(request):
         else:
             print("\n", waste_sludge_add.errors)
     context['waste_sludge_add'] = waste_sludge_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/waste-sludge.html', context)
 
 
@@ -1726,6 +1759,7 @@ def solvent_aerosol_emission_sources_add(request):
         if SAES_add.is_valid():
             solvent = SAES_add.save(commit=False)
             solvent.company_id = factory_id
+            solvent.years = request.session.get('years')
             solvent.save()
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
@@ -1736,6 +1770,7 @@ def solvent_aerosol_emission_sources_add(request):
         else:
             print("\n", SAES_add.errors)
     context['SAES_add'] = SAES_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add})
 
 
@@ -1750,6 +1785,7 @@ def VOCs_one_add(request):
         if VOCs_one_add.is_valid():
             VOCs_one_add = VOCs_one_add.save(commit=False)
             VOCs_one_add.company_id = factory_id
+            VOCs_one_add.years = request.session.get('years')
             VOCs_one_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1768,6 +1804,7 @@ def VOCs_one_add(request):
         else:
             print("\n", VOCs_one_add.errors)
     context['VOCs_one_add'] = VOCs_one_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/VOCs-one.html', context)
 
 
@@ -1782,6 +1819,7 @@ def VOCs_two_add(request):
         if VOCs_two_add.is_valid():
             VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = factory_id
+            VOCs_two_add.years = request.session.get('years')
             VOCs_two_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1800,6 +1838,7 @@ def VOCs_two_add(request):
         else:
             print("\n", VOCs_two_add.errors)
     context['VOCs_two_add'] = VOCs_two_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/VOCs-two.html', context)
 
 
@@ -1814,6 +1853,7 @@ def electricity_add(request):
         if ELEC_add.is_valid():
             ELEC_add = ELEC_add.save(commit=False)
             ELEC_add.company_id = factory_id
+            ELEC_add.years = request.session.get('years')
             ELEC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1832,6 +1872,7 @@ def electricity_add(request):
         else:
             print("\n", ELEC_add.errors)
     context['ELEC_add'] = ELEC_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/electricity.html', context)
 
 
@@ -1839,13 +1880,14 @@ def electricity_add(request):
 @login_required(login_url="/login/")
 def upstream_transportation_add(request):
     context = {}
-    UT_add = UTform()
+    UT_add = UTform(request)
     if request.method == "POST":
-        UT_add = UTform(request.POST, request.FILES)
+        UT_add = UTform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if UT_add.is_valid():
             UT_add = UT_add.save(commit=False)
             UT_add.company_id = factory_id
+            UT_add.years = request.session.get('years')
             UT_add.save()
             stages = request.POST.getlist('stage')
             last_id = upstream_transportation.objects.values("id").last().get("id")
@@ -1874,6 +1916,7 @@ def upstream_transportation_add(request):
         else:
             print("\n", UT_add.errors)
     context['UT_add'] = UT_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/upstream-transportation.html', context)
 
 
@@ -1881,13 +1924,14 @@ def upstream_transportation_add(request):
 @login_required(login_url="/login/")
 def downstream_transportation_add(request):
     context = {}
-    DT_add = DTform()
+    DT_add = DTform(request)
     if request.method == "POST":
-        DT_add = DTform(request.POST, request.FILES)
+        DT_add = DTform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if DT_add.is_valid():
             DT_add = DT_add.save(commit=False)
             DT_add.company_id = factory_id
+            DT_add.years = request.session.get('years')
             DT_add.save()
             stages = request.POST.getlist('stage')
             last_id = downstream_transportation.objects.values("id").last().get("id")
@@ -1916,6 +1960,7 @@ def downstream_transportation_add(request):
         else:
             print("\n", DT_add.errors)
     context['DT_add'] = DT_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/downstream-transportation.html', context)
 
 
@@ -1929,6 +1974,7 @@ def employee_commute_add(request):
         if EC_add.is_valid():
             commute = EC_add.save(commit=False)
             commute.company_id = factory_id
+            commute.years = request.session.get('years')
             commute.save()
             Commute_formSet = CommuteFormSet(request.POST, request.FILES, instance=commute)
             if Commute_formSet.is_valid():
@@ -1951,23 +1997,24 @@ def employee_commute_add(request):
                 last_data = employee_commute.objects.last()
                 last_data.delete()
                 print("Commute_formSet>>>>>>>>>>>>>>>>>>>>\n", Commute_formSet)
-                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
+                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'years': request.session.get('years')})
         else:
             print("\n", EC_add.errors)
     context['EC_add'] = EC_add
-    return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
+    return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'years': request.session.get('years')})
 
 
 @login_required(login_url="/login/")
 def employee_business_trip_add(request):
     context = {}
-    EBT_add = EBTform()
+    EBT_add = EBTform(request)
     if request.method == "POST":
-        EBT_add = EBTform(request.POST, request.FILES)
+        EBT_add = EBTform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EBT_add.is_valid():
             business = EBT_add.save(commit=False)
             business.company_id = factory_id
+            business.years = request.session.get('years')
             business.save()
             tripsection_formSet = TripSectionFormSet(request.POST, request.FILES, instance=business)
             if tripsection_formSet.is_valid():
@@ -1998,11 +2045,11 @@ def employee_business_trip_add(request):
                 last_data = employee_business_trip.objects.last()
                 last_data.delete()
                 print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", tripsection_formSet)
-                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
+                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'years': request.session.get('years')})
         else:
             print("\n", EBT_add.errors)
     context['EBT_add'] = EBT_add
-    return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
+    return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'years': request.session.get('years')})
 
 
 @login_required(login_url="/login/")
@@ -2015,6 +2062,7 @@ def waste_add(request):
         if WASTE_add.is_valid():
             WASTE_add = WASTE_add.save(commit=False)
             WASTE_add.company_id = factory_id
+            WASTE_add.years = request.session.get('years')
             WASTE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2033,6 +2081,7 @@ def waste_add(request):
         else:
             print("\n", WASTE_add.errors)
     context['WASTE_add'] = WASTE_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/waste.html', context)
 
 
@@ -2047,6 +2096,7 @@ def pipe_wastewater_add(request):
         if PW_add.is_valid():
             PW_add = PW_add.save(commit=False)
             PW_add.company_id = factory_id
+            PW_add.years = request.session.get('years')
             PW_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2065,6 +2115,7 @@ def pipe_wastewater_add(request):
         else:
             print("\n", PW_add.errors)
     context['PW_add'] = PW_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/pipe-wastewater.html', context)
 
 
@@ -2079,6 +2130,7 @@ def purchase_material_add(request):
         if PM_add.is_valid():
             PM_add = PM_add.save(commit=False)
             PM_add.company_id = factory_id
+            PM_add.years = request.session.get('years')
             PM_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2097,6 +2149,7 @@ def purchase_material_add(request):
         else:
             print("\n", PM_add.errors)
     context['PM_add'] = PM_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/purchase-material.html', context)
 
 
@@ -2111,6 +2164,7 @@ def product_indirect_emissions_add(request):
         if PIE_add.is_valid():
             PIE_add = PIE_add.save(commit=False)
             PIE_add.company_id = factory_id
+            PIE_add.years = request.session.get('years')
             PIE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2129,6 +2183,7 @@ def product_indirect_emissions_add(request):
         else:
             print("\n", PIE_add.errors)
     context['PIE_add'] = PIE_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/product-indirect-emissions.html', context)
 
 
@@ -2297,14 +2352,16 @@ def edit_device(request, error_from=None, error_formset=None):
         formset = formsetName.get(datasheet_id)
         if request.method == 'GET':
             single_dataID = request.GET.get('single_dataID')
+            years = request.session.get('years')
             request.session.update({'single_dataID': single_dataID})
             current_data = dbName.objects.get(id=single_dataID)
-            update_from = form(instance=current_data)
+            update_from = form(request, instance=current_data)
 
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
                 'single_dataID': single_dataID,
+                'years': years,
             }
             try:
                 if datasheet_id in formsetName:
@@ -2352,12 +2409,14 @@ def edit_device(request, error_from=None, error_formset=None):
         # 編輯後表單內容有誤轉跳
         if request.method == 'POST':
             single_dataID = request.session.get('single_dataID')
+            years = request.session.get('years')
             update_from = error_from
 
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
                 'single_dataID': single_dataID,
+                'years': years
             }
             # 表中表情況
             try:
@@ -2458,7 +2517,7 @@ def update_device(request, single_dataID):
         dbName = modelName.get(datasheet_id)
         form = formName.get(datasheet_id)
         current_data = get_object_or_404(dbName, id=single_dataID)
-        update_from = form(request.POST, request.FILES, instance=current_data)
+        update_from = form(request, request.POST, request.FILES, instance=current_data)
 
         if request.method == 'POST':
             # 表中表情況
@@ -2490,7 +2549,7 @@ def update_device(request, single_dataID):
 def delete_device(request):
     if request.method == 'GET':
         datasheet_id = request.session.get('dropdown_three')
-        single_dataID = request.GET.get('single_dataID')
+        delete_list = request.GET.get('delete_str').split()
         modelName = {
             "1": emergency_generators,
             "2": combustion_equipment,
@@ -2524,9 +2583,9 @@ def delete_device(request):
         }
         if modelName.get(datasheet_id):
             dbName = modelName.get(datasheet_id)
-            current_data = dbName.objects.get(id=single_dataID)
+            current_data = dbName.objects.filter(id__in=delete_list)
             current_data.delete()  # 刪除該筆資料
-            return JsonResponse(single_dataID, safe=False)
+            return JsonResponse(delete_list, safe=False)
 
 
 # 新增title
