@@ -80,6 +80,10 @@ PROCESS_UNIT_CHOICES = [
     ('公升', '公升'),
     ('立方公尺', '立方公尺')
 ]
+VOC1_UNIT_CHOICES = [
+    ('公斤', '公斤'),
+    ('公升', '公升')
+]
 REFRIGERANT_TYPE_CHOICES = [
     ('R-11', 'R-11'),
     ('R-12', 'R-12'),
@@ -497,7 +501,7 @@ class OFform(forms.ModelForm):
 class MTform(forms.ModelForm):
     class Meta:
         model = material
-        fields = ('years', 'material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
+        fields = ('years', 'material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'carbon_content', 'january', 'february', 'march', 'april', 'may',
                   'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
@@ -508,6 +512,7 @@ class MTform(forms.ModelForm):
             'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
             'chemical_name': forms.TextInput(attrs={'class': 'form-control chemical_name', 'id': 'chemical_name'}),
             'chemical_formula': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
+            'carbon_content': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -530,6 +535,7 @@ class MTform(forms.ModelForm):
         self.fields['process_add_name'].required = False
         self.fields['chemical_name'].required = False
         self.fields['chemical_formula'].required = False
+        self.fields['carbon_content'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
         # self.fields['material_id'].validators[]
@@ -539,6 +545,12 @@ class MTform(forms.ModelForm):
         if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return material_id
+
+    def clean_carbon_content(self):
+        carbon_content = self.cleaned_data.get('carbon_content')
+        if not re.match(r'^[0-9]+(.[0-9]{0,2})?$', str(carbon_content)):
+            raise forms.ValidationError("只能輸入正實數(小數點後兩位)", 'invalid')
+        return carbon_content
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -968,6 +980,7 @@ class ODform(forms.ModelForm):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return effusion_rate
 
+
 # 滅火器
 class EXform(forms.ModelForm):
     class Meta:
@@ -1114,18 +1127,18 @@ class EMPform(forms.ModelForm):
 class WASTEWATERform(forms.ModelForm):
     class Meta:
         model = waste_water
-        fields = ('years', 'Pi', 'Wi', 'CODi', 'COD_total', 'Si', 'MCFj', 'Bo', 'Ri',
+        fields = ('years', 'Pi', 'Wi', 'CODi', 'Si', 'MCFj', 'Bo', 'Ri', 'COD_total',
                   'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'Pi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
-            'Wi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
-            'CODi': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
-            'COD_total': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
-            'Si': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
-            'MCFj': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
-            'Bo': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
-            'Ri': forms.TextInput(attrs={'class': 'form-control', 'value': '0'}),
+            'Pi': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '若沒有則無需填寫'}),
+            'Wi': forms.TextInput(attrs={'class': 'form-control', 'id': 'Wi'}),
+            'CODi': forms.TextInput(attrs={'class': 'form-control', 'id': 'CODi'}),
+            'Si': forms.TextInput(attrs={'class': 'form-control'}),
+            'MCFj': forms.TextInput(attrs={'class': 'form-control', 'id': 'MCFj', 'value': '0.8'}),
+            'Bo': forms.TextInput(attrs={'class': 'form-control', 'id': 'Bo', 'value': '0.25'}),
+            'Ri': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '無回收，填"0"'}),
+            'COD_total': forms.TextInput(attrs={'class': 'form-control', 'id': 'COD_total'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1133,8 +1146,18 @@ class WASTEWATERform(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         super(WASTEWATERform, self).__init__(*args, **kwargs)
         self.fields['years'].initial = request.session.get('years')
+        self.fields['Pi'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
+
+    def clean_Pi(self):
+        pi = self.cleaned_data.get('Pi')
+        if pi is None:
+            pass
+        else:
+            if pi <= 0:
+                raise forms.ValidationError("Pi 必須大於 1", 'invalid')
+        return pi
 
 
 # 廢淤泥
@@ -1304,7 +1327,6 @@ class UTform(forms.ModelForm):
         self.fields['air_paid'].required = False
         self.fields['air_image_note'].required = False
         self.fields['message_board'].required = False
-
 
 
 # 下游運輸
@@ -1500,17 +1522,36 @@ class WASTEform(forms.ModelForm):
 class VOCsOneForm(forms.ModelForm):
     class Meta:
         model = VOCs_one
-        fields = ('years', 'emission', 'concentration_ch4', 'message_board')
+        fields = ('years', 'process_stage', 'material_id', 'process_add_name', 'chemical_name', 'chemical_formula', 'purchase_volume', 'consumption', 'purchase_unit',
+                  'CO2', 'CH4', 'N2O', 'HFC', 'PFC', 'SF6', 'NF3', 'image_note', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
-            'emission': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-            'concentration_ch4': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
+            'material_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
+            'chemical_name': forms.TextInput(attrs={'class': 'form-control chemical_name', 'id': 'chemical_name'}),
+            'chemical_formula': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
+            'purchase_volume': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
+            'consumption': forms.TextInput(attrs={'class': 'form-control chemical_name', 'id': 'chemical_name'}),
+            'purchase_unit': forms.Select(choices=VOC1_UNIT_CHOICES),
+            'CO2': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'CH4': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'N2O': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'HFC': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'PFC': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'SF6': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'NF3': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
+            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
 
     def __init__(self, request, *args, **kwargs):
         super(VOCsOneForm, self).__init__(*args, **kwargs)
         self.fields['years'].initial = request.session.get('years')
+        self.fields['process_add_name'].required = False
+        self.fields['chemical_name'].required = False
+        self.fields['chemical_formula'].required = False
+        self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
 
@@ -1518,9 +1559,11 @@ class VOCsOneForm(forms.ModelForm):
 class VOCsTwoForm(forms.ModelForm):
     class Meta:
         model = VOCs_two
-        fields = ('years', 'disposal_volume', 'concentration_entrance', 'concentration_exit', 'builtIn_rate', 'custom_rate', 'concentration_ch4', 'voc_capture_rate', 'combustion_equipment_rate', 'radio_VOCs', 'radio_concentration', 'radio_co2_emission', 'message_board')
+        fields = ('years', 'process_name', 'burn', 'disposal_volume', 'concentration_entrance', 'concentration_exit', 'builtIn_rate', 'custom_rate', 'concentration_ch4', 'voc_capture_rate', 'combustion_equipment_rate', 'radio_VOCs', 'radio_concentration', 'radio_co2_emission', 'message_board')
         widgets = {
             'years': forms.TextInput(attrs={'class': 'form-control', 'id': 'years'}),
+            'process_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'burn': forms.RadioSelect(choices=((1, "未經燃燒"), (2, "經過燃燒")), attrs={'class': 'form-check-input', 'id': 'radio_burn'}),
             'disposal_volume': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'concentration_entrance': forms.TextInput(
                 attrs={'class': 'form-control concentration_entrance', "id": "concentration_entrance", 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)', "disabled": ""}),
