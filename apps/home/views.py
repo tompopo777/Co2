@@ -102,10 +102,11 @@ def load_table(request):
             factory_id = request.session.get('company_id')
         else:
             factory_id = request.session.get('factory_id')
-        t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+        t_name = list(section_two.objects.filter(did=device_id).values("d_name", "did"))
         # 從db撈每張表要顯示的值
         for a in t_name:
             if a["d_name"] == "柴油發電機":
+                print(a["did"])
                 t_data = []
                 # raw_data = emergency_generators.objects.filter(company_id__in=factory_id_list, years=year).values("id", "device_id", "device_capacity", "position",
                 raw_data = emergency_generators.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_capacity", "position",
@@ -126,6 +127,11 @@ def load_table(request):
                     single_data["total"] = consumption_total
                     # 將 estimate 替換成中文
                     single_data["estimate"] = "是" if single_data["estimate"] else "否"
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
 
                 return JsonResponse(t_data, safe=False)
@@ -161,6 +167,12 @@ def load_table(request):
                     # 將計算後的「平均熱值」丟回字典
                     single_data["avg_heat"] = avg_heat
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "公務車":
                 t_data = []
@@ -177,11 +189,9 @@ def load_table(request):
                     single_data = raw_data[i]
                     consumption_total = 0
                     for j in consumptions_data[i]:
-                        # print("oil:::", consumptions_data[i].get(j))
                         # 「逐一」將資料(耗用量)丟回字典
                         single_data[j] = consumptions_data[i].get(j)
                         consumption_total += consumptions_data[i].get(j)
-                    # print("single_data11111", single_data)
                     # 將計算後的耗用量丟回字典
                     single_data["consumption_total"] = consumption_total
                     urea_total = 0
@@ -197,6 +207,12 @@ def load_table(request):
                             single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
                         single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
                 t_data = list(
@@ -205,6 +221,12 @@ def load_table(request):
                                                                                       "january", "february", "march", "april",
                                                                                       "may", "june", "july", "august",
                                                                                       "september", "october", "november", "december"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製程添加化學品":
                 t_data = []
@@ -232,6 +254,12 @@ def load_table(request):
                     for j in unit[i]:
                         single_data[j] = unit[i].get(j)
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
@@ -248,6 +276,12 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
@@ -266,6 +300,12 @@ def load_table(request):
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
                 t_data = []
@@ -282,6 +322,12 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
@@ -300,6 +346,12 @@ def load_table(request):
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
                 t_data = []
@@ -316,6 +368,12 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
@@ -334,6 +392,12 @@ def load_table(request):
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "其他設備清單":
                 t_data = []
@@ -351,11 +415,23 @@ def load_table(request):
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
                     extinguisher.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "extinguisher_vendor", "extinguisher_type", "position", "inventory",
                                                                                           "chemical_weight", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
                 t_data = list(
@@ -364,6 +440,12 @@ def load_table(request):
                                                                                                  "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
                                                                                                  "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
                                                                                                  "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "委外人員清冊":
                 t_data = list(
@@ -374,11 +456,16 @@ def load_table(request):
                                                                                       "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
                                                                                       "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
                                                                                       "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "厭氧廢水":
                 t_data = []
                 raw_data = waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri")
-                print(raw_data)
                 # 計算加油量合計
                 for i in range(raw_data.count()):
                     single_data = {}
@@ -412,14 +499,32 @@ def load_table(request):
                 # print(raw_data)
                 # t_data.append(raw_data)
                 # t_data = list(waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢汙泥":
                 t_data = list(
                     waste_sludge.objects.filter(company_id=factory_id, years=year).values("id", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
                                                                                           "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
                 t_data = list(solvent_aerosol_emission_sources.objects.filter(company_id=factory_id, years=year).values("id", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
@@ -443,6 +548,12 @@ def load_table(request):
                     single_data["kw_hr"] = kw_hr
                     single_data["kkw_hr"] = kkw_hr
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "上游運輸":
                 t_data = list(
@@ -453,6 +564,12 @@ def load_table(request):
                                                                                          "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
                                                                                          "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
                                                                                          "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "下游運輸":
                 t_data = list(
@@ -462,6 +579,12 @@ def load_table(request):
                                                                                            "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
                                                                                            "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
                                                                                            "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工通勤":
                 t_data = []
@@ -507,6 +630,12 @@ def load_table(request):
                             else:
                                 single_data[d] = round(transportation_dic.get(d), 4)
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
@@ -527,13 +656,31 @@ def load_table(request):
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
                 # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_1":
                 t_data = list(VOCs_one.objects.filter(company_id=factory_id, years=year).values("id", "emission", "concentration_ch4"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_2":
                 t_data = list(VOCs_two.objects.filter(company_id=factory_id, years=year).values("id", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
                                                                                                 "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "納管廢水排放量":
                 t_data = []
@@ -549,6 +696,12 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     Total_Emission = Total_Emission.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Emission"] = Total_Emission
+                    t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "採購原物料":
@@ -567,6 +720,12 @@ def load_table(request):
                     Total_Purchase = Total_Purchase.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Purchase"] = Total_Purchase
                     t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "產品間接排放":
                 t_data = []
@@ -582,6 +741,12 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     Total_Deliver = Total_Deliver.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Deliver"] = Total_Deliver
+                    t_data.append(single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
 
@@ -2598,81 +2763,95 @@ def add_title(request):
             "1": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "設備編號", "容量(𝓁)", "地點", "部門", "是否推估"],
-                "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+                "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "佐證資料": ["引用單據"],
             },
 
             "2": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "名稱", "編號", "燃料種類"],
                 "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
+                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"],
+                "佐證資料": ["引用單據"],
             },
 
             "3": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
                 "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "佐證資料": ["引用單據"],
             },
 
             "4": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "原物料號", "原/物料", "名稱"],
                 "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
-                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "佐證資料": ["引用單據"],
             },
 
             "5": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "製程階段", "料號", "製程添加名稱", "含碳量(%)", "是否燃燒", "VOCs"],
-                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
+                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"],
+                "佐證資料": ["引用單據"],
             },
             # 冷媒(6~13)
             "6": {
                 "編輯區": ["刪除", "修改"],
-                "冰箱清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冰箱清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
 
             "7": {
                 "編輯區": ["刪除", "修改"],
-                "冷氣機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冷氣機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
 
             "8": {
                 "編輯區": ["刪除", "修改"],
-                "車輛清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "車輛清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
 
             "9": {
                 "編輯區": ["刪除", "修改"],
-                "飲水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "飲水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
 
             "10": {
                 "編輯區": ["刪除", "修改"],
-                "冰水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冰水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
 
             "11": {
                 "編輯區": ["刪除", "修改"],
-                "製冰機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "製冰機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
 
             "12": {
                 "編輯區": ["刪除", "修改"],
-                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
 
             "13": {
                 "編輯區": ["刪除", "修改"],
-                "滅火器清單": ["序號", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
+                "滅火器清單": ["序號", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"],
+                "佐證資料": ["引用單據"],
             },
             # 人天清冊
             "14": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "類型"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+                "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "佐證資料": ["引用單據"],
             },
 
             "15": {
@@ -2680,27 +2859,32 @@ def add_title(request):
                 "內容": ["序號", "人員類別"],
                 "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+                "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "佐證資料": ["引用單據"],
             },
             # 厭氧廢水
             "16": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "每年事業廢水之COD總量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量", u"CH\u2084"],
+                "佐證資料": ["引用單據"],
             },
 
             "17": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "佐證資料": ["引用單據"],
             },
 
             "18": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "溶劑、噴霧劑名稱", "數量(瓶/罐)", "容量", "單位", "氣體名稱", "氣體含量(%)", "密度"]
+                "內容": ["序號", "溶劑、噴霧劑名稱", "數量(瓶/罐)", "容量", "單位", "氣體名稱", "氣體含量(%)", "密度"],
+                "佐證資料": ["引用單據"],
             },
 
             "19": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+                "佐證資料": ["引用單據"],
             },
 
             "20": {
@@ -2708,11 +2892,13 @@ def add_title(request):
                 "內容": ["序號", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
                 "VOCs濃度": ["入口濃度", "出口濃度"],
                 u"CO\u2082排放係數": ["內設值", "自訂值"],
+                "佐證資料": ["引用單據"],
             },
             # 用電量
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "用電量": ["序號", "電表編號", "電表位置", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+                "用電量": ["序號", "電表編號", "電表位置", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"],
+                "佐證資料": ["引用單據"],
             },
 
             "22": {
@@ -2721,7 +2907,8 @@ def add_title(request):
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"],
+                "佐證資料": ["引用單據"],
             },
 
             "23": {
@@ -2730,12 +2917,14 @@ def add_title(request):
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"],
+                "佐證資料": ["引用單據"],
             },
 
             "24": {
                 "編輯區": ["刪除", "修改"],
                 "員工通勤清冊": ["序號", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
+                "佐證資料": ["引用單據"],
             },
 
             # 員工出差
@@ -2743,32 +2932,37 @@ def add_title(request):
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
                 "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
+                "佐證資料": ["引用單據"],
             },
 
             "26": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+                "佐證資料": ["引用單據"],
             },
 
             # 納管廢水
             "27": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "納管編號", "廠別", "地址"],
-                "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+                "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"],
+                "佐證資料": ["引用單據"],
             },
 
             # 原物料採購
             "28": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "產品編號", "產品名稱", "廠商", "大類名稱", "原/物料"],
-                "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+                "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"],
+                "佐證資料": ["引用單據"],
             },
 
             # 原物料採購
             "29": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "產品編號", "產品名稱"],
-                "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+                "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"],
+                "佐證資料": ["引用單據"],
             },
         }
         # 如果沒有刪除、編輯權限，把編輯區拿掉
