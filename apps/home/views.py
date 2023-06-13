@@ -201,7 +201,7 @@ def load_table(request):
             elif a["d_name"] == "原物料使用":
                 t_data = list(
                     material.objects.filter(company_id=factory_id, years=year).values("id", "material_id", "material_type", "material_name",
-                                                                                      "process_add_name", "chemical_name", "chemical_formula",
+                                                                                      "process_add_name", "chemical_name", "chemical_formula", "carbon_content",
                                                                                       "january", "february", "march", "april",
                                                                                       "may", "june", "july", "august",
                                                                                       "september", "october", "november", "december"))
@@ -335,7 +335,7 @@ def load_table(request):
                     single_data["effusion_volume"] = effusion_volume
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "其他設備清單":
+            elif a["d_name"] == "設備清單":
                 t_data = []
                 raw_data = other_device.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
@@ -375,14 +375,13 @@ def load_table(request):
                                                                                       "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
                                                                                       "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "厭氧廢水":
+            elif a["d_name"] == "廢水":
                 t_data = []
-                raw_data = waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri")
-                print(raw_data)
+                raw_data = waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "Si", "MCFj", "Bo", "Ri", "COD_total")
                 # 計算加油量合計
                 for i in range(raw_data.count()):
                     single_data = {}
-                    Pi = "{:.10f}".format(raw_data[i].get("Pi"))
+                    Pi = raw_data[i].get("Pi")
                     Wi = "{:.10f}".format(raw_data[i].get("Wi"))
                     CODi = "{:.10f}".format(raw_data[i].get("CODi"))
                     COD_total = "{:.10f}".format(raw_data[i].get("COD_total"))
@@ -390,8 +389,14 @@ def load_table(request):
                     MCFj = "{:.10f}".format(raw_data[i].get("MCFj"))
                     Bo = "{:.10f}".format(raw_data[i].get("Bo"))
                     Ri = "{:.10f}".format(raw_data[i].get("Ri"))
-                    ch4 = (((raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi")) - (raw_data[i].get("Si"))) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj"))) - raw_data[i].get("Ri")
-                    consumption_total = ch4.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+
+                    if Pi is not None:
+                        Pi = "{:.10f}".format(Pi)
+                        ch4 = (((raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi")) - (raw_data[i].get("Si"))) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj"))) - raw_data[i].get("Ri")
+                        consumption_total = ch4.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    else:
+                        ch4 = (((raw_data[i].get("Wi") * raw_data[i].get("CODi")) - (raw_data[i].get("Si"))) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj"))) - raw_data[i].get("Ri")
+                        consumption_total = ch4.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     # 抓單筆資料
                     single_data.update(raw_data[i])
                     # 將計算後的加油量丟回字典
@@ -631,12 +636,19 @@ def copy_last_year_data(request):
 
         model = modelName.get(str(device_id))
         if model:
+            # 檢查當前年份是否已有資料
+            if model.objects.filter(company_id=factory_id, years=this_year).exists():
+                response_data = {
+                    'success': False,
+                    'copy_data_message': f'{this_year}年資料已存在！'
+                }
+                return response_data
             last_year_data = model.objects.filter(company_id=factory_id, years=last_year).values()
             # 如果去年沒有資料，顯示 alert 訊息
             if not last_year_data:
                 response_data = {
                     'success': False,
-                    'message': f'{last_year}年沒有任何資料！'
+                    'copy_data_message': f'{last_year}年沒有任何資料！'
                 }
                 return response_data
 
@@ -653,7 +665,7 @@ def copy_last_year_data(request):
             # 回傳 alert 訊息
             response_data = {
                 'success': True,  # 也可以改為 False
-                'message': f'{last_year}年資料複製成功！'
+                'copy_data_message': f'{last_year}年資料複製成功！'
             }
             return response_data
         else:
@@ -2153,7 +2165,10 @@ def carbon_system(request, message=None):
         context = {
             "groups_query": groups_query,
             "factory_group": factory_group,
-            "company_group": company_group
+            "company_group": company_group,
+            "message": "",
+            "count_error": "",
+            "export_error": ""
         }
         if message:
             context.update(message)
@@ -2241,7 +2256,8 @@ def bar_action(request):
         if 'public_version' in request.GET:
             return public_version(request)
         if 'export_excel' in request.GET:
-            return export_excel(request)
+            message = export_excel(request)
+            return carbon_system(request, message)
 
 
 # 編輯轉跳
@@ -2536,74 +2552,75 @@ def add_title(request):
         device_id = request.session.get('dropdown_three')
         # 選擇title要顯示的欄位
         htmlName = {
+            # 柴油發電機
             "1": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "設備編號", "容量(𝓁)", "地點", "部門", "是否推估"],
                 "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
-
+            # 燃燒設備
             "2": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "名稱", "編號", "燃料種類"],
                 "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
             },
-
+            # 公務車
             "3": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
                 "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
             },
-
+            # 原物料
             "4": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "原物料號", "原/物料", "名稱"],
-                "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
+                "是否為化學品": ["化學品名稱", "化學品名", "化學式", "含碳量(%)"],
                 "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
-
+            # 製成添加物
             "5": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "製程階段", "料號", "製程添加名稱", "含碳量(%)", "是否燃燒", "VOCs"],
                 "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
             },
-            # 冷媒(6~13)
+            # 冰箱清單
             "6": {
                 "編輯區": ["刪除", "修改"],
                 "冰箱清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
-
+            # 冷氣機清單
             "7": {
                 "編輯區": ["刪除", "修改"],
                 "冷氣機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
-
+            # 車輛清單
             "8": {
                 "編輯區": ["刪除", "修改"],
                 "車輛清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
-
+            # 飲水機清單
             "9": {
                 "編輯區": ["刪除", "修改"],
                 "飲水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
-
+            # 冰水機清單
             "10": {
                 "編輯區": ["刪除", "修改"],
                 "冰水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
-
+            # 製冰機清單
             "11": {
                 "編輯區": ["刪除", "修改"],
                 "製冰機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
-
+            # 設備清單
             "12": {
                 "編輯區": ["刪除", "修改"],
                 "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
             },
-
+            # 滅火器
             "13": {
                 "編輯區": ["刪除", "修改"],
                 "滅火器清單": ["序號", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
@@ -2615,7 +2632,7 @@ def add_title(request):
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
-
+            # 委外人員
             "15": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "人員類別"],
@@ -2623,17 +2640,17 @@ def add_title(request):
                 "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
-            # 厭氧廢水
+            # 廢水
             "16": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "每年事業廢水之COD總量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量", u"CH\u2084"],
+                "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量", "每年事業廢水之COD總量", u"CH\u2084"],
             },
-
+            # 廢汙泥
             "17": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
             },
-
+            # 溶劑、噴霧劑
             "18": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "溶劑、噴霧劑名稱", "數量(瓶/罐)", "容量", "單位", "氣體名稱", "氣體含量(%)", "密度"]
@@ -2655,7 +2672,7 @@ def add_title(request):
                 "編輯區": ["刪除", "修改"],
                 "用電量": ["序號", "電表編號", "電表位置", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
             },
-
+            # 上游運輸
             "22": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
@@ -2664,7 +2681,7 @@ def add_title(request):
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
             },
-
+            # 下游運輸
             "23": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
@@ -2673,7 +2690,7 @@ def add_title(request):
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
             },
-
+            # 員工通勤
             "24": {
                 "編輯區": ["刪除", "修改"],
                 "員工通勤清冊": ["序號", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
@@ -2685,7 +2702,7 @@ def add_title(request):
                 "內容": ["序號", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
                 "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
             },
-
+            # 廢棄物
             "26": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],

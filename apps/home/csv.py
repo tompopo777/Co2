@@ -268,12 +268,20 @@ def export_excel(request):
         prefix = column_mapping.get('prefix', '')
         columns = column_mapping['columns']
         column_names = column_mapping['column_names']
+        device_name = excel_did[0].d_name
 
         # 根據所需欄位清單查詢資料
         data = globals()[table_name].objects.all().filter(company_id=factory_id, years=year).values(*columns)
 
         # 將查詢結果轉換為DataFrame
         df = pd.DataFrame(list(data))
+
+        if df.empty:
+            print("empty")
+            export_message = {
+                'export_error': f'{device_name}沒有任何資料可以匯出!'
+            }
+            return export_message
 
         # 將欄位名稱改成中文
         df.columns = column_names
@@ -293,6 +301,13 @@ def export_excel(request):
 
             # 將子表的資料加入到母表的資料中
             df = pd.merge(mother_df, child_df, left_on='id', right_on='trip_id', how='left')
+
+            if df.empty:
+                print("empty")
+                export_message = {
+                    'export_error': '沒有任何資料可以匯出!'
+                }
+                return export_message
 
             df.drop(columns=['id'], inplace=True)
             df.rename(columns={'years': '年度', 'business_trip_number': '出差單號', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'business_trip_location': '出差地點', 'business_trip_date': '啟程日期',
@@ -320,6 +335,13 @@ def export_excel(request):
             # 將子表的資料加入到母表的資料中
             df = pd.merge(mother_df, child_df, left_on='id', right_on='commute', how='left')
 
+            if df.empty:
+                print("empty")
+                export_message = {
+                    'export_error': '沒有任何資料可以匯出!'
+                }
+                return export_message
+
             df.drop(columns=['id'], inplace=True)
 
             df.rename(columns={'years': '年度', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'city': '居住城市', 'township': '鄉鎮市區', 'address': '行政區公家機關地址',
@@ -330,6 +352,7 @@ def export_excel(request):
 
             # 將 DataFrame 欄位順序重新排列
             df = df.reindex(columns=custom_column_order)
+
 
         # 創建Excel文件
         excel_name = prefix + excel_did[0].d_name + '.xlsx'

@@ -206,7 +206,7 @@
                                         </label>
                                         <input type="file" id="importExcel" name="importExcel" style="display:none">
                                     {% endif %}
-                                    <button type="submit" name="export_excel" class="btn btn-outline-light me-1">匯出Excel</button>
+                                    <button type="submit" name="export_excel" id="export_excel" class="btn btn-outline-light me-1">匯出Excel</button>
                                 </form>
                             </div>
                         </div>
@@ -732,10 +732,20 @@
                     });
                 });
             }
-            let copy_last_year = "{{ message }}" // 顯示成功訊息
+            let copy_last_year = "{{ copy_data_message }}" // 顯示成功訊息
             if (copy_last_year !== "") {
                 alert(copy_last_year); // 顯示成功訊息
                 console.warn('copy_last_year', copy_last_year)
+            }
+            let count_error = "{{ count_error }}" // 顯示成功訊息
+            if (count_error !== "") {
+                alert(count_error); // 顯示成功訊息
+                console.warn('count_error', count_error)
+            }
+            let export_error = "{{ export_error }}" // 顯示成功訊息
+            if (export_error !== "") {
+                alert(export_error); // 顯示成功訊息
+                console.warn('export_error', export_error)
             }
         });
 
@@ -807,6 +817,20 @@
 
     <!-- Excel -->
     <script>
+        {#$(document).ready(function () {#}
+        {#    // 匯出 Excel 按鈕#}
+        {#    $('#export_excel').on('click', function () {#}
+        {#        $.ajax({#}
+        {#            url: "{% url 'export_excel' %}",#}
+        {#            type: "GET",#}
+        {#            success: function (response) {#}
+        {#                if (response.message) {#}
+        {#                    alert(response.message); // 顯示警示訊息#}
+        {#                }#}
+        {#            },#}
+        {#        });#}
+        {#    });#}
+
 
         $(document).ready(function () {
             // 匯入 Excel 按鈕

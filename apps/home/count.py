@@ -7,7 +7,11 @@ from django.db.models import Sum, F, Value, CharField
 from django.db.models.functions import Cast
 from decimal import *
 from django.http import HttpResponse
+
 from .models import *
+import json
+
+from .views import carbon_system
 
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
@@ -38,6 +42,7 @@ def calculate_summary(request):
             company_name = ''
 
         emergency_generators_device = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)
+        # print('emergency_generators_device', emergency_generators_device)
         combustion_equipment_device = combustion_equipment_count(years, factory_id, coefficient_source, gwp_version)
         official_car_device = official_car_count(years, factory_id, coefficient_source, gwp_version)
         refrigerator_device = refrigerator_count(years, factory_id, coefficient_source, gwp_version)
@@ -63,6 +68,16 @@ def calculate_summary(request):
                             vehicle_device, water_dispenser_device, ice_water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device,
                             personnel_inventory_device, employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device,
                             employee_business_trip_device, waste_transport_device, waste_process_device, purchase_material_device])
+
+        print(output)
+        if output.empty:
+            print("OK")
+            message = {
+                'count_error': '沒有任何資料!'
+            }
+            request.method = "GET"
+            return carbon_system(request, message)
+
         output = output.rename(
             columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'sum_count': '活動數據總量', 'data_unit': '數據單位', 'emission': '排放當量公噸(公噸/數據期間)', 'gas_name': '可能產生溫室氣體種類', 'coefficient': '排放係數', 'coefficient_unit': '排放係數單位',
                      'coefficient_source': '係數來源', 'gwp_coefficient': 'ICPP報告GWP值'})
@@ -80,6 +95,7 @@ def calculate_summary(request):
 
 # 發電機
 def emergency_generators_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = emergency_generators.objects.filter(years=years).filter(company_id=factory_id).values('did').annotate(
             process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
@@ -108,11 +124,12 @@ def emergency_generators_count(years, factory_id, coefficient_source, gwp_versio
         return final
     except:
         print('沒有該發電機設備')
-        pass
+        return final
 
 
 # 燃燒設備
 def combustion_equipment_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = combustion_equipment.objects.filter(years=years).filter(company_id=factory_id).values('device_name', 'fuel_type').annotate(
             process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
@@ -140,11 +157,12 @@ def combustion_equipment_count(years, factory_id, coefficient_source, gwp_versio
         return final
     except:
         print('沒有該燃燒設備設備')
-        pass
+        return final
 
 
 # 公務車
 def official_car_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = official_car.objects.filter(years=years).filter(company_id=factory_id).values('vehicle_type', 'fuel_type').annotate(
             process_area=Value('移動式式燃燒', output_field=models.CharField(max_length=50)),
@@ -175,7 +193,7 @@ def official_car_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該公務車設備')
-        pass
+        return final
 
 
 # 逸散(冰箱~其他設備)
@@ -189,6 +207,7 @@ def official_car_count(years, factory_id, coefficient_source, gwp_version):
 
 # 冰箱
 def refrigerator_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(refrigerator.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -213,11 +232,12 @@ def refrigerator_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該冰箱設備')
-        pass
+        return final
 
 
 # 冷氣機
 def airconditioner_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(
             list(airconditioner.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('冷氣機', output_field=models.CharField(max_length=50)),
@@ -241,11 +261,12 @@ def airconditioner_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該冷氣機設備')
-        pass
+        return final
 
 
 # 車輛清單
 def vehicle_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
         # gwp_version = 6
@@ -272,11 +293,12 @@ def vehicle_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該車輛設備')
-        pass
+        return final
 
 
 # 飲水機
 def water_dispenser_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(
             list(water_dispenser.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(process_area=Value('逸散', output_field=models.CharField(max_length=50)), device_name=Value('飲水機', output_field=models.CharField(max_length=50)),
@@ -302,11 +324,12 @@ def water_dispenser_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except KeyError:
         print('沒有該設備')
-        pass
+        return final
 
 
 # 冰水機清單
 def ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(ice_water_dispenser.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -331,11 +354,12 @@ def ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version
         return final
     except:
         print('沒有該冰水機設備')
-        pass
+        return final
 
 
 # 製冰機
 def ice_maker_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(ice_maker.objects.filter(years=years).filter(company_id=factory_id).values("refrigerant_type", "filling_volume").annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -362,11 +386,12 @@ def ice_maker_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except KeyError:
         print('沒有該製冰機設備')
-        pass
+        return final
 
 
 # 其他設備
 def other_device_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(
             list(other_device.objects.filter(years=years).filter(company_id=factory_id).values('device_name', "refrigerant_type", "filling_volume").annotate(
@@ -392,11 +417,12 @@ def other_device_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該其他設備設備')
-        pass
+        return final
 
 
 # 溶劑、噴霧劑
 def solvent_aerosol_emission_sources_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_part = pd.DataFrame(list(solvent_aerosol_emission_sources.objects.filter(years=years).filter(company_id=factory_id).values('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'gas_name', 'gas_ratio', 'density').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -442,11 +468,12 @@ def solvent_aerosol_emission_sources_count(years, factory_id, coefficient_source
         return final
     except:
         print('沒有該溶劑、噴霧劑設備')
-        pass
+        return final
 
 
 # 人天清冊
 def personnel_inventory_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         employee_raw_data = pd.DataFrame(list(personnel_inventory.objects.filter(years=years).filter(company_id=factory_id).filter(classification='員工').values('did').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -503,11 +530,12 @@ def personnel_inventory_count(years, factory_id, coefficient_source, gwp_version
         return final
     except:
         print('沒有該人天清冊設備')
-        pass
+        return final
 
 
 # 委外人員
 def employee_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(employee.objects.filter(years=years).filter(company_id=factory_id).values('career').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -545,11 +573,12 @@ def employee_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該委外人員設備')
-        pass
+        return final
 
 
 # 滅火器
 def extinguisher_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(extinguisher.objects.filter(years=years).filter(company_id=factory_id).values('extinguisher_type').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -578,11 +607,12 @@ def extinguisher_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該滅火器設備')
-        pass
+        return final
 
 
 # 厭氧廢水
 def waste_water_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(waste_water.objects.filter(years=years).filter(company_id=factory_id).values('did').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
@@ -603,11 +633,12 @@ def waste_water_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該厭氧廢水設備')
-        pass
+        return final
 
 
 # 用電量 (第二類)
 def electricity_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(electricity.objects.filter(years=years).filter(company_id=factory_id).values('meter_location').annotate(
             process_area=Value('輸入能源', output_field=models.CharField(max_length=50)),
@@ -628,11 +659,12 @@ def electricity_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該用電量設備')
-        pass
+        return final
 
 
 # 上游運輸 (第三類)
 # def upstream_transport_count(years, factory_id, coefficient_source, gwp_version):
+#     final = pd.DataFrame()
 #     try:
 # gwp_version = 6
 # transport_raw_data = pd.DataFrame(list(upstream_transportation.objects.filter(customer='國內').filter(paid='公司支付').values('commodity_NW', 'transport_type', 'transport_fuel', 'transport_distance', 'trips').annotate(
@@ -665,6 +697,7 @@ def electricity_count(years, factory_id, coefficient_source, gwp_version):
 
 # 員工通勤 (第三類)
 def employee_commute_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(employee_commute.objects.filter(years=years).filter(company_id=factory_id).values('id', 'commute_distance', 'work_days').annotate(
             process_area=Value('員工通勤產生之排放', output_field=models.CharField(max_length=50)),
@@ -712,11 +745,12 @@ def employee_commute_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該員工通勤設備')
-        pass
+        return final
 
 
 # 員工出差 (第三類)
 def employee_business_trip_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(employee_business_trip.objects.filter(years=years).filter(company_id=factory_id).values('id').annotate(
             process_area=Value('員工出差產生之排放', output_field=models.CharField(max_length=50)),
@@ -764,11 +798,12 @@ def employee_business_trip_count(years, factory_id, coefficient_source, gwp_vers
         return final
     except:
         print('沒有該員工出差設備')
-        pass
+        return final
 
 
 # 廢棄物運輸 (第三類)
 def waste_transport_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(
             waste.objects.filter(years=years).filter(company_id=factory_id).exclude(transport_type__isnull=True).exclude(transport_fuel__isnull=True).exclude(transport_distance__isnull=True).values('waste_weigh', 'waste_disposal', 'transport_type', 'transport_fuel', 'transport_distance').annotate(
@@ -793,11 +828,12 @@ def waste_transport_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該廢棄物運輸設備')
-        pass
+        return final
 
 
 # 廢棄物處理 (第四類)
 def waste_process_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(waste.objects.filter(years=years).filter(company_id=factory_id).values('waste_disposal', 'waste_name', 'waste_weigh').annotate(
             process_area=Value('公司營運所產生廢棄物處置', output_field=models.CharField(max_length=50)),
@@ -816,11 +852,12 @@ def waste_process_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該廢棄物處理設備')
-        pass
+        return final
 
 
 # 採購原物料 (第四類)
 def purchase_material_count(years, factory_id, coefficient_source, gwp_version):
+    final = pd.DataFrame()
     try:
         raw_data = pd.DataFrame(list(purchase_material.objects.filter(years=years).filter(company_id=factory_id).values('product_name', 'category_name').annotate(
             process_area=Value('組織購買原物料', output_field=models.CharField(max_length=50)),
@@ -841,4 +878,4 @@ def purchase_material_count(years, factory_id, coefficient_source, gwp_version):
         return final
     except:
         print('沒有該原物料採購設備')
-        pass
+        return final
