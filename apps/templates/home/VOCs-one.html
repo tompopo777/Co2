@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} VOCs_1 {% endblock %}
+{% block title %} VOC逸散 {% endblock %}
 
 {% block body_class %} VOCs-one {% endblock %}
 
@@ -23,64 +23,170 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ VOCs_1</h3>
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ VOC逸散</h3>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <form action="/VOCs_one_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-4">
+                                        <div class="row mb-3">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ VOCs_one_add.years }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>VOCs排放量(單位: 千立方公尺/年) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ VOCs_one_add.emission }}
+                                                    <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VOCs_one_add.process_stage }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>CH<sub>4</sub>濃度(單位: ppm) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ VOCs_one_add.concentration_ch4 }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <br>
-                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="form-control">
-                                                <label>備註欄</label>
-                                                {% for error in VOCs_one_add.message_board.errors %}
+                                            <div class="col-3">
+                                                {% for error in VOCs_one_add.material_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
-                                                {{ VOCs_one_add.message_board }}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>料號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VOCs_one_add.material_id }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static">
+                                                    <label>製程添加名稱</label>
+                                                    {{ VOCs_one_add.process_add_name }}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="d-flex justify-content-center">
-                                        <div class="col-auto mx-3">
-                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
-                                                確認，並新增另一筆
-                                            </button>
+                                        <div class="row mb-4">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>化學品名</label>
+                                                    {{ VOCs_one_add.chemical_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>化學式</label>
+                                                    {{ VOCs_one_add.chemical_formula }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static">
+                                                    <label>進貨量</label>
+                                                    {{ VOCs_one_add.purchase_volume }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>申報耗用量(單位: {{ VOCs_one_add.purchase_unit }})</label>
+                                                    {{ VOCs_one_add.consumption }}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-auto mx-3">
-                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
-                                                確認
-                                            </button>
+                                        <div class="row mb-4">
+                                            <div class="form-group">
+                                                <label for="controlled_gases">會排放的管制氣體</label>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="form-check ps-1">
+                                                            {{ VOCs_one_add.CO2 }}
+                                                            <label>CO<sub>2</sub></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-check ps-1">
+                                                            {{ VOCs_one_add.CH4 }}
+                                                            <label>CH<sub>4</sub></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-check ps-1">
+                                                            {{ VOCs_one_add.N2O }}
+                                                            <label>N<sub>2</sub>O</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-check ps-1">
+                                                            {{ VOCs_one_add.HFC }}
+                                                            <label>HFCs</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-check ps-1">
+                                                            {{ VOCs_one_add.PFC }}
+                                                            <label>PFCs</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-check ps-1">
+                                                            {{ VOCs_one_add.SF6 }}
+                                                            <label>SF<sub>6</sub></label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <div class="form-check ps-1">
+                                                            {{ VOCs_one_add.NF3 }}
+                                                            <label>NF<sub>3</sub></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-auto mx-3">
-                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
-                                                取消
-                                            </a>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <br>
+                                        <div class="d-flex">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>上傳引用單據</label>
+                                                    {{ VOCs_one_add.image_note }}
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <div class="d-flex">
+                                            <div class="ps-md-2 align-self-center">
+                                                <div class="col-2" multiple="multiple">
+                                                    <input type="hidden" name="stage" value="VOC逸散">
+                                                    <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
+                                                </div>
+                                            </div>
+                                            <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-control">
+                                                    <label>備註欄</label>
+                                                    {% for error in VOCs_one_add.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
+                                                    {{ VOCs_one_add.message_board }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-auto mx-3">
+                                                <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認，並新增另一筆
+                                                </button>
+                                            </div>
+                                            <div class="col-auto mx-3">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認
+                                                </button>
+                                            </div>
+                                            <div class="col-auto mx-3">
+                                                <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
+                                                    取消
+                                                </a>
+                                            </div>
+                                        </div>
                                 </form>
                             </div>
                         </div>

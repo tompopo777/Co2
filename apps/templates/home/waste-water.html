@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} 厭氧廢水 {% endblock %}
+{% block title %} 廢水 {% endblock %}
 
 {% block body_class %} waste-water {% endblock %}
 
@@ -23,7 +23,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 厭氧廢水</h3>
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 廢水</h3>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -38,8 +38,11 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in waste_water_add.Pi.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>Pi:工業部門生產量(t/yr) <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>Pi:工業部門生產量(t/yr)</label>
                                                     {{ waste_water_add.Pi }}
                                                 </div>
                                             </div>
@@ -59,24 +62,18 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>每年事業廢水之COD總量<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ waste_water_add.COD_total }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
                                                     <label>Si:污泥移除量(kg COD/yr) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ waste_water_add.Si }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>MCFj:甲烷修正係數 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ waste_water_add.MCFj }}
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>Bo:最大CH4產生量<span style="color:red; font-size:16px;">* </span></label>
@@ -87,6 +84,12 @@
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>Ri:甲烷移除量(kg CH4/yr) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ waste_water_add.Ri }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>每年事業廢水之COD總量<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ waste_water_add.COD_total }}
                                                 </div>
                                             </div>
                                         </div>
@@ -150,31 +153,6 @@
         </div>
     </section>
 
-    <!-- 參照表 -->
-    <div class="modal fade" id="notes" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true" data-bs-backdrop="static">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="col">
-                        <h5 class="modal-title text-light bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
-                    </div>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group row">
-                        <label for="yearInput" class="col-3 col-form-label">盤查年度:</label>
-                        <div class="col">
-                            <input type="text" class="form-control" id="yearInput" name="years" onchange="check_year()">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="updateYear()">確認</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 {% endblock content %}
 
 <!-- Specific Page JS goes HERE  -->
@@ -183,6 +161,9 @@
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    Decimal.js#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/decimal.js/10.3.1/decimal.min.js"></script>
+
 
 
     <script>
@@ -248,5 +229,33 @@
                 document.getElementById('attachment').files = dt.files;
             });
         });
+
+
+        // 監聽Wi, CODi, MCFj, Bo欄位的變化
+        document.addEventListener('DOMContentLoaded', function () {
+            let WiInput = document.getElementById('Wi');
+            let CODiInput = document.getElementById('CODi');
+            let MCFjInput = document.getElementById('MCFj');
+            let BoInput = document.getElementById('Bo');
+
+            [WiInput, CODiInput, MCFjInput, BoInput].forEach(function (input) {
+                input.addEventListener('input', calculateCODTotal);
+            });
+        });
+
+        // 計算並填寫COD_total欄位
+        function calculateCODTotal() {
+            let Wi = new Decimal(document.getElementById('Wi').value);
+            let CODi = new Decimal(document.getElementById('CODi').value);
+            let MCFj = new Decimal(document.getElementById('MCFj').value);
+            let Bo = new Decimal(document.getElementById('Bo').value);
+
+            let CODTotal = Wi * CODi * MCFj * Bo;
+            CODTotal = CODTotal.toFixed(10); // 限制為 10 位小數
+
+            // 將計算結果填入COD_total欄位
+            document.getElementById('COD_total').value = CODTotal.toString();
+        }
+
     </script>
 {% endblock javascripts %}

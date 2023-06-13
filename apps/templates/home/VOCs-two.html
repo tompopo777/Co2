@@ -30,7 +30,7 @@
                                 <form action="/VOCs_two_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-5">
                                                     <label>年度 <span style="color:red; font-size:16px;">* </span></label>
@@ -39,28 +39,44 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-5">
+                                                    <label>製程名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ VOCs_two_add.process_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-5">
                                                     <label>VOCs處理量(單位: 千立方公尺/年) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ VOCs_two_add.disposal_volume }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-5">
-                                                    <label>CH<sub>4</sub>濃度(單位: ppm) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ VOCs_two_add.concentration_ch4 }}
-                                                </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="form-check ps-1">
+                                                <label>
+                                                    {{ VOCs_two_add.burn.0 }}
+                                                    {{ VOCs_two_add.burn.1 }}
+                                                </label>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-5">
-                                                    <label>VOCs設備補集率 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ VOCs_two_add.voc_capture_rate }}
+                                        <div class="row mb-3">
+                                            <div class="row mb-3">
+                                                <div class="col-4">
+                                                    <div class="input-group input-group-static mb-5">
+                                                        <label>CH<sub>4</sub>濃度(單位: ppm) <span style="color:red; font-size:16px;">* </span></label>
+                                                        {{ VOCs_two_add.concentration_ch4 }}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-5">
-                                                    <label>設備燃燒效率 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ VOCs_two_add.combustion_equipment_rate }}
+                                                <div class="col-4">
+                                                    <div class="input-group input-group-static mb-5">
+                                                        <label>VOCs設備補集率 <span style="color:red; font-size:16px;">* </span></label>
+                                                        {{ VOCs_two_add.voc_capture_rate }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="input-group input-group-static mb-5">
+                                                        <label>設備燃燒效率 <span style="color:red; font-size:16px;">* </span></label>
+                                                        {{ VOCs_two_add.combustion_equipment_rate }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -233,6 +249,21 @@
                 document.getElementById('attachment').files = dt.files;
             });
         });
+
+        function handleCheckboxClick() {
+            let radio_burn = document.getElementById("radio_burn");
+
+            let collapseOne = document.getElementById("collapseOne");
+            let collapseTwo = document.getElementById("collapseTwo");
+
+            if (radio_burn.value === "0") {
+                collapseOne.style.display = "block";  // 展開 collapseOne 區塊
+                collapseTwo.style.display = "none";   // 隱藏 collapseTwo 區塊
+            } else if (radio_burn.value === "1") {
+                collapseOne.style.display = "none";  // 展開 collapseOne 區塊
+                collapseTwo.style.display = "block";   // 隱藏 collapseTwo 區塊
+            }
+        }
 
 
         {#    出入口濃度篩選器#}
