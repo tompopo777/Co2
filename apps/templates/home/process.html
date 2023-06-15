@@ -83,9 +83,11 @@
                                         </div>
                                         {% if PC_add.errors %}
                                             <div class="col-12 text-center">
-                                                {% if 'january' in PC_add.errors  or 'february' in PC_add.errors  or 'march' in PC_add.errors  or 'april' in PC_add.errors  or 'may' in PC_add.errors  or 'june' in PC_add.errors  or 'july' in PC_add.errors  or 'august' in PC_add.errors  or 'september' in PC_add.errors  or 'october' in PC_add.errors  or 'november' in PC_add.errors  or 'december' in PC_add.errors  in PC_add.errors %}
-                                                    <li style="color: red">只能輸入正數</li>
-                                                {% endif %}
+                                                {% for error in PC_add.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
                                                 {% for error in PC_add.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}

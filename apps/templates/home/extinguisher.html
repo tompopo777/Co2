@@ -31,6 +31,9 @@
                                     <div class="card-body p-0 my-3">
                                         <div class="row my-3">
                                             <div class="col-4">
+                                                {% for error in EX_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;"></span></label>
                                                     {{ EX_add.device_id }}
@@ -57,6 +60,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in EX_add.chemical_weight.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EX_add.chemical_weight }}
@@ -211,25 +217,32 @@
         $('#extinguisher_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
 
         {#    使用月份、更換/填充日期，disabled#}
-        let using_amount = document.getElementById('id_using_amount')
-        let monthly = document.getElementById('monthly')
-        using_amount.addEventListener('input', function () {
-            if (using_amount.value !== '') {
-                monthly.disabled = false;
-            } else {
-                monthly.value = ""
-                monthly.disabled = true;
-            }
-        });
-        let replace_filling_amount = document.getElementById('id_replace_filling_amount')
-        let replace_filling_date = document.getElementById('replace_filling_date')
-        replace_filling_amount.addEventListener('input', function () {
-            if (replace_filling_amount.value !== '') {
-                replace_filling_date.disabled = false;
-            } else {
-                replace_filling_date.value = ""
-                replace_filling_date.disabled = true;
-            }
+        $(document).ready(function () {
+            let using_amount = $('#id_using_amount')
+            let monthly = $('#monthly')
+            monthly.prop('disabled', true);
+            using_amount.on('input', function () {
+                let value = $(this).val();
+                if (value) {
+                    monthly.prop('disabled', false);
+                } else {
+                    monthly.prop('disabled', true);
+                    monthly.val("")
+                }
+            });
+
+            let replace_filling_amount = $('#id_replace_filling_amount')
+            let replace_filling_date = $('#replace_filling_date')
+            replace_filling_date.prop('disabled', true);
+            replace_filling_amount.on('input', function () {
+                let value = $(this).val();
+                if (value) {
+                    replace_filling_date.prop('disabled', false);
+                } else {
+                    replace_filling_date.prop('disabled', true);
+                    replace_filling_date.val("")
+                }
+            });
         });
 
     </script>

@@ -92,9 +92,11 @@
                                         </div>
                                         {% if MT_add.errors %}
                                             <div class="col-12 text-center">
-                                                {% if 'january' in MT_add.errors  or 'february' in MT_add.errors  or 'march' in MT_add.errors  or 'april' in MT_add.errors  or 'may' in MT_add.errors  or 'june' in MT_add.errors  or 'july' in MT_add.errors  or 'august' in MT_add.errors  or 'september' in MT_add.errors  or 'october' in MT_add.errors  or 'november' in MT_add.errors  or 'december' in MT_add.errors  in MT_add.errors %}
-                                                    <li style="color: red">只能輸入正數</li>
-                                                {% endif %}
+                                                {% for error in MT_add.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
                                                 {% for error in MT_add.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}

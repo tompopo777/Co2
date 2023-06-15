@@ -81,9 +81,11 @@
                                         </div>
                                         {% if EG_add.errors %}
                                             <div class="col-12 text-center">
-                                                {% if 'january' in EG_add.errors  or 'february' in EG_add.errors  or 'march' in EG_add.errors  or 'april' in EG_add.errors  or 'may' in EG_add.errors  or 'june' in EG_add.errors  or 'july' in EG_add.errors  or 'august' in EG_add.errors  or 'september' in EG_add.errors  or 'october' in EG_add.errors  or 'november' in EG_add.errors  or 'december' in EG_add.errors  in EG_add.errors %}
-                                                    <li style="color: red">只能輸入正數</li>
-                                                {% endif %}
+                                                {% for error in EG_add.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
                                                 {% for error in EG_add.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}

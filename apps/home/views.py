@@ -166,7 +166,6 @@ def load_table(request):
                         single_data[j] = heat_data[i].get(j)
                     # 將計算後的「平均熱值」丟回字典
                     single_data["avg_heat"] = avg_heat
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -206,8 +205,7 @@ def load_table(request):
                         for e in urea_data[i]:
                             single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
                         single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
-                    t_data.append(single_data)
-                    # 顯示有引用單據
+                        # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
                     else:
@@ -253,8 +251,7 @@ def load_table(request):
                     # 將單位丟回字典
                     for j in unit[i]:
                         single_data[j] = unit[i].get(j)
-                    t_data.append(single_data)
-                    # 顯示有引用單據
+                        # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
                     else:
@@ -276,7 +273,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -299,7 +295,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -322,7 +317,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -345,7 +339,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -368,7 +361,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -391,7 +383,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -414,7 +405,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -493,12 +483,12 @@ def load_table(request):
                     single_data["ch4"] = consumption_total
                     t_data.append(single_data)
 
-                # for i in range(raw_data.count()):
-                #     cod_total = (raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi") - raw_data[i].get("Si")) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj")) - raw_data[i].get("Ri")
-                #     raw_data[i]["CH4"] = cod_total
-                # print(raw_data)
-                # t_data.append(raw_data)
-                # t_data = list(waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
+                    # for i in range(raw_data.count()):
+                    #     cod_total = (raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi") - raw_data[i].get("Si")) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj")) - raw_data[i].get("Ri")
+                    #     raw_data[i]["CH4"] = cod_total
+                    # print(raw_data)
+                    # t_data.append(raw_data)
+                    # t_data = list(waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -529,7 +519,7 @@ def load_table(request):
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "meter_location", "address",
+                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "address",
                                                                                                 "january", "february", "march", "april",
                                                                                                 "may", "june", "july", "august",
                                                                                                 "september", "october", "november", "december")
@@ -547,7 +537,6 @@ def load_table(request):
                     kkw_hr = kkw_hr.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["kw_hr"] = kw_hr
                     single_data["kkw_hr"] = kkw_hr
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -558,12 +547,12 @@ def load_table(request):
             elif a["d_name"] == "上游運輸":
                 t_data = list(
                     upstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
-                                                                                         "organizational_use_products", "customer", "supplier", "supplier_address",
-                                                                                         "trade_term", "receiving_address", "delivery_address",
-                                                                                         "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                                                         "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                                                         "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                                                         "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                                                                                                     "organizational_use_products", "customer", "supplier", "supplier_address",
+                                                                                                     "trade_term", "receiving_address", "delivery_address",
+                                                                                                     "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                                                                     "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                                                                     "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                                                                     "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
                 # 顯示有引用單據
                 for raw_data in t_data:
                     if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
@@ -574,11 +563,11 @@ def load_table(request):
             elif a["d_name"] == "下游運輸":
                 t_data = list(
                     downstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
-                                                                                           "trade_term", "receiving_address", "delivery_address",
-                                                                                           "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                                                           "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                                                           "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                                                           "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                                                                                                       "trade_term", "receiving_address", "delivery_address",
+                                                                                                       "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                                                                       "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                                                                       "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                                                                       "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
                 # 顯示有引用單據
                 for raw_data in t_data:
                     if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
@@ -629,8 +618,7 @@ def load_table(request):
                                 single_data[d] = None
                             else:
                                 single_data[d] = round(transportation_dic.get(d), 4)
-                    t_data.append(single_data)
-                    # 顯示有引用單據
+                                # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
                     else:
@@ -640,8 +628,8 @@ def load_table(request):
             elif a["d_name"] == "廢棄物":
                 t_data = []
                 raw_data = waste.objects.filter(company_id=factory_id, years=year).values("id", "waste_name", "waste_weigh", "waste_date",
-                                                                              "waste_location", "waste_disposal", "waste_disposal_vendor",
-                                                                              "transport_type", "transport_fuel", "transport_distance")
+                                                                                          "waste_location", "waste_disposal", "waste_disposal_vendor",
+                                                                                          "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計
                     if (raw_data[i].get("transport_distance") == None):
@@ -655,7 +643,7 @@ def load_table(request):
                     single_data["total_distance"] = Tkm
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
-                # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+                    # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -696,7 +684,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     Total_Emission = Total_Emission.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Emission"] = Total_Emission
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -719,7 +706,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     Total_Purchase = Total_Purchase.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Purchase"] = Total_Purchase
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -741,7 +727,6 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     Total_Deliver = Total_Deliver.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Deliver"] = Total_Deliver
-                    t_data.append(single_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -2631,7 +2616,6 @@ def edit_device(request, error_from=None, error_formset=None):
                 return render(request, EditDevice_page, formUpdata_name)
 
 
-
 # 儲存更新後的資料
 @login_required(login_url="/login/")
 def update_device(request, single_dataID):
@@ -2897,7 +2881,7 @@ def add_title(request):
             # 用電量
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "用電量": ["序號", "電表編號", "電表位置", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"],
+                "用電量": ["序號", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"],
                 "佐證資料": ["引用單據"],
             },
 
@@ -2984,5 +2968,3 @@ def load_chemical(request):
     chemical_add = request.GET.get("add_ch_name")
     chemical_data = list(chemical_table.objects.filter(chemical_add=chemical_add).values("chemical_name", "chemical_formula"))
     return JsonResponse(chemical_data, safe=False)
-
-

@@ -784,7 +784,7 @@ class WDform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -832,7 +832,7 @@ class IWDform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -880,7 +880,7 @@ class IMform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -956,12 +956,12 @@ class EXform(forms.ModelForm):
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'extinguisher_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '選填'}),
-            'chemical_weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
-            'inventory': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'using_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '請輸入數字，無更換/填充則無需填寫'}),
-            'monthly': forms.TextInput(attrs={'class': 'form-control', 'id': 'monthly', 'placeholder': '無使用則無需填寫', 'disabled': True}),
+            'chemical_weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數字'}),
+            'inventory': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
+            'using_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '請輸入數字，無更換/填充則無需填寫'}),
+            'monthly': forms.TextInput(attrs={'class': 'form-control', 'id': 'monthly', 'placeholder': '無使用則無需填寫'}),
             'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入數字，無更換/填充則無需填寫'}),
-            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'replace_filling_date', 'placeholder': '無更換/填充則無需填寫', 'disabled': True}),
+            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'replace_filling_date', 'placeholder': '無更換/填充則無需填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -977,6 +977,17 @@ class EXform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_chemical_weight(self):
+        chemical_weight = self.cleaned_data.get('chemical_weight')
+        if not chemical_weight >= 0:
+            raise forms.ValidationError("該欄位必須大於零", 'invalid')
+        return chemical_weight
 
 # 人添清冊
 class PIform(forms.ModelForm):
@@ -1115,10 +1126,10 @@ class WasteSludgeForm(forms.ModelForm):
                   'CH4_capture_system_rate', 'combustion_equipment_efficiency', 'image_note', 'message_board')
         widgets = {
             'waste_sludge_treatment_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'waste_sludge_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'average_inlet_MLSS_concentration': forms.TextInput(attrs={'class': 'form-control', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
-            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'waste_sludge_inflow_rate': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數字'}),
+            'average_inlet_MLSS_concentration': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數字'}),
+            'CH4_capture_system_rate': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'combustion_equipment_efficiency': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1127,6 +1138,30 @@ class WasteSludgeForm(forms.ModelForm):
         super(WasteSludgeForm, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
+
+    def clean_combustion_equipment_efficiency(self):
+        combustion_equipment_efficiency = self.cleaned_data.get('combustion_equipment_efficiency')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(combustion_equipment_efficiency)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return combustion_equipment_efficiency
+
+    def clean_average_inlet_MLSS_concentration(self):
+        average_inlet_MLSS_concentration = self.cleaned_data.get('average_inlet_MLSS_concentration')
+        if not re.match(r'^[0-9]+$', str(average_inlet_MLSS_concentration)):
+            raise forms.ValidationError("只能輸入正整數字", 'invalid')
+        return average_inlet_MLSS_concentration
+
+    def clean_waste_sludge_inflow_rate(self):
+        waste_sludge_inflow_rate = self.cleaned_data.get('waste_sludge_inflow_rate')
+        if not re.match(r'^[0-9]+$', str(waste_sludge_inflow_rate)):
+            raise forms.ValidationError("只能輸入正整數字", 'invalid')
+        return waste_sludge_inflow_rate
+
+    def clean_CH4_capture_system_rate(self):
+        CH4_capture_system_rate = self.cleaned_data.get('CH4_capture_system_rate')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(CH4_capture_system_rate)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return CH4_capture_system_rate
 
 
 # 溶劑、噴霧劑
@@ -1137,12 +1172,12 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
                   'gas_name', 'gas_ratio', 'density', 'image_note', 'message_board')
         widgets = {
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^\+?[1-9][0-9]*$', 'title': '只能輸入正整數', 'placeholder': '只能輸入正整數'}),
-            'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數'}),
+            'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'solvent_capacity_unit': forms.Select(attrs={'id': 'solvent_capacity_unit', 'style': 'width:100px'}, choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
             'gas_name': forms.Select(attrs={'id': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
             'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-            'density': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9]+(.[0-9]{0,10})?$', 'title': '只能輸入正實數(小數點後十位)', 'placeholder': '只能輸入正實數(小數點後十位)'}),
+            'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1152,17 +1187,47 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_solvent_amount(self):
+        solvent_amount = self.cleaned_data.get('solvent_amount')
+        if not re.match(r'^[0-9]+$', str(solvent_amount)):
+            raise forms.ValidationError("只能輸入正整數字", 'invalid')
+        return solvent_amount
+
+    def clean_solvent_capacity(self):
+        solvent_capacity = self.cleaned_data.get('solvent_capacity')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(solvent_capacity)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return solvent_capacity
+
+    def clean_gas_name(self):
+        gas_name = self.cleaned_data.get('gas_name')
+        if gas_name == "":
+            raise forms.ValidationError("請選擇氣體名稱", 'invalid')
+        return gas_name
+
+    def clean_gas_ratio(self):
+        gas_ratio = self.cleaned_data.get('gas_ratio')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(gas_ratio)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return gas_ratio
+
+    def clean_density(self):
+        density = self.cleaned_data.get('density')
+        if not re.match(r'^[0-9]+(.[0-9]{0,10})?$', str(density)):
+            raise forms.ValidationError("只能輸入正實數(小數點後十位)", 'invalid')
+        return density
+
 
 # 發電量
 class ELECform(forms.ModelForm):
     class Meta:
         model = electricity
-        fields = ('EMI_id', 'address', 'meter_location', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+        fields = ('EMI_id', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
-            'EMI_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            # 'EMI_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'EMI_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
-            'meter_location': forms.TextInput(attrs={'class': 'form-control'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -1184,6 +1249,25 @@ class ELECform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_EMI_id(self):
+        EMI_id = self.cleaned_data.get('EMI_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', EMI_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return EMI_id
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
+
 
 # 上游運輸
 class UTform(forms.ModelForm):
@@ -1202,7 +1286,7 @@ class UTform(forms.ModelForm):
             'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '無單號請輸入: 0'}),
             'commodity_name': forms.TextInput(attrs={'class': 'form-control'}),
             'weight': forms.Select(choices=WEIGHT_CHOICES),
-            'commodity_NW': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
+            'commodity_NW': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數字'}),
             'organizational_use_products': forms.Select(choices=ORGANIZATIONAL_USE_PRODUCTS_CHOICES),
             'customer': forms.Select(choices=CUSTOMER_CHOICES),
             'supplier': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1215,25 +1299,25 @@ class UTform(forms.ModelForm):
             'paid': forms.RadioSelect(choices=UP_PAID_CHOICES),
             'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
             'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
-            'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
             'overseas_paid': forms.RadioSelect(choices=UP_PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
-            'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
             'overseas_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'special_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'special_transport_country': forms.TextInput(attrs={'class': 'form-control'}),
             'special_paid': forms.RadioSelect(choices=UP_PAID_CHOICES),
             'special_transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
             'special_transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
-            'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'air_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'air_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'air_arrive': forms.TextInput(attrs={'class': 'form-control'}),
-            'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
             'air_paid': forms.RadioSelect(choices=UP_PAID_CHOICES),
             'air_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
@@ -1287,7 +1371,7 @@ class DTform(forms.ModelForm):
             'acceptance_receipt': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '無單號請輸入: 0'}),
             'commodity_name': forms.TextInput(attrs={'class': 'form-control'}),
             'weight': forms.Select(choices=WEIGHT_CHOICES),
-            'commodity_NW': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入數字'}),
+            'commodity_NW': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數字'}),
             'customer': forms.Select(choices=CUSTOMER_CHOICES),
             'supplier': forms.TextInput(attrs={'class': 'form-control'}),
             'supplier_address': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1299,25 +1383,25 @@ class DTform(forms.ModelForm):
             'paid': forms.RadioSelect(choices=DOWN_PAID_CHOICES),
             'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
             'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
-            'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'overseas_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1海里 = 1.852公里'}),
             'overseas_paid': forms.RadioSelect(choices=DOWN_PAID_CHOICES),
             'overseas_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'overseas_arrive': forms.TextInput(attrs={'class': 'form-control'}),
-            'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'overseas_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
             'overseas_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'special_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'special_transport_country': forms.TextInput(attrs={'class': 'form-control'}),
             'special_paid': forms.RadioSelect(choices=DOWN_PAID_CHOICES),
             'special_transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
             'special_transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
-            'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'special_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
             'special_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'air_transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(供應商/機場/港口至公司)'}),
             'air_delivery': forms.TextInput(attrs={'class': 'form-control'}),
             'air_arrive': forms.TextInput(attrs={'class': 'form-control'}),
-            'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入數字', 'placeholder': '只能輸入數字'}),
+            'air_trips': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
             'air_paid': forms.RadioSelect(choices=DOWN_PAID_CHOICES),
             'air_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
@@ -1368,7 +1452,7 @@ class ECform(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'township': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
-            'commute_distance': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9.]*$', 'title': "只能輸入數字", 'placeholder': "只能輸入數字"}),
+            'commute_distance': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9.]*$', 'title': "只能輸入正整數字", 'placeholder': "只能輸入正整數字"}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }

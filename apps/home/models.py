@@ -549,7 +549,6 @@ class electricity(models.Model):
     years = models.IntegerField(default=timezone.now().year)
     EMI_id = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
-    meter_location = models.CharField(max_length=50)
     january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     february = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     march = models.DecimalField(max_digits=20, decimal_places=4, default=0)

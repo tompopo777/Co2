@@ -54,9 +54,11 @@
                                         <br>
                                         {% if CE_add.errors %}
                                             <div class="col-12 text-center">
-                                                {% if 'fuel_january' in CE_add.errors or 'fuel_february' in CE_add.errors or 'fuel_march' in CE_add.errors or 'fuel_april' in CE_add.errors or 'fuel_may' in CE_add.errors or 'fuel_june' in CE_add.errors or 'fuel_july' in CE_add.errors or 'fuel_august' in CE_add.errors or 'fuel_september' in CE_add.errors or 'fuel_october' in CE_add.errors or 'fuel_november' in CE_add.errors or 'fuel_december' in CE_add.errors or 'heat_january' in CE_add.errors or 'heat_february' in CE_add.errors or 'heat_march' in CE_add.errors or 'heat_april' in CE_add.errors or 'heat_may' in CE_add.errors or 'heat_june' in CE_add.errors or 'heat_july' in CE_add.errors or 'heat_august' in CE_add.errors or 'heat_september' in CE_add.errors or 'heat_october' in CE_add.errors or 'heat_november' in CE_add.errors or 'heat_december' %}
-                                                    <li style="color: red">只能輸入正數</li>
-                                                {% endif %}
+                                                {% for error in CE_add.errors %}
+                                                    {% if 'fuel_january' == error or 'fuel_february' == error or 'fuel_march' == error or 'fuel_april' == error or 'fuel_may' == error or 'fuel_june' == error or 'fuel_july' == error or 'fuel_august' == error or 'fuel_september' == error or 'fuel_october' == error or 'fuel_november' == error or 'fuel_december' == error or 'heat_january' == error or 'heat_february' == error or 'heat_march' == error or 'heat_april' == error or 'heat_may' == error or 'heat_june' == error or 'heat_july' == error or 'heat_august' == error or 'heat_september' == error or 'heat_october' == error or 'heat_november' == error or 'heat_december' == error%}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
                                                 {% for error in CE_add.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}

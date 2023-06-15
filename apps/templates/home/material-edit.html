@@ -93,9 +93,11 @@
                                         </div>
                                         {% if form.errors %}
                                             <div class="col-12 text-center">
-                                                {% if 'january' in form.errors  or 'february' in form.errors  or 'march' in form.errors  or 'april' in form.errors  or 'may' in form.errors  or 'june' in form.errors  or 'july' in form.errors  or 'august' in form.errors  or 'september' in form.errors  or 'october' in form.errors  or 'november' in form.errors  or 'december' in form.errors  in form.errors %}
-                                                    <li style="color: red">只能輸入正數</li>
-                                                {% endif %}
+                                                {% for error in form.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
                                                 {% for error in form.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}

@@ -71,9 +71,11 @@
                                                 </div>
                                                 {% if OffCar_add.errors %}
                                                     <div class="col-12 text-center">
-                                                        {% if 'january' in OffCar_add.errors  or 'february' in OffCar_add.errors  or 'march' in OffCar_add.errors  or 'april' in OffCar_add.errors  or 'may' in OffCar_add.errors  or 'june' in OffCar_add.errors  or 'july' in OffCar_add.errors  or 'august' in OffCar_add.errors  or 'september' in OffCar_add.errors  or 'october' in OffCar_add.errors  or 'november' in OffCar_add.errors  or 'december' in OffCar_add.errors  in OffCar_add.errors or 'urea_january' in OffCar_add.errors or 'urea_february' in OffCar_add.errors or 'urea_march' in OffCar_add.errors or 'urea_april' in OffCar_add.errors or 'urea_may' in OffCar_add.errors or 'urea_june' in OffCar_add.errors or 'urea_july' in OffCar_add.errors or 'urea_august' in OffCar_add.errors or 'urea_september' in OffCar_add.errors or 'urea_october' in OffCar_add.errors or 'urea_november' in OffCar_add.errors or 'urea_december' %}
-                                                            <li style="color: red">只能輸入正數</li>
-                                                        {% endif %}
+                                                        {% for error in OffCar_add.errors %}
+                                                            {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error or 'urea_january' == error or 'urea_february' == error or 'urea_march' == error or 'urea_april' == error or 'urea_may' == error or 'urea_june' == error or 'urea_july' == error or 'urea_august' == error or 'urea_september' == error or 'urea_october' == error or 'urea_november' == error or 'urea_december' == error %}
+                                                                <li style="color: red">只能輸入正數</li>
+                                                            {% endif %}
+                                                        {% endfor %}
                                                         {% for error in OffCar_add.errors.數值必須大於零 %}
                                                             <li style="color: red">{{ error }}</li>
                                                         {% endfor %}

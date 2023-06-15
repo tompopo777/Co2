@@ -32,27 +32,25 @@
                                     <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
                                         <div class="row">
-                                            <div class="col-5">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-7">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>溶劑、噴霧劑名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.solvent_name }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                {% for error in form.solvent_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-6">
                                                     <label>溶劑、噴霧劑數量(單位: 瓶/罐)<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.solvent_amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                {% for error in form.solvent_capacity.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-6">
                                                     <label>溶劑、噴霧劑容量(單位: {{ form.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.solvent_capacity }}
@@ -61,18 +59,27 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-4">
+                                                {% for error in form.gas_name.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>氣體名稱<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.gas_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in form.gas_ratio.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>添加比例(%) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.gas_ratio }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in form.density.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>容量換算密度('oz' 預設為'1')<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.density }}

@@ -32,6 +32,9 @@
                                     <div class="card-body p-0 my-3">
                                         <div class="row my-3">
                                             <div class="col-4">
+                                                {% for error in form.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;"></span></label>
                                                     {{ form.device_id }}
@@ -50,7 +53,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row  my-3">
+                                        <div class="row my-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
@@ -58,6 +61,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in form.chemical_weight.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.chemical_weight }}
@@ -70,7 +76,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row  my-3">
+                                        <div class="row my-3">
                                             <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器使用數量 <span style="color:red; font-size:16px;">* </span></label>
@@ -187,6 +193,39 @@
         })
 
         $('#extinguisher_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+
+        {#    使用月份、更換/填充日期，disabled#}
+        using = function () {
+            let using_amount = $('#id_using_amount')
+            let monthly = $('#monthly')
+            let value = using_amount.val();
+            console.warn('value', value)
+            if (value) {
+                monthly.prop('disabled', false);
+            } else {
+                monthly.prop('disabled', true);
+                monthly.val("")
+            }
+        }
+        replace = function () {
+            let replace_filling_amount = $('#id_replace_filling_amount')
+            let replace_filling_date = $('#replace_filling_date')
+            let value = replace_filling_amount.val();
+            console.warn('value', value)
+            if (value) {
+                replace_filling_date.prop('disabled', false);
+            } else {
+                replace_filling_date.prop('disabled', true);
+                replace_filling_date.val("")
+            }
+        }
+
+        $(document).ready(function () { using(); replace(); });
+
+        let using_amount = $('#id_using_amount')
+        using_amount.on('input', using);
+        let replace_filling_amount = $('#id_replace_filling_amount')
+        replace_filling_amount.on('input', replace);
     </script>
 
 {% endblock javascripts %}

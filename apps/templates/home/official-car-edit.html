@@ -71,9 +71,11 @@
                                                 </div>
                                                 {% if form.errors %}
                                                     <div class="col-12 text-center">
-                                                        {% if 'january' in form.errors  or 'february' in form.errors  or 'march' in form.errors  or 'april' in form.errors  or 'may' in form.errors  or 'june' in form.errors  or 'july' in form.errors  or 'august' in form.errors  or 'september' in form.errors  or 'october' in form.errors  or 'november' in form.errors  or 'december' in form.errors  in form.errors or 'urea_january' in form.errors or 'urea_february' in form.errors or 'urea_march' in form.errors or 'urea_april' in form.errors or 'urea_may' in form.errors or 'urea_june' in form.errors or 'urea_july' in form.errors or 'urea_august' in form.errors or 'urea_september' in form.errors or 'urea_october' in form.errors or 'urea_november' in form.errors or 'urea_december' %}
-                                                            <li style="color: red">只能輸入正數</li>
-                                                        {% endif %}
+                                                        {% for error in form.errors %}
+                                                            {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error or 'urea_january' == error or 'urea_february' == error or 'urea_march' == error or 'urea_april' == error or 'urea_may' == error or 'urea_june' == error or 'urea_july' == error or 'urea_august' == error or 'urea_september' == error or 'urea_october' == error or 'urea_november' == error or 'urea_december' == error %}
+                                                                <li style="color: red">只能輸入正數</li>
+                                                            {% endif %}
+                                                        {% endfor %}
                                                         {% for error in form.errors.數值必須大於零 %}
                                                             <li style="color: red">{{ error }}</li>
                                                         {% endfor %}
