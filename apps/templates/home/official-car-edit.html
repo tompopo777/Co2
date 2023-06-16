@@ -22,36 +22,16 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 公務車</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 公務車</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>車輛類別 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ form.vehicle_type }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ form.fuel_type }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
                                                 {% for error in form.device_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -60,10 +40,22 @@
                                                     {{ form.device_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>所屬單位</label>
                                                     {{ form.department }}
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>車輛類別 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.vehicle_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.fuel_type }}
                                                 </div>
                                             </div>
                                         </div>
@@ -79,9 +71,11 @@
                                                 </div>
                                                 {% if form.errors %}
                                                     <div class="col-12 text-center">
-                                                        {% if 'january' in form.errors  or 'february' in form.errors  or 'march' in form.errors  or 'april' in form.errors  or 'may' in form.errors  or 'june' in form.errors  or 'july' in form.errors  or 'august' in form.errors  or 'september' in form.errors  or 'october' in form.errors  or 'november' in form.errors  or 'december' in form.errors  in form.errors or 'urea_january' in form.errors or 'urea_february' in form.errors or 'urea_march' in form.errors or 'urea_april' in form.errors or 'urea_may' in form.errors or 'urea_june' in form.errors or 'urea_july' in form.errors or 'urea_august' in form.errors or 'urea_september' in form.errors or 'urea_october' in form.errors or 'urea_november' in form.errors or 'urea_december' %}
-                                                            <li style="color: red">只能輸入正數</li>
-                                                        {% endif %}
+                                                        {% for error in form.errors %}
+                                                            {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error or 'urea_january' == error or 'urea_february' == error or 'urea_march' == error or 'urea_april' == error or 'urea_may' == error or 'urea_june' == error or 'urea_july' == error or 'urea_august' == error or 'urea_september' == error or 'urea_october' == error or 'urea_november' == error or 'urea_december' == error %}
+                                                                <li style="color: red">只能輸入正數</li>
+                                                            {% endif %}
+                                                        {% endfor %}
                                                         {% for error in form.errors.數值必須大於零 %}
                                                             <li style="color: red">{{ error }}</li>
                                                         {% endfor %}

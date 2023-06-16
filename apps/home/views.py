@@ -85,7 +85,7 @@ def current_user_group_id(request):
         user_id = request.user.id
         current_user = Profile.objects.filter(user_id=user_id).get()
         factory_id = current_user.factory_id
-        factory_name = current_user.factory
+        # factory_name = current_user.factory
         return factory_id
     except:
         pass
@@ -102,10 +102,11 @@ def load_table(request):
             factory_id = request.session.get('company_id')
         else:
             factory_id = request.session.get('factory_id')
-        t_name = list(section_two.objects.filter(did=device_id).values("d_name"))
+        t_name = list(section_two.objects.filter(did=device_id).values("d_name", "did"))
         # 從db撈每張表要顯示的值
         for a in t_name:
             if a["d_name"] == "柴油發電機":
+                print(a["did"])
                 t_data = []
                 # raw_data = emergency_generators.objects.filter(company_id__in=factory_id_list, years=year).values("id", "device_id", "device_capacity", "position",
                 raw_data = emergency_generators.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_capacity", "position",
@@ -126,6 +127,11 @@ def load_table(request):
                     single_data["total"] = consumption_total
                     # 將 estimate 替換成中文
                     single_data["estimate"] = "是" if single_data["estimate"] else "否"
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
 
                 return JsonResponse(t_data, safe=False)
@@ -160,6 +166,11 @@ def load_table(request):
                         single_data[j] = heat_data[i].get(j)
                     # 將計算後的「平均熱值」丟回字典
                     single_data["avg_heat"] = avg_heat
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "公務車":
@@ -177,11 +188,9 @@ def load_table(request):
                     single_data = raw_data[i]
                     consumption_total = 0
                     for j in consumptions_data[i]:
-                        # print("oil:::", consumptions_data[i].get(j))
                         # 「逐一」將資料(耗用量)丟回字典
                         single_data[j] = consumptions_data[i].get(j)
                         consumption_total += consumptions_data[i].get(j)
-                    # print("single_data11111", single_data)
                     # 將計算後的耗用量丟回字典
                     single_data["consumption_total"] = consumption_total
                     urea_total = 0
@@ -196,6 +205,11 @@ def load_table(request):
                         for e in urea_data[i]:
                             single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
                         single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
+                        # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "原物料使用":
@@ -205,6 +219,12 @@ def load_table(request):
                                                                                       "january", "february", "march", "april",
                                                                                       "may", "june", "july", "august",
                                                                                       "september", "october", "november", "december"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製程添加化學品":
                 t_data = []
@@ -231,6 +251,11 @@ def load_table(request):
                     # 將單位丟回字典
                     for j in unit[i]:
                         single_data[j] = unit[i].get(j)
+                        # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
@@ -248,6 +273,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷氣機清單":
@@ -265,6 +295,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "車輛清單":
@@ -282,6 +317,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "飲水機清單":
@@ -299,6 +339,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰水機清單":
@@ -316,6 +361,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製冰機清單":
@@ -333,6 +383,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "設備清單":
@@ -350,12 +405,23 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     effusion_volume = effusion_volume.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["effusion_volume"] = effusion_volume
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
                     extinguisher.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "extinguisher_vendor", "extinguisher_type", "position", "inventory",
                                                                                           "chemical_weight", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
                 t_data = list(
@@ -364,6 +430,12 @@ def load_table(request):
                                                                                                  "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
                                                                                                  "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
                                                                                                  "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "委外人員清冊":
                 t_data = list(
@@ -374,6 +446,12 @@ def load_table(request):
                                                                                       "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
                                                                                       "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
                                                                                       "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢水":
                 t_data = []
@@ -411,25 +489,43 @@ def load_table(request):
                     single_data["ch4"] = consumption_total
                     t_data.append(single_data)
 
-                # for i in range(raw_data.count()):
-                #     cod_total = (raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi") - raw_data[i].get("Si")) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj")) - raw_data[i].get("Ri")
-                #     raw_data[i]["CH4"] = cod_total
-                # print(raw_data)
-                # t_data.append(raw_data)
-                # t_data = list(waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
+                    # for i in range(raw_data.count()):
+                    #     cod_total = (raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi") - raw_data[i].get("Si")) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj")) - raw_data[i].get("Ri")
+                    #     raw_data[i]["CH4"] = cod_total
+                    # print(raw_data)
+                    # t_data.append(raw_data)
+                    # t_data = list(waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢汙泥":
                 t_data = list(
                     waste_sludge.objects.filter(company_id=factory_id, years=year).values("id", "waste_sludge_treatment_name", "waste_sludge_inflow_rate", "average_inlet_MLSS_concentration",
                                                                                           "CH4_capture_system_rate", "combustion_equipment_efficiency"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
                 t_data = list(solvent_aerosol_emission_sources.objects.filter(company_id=factory_id, years=year).values("id", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "meter_location", "address",
+                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "address",
                                                                                                 "january", "february", "march", "april",
                                                                                                 "may", "june", "july", "august",
                                                                                                 "september", "october", "november", "december")
@@ -447,26 +543,43 @@ def load_table(request):
                     kkw_hr = kkw_hr.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["kw_hr"] = kw_hr
                     single_data["kkw_hr"] = kkw_hr
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "上游運輸":
                 t_data = list(
                     upstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
-                                                                                         "organizational_use_products", "customer", "supplier", "supplier_address",
-                                                                                         "trade_term", "receiving_address", "delivery_address",
-                                                                                         "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                                                         "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                                                         "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                                                         "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                                                                                                     "organizational_use_products", "customer", "supplier", "supplier_address",
+                                                                                                     "trade_term", "receiving_address", "delivery_address",
+                                                                                                     "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                                                                     "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                                                                     "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                                                                     "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "下游運輸":
                 t_data = list(
                     downstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
-                                                                                           "trade_term", "receiving_address", "delivery_address",
-                                                                                           "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                                                           "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                                                           "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                                                           "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                                                                                                       "trade_term", "receiving_address", "delivery_address",
+                                                                                                       "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
+                                                                                                       "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                                                                       "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
+                                                                                                       "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工通勤":
                 t_data = []
@@ -511,13 +624,18 @@ def load_table(request):
                                 single_data[d] = None
                             else:
                                 single_data[d] = round(transportation_dic.get(d), 4)
+                                # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物":
                 t_data = []
                 raw_data = waste.objects.filter(company_id=factory_id, years=year).values("id", "waste_name", "waste_weigh", "waste_date",
-                                                                              "waste_location", "waste_disposal", "waste_disposal_vendor",
-                                                                              "transport_type", "transport_fuel", "transport_distance")
+                                                                                          "waste_location", "waste_disposal", "waste_disposal_vendor",
+                                                                                          "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計
                     if (raw_data[i].get("transport_distance") == None):
@@ -531,14 +649,32 @@ def load_table(request):
                     single_data["total_distance"] = Tkm
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
                     t_data.append(single_data)
-                # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+                    # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_1":
                 t_data = list(VOCs_one.objects.filter(company_id=factory_id, years=year).values("id", "emission", "concentration_ch4"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "VOCs_2":
                 t_data = list(VOCs_two.objects.filter(company_id=factory_id, years=year).values("id", "disposal_volume", "concentration_ch4", "voc_capture_rate", "combustion_equipment_rate",
                                                                                                 "concentration_entrance", "concentration_exit", "builtIn_rate", "custom_rate"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "納管廢水排放量":
                 t_data = []
@@ -554,6 +690,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     Total_Emission = Total_Emission.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Emission"] = Total_Emission
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "採購原物料":
@@ -571,6 +712,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     Total_Purchase = Total_Purchase.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Purchase"] = Total_Purchase
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "產品間接排放":
@@ -587,6 +733,11 @@ def load_table(request):
                     # 將計算後的逸散量丟回字典
                     Total_Deliver = Total_Deliver.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     single_data["Total_Deliver"] = Total_Deliver
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
 
@@ -1217,13 +1368,13 @@ def copy_last_year_data(request):
 def emergency_generators_add(request):
     context = {}
     EG_add = EGform(request)
-    # EG_add = EGform()
     if request.method == "POST":
         EG_add = EGform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EG_add.is_valid():
             EG_add = EG_add.save(commit=False)
             EG_add.company_id = factory_id
+            EG_add.years = request.session.get('years')
             EG_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1242,6 +1393,7 @@ def emergency_generators_add(request):
         else:
             print("\n", EG_add.errors)
     context['EG_add'] = EG_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/emergency-generator.html', context)
 
 
@@ -1255,6 +1407,7 @@ def combustion_equipment_add(request):
         if CE_add.is_valid():
             CE_add = CE_add.save(commit=False)
             CE_add.company_id = factory_id
+            CE_add.years = request.session.get('years')
             CE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1273,6 +1426,7 @@ def combustion_equipment_add(request):
         else:
             print("\n", CE_add.errors)
     context['CE_add'] = CE_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/combustion-equipment.html', context)
 
 
@@ -1287,6 +1441,7 @@ def official_car_add(request):
         if OffCar_add.is_valid():
             OffCar_add = OffCar_add.save(commit=False)
             OffCar_add.company_id = factory_id
+            OffCar_add.years = request.session.get('years')
             OffCar_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1305,6 +1460,7 @@ def official_car_add(request):
         else:
             print("\n", OffCar_add.errors)
     context['OffCar_add'] = OffCar_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/official-car.html', context)
 
 
@@ -1318,6 +1474,7 @@ def material_add(request):
         if MT_add.is_valid():
             MT_add = MT_add.save(commit=False)
             MT_add.company_id = factory_id
+            MT_add.years = request.session.get('years')
             MT_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1336,6 +1493,7 @@ def material_add(request):
         else:
             print("\n", MT_add.errors)
     context['MT_add'] = MT_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/material.html', context)
 
 
@@ -1349,6 +1507,7 @@ def process_add(request):
         if PC_add.is_valid():
             PC_add = PC_add.save(commit=False)
             PC_add.company_id = factory_id
+            PC_add.years = request.session.get('years')
             PC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1367,6 +1526,7 @@ def process_add(request):
         else:
             print("\n", PC_add.errors)
     context['PC_add'] = PC_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/process.html', context)
 
 
@@ -1380,6 +1540,7 @@ def refrigerator_add(request):
         if RF_add.is_valid():
             RF_add = RF_add.save(commit=False)
             RF_add.company_id = factory_id
+            RF_add.years = request.session.get('years')
             RF_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1398,6 +1559,7 @@ def refrigerator_add(request):
         else:
             print("\n", RF_add.errors)
     context['RF_add'] = RF_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/refrigerator.html', context)
 
 
@@ -1411,6 +1573,7 @@ def airconditioner_add(request):
         if AC_add.is_valid():
             AC_add = AC_add.save(commit=False)
             AC_add.company_id = factory_id
+            AC_add.years = request.session.get('years')
             AC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1429,6 +1592,7 @@ def airconditioner_add(request):
         else:
             print("\n", AC_add.errors)
     context['AC_add'] = AC_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/airconditioner.html', context)
 
 
@@ -1442,6 +1606,7 @@ def vehicle_add(request):
         if VC_add.is_valid():
             VC_add = VC_add.save(commit=False)
             VC_add.company_id = factory_id
+            VC_add.years = request.session.get('years')
             VC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1460,6 +1625,7 @@ def vehicle_add(request):
         else:
             print("\n", VC_add.errors)
     context['VC_add'] = VC_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/vehicle.html', context)
 
 
@@ -1473,6 +1639,7 @@ def water_dispenser_add(request):
         if WD_add.is_valid():
             WD_add = WD_add.save(commit=False)
             WD_add.company_id = factory_id
+            WD_add.years = request.session.get('years')
             WD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1491,6 +1658,7 @@ def water_dispenser_add(request):
         else:
             print("\n", WD_add.errors)
     context['WD_add'] = WD_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/water-dispenser.html', context)
 
 
@@ -1504,6 +1672,7 @@ def ice_water_dispenser_add(request):
         if IWD_add.is_valid():
             IWD_add = IWD_add.save(commit=False)
             IWD_add.company_id = factory_id
+            IWD_add.years = request.session.get('years')
             IWD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1522,6 +1691,7 @@ def ice_water_dispenser_add(request):
         else:
             print("\n", IWD_add.errors)
     context['IWD_add'] = IWD_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/ice-water-dispenser.html', context)
 
 
@@ -1535,6 +1705,7 @@ def ice_maker_add(request):
         if IM_add.is_valid():
             IM_add = IM_add.save(commit=False)
             IM_add.company_id = factory_id
+            IM_add.years = request.session.get('years')
             IM_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1553,6 +1724,7 @@ def ice_maker_add(request):
         else:
             print("\n", IM_add.errors)
     context['IM_add'] = IM_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/ice-maker.html', context)
 
 
@@ -1566,6 +1738,7 @@ def other_device_add(request):
         if OD_add.is_valid():
             OD_add = OD_add.save(commit=False)
             OD_add.company_id = factory_id
+            OD_add.years = request.session.get('years')
             OD_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1584,6 +1757,7 @@ def other_device_add(request):
         else:
             print("\n", OD_add.errors)
     context['OD_add'] = OD_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/other-device.html', context)
 
 
@@ -1597,6 +1771,7 @@ def extinguisher_add(request):
         if EX_add.is_valid():
             EX_add = EX_add.save(commit=False)
             EX_add.company_id = factory_id
+            EX_add.years = request.session.get('years')
             EX_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1615,6 +1790,7 @@ def extinguisher_add(request):
         else:
             print("\n", EX_add.errors)
     context['EX_add'] = EX_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/extinguisher.html', context)
 
 
@@ -1628,6 +1804,7 @@ def personnel_inventory_add(request):
         if PI_add.is_valid():
             PI_add = PI_add.save(commit=False)
             PI_add.company_id = factory_id
+            PI_add.years = request.session.get('years')
             PI_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1646,6 +1823,7 @@ def personnel_inventory_add(request):
         else:
             print("\n", PI_add.errors)
     context['PI_add'] = PI_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/personnel-inventory.html', context)
 
 
@@ -1659,6 +1837,7 @@ def employee_add(request):
         if EMP_add.is_valid():
             EMP_add = EMP_add.save(commit=False)
             EMP_add.company_id = factory_id
+            EMP_add.years = request.session.get('years')
             EMP_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1677,6 +1856,7 @@ def employee_add(request):
         else:
             print("\n", EMP_add.errors)
     context['EMP_add'] = EMP_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/employee.html', context)
 
 
@@ -1691,6 +1871,7 @@ def waste_water_add(request):
         if waste_water_add.is_valid():
             waste_water_add = waste_water_add.save(commit=False)
             waste_water_add.company_id = factory_id
+            waste_water_add.years = request.session.get('years')
             waste_water_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1709,6 +1890,7 @@ def waste_water_add(request):
         else:
             print("\n", waste_water_add.errors)
     context['waste_water_add'] = waste_water_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/waste-water.html', context)
 
 
@@ -1723,6 +1905,7 @@ def waste_sludge_add(request):
         if waste_sludge_add.is_valid():
             waste_sludge_add = waste_sludge_add.save(commit=False)
             waste_sludge_add.company_id = factory_id
+            waste_sludge_add.years = request.session.get('years')
             waste_sludge_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1741,6 +1924,7 @@ def waste_sludge_add(request):
         else:
             print("\n", waste_sludge_add.errors)
     context['waste_sludge_add'] = waste_sludge_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/waste-sludge.html', context)
 
 
@@ -1755,6 +1939,7 @@ def solvent_aerosol_emission_sources_add(request):
         if SAES_add.is_valid():
             solvent = SAES_add.save(commit=False)
             solvent.company_id = factory_id
+            solvent.years = request.session.get('years')
             solvent.save()
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
@@ -1765,6 +1950,7 @@ def solvent_aerosol_emission_sources_add(request):
         else:
             print("\n", SAES_add.errors)
     context['SAES_add'] = SAES_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add})
 
 
@@ -1779,6 +1965,7 @@ def VOCs_one_add(request):
         if VOCs_one_add.is_valid():
             VOCs_one_add = VOCs_one_add.save(commit=False)
             VOCs_one_add.company_id = factory_id
+            VOCs_one_add.years = request.session.get('years')
             VOCs_one_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1797,6 +1984,7 @@ def VOCs_one_add(request):
         else:
             print("\n", VOCs_one_add.errors)
     context['VOCs_one_add'] = VOCs_one_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/VOCs-one.html', context)
 
 
@@ -1811,6 +1999,7 @@ def VOCs_two_add(request):
         if VOCs_two_add.is_valid():
             VOCs_two_add = VOCs_two_add.save(commit=False)
             VOCs_two_add.company_id = factory_id
+            VOCs_two_add.years = request.session.get('years')
             VOCs_two_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1829,6 +2018,7 @@ def VOCs_two_add(request):
         else:
             print("\n", VOCs_two_add.errors)
     context['VOCs_two_add'] = VOCs_two_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/VOCs-two.html', context)
 
 
@@ -1843,6 +2033,7 @@ def electricity_add(request):
         if ELEC_add.is_valid():
             ELEC_add = ELEC_add.save(commit=False)
             ELEC_add.company_id = factory_id
+            ELEC_add.years = request.session.get('years')
             ELEC_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -1861,6 +2052,7 @@ def electricity_add(request):
         else:
             print("\n", ELEC_add.errors)
     context['ELEC_add'] = ELEC_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/electricity.html', context)
 
 
@@ -1868,13 +2060,14 @@ def electricity_add(request):
 @login_required(login_url="/login/")
 def upstream_transportation_add(request):
     context = {}
-    UT_add = UTform()
+    UT_add = UTform(request)
     if request.method == "POST":
-        UT_add = UTform(request.POST, request.FILES)
+        UT_add = UTform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if UT_add.is_valid():
             UT_add = UT_add.save(commit=False)
             UT_add.company_id = factory_id
+            UT_add.years = request.session.get('years')
             UT_add.save()
             stages = request.POST.getlist('stage')
             last_id = upstream_transportation.objects.values("id").last().get("id")
@@ -1903,6 +2096,7 @@ def upstream_transportation_add(request):
         else:
             print("\n", UT_add.errors)
     context['UT_add'] = UT_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/upstream-transportation.html', context)
 
 
@@ -1910,13 +2104,14 @@ def upstream_transportation_add(request):
 @login_required(login_url="/login/")
 def downstream_transportation_add(request):
     context = {}
-    DT_add = DTform()
+    DT_add = DTform(request)
     if request.method == "POST":
-        DT_add = DTform(request.POST, request.FILES)
+        DT_add = DTform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if DT_add.is_valid():
             DT_add = DT_add.save(commit=False)
             DT_add.company_id = factory_id
+            DT_add.years = request.session.get('years')
             DT_add.save()
             stages = request.POST.getlist('stage')
             last_id = downstream_transportation.objects.values("id").last().get("id")
@@ -1945,6 +2140,7 @@ def downstream_transportation_add(request):
         else:
             print("\n", DT_add.errors)
     context['DT_add'] = DT_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/downstream-transportation.html', context)
 
 
@@ -1958,6 +2154,7 @@ def employee_commute_add(request):
         if EC_add.is_valid():
             commute = EC_add.save(commit=False)
             commute.company_id = factory_id
+            commute.years = request.session.get('years')
             commute.save()
             Commute_formSet = CommuteFormSet(request.POST, request.FILES, instance=commute)
             if Commute_formSet.is_valid():
@@ -1980,23 +2177,24 @@ def employee_commute_add(request):
                 last_data = employee_commute.objects.last()
                 last_data.delete()
                 print("Commute_formSet>>>>>>>>>>>>>>>>>>>>\n", Commute_formSet)
-                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
+                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'years': request.session.get('years')})
         else:
             print("\n", EC_add.errors)
     context['EC_add'] = EC_add
-    return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet})
+    return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'years': request.session.get('years')})
 
 
 @login_required(login_url="/login/")
 def employee_business_trip_add(request):
     context = {}
-    EBT_add = EBTform()
+    EBT_add = EBTform(request)
     if request.method == "POST":
-        EBT_add = EBTform(request.POST, request.FILES)
+        EBT_add = EBTform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if EBT_add.is_valid():
             business = EBT_add.save(commit=False)
             business.company_id = factory_id
+            business.years = request.session.get('years')
             business.save()
             tripsection_formSet = TripSectionFormSet(request.POST, request.FILES, instance=business)
             if tripsection_formSet.is_valid():
@@ -2027,11 +2225,11 @@ def employee_business_trip_add(request):
                 last_data = employee_business_trip.objects.last()
                 last_data.delete()
                 print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", tripsection_formSet)
-                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
+                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'years': request.session.get('years')})
         else:
             print("\n", EBT_add.errors)
     context['EBT_add'] = EBT_add
-    return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet})
+    return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'years': request.session.get('years')})
 
 
 @login_required(login_url="/login/")
@@ -2044,6 +2242,7 @@ def waste_add(request):
         if WASTE_add.is_valid():
             WASTE_add = WASTE_add.save(commit=False)
             WASTE_add.company_id = factory_id
+            WASTE_add.years = request.session.get('years')
             WASTE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2062,6 +2261,7 @@ def waste_add(request):
         else:
             print("\n", WASTE_add.errors)
     context['WASTE_add'] = WASTE_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/waste.html', context)
 
 
@@ -2076,6 +2276,7 @@ def pipe_wastewater_add(request):
         if PW_add.is_valid():
             PW_add = PW_add.save(commit=False)
             PW_add.company_id = factory_id
+            PW_add.years = request.session.get('years')
             PW_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2094,6 +2295,7 @@ def pipe_wastewater_add(request):
         else:
             print("\n", PW_add.errors)
     context['PW_add'] = PW_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/pipe-wastewater.html', context)
 
 
@@ -2108,6 +2310,7 @@ def purchase_material_add(request):
         if PM_add.is_valid():
             PM_add = PM_add.save(commit=False)
             PM_add.company_id = factory_id
+            PM_add.years = request.session.get('years')
             PM_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2126,6 +2329,7 @@ def purchase_material_add(request):
         else:
             print("\n", PM_add.errors)
     context['PM_add'] = PM_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/purchase-material.html', context)
 
 
@@ -2140,6 +2344,7 @@ def product_indirect_emissions_add(request):
         if PIE_add.is_valid():
             PIE_add = PIE_add.save(commit=False)
             PIE_add.company_id = factory_id
+            PIE_add.years = request.session.get('years')
             PIE_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
@@ -2158,6 +2363,7 @@ def product_indirect_emissions_add(request):
         else:
             print("\n", PIE_add.errors)
     context['PIE_add'] = PIE_add
+    context['years'] = request.session.get('years')
     return render(request, 'home/product-indirect-emissions.html', context)
 
 
@@ -2334,14 +2540,16 @@ def edit_device(request, error_from=None, error_formset=None):
         formset = formsetName.get(datasheet_id)
         if request.method == 'GET':
             single_dataID = request.GET.get('single_dataID')
+            years = request.session.get('years')
             request.session.update({'single_dataID': single_dataID})
             current_data = dbName.objects.get(id=single_dataID)
-            update_from = form(instance=current_data)
+            update_from = form(request, instance=current_data)
 
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
                 'single_dataID': single_dataID,
+                'years': years,
             }
             try:
                 if datasheet_id in formsetName:
@@ -2389,12 +2597,14 @@ def edit_device(request, error_from=None, error_formset=None):
         # 編輯後表單內容有誤轉跳
         if request.method == 'POST':
             single_dataID = request.session.get('single_dataID')
+            years = request.session.get('years')
             update_from = error_from
 
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
                 'single_dataID': single_dataID,
+                'years': years
             }
             # 表中表情況
             try:
@@ -2442,7 +2652,6 @@ def edit_device(request, error_from=None, error_formset=None):
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
                 return render(request, EditDevice_page, formUpdata_name)
-
 
 
 # 儲存更新後的資料
@@ -2495,7 +2704,7 @@ def update_device(request, single_dataID):
         dbName = modelName.get(datasheet_id)
         form = formName.get(datasheet_id)
         current_data = get_object_or_404(dbName, id=single_dataID)
-        update_from = form(request.POST, request.FILES, instance=current_data)
+        update_from = form(request, request.POST, request.FILES, instance=current_data)
 
         if request.method == 'POST':
             # 表中表情況
@@ -2527,7 +2736,7 @@ def update_device(request, single_dataID):
 def delete_device(request):
     if request.method == 'GET':
         datasheet_id = request.session.get('dropdown_three')
-        single_dataID = request.GET.get('single_dataID')
+        delete_list = request.GET.get('delete_str').split()
         modelName = {
             "1": emergency_generators,
             "2": combustion_equipment,
@@ -2561,9 +2770,9 @@ def delete_device(request):
         }
         if modelName.get(datasheet_id):
             dbName = modelName.get(datasheet_id)
-            current_data = dbName.objects.get(id=single_dataID)
+            current_data = dbName.objects.filter(id__in=delete_list)
             current_data.delete()  # 刪除該筆資料
-            return JsonResponse(single_dataID, safe=False)
+            return JsonResponse(delete_list, safe=False)
 
 
 # 新增title
@@ -2577,26 +2786,32 @@ def add_title(request):
             "1": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "設備編號", "容量(𝓁)", "地點", "部門", "是否推估"],
-                "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+                "加油量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "佐證資料": ["引用單據"],
             },
             # 燃燒設備
             "2": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "名稱", "編號", "燃料種類"],
                 "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"]
+                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"],
+                "佐證資料": ["引用單據"],
             },
             # 公務車
             "3": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
                 "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"]
+                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "佐證資料": ["引用單據"],
             },
             # 原物料
             "4": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "原物料號", "原/物料", "名稱"],
+                "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
+                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "佐證資料": ["引用單據"],
                 "是否為化學品": ["化學品名稱", "化學品名", "化學式", "含碳量(%)"],
                 "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
@@ -2604,54 +2819,64 @@ def add_title(request):
             "5": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "製程階段", "料號", "製程添加名稱", "含碳量(%)", "是否燃燒", "VOCs"],
-                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"]
+                "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"],
+                "佐證資料": ["引用單據"],
             },
             # 冰箱清單
             "6": {
                 "編輯區": ["刪除", "修改"],
-                "冰箱清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冰箱清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
             # 冷氣機清單
             "7": {
                 "編輯區": ["刪除", "修改"],
-                "冷氣機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冷氣機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
             # 車輛清單
             "8": {
                 "編輯區": ["刪除", "修改"],
-                "車輛清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "車輛清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
             # 飲水機清單
             "9": {
                 "編輯區": ["刪除", "修改"],
-                "飲水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "飲水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
             # 冰水機清單
             "10": {
                 "編輯區": ["刪除", "修改"],
-                "冰水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "冰水機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
             # 製冰機清單
             "11": {
                 "編輯區": ["刪除", "修改"],
-                "製冰機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "製冰機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
             # 設備清單
             "12": {
                 "編輯區": ["刪除", "修改"],
-                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"]
+                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "佐證資料": ["引用單據"],
             },
             # 滅火器
             "13": {
                 "編輯區": ["刪除", "修改"],
-                "滅火器清單": ["序號", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"]
+                "滅火器清單": ["序號", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"],
+                "佐證資料": ["引用單據"],
             },
             # 人天清冊
             "14": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "類型"],
                 "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+                "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "佐證資料": ["引用單據"],
             },
             # 委外人員
             "15": {
@@ -2659,27 +2884,33 @@ def add_title(request):
                 "內容": ["序號", "人員類別"],
                 "員工人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+                "每日工作時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "佐證資料": ["引用單據"],
             },
             # 廢水
             "16": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量", "每年事業廢水之COD總量", u"CH\u2084"],
+                "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "每年事業廢水之COD總量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量", u"CH\u2084"],
+                "佐證資料": ["引用單據"],
             },
             # 廢汙泥
             "17": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "廢棄污泥厭氧處理單元名稱", "污泥進流量(立方公尺/年)", "平均進流MLSS濃度(mg/L)", u"CH\u2084捕集系統捕集率", "燃燒設備效率"],
+                "佐證資料": ["引用單據"],
             },
             # 溶劑、噴霧劑
             "18": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "溶劑、噴霧劑名稱", "數量(瓶/罐)", "容量", "單位", "氣體名稱", "氣體含量(%)", "密度"]
+                "內容": ["序號", "溶劑、噴霧劑名稱", "數量(瓶/罐)", "容量", "單位", "氣體名稱", "氣體含量(%)", "密度"],
+                "佐證資料": ["引用單據"],
             },
 
             "19": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "VOCs排放量(千立方公尺/年)", u"CH\u2084濃度(ppm)"],
+                "佐證資料": ["引用單據"],
             },
 
             "20": {
@@ -2687,11 +2918,13 @@ def add_title(request):
                 "內容": ["序號", "VOCs排放量(千立方公尺/年)", u'CH\u2084濃度', "VOCs設備補集率", "燃燒設備效率"],
                 "VOCs濃度": ["入口濃度", "出口濃度"],
                 u"CO\u2082排放係數": ["內設值", "自訂值"],
+                "佐證資料": ["引用單據"],
             },
             # 用電量
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "用電量": ["序號", "電表編號", "電表位置", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"]
+                "用電量": ["序號", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"],
+                "佐證資料": ["引用單據"],
             },
             # 上游運輸
             "22": {
@@ -2700,7 +2933,8 @@ def add_title(request):
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"],
+                "佐證資料": ["引用單據"],
             },
             # 下游運輸
             "23": {
@@ -2709,12 +2943,14 @@ def add_title(request):
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"]
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"],
+                "佐證資料": ["引用單據"],
             },
             # 員工通勤
             "24": {
                 "編輯區": ["刪除", "修改"],
                 "員工通勤清冊": ["序號", "編號", "部門", "姓名", "交通方式", "居住城市", "鄉鎮市區", "行政區公家機關地址", "至公司距離(km)", "年工作天數", "距離合計"],
+                "佐證資料": ["引用單據"],
             },
 
             # 員工出差
@@ -2722,32 +2958,37 @@ def add_title(request):
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "出差單號", "員工編號", "部門", "姓名", "出差地點", "啟程日期"],
                 "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
+                "佐證資料": ["引用單據"],
             },
             # 廢棄物
             "26": {
                 "編輯區": ["刪除", "修改"],
                 "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+                "佐證資料": ["引用單據"],
             },
 
             # 納管廢水
             "27": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "納管編號", "廠別", "地址"],
-                "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+                "納管廢水排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"],
+                "佐證資料": ["引用單據"],
             },
 
             # 原物料採購
             "28": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "產品編號", "產品名稱", "廠商", "大類名稱", "原/物料"],
-                "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+                "原物料採購量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"],
+                "佐證資料": ["引用單據"],
             },
 
             # 原物料採購
             "29": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "產品編號", "產品名稱"],
-                "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"]
+                "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"],
+                "佐證資料": ["引用單據"],
             },
         }
         # 如果沒有刪除、編輯權限，把編輯區拿掉
@@ -2769,5 +3010,3 @@ def load_chemical(request):
     chemical_add = request.GET.get("add_ch_name")
     chemical_data = list(chemical_table.objects.filter(chemical_add=chemical_add).values("chemical_name", "chemical_formula"))
     return JsonResponse(chemical_data, safe=False)
-
-

@@ -18,8 +18,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 燃燒設備</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 燃燒設備</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -27,27 +27,13 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ CE_add.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ CE_add.fuel_type }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ CE_add.device_name }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 {% for error in CE_add.device_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -56,15 +42,23 @@
                                                     {{ CE_add.device_id }}
                                                 </div>
                                             </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ CE_add.fuel_type }}
+                                                </div>
+                                            </div>
                                         </div>
                                         <br>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <br>
                                         {% if CE_add.errors %}
                                             <div class="col-12 text-center">
-                                                {% if 'fuel_january' in CE_add.errors or 'fuel_february' in CE_add.errors or 'fuel_march' in CE_add.errors or 'fuel_april' in CE_add.errors or 'fuel_may' in CE_add.errors or 'fuel_june' in CE_add.errors or 'fuel_july' in CE_add.errors or 'fuel_august' in CE_add.errors or 'fuel_september' in CE_add.errors or 'fuel_october' in CE_add.errors or 'fuel_november' in CE_add.errors or 'fuel_december' in CE_add.errors or 'heat_january' in CE_add.errors or 'heat_february' in CE_add.errors or 'heat_march' in CE_add.errors or 'heat_april' in CE_add.errors or 'heat_may' in CE_add.errors or 'heat_june' in CE_add.errors or 'heat_july' in CE_add.errors or 'heat_august' in CE_add.errors or 'heat_september' in CE_add.errors or 'heat_october' in CE_add.errors or 'heat_november' in CE_add.errors or 'heat_december' %}
-                                                    <li style="color: red">只能輸入正數 </li>
-                                                {% endif %}
+                                                {% for error in CE_add.errors %}
+                                                    {% if 'fuel_january' == error or 'fuel_february' == error or 'fuel_march' == error or 'fuel_april' == error or 'fuel_may' == error or 'fuel_june' == error or 'fuel_july' == error or 'fuel_august' == error or 'fuel_september' == error or 'fuel_october' == error or 'fuel_november' == error or 'fuel_december' == error or 'heat_january' == error or 'heat_february' == error or 'heat_march' == error or 'heat_april' == error or 'heat_may' == error or 'heat_june' == error or 'heat_july' == error or 'heat_august' == error or 'heat_september' == error or 'heat_october' == error or 'heat_november' == error or 'heat_december' == error%}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
                                                 {% for error in CE_add.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -315,13 +309,13 @@
                         error_name = "{{ field.label }}"
                         error_name = error_name.replaceAll(' ', '_')
                         if (
-                            error_name==='Fuel_january' || error_name==='Fuel_february' || error_name==='Fuel_march' || error_name==='Fuel_april' ||
-                            error_name==='Fuel_may' || error_name==='Fuel_june' || error_name==='Fuel_july' || error_name==='Fuel_august' ||
-                            error_name==='Fuel_september' || error_name==='Fuel_october' || error_name==='Fuel_november' || error_name==='Fuel_december' ||
-                            error_name==='Heat_january' || error_name==='Heat_february' || error_name==='Heat_march' || error_name==='Heat_april' ||
-                            error_name==='Heat_may' || error_name==='Heat_june' || error_name==='Heat_july' || error_name==='Heat_august' ||
-                            error_name==='Heat_september' || error_name==='Heat_october' || error_name==='Heat_november' || error_name==='Heat_december'
-                        ){
+                            error_name === 'Fuel_january' || error_name === 'Fuel_february' || error_name === 'Fuel_march' || error_name === 'Fuel_april' ||
+                            error_name === 'Fuel_may' || error_name === 'Fuel_june' || error_name === 'Fuel_july' || error_name === 'Fuel_august' ||
+                            error_name === 'Fuel_september' || error_name === 'Fuel_october' || error_name === 'Fuel_november' || error_name === 'Fuel_december' ||
+                            error_name === 'Heat_january' || error_name === 'Heat_february' || error_name === 'Heat_march' || error_name === 'Heat_april' ||
+                            error_name === 'Heat_may' || error_name === 'Heat_june' || error_name === 'Heat_july' || error_name === 'Heat_august' ||
+                            error_name === 'Heat_september' || error_name === 'Heat_october' || error_name === 'Heat_november' || error_name === 'Heat_december'
+                        ) {
                             error_name = error_name.toLowerCase()
                             error_input = document.querySelector("[name=" + error_name + "]");
                             parentDiv = error_input.parentNode;

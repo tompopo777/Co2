@@ -21,8 +21,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 原物料使用</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 原物料使用</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -30,19 +30,13 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ MT_add.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ MT_add.material_name }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 {% for error in MT_add.material_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -51,7 +45,7 @@
                                                     {{ MT_add.material_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ MT_add.material_type }}
@@ -107,9 +101,11 @@
                                         </div>
                                         {% if MT_add.errors %}
                                             <div class="col-12 text-center">
-                                                {% if 'january' in MT_add.errors  or 'february' in MT_add.errors  or 'march' in MT_add.errors  or 'april' in MT_add.errors  or 'may' in MT_add.errors  or 'june' in MT_add.errors  or 'july' in MT_add.errors  or 'august' in MT_add.errors  or 'september' in MT_add.errors  or 'october' in MT_add.errors  or 'november' in MT_add.errors  or 'december' in MT_add.errors  in MT_add.errors %}
-                                                    <li style="color: red">只能輸入正數</li>
-                                                {% endif %}
+                                                {% for error in MT_add.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
                                                 {% for error in MT_add.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}

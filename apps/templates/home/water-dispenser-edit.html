@@ -22,8 +22,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 飲水機清單</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 飲水機清單</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -33,8 +33,8 @@
                                         <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>填報年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
+                                                    <label>該設備購買年份 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.years_purchased }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -74,13 +74,7 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>該設備購買年份 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years_purchased }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 {% for error in form.filling_volume.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -89,7 +83,7 @@
                                                     {{ form.filling_volume }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 {% for error in form.effusion_rate.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -98,7 +92,7 @@
                                                     {{ form.effusion_rate }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.refrigerant_type }}

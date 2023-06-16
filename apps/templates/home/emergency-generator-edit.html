@@ -22,8 +22,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 柴油發電機</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 柴油發電機</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -31,13 +31,7 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 {% for error in form.device_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -46,12 +40,12 @@
                                                     {{ form.device_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 {% for error in form.device_capacity.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>發電機容量(KW) <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>發電機容量(kw) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.device_capacity }}
                                                 </div>
                                             </div>
@@ -87,9 +81,11 @@
                                         </div>
                                         {% if form.errors %}
                                             <div class="col-12 text-center">
-                                                {% if 'january' in form.errors  or 'february' in form.errors  or 'march' in form.errors  or 'april' in form.errors  or 'may' in form.errors  or 'june' in form.errors  or 'july' in form.errors  or 'august' in form.errors  or 'september' in form.errors  or 'october' in form.errors  or 'november' in form.errors  or 'december' in form.errors  in form.errors %}
-                                                    <li style="color: red">只能輸入正數</li>
-                                                {% endif %}
+                                                {% for error in form.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
                                                 {% for error in form.errors.數值必須大於零 %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
