@@ -636,13 +636,6 @@ def copy_last_year_data(request):
 
         model = modelName.get(str(device_id))
         if model:
-            # 檢查當前年份是否已有資料
-            if model.objects.filter(company_id=factory_id, years=this_year).exists():
-                response_data = {
-                    'success': False,
-                    'copy_data_message': f'{this_year}年資料已存在！'
-                }
-                return response_data
             last_year_data = model.objects.filter(company_id=factory_id, years=last_year).values()
             # 如果去年沒有資料，顯示 alert 訊息
             if not last_year_data:
@@ -651,6 +644,30 @@ def copy_last_year_data(request):
                     'copy_data_message': f'{last_year}年沒有任何資料！'
                 }
                 return response_data
+
+            # 檢查當前年份是否已有資料
+            if model.objects.filter(company_id=factory_id, years=this_year).exists():
+                response_data = {
+                    'success': False,
+                    'copy_data_message': f'{this_year}年資料已存在！'
+                }
+                return response_data
+
+                # # 檢查逐筆資料是否已存在
+                # copied_data_count = 0
+                # skipped_data_count = 0
+                # for data in last_year_data:
+                #     data.pop('id')  # 刪除主鍵
+                #     data['years'] = this_year
+                #
+                #     # 檢查逐筆資料是否已存在
+                #     if model.objects.filter(company_id=factory_id, years=this_year, **data).exists():
+                #         skipped_data_count += 1
+                #         continue  # 跳過已存在的資料
+                #
+                #     # 儲存逐筆資料到資料庫
+                #     model.objects.create(**data)
+                #     copied_data_count += 1
 
             # 將年份改為今年
             for data in last_year_data:
@@ -2257,7 +2274,11 @@ def bar_action(request):
             return public_version(request)
         if 'export_excel' in request.GET:
             message = export_excel(request)
-            return carbon_system(request, message)
+            # 匯出錯誤訊息return字典到carbon_system
+            if isinstance(message, dict):
+                return carbon_system(request, message)
+            else:
+                return message
 
 
 # 編輯轉跳

@@ -7,6 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 from urllib import parse
+from datetime import datetime
+from IPython.core.display import display
 from django.contrib import messages
 from openpyxl import load_workbook
 # from .views import current_user_group_id
@@ -282,95 +284,91 @@ def export_excel(request):
                 'export_error': f'{device_name}沒有任何資料可以匯出!'
             }
             return export_message
+        else:
+            # 將欄位名稱改成中文
+            df.columns = column_names
 
-        # 將欄位名稱改成中文
-        df.columns = column_names
+            if table_name == 'employee_business_trip':
+                # 取得母表和子表的欄位資訊
+                mother_columns = COLUMN_MAPPING['employee_business_trip']['columns']
+                child_columns = COLUMN_MAPPING['trip_section']['columns']
 
-        if table_name == 'employee_business_trip':
-            # 取得母表和子表的欄位資訊
-            mother_columns = COLUMN_MAPPING['employee_business_trip']['columns']
-            child_columns = COLUMN_MAPPING['trip_section']['columns']
+                # 取得母表和子表的資料
+                mother_data = employee_business_trip.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
+                child_data = trip_section.objects.all().values(*child_columns)
 
-            # 取得母表和子表的資料
-            mother_data = employee_business_trip.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
-            child_data = trip_section.objects.all().values(*child_columns)
+                # 將母表和子表的資料轉換為 DataFrame
+                mother_df = pd.DataFrame(list(mother_data))
+                child_df = pd.DataFrame(list(child_data))
 
-            # 將母表和子表的資料轉換為 DataFrame
-            mother_df = pd.DataFrame(list(mother_data))
-            child_df = pd.DataFrame(list(child_data))
+                # 將子表的資料加入到母表的資料中
+                df = pd.merge(mother_df, child_df, left_on='id', right_on='trip_id', how='left')
 
-            # 將子表的資料加入到母表的資料中
-            df = pd.merge(mother_df, child_df, left_on='id', right_on='trip_id', how='left')
+                df.drop(columns=['id'], inplace=True)
+                df.rename(columns={'years': '年度', 'business_trip_number': '出差單號', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'business_trip_location': '出差地點', 'business_trip_date': '啟程日期',
+                                   'departure': '出發地', 'transportation': '交通工具', 'distance': '距離', 'trip_id': '出差行程編號', 'message_board': '備註欄'}, inplace=True)
 
-            if df.empty:
-                print("empty")
-                export_message = {
-                    'export_error': '沒有任何資料可以匯出!'
-                }
-                return export_message
+                # 欄位順序列表（自訂順序）
+                custom_column_order = ['年度', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期', '出發地', '交通工具', '距離', '出差行程編號', '備註欄']
 
-            df.drop(columns=['id'], inplace=True)
-            df.rename(columns={'years': '年度', 'business_trip_number': '出差單號', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'business_trip_location': '出差地點', 'business_trip_date': '啟程日期',
-                               'departure': '出發地', 'transportation': '交通工具', 'distance': '距離', 'trip_id': '出差行程編號', 'message_board': '備註欄'}, inplace=True)
+                # 將 DataFrame 欄位順序重新排列
+                df = df.reindex(columns=custom_column_order)
 
-            # 欄位順序列表（自訂順序）
-            custom_column_order = ['年度', '出差單號', '員工編號', '部門', '姓名', '出差地點', '啟程日期', '出發地', '交通工具', '距離', '出差行程編號', '備註欄']
+            elif table_name == 'employee_commute':
+                # 取得母表和子表的欄位資訊
+                mother_columns = COLUMN_MAPPING['employee_commute']['columns']
+                child_columns = COLUMN_MAPPING['transportation_way']['columns']
 
-            # 將 DataFrame 欄位順序重新排列
-            df = df.reindex(columns=custom_column_order)
+                # 取得母表和子表的資料
+                mother_data = employee_commute.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
+                child_data = transportation_way.objects.all().values(*child_columns)
 
-        elif table_name == 'employee_commute':
-            # 取得母表和子表的欄位資訊
-            mother_columns = COLUMN_MAPPING['employee_commute']['columns']
-            child_columns = COLUMN_MAPPING['transportation_way']['columns']
+                # 將母表和子表的資料轉換為 DataFrame
+                mother_df = pd.DataFrame(list(mother_data))
+                child_df = pd.DataFrame(list(child_data))
 
-            # 取得母表和子表的資料
-            mother_data = employee_commute.objects.all().filter(company_id=factory_id, years=year).values(*mother_columns)
-            child_data = transportation_way.objects.all().values(*child_columns)
+                # 將子表的資料加入到母表的資料中
+                df = pd.merge(mother_df, child_df, left_on='id', right_on='commute', how='left')
 
-            # 將母表和子表的資料轉換為 DataFrame
-            mother_df = pd.DataFrame(list(mother_data))
-            child_df = pd.DataFrame(list(child_data))
+                df.drop(columns=['id'], inplace=True)
 
-            # 將子表的資料加入到母表的資料中
-            df = pd.merge(mother_df, child_df, left_on='id', right_on='commute', how='left')
+                df.rename(columns={'years': '年度', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'city': '居住城市', 'township': '鄉鎮市區', 'address': '行政區公家機關地址',
+                                   'commute_distance': '至公司距離(km)', 'work_days': '年工作天數', 'transportation': '交通工具', 'commute': '員工通勤編號', 'message_board': '備註欄'}, inplace=True)
 
-            if df.empty:
-                print("empty")
-                export_message = {
-                    'export_error': '沒有任何資料可以匯出!'
-                }
-                return export_message
+                # 欄位順序列表（自訂順序）
+                custom_column_order = ['年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數', '交通工具', '員工通勤編號', '備註欄']
 
-            df.drop(columns=['id'], inplace=True)
+                # 將 DataFrame 欄位順序重新排列
+                df = df.reindex(columns=custom_column_order)
 
-            df.rename(columns={'years': '年度', 'employee_id': '員工編號', 'department': '部門', 'employee_name': '姓名', 'city': '居住城市', 'township': '鄉鎮市區', 'address': '行政區公家機關地址',
-                               'commute_distance': '至公司距離(km)', 'work_days': '年工作天數', 'transportation': '交通工具', 'commute': '員工通勤編號', 'message_board': '備註欄'}, inplace=True)
+            excel_name = prefix + excel_did[0].d_name + '.xlsx'
+            output = df
+            display(output)
 
-            # 欄位順序列表（自訂順序）
-            custom_column_order = ['年度', '員工編號', '部門', '姓名', '居住城市', '鄉鎮市區', '行政區公家機關地址', '至公司距離(km)', '年工作天數', '交通工具', '員工通勤編號', '備註欄']
+            response = HttpResponse(content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=' + parse.quote(excel_name, encoding="UTF-8")
 
-            # 將 DataFrame 欄位順序重新排列
-            df = df.reindex(columns=custom_column_order)
+            print("output!!!!", output)
 
-
-        # 創建Excel文件
-        excel_name = prefix + excel_did[0].d_name + '.xlsx'
-        output = io.BytesIO()
-        writer = pd.ExcelWriter(output, engine='xlsxwriter')
-        df.to_excel(writer, index=False, sheet_name='Sheet1')
-        writer.save()
-        output.seek(0)
-
-        # 下載 Excel 文件
-        response = HttpResponse(output.getvalue(), content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=' + parse.quote(excel_name, encoding="UTF-8")
-
-        return response
+            # 匯出Excel檔案
+            output.to_excel(response, index=False)
+            return response
 
     else:
         # 呈現選擇保存位置的表格
         return render(request, 'home/carbon-system.html')
+
+        # 創建Excel文件
+        # excel_name = prefix + excel_did[0].d_name + '.xlsx'
+        # output = io.BytesIO()
+        # writer = pd.ExcelWriter(output, engine='xlsxwriter')
+        # df.to_excel(writer, index=False, sheet_name='Sheet1')
+        # writer.save()
+        # output.seek(0)
+
+        # 下載 Excel 文件
+        # response = HttpResponse(output.getvalue(), content_type='application/vnd.ms-excel')
+        # response['Content-Disposition'] = 'attachment; filename=' + parse.quote(excel_name, encoding="UTF-8")
 
 
 # 下載公版
@@ -454,10 +452,20 @@ def import_excel(request):
         # 取得目標資料表名稱
         section = section_two.objects.get(did=did)
         table_name = section.t_name
+        device_name = section.d_name
 
         column_mapping = COLUMN_MAPPING[table_name]
         column_names = column_mapping['column_names']
         columns = column_mapping['columns']
+
+        # 檢查今年度是否已存在資料
+        this_year = datetime.now().year
+        if globals()[table_name].objects.filter(company_id=factory_id, years=this_year).exists():
+            response_data = {
+                'success': False,
+                'message': f'今年度已存在 {device_name} 的資料'
+            }
+            return JsonResponse(response_data)
 
         # 寫入資料庫
         try:
@@ -570,7 +578,6 @@ def import_excel(request):
                             data[key] = False
                         elif pd.isna(value) or value == '':  # 檢查是否為 NaN 或空白儲存格
                             data[key] = None  # 將值設為 None，而不是儲存空白值
-
 
                 # 將資料存入資料庫
                 model_list = [globals()[table_name](**data) for data in data_dict]

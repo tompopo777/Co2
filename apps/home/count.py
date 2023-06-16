@@ -42,7 +42,6 @@ def calculate_summary(request):
             company_name = ''
 
         emergency_generators_device = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)
-        # print('emergency_generators_device', emergency_generators_device)
         combustion_equipment_device = combustion_equipment_count(years, factory_id, coefficient_source, gwp_version)
         official_car_device = official_car_count(years, factory_id, coefficient_source, gwp_version)
         refrigerator_device = refrigerator_count(years, factory_id, coefficient_source, gwp_version)
@@ -69,9 +68,7 @@ def calculate_summary(request):
                             personnel_inventory_device, employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device,
                             employee_business_trip_device, waste_transport_device, waste_process_device, purchase_material_device])
 
-        print(output)
         if output.empty:
-            print("OK")
             message = {
                 'count_error': '沒有任何資料!'
             }
@@ -90,7 +87,6 @@ def calculate_summary(request):
         # 匯出Excel檔案
         output.to_excel(response, index=False)
         return response
-        # return None
 
 
 # 發電機
