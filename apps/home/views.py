@@ -455,7 +455,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢水":
                 t_data = []
-                raw_data = waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "Si", "MCFj", "Bo", "Ri", "COD_total")
+                raw_data = waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri")
                 # 計算加油量合計
                 for i in range(raw_data.count()):
                     single_data = {}
@@ -481,20 +481,13 @@ def load_table(request):
                     single_data["Pi"] = Pi
                     single_data["Wi"] = Wi
                     single_data["CODi"] = CODi
-                    single_data["COD_total"] = COD_total
                     single_data["Si"] = Si
                     single_data["MCFj"] = MCFj
                     single_data["Bo"] = Bo
                     single_data["Ri"] = Ri
                     single_data["ch4"] = consumption_total
-                    t_data.append(single_data)
+                    single_data["COD_total"] = COD_total
 
-                    # for i in range(raw_data.count()):
-                    #     cod_total = (raw_data[i].get("Pi") * raw_data[i].get("Wi") * raw_data[i].get("CODi") - raw_data[i].get("Si")) * (raw_data[i].get("Bo") * raw_data[i].get("MCFj")) - raw_data[i].get("Ri")
-                    #     raw_data[i]["CH4"] = cod_total
-                    # print(raw_data)
-                    # t_data.append(raw_data)
-                    # t_data = list(waste_water.objects.filter(company_id=factory_id, years=year).values("id", "Pi", "Wi", "CODi", "COD_total", "Si", "MCFj", "Bo", "Ri"))
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"

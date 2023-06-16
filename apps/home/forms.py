@@ -495,8 +495,7 @@ class OFform(forms.ModelForm):
 class MTform(forms.ModelForm):
     class Meta:
         model = material
-        fields = ('material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'january', 'february', 'march', 'april', 'may',
-        fields = ('years', 'material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'carbon_content', 'january', 'february', 'march', 'april', 'may',
+        fields = ('material_name', 'material_id', 'material_type', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula', 'carbon_content', 'january', 'february', 'march', 'april', 'may',
                   'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             'material_name': forms.TextInput(attrs={'class': 'form-control'}),
