@@ -670,7 +670,7 @@ class employee_commute(models.Model):
     city = models.CharField(max_length=100)
     township = models.CharField(max_length=10)
     address = models.CharField(max_length=100)
-    commute_distance = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    commute_distance = models.DecimalField(max_digits=20, decimal_places=4)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
@@ -705,7 +705,7 @@ class trip_section(models.Model):
     id = models.AutoField(primary_key=True)
     departure = models.CharField(max_length=50)
     transportation = models.CharField(max_length=30)
-    distance = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+    distance = models.DecimalField(max_digits=20, decimal_places=4)
     trip_id = models.ForeignKey(employee_business_trip, on_delete=models.CASCADE, db_column='trip_id')
 
 

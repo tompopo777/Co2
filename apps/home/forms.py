@@ -23,7 +23,7 @@ MONTH_CHOICES = [
     ('12', '十二月'),
 ]
 TRANSPORTATION_CHOICES = [
-    ('------', '------'),
+    ('', '------'),
     ('走路', '走路'),
     ('自行車', '自行車'),
     ('機車', '機車'),
@@ -176,7 +176,7 @@ DOWN_PAID_CHOICES = [
     ('客戶支付(不計算)', '客戶支付(不計算)'),
 ]
 BUSINESS_TRANSPORTATION_CHOICES = [
-    ('------', '------'),
+    ('', '------'),
     ('自駕汽車', '自駕汽車'),
     ('高鐵', '高鐵'),
     ('火車(電聯)', '火車(電聯)'),
@@ -291,7 +291,6 @@ class CompanyForm(forms.ModelForm):
 class EGform(forms.ModelForm):
     class Meta:
         model = emergency_generators
-        # fields = ('device_id', 'device_capacity', 'position', 'department', 'estimate',
         fields = ('device_id', 'device_capacity', 'position', 'department', 'estimate',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
                   'november', 'december', 'image_note', 'message_board')
@@ -716,6 +715,7 @@ class ACform(forms.ModelForm):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return effusion_rate
 
+
 # 車輛清單
 class VCform(forms.ModelForm):
     class Meta:
@@ -763,6 +763,7 @@ class VCform(forms.ModelForm):
         if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return effusion_rate
+
 
 # 飲水機清單
 class WDform(forms.ModelForm):
@@ -812,6 +813,7 @@ class WDform(forms.ModelForm):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return effusion_rate
 
+
 # 冰水機清單
 class IWDform(forms.ModelForm):
     class Meta:
@@ -860,6 +862,7 @@ class IWDform(forms.ModelForm):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return effusion_rate
 
+
 # 製冰機清單
 class IMform(forms.ModelForm):
     class Meta:
@@ -907,6 +910,7 @@ class IMform(forms.ModelForm):
         if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(effusion_rate)):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return effusion_rate
+
 
 # 設備清單
 class ODform(forms.ModelForm):
@@ -1001,6 +1005,7 @@ class EXform(forms.ModelForm):
         if not chemical_weight >= 0:
             raise forms.ValidationError("該欄位必須大於零", 'invalid')
         return chemical_weight
+
 
 # 人添清冊
 class PIform(forms.ModelForm):
@@ -1469,14 +1474,14 @@ class ECform(forms.ModelForm):
         fields = ('employee_id', 'employee_name', 'department', 'work_days', 'city',
                   'township', 'address', 'commute_distance', 'image_note', 'message_board')
         widgets = {
-            'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'employee_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
-            'work_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '有來就算一天'}),
+            'work_days': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '有來就算一天(請輸入阿拉伯數字)'}),
             'city': forms.TextInput(attrs={'class': 'form-control'}),
             'township': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
-            'commute_distance': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[0-9.]*$', 'title': "只能輸入正整數字", 'placeholder': "只能輸入正整數字"}),
+            'commute_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正整數字"}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1486,21 +1491,45 @@ class ECform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_employee_id(self):
+        employee_id = self.cleaned_data.get('employee_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', employee_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return employee_id
 
-CommuteFormSet = inlineformset_factory(employee_commute, transportation_way, fields=('transportation',), extra=1,
-                                       widgets={'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'})})
+    def clean_work_days(self):
+        work_days = self.cleaned_data.get('work_days')
+        if not work_days > 0:
+            raise forms.ValidationError("該欄位必須大於零", 'invalid')
+        return work_days
 
-department_CHOICES = [
-    ('資材部', '資材部'),
-    ('業務部', '業務部'),
-    ('行銷部', '行銷部'),
-    ('管理部', '管理部'),
-    ('工程部', '工程部'),
-    ('客服部', '客服部'),
-    ('會計部', '會計部'),
-    ('後勤部', '後勤部'),
-    ('產品研發部', '產品研發部'),
-]
+    def clean_commute_distance(self):
+        commute_distance = self.cleaned_data.get('commute_distance')
+        if not commute_distance > 0:
+            raise forms.ValidationError("該欄位必須大於零", 'invalid')
+        return commute_distance
+
+
+# 通勤段數(員工通勤表中表)
+class CommuteFormSet(forms.ModelForm):
+    class Meta:
+        model = transportation_way
+        fields = ('transportation', )
+        widgets = {
+            'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
+            # 'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control', 'required': 'required'}),
+        }
+
+    def clean_transportation(self):
+        transportation = self.cleaned_data['transportation']
+        for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
+            if transportation == BUSINESS_TRANSPORTATION[1]:
+                return transportation
+        print('有低能兒亂改表單:', transportation)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+
+CommuteFormSet = inlineformset_factory(employee_commute, transportation_way, form=CommuteFormSet, extra=1)
 
 
 # 員工出差
@@ -1512,8 +1541,8 @@ class EBTform(forms.ModelForm):
         widgets = {
             'business_trip_location': forms.TextInput(attrs={'class': 'form-control'}),
             'business_trip_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'business_trip_date'}),
-            'business_trip_number': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'employee_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'business_trip_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'employee_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'employee_name': forms.TextInput(attrs={'class': 'form-control'}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'bt_image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -1528,11 +1557,46 @@ class EBTform(forms.ModelForm):
         self.fields['rtd_image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_business_trip_number(self):
+        business_trip_number = self.cleaned_data.get('business_trip_number')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', business_trip_number):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return business_trip_number
 
-TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, fields=('departure', 'transportation', 'distance'), extra=1,
-                                           widgets={'departure': forms.TextInput(attrs={'class': 'form-control'}),
-                                                    'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
-                                                    'distance': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': r'^[0-9]+(.[0-9]{0,4})?$', 'title': '只能輸入正實數(小數點後四位)', 'placeholder': '只能輸入正實數(小數點後四位)'})})
+    def clean_employee_id(self):
+        employee_id = self.cleaned_data.get('employee_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', employee_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return employee_id
+
+
+# 出差段數(員工出差表中表)
+class TripSectionFormSet(forms.ModelForm):
+    class Meta:
+        model = trip_section
+        fields = ('departure', 'transportation', 'distance', )
+        widgets = {
+            'departure': forms.TextInput(attrs={'class': 'form-control'}),
+            'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
+            'distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'})
+        }
+
+    def clean_transportation(self):
+        transportation = self.cleaned_data['transportation']
+        for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
+            if transportation == BUSINESS_TRANSPORTATION[1]:
+                return transportation
+        print('有低能兒亂改表單:', transportation)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+    def clean_distance(self):
+        distance = self.cleaned_data.get('distance')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(distance)) or distance <= 0:
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return distance
+
+
+TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, form=TripSectionFormSet, extra=1)
 
 
 # 廢棄物

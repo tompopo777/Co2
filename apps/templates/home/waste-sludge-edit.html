@@ -33,7 +33,7 @@
                                         <div class="row">
                                             <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄污泥厭氧處理單元名稱  <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>廢棄污泥厭氧處理單元名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.waste_sludge_treatment_name }}
                                                 </div>
                                             </div>
@@ -85,10 +85,23 @@
                                             </div>
                                             <div class=" ps-md-2 align-self-center">
                                                 <div class="col-1 ">
-                                                    {{ form.image_path }}
+                                                    {{ image_form.image_path }}
                                                 </div>
                                             </div>
                                         </div>
+{#                                        <div class="d-flex">#}
+{#                                            <div class="ps-md-2 align-self-center">#}
+{#                                                <div class="col-2" multiple="multiple">#}
+{#                                                    <input type="hidden" name="stage" value="廢汙泥">#}
+{#                                                    <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">#}
+{#                                                </div>#}
+{#                                            </div>#}
+{#                                            <div id="files-area">#}
+{#                                            <span id="filesList">#}
+{#                                                <span id="files-names"></span>#}
+{#                                            </span>#}
+{#                                            </div>#}
+{#                                        </div>#}
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <div class="row">
                                             <div class="col">
