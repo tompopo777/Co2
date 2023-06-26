@@ -549,6 +549,7 @@ class electricity(models.Model):
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=21, db_column='did_id')
     years = models.IntegerField(default=timezone.now().year)
     EMI_id = models.CharField(max_length=50)
+    meter_location = models.CharField(max_length=50)
     address = models.CharField(max_length=100)
     january = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     february = models.DecimalField(max_digits=20, decimal_places=4, default=0)

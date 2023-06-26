@@ -518,7 +518,7 @@ def load_table(request):
             elif a["d_name"] == "用電量":
                 t_data = []
                 # 將要運算的值分別撈出(逸散率/填充量)
-                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "address",
+                raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "meter_location", "address",
                                                                                                 "january", "february", "march", "april",
                                                                                                 "may", "june", "july", "august",
                                                                                                 "september", "october", "november", "december")
@@ -2916,7 +2916,7 @@ def add_title(request):
             # 用電量
             "21": {
                 "編輯區": ["刪除", "修改"],
-                "用電量": ["序號", "電表編號", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"],
+                "用電量": ["序號", "電表編號", "電表位置", "地址", "一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(度)", "總計(千度)"],
                 "佐證資料": ["引用單據"],
             },
             # 上游運輸

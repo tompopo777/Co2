@@ -504,12 +504,13 @@ def personnel_inventory_count(years, factory_id, coefficient_source, gwp_version
                 ((Decimal(str(row['WKnum_december'])) * Decimal('31') * Decimal('24')) - Decimal(str(row['WKhours_december'])))
             return row['dormitory_total_usage']
 
-        dormitory_raw_data['dormitory_total_usage'] = dormitory_raw_data.apply(dormitory_count, axis=1)
-        dormitory_raw_data = dormitory_raw_data.drop(columns=['WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
-                                                              'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december'])
-        # 宿舍總人天
-        dormitory_raw_data = dormitory_raw_data.groupby(["process_area", "device_name", "fuel_type"]).agg({'dormitory_total_usage': 'sum'}).reset_index()
-        employee_raw_data['total_usage'] = employee_raw_data['total_usage'] + dormitory_raw_data['dormitory_total_usage']
+        if not dormitory_raw_data.empty:
+            dormitory_raw_data['dormitory_total_usage'] = dormitory_raw_data.apply(dormitory_count, axis=1)
+            dormitory_raw_data = dormitory_raw_data.drop(columns=['WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
+                                                                  'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december'])
+            # 宿舍總人天
+            dormitory_raw_data = dormitory_raw_data.groupby(["process_area", "device_name", "fuel_type"]).agg({'dormitory_total_usage': 'sum'}).reset_index()
+            employee_raw_data['total_usage'] = employee_raw_data['total_usage'] + dormitory_raw_data['dormitory_total_usage']
         a_part = employee_raw_data
         coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
             coefficient_unit=Value('公噸' + '/人時', output_field=models.CharField(max_length=50)))))
@@ -576,6 +577,10 @@ def employee_count(years, factory_id, coefficient_source, gwp_version):
 def extinguisher_count(years, factory_id, coefficient_source, gwp_version):
     final = pd.DataFrame()
     try:
+        # years = 2023
+        # factory_id = 1
+        # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+        # gwp_version = 6
         raw_data = pd.DataFrame(list(extinguisher.objects.filter(years=years).filter(company_id=factory_id).values('extinguisher_type').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
             device_name=Value('滅火器', output_field=models.CharField(max_length=50)),
@@ -589,7 +594,6 @@ def extinguisher_count(years, factory_id, coefficient_source, gwp_version):
                 return 'CO2'
             else:
                 return 'HFCs'
-
         a_part['gas_name'] = a_part.apply(extinguisher_gas, axis=1)
         coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='質量平衡法').filter(cause__in=a_part['device_name']).values('gas_name', 'coefficient', 'coefficient_source').annotate(
             coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))

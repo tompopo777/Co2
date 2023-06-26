@@ -1247,11 +1247,12 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
 class ELECform(forms.ModelForm):
     class Meta:
         model = electricity
-        fields = ('EMI_id', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
+        fields = ('EMI_id', 'meter_location', 'address', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
             # 'EMI_id': forms.TextInput(attrs={'class': 'form-control', 'pattern': r'^[a-zA-Z0-9_-]*$', 'title': "'英文'、'數字'、'-'、'_'", 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'EMI_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'meter_location': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
