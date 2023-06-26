@@ -133,7 +133,6 @@ def load_table(request):
                     else:
                         single_data["image"] = None
                     t_data.append(single_data)
-
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "燃燒設備":
                 t_data = []
@@ -578,26 +577,31 @@ def load_table(request):
                 t_data = []
                 # 將要運算的值分別撈出(員工數/每日工時/每月工作天數/加班+補休時數/請假時數/休假時數)
                 pre_data = employee_commute.objects.filter(company_id=factory_id, years=year).values("id", "employee_id", "department", "employee_name")
-                post_data = employee_commute.objects.filter(company_id=factory_id, years=year).values("city", "township", "address", "commute_distance", "work_days")
+                back_data = employee_commute.objects.filter(company_id=factory_id, years=year).values("city", "township", "address", "commute_distance", "work_days")
                 for i in range(pre_data.count()):
                     single_data = pre_data[i]
-                    id = pre_data[i].get("id")
-                    transportation = transportation_way.objects.filter(commute=id).values("transportation")
+                    data_id = pre_data[i].get("id")
+                    transportation = transportation_way.objects.filter(commute=data_id).values("transportation")
                     if len(transportation) > 1:
-                        transportation_first = transportation_way.objects.filter(commute=id).values("transportation").first()
+                        transportation_first = transportation_way.objects.filter(commute=data_id).values("transportation").first()
                         single_data["transportation"] = transportation_first.get("transportation") + "*"
                     else:
                         for t in transportation:
                             single_data["transportation"] = t.get("transportation")
-                    for j in post_data[i]:
-                        single_data[j] = post_data[i].get(j)
+                    for j in back_data[i]:
+                        single_data[j] = back_data[i].get(j)
                     # 計算單筆距離合計
-                    total_distance = post_data[i].get("commute_distance") * post_data[i].get("work_days") * 2
+                    total_distance = back_data[i].get("commute_distance") * back_data[i].get("work_days") * 2
                     # print("total_distance::::::::::::::::::::::::::::::::::::::::", total_distance)
                     # 抓單筆資料
                     # 將計算後的逸散量丟回字典
                     single_data["total_distance"] = total_distance
                     # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=pre_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "員工出差":
@@ -631,18 +635,15 @@ def load_table(request):
                                                                                           "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計
-                    if (raw_data[i].get("transport_distance") == None):
-                        Tkm = "-"
+                    if raw_data[i].get("transport_distance") is None:
+                        tkm = "-"
                     else:
-                        Tkm = raw_data[i].get("waste_weigh") * raw_data[i].get("transport_distance")
+                        tkm = raw_data[i].get("waste_weigh") * raw_data[i].get("transport_distance")
                     # print("Tkm::::::::::::::::::::::::::::::::::::::::", Tkm)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    single_data["total_distance"] = Tkm
-                    # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
-                    t_data.append(single_data)
-                    # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
+                    single_data["total_distance"] = tkm
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -697,14 +698,14 @@ def load_table(request):
                                                                                                       "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
-                    Total_Purchase = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                    total_purchase = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
                                      raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
                                      raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    Total_Purchase = Total_Purchase.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
-                    single_data["Total_Purchase"] = Total_Purchase
+                    total_purchase = total_purchase.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["Total_Purchase"] = total_purchase
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -718,14 +719,14 @@ def load_table(request):
                                                                                                                "september", "october", "november", "december")
                 # 計算當月排放量
                 for i in range(raw_data.count()):
-                    Total_Deliver = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
+                    total_deliver = raw_data[i].get("january") + raw_data[i].get("february") + raw_data[i].get("march") + raw_data[i].get("april") + \
                                     raw_data[i].get("may") + raw_data[i].get("june") + raw_data[i].get("july") + raw_data[i].get("august") + \
                                     raw_data[i].get("september") + raw_data[i].get("october") + raw_data[i].get("november") + raw_data[i].get("december")
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
-                    Total_Deliver = Total_Deliver.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
-                    single_data["Total_Deliver"] = Total_Deliver
+                    total_deliver = total_deliver.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    single_data["Total_Deliver"] = total_deliver
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -2139,8 +2140,8 @@ def downstream_transportation_add(request):
 
 @login_required(login_url="/login/")
 def employee_commute_add(request):
-    context = {}
     EC_add = ECform(request)
+    commute_formset = CommuteFormSet
     if request.method == "POST":
         EC_add = ECform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
@@ -2148,10 +2149,15 @@ def employee_commute_add(request):
             commute = EC_add.save(commit=False)
             commute.company_id = factory_id
             commute.years = request.session.get('years')
-            commute.save()
-            Commute_formSet = CommuteFormSet(request.POST, request.FILES, instance=commute)
-            if Commute_formSet.is_valid():
-                Commute_formSet.save()
+            commute_formset = CommuteFormSet(request.POST, request.FILES, instance=commute)
+            not_empty = False
+            for form in commute_formset:
+                if form.has_changed():
+                    not_empty = True
+                    break
+            if commute_formset.is_valid() and not_empty:
+                commute.save()
+                commute_formset.save()
                 stage = request.POST.get('stage')
                 image_path = request.FILES.getlist('file_field')
                 last_id = employee_commute.objects.values("id").last().get("id")
@@ -2167,20 +2173,24 @@ def employee_commute_add(request):
                 else:
                     return redirect('/carbon-system/')
             else:
-                last_data = employee_commute.objects.last()
-                last_data.delete()
-                print("Commute_formSet>>>>>>>>>>>>>>>>>>>>\n", Commute_formSet)
-                return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'years': request.session.get('years')})
+                if not not_empty:
+                    for form in commute_formset:
+                        form.add_error('transportation', '請選擇交通方式')
+                print("Commute_formSet>>>>>>>>>>>>>>>>>>>>\n", commute_formset.errors)
         else:
             print("\n", EC_add.errors)
-    context['EC_add'] = EC_add
-    return render(request, 'home/employee-commute.html', {'EC_add': EC_add, 'CommuteFormSet': CommuteFormSet, 'years': request.session.get('years')})
+    context = {
+        'EC_add': EC_add,
+        'CommuteFormSet': commute_formset,
+        'years': request.session.get('years')
+    }
+    return render(request, 'home/employee-commute.html', context)
 
 
 @login_required(login_url="/login/")
 def employee_business_trip_add(request):
-    context = {}
     EBT_add = EBTform(request)
+    trip_section_formset = TripSectionFormSet
     if request.method == "POST":
         EBT_add = EBTform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
@@ -2188,10 +2198,15 @@ def employee_business_trip_add(request):
             business = EBT_add.save(commit=False)
             business.company_id = factory_id
             business.years = request.session.get('years')
-            business.save()
-            tripsection_formSet = TripSectionFormSet(request.POST, request.FILES, instance=business)
-            if tripsection_formSet.is_valid():
-                tripsection_formSet.save()
+            trip_section_formset = TripSectionFormSet(request.POST, request.FILES, instance=business)
+            not_empty = False
+            for form in trip_section_formset:
+                if form.has_changed():
+                    not_empty = True
+                    break
+            if trip_section_formset.is_valid() and not_empty:
+                business.save()
+                trip_section_formset.save()
                 stages = request.POST.getlist('stage')
                 last_id = employee_business_trip.objects.values("id").last().get("id")
                 table_id = employee_business_trip.objects.values("did").last().get("did")
@@ -2215,14 +2230,18 @@ def employee_business_trip_add(request):
                 else:
                     return redirect('/carbon-system/')
             else:
-                last_data = employee_business_trip.objects.last()
-                last_data.delete()
-                print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", tripsection_formSet)
-                return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'years': request.session.get('years')})
+                if not not_empty:
+                    trip_section_formset.non_form_errors().append('請填寫出差段數')
+                    print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", trip_section_formset.non_form_errors())
+                print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", trip_section_formset.errors)
         else:
             print("\n", EBT_add.errors)
-    context['EBT_add'] = EBT_add
-    return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'years': request.session.get('years')})
+    context = {
+        'EBT_add': EBT_add,
+        'TripSectionFormSet': trip_section_formset,
+        'years': request.session.get('years'),
+    }
+    return render(request, 'home/employee-business-trip.html', context)
 
 
 @login_required(login_url="/login/")
@@ -2465,12 +2484,15 @@ def bar_action(request):
             if function_dic.get(device_id):
                 device_function = function_dic.get(device_id)
             return device_function
+
         if 'copy_last_year' in request.GET:
             message = copy_last_year_data(request)
             print('message', message)
             return carbon_system(request, message)
+
         if 'public_version' in request.GET:
             return public_version(request)
+
         if 'export_excel' in request.GET:
             message = export_excel(request)
             # 匯出錯誤訊息return字典到carbon_system
@@ -2538,11 +2560,17 @@ def edit_device(request, error_from=None, error_formset=None):
             current_data = dbName.objects.get(id=single_dataID)
             update_from = form(request, instance=current_data)
 
+            # image_form = image.objects.get(id=1)
+            # image_form = form(request, instance=image.objects.get(id=1))
+            # print(image_form.image_path)
+
             formUpdata_name = {
                 'form': update_from,
                 'datasheet_id': datasheet_id,
                 'single_dataID': single_dataID,
                 'years': years,
+
+                # 'image_form': image_form
             }
             try:
                 if datasheet_id in formsetName:
@@ -2599,16 +2627,12 @@ def edit_device(request, error_from=None, error_formset=None):
                 'single_dataID': single_dataID,
                 'years': years
             }
-            # 表中表情況
-            try:
-                if datasheet_id in formsetName:
-                    # update_formset = formset(instance=current_data)
-                    # update_formset = formset(request.POST, request.FILES, instance=current_data)
-                    update_formset = error_formset
-                    formUpdata_name["update_formset"] = update_formset
 
-            except:
-                pass
+            # 表中表情況
+            if error_formset:
+                update_formset = error_formset
+                formUpdata_name["update_formset"] = update_formset
+                formUpdata_name["dont_remove"] = 'dont_remove'
 
             # 建立字典
             htmlName = {
@@ -2710,7 +2734,8 @@ def update_device(request, single_dataID):
                         update_formset.save()
                         return redirect('/carbon-system/', locals())
                     else:
-                        print("\n", update_formset.errors)
+                        print("update_formset\n", update_formset.errors)
+                        update_formset = formset(request.POST, request.FILES, instance=current_data)
                         return edit_device(request, update_from, update_formset)
             except:
                 pass
@@ -2805,8 +2830,6 @@ def add_title(request):
                 "是否為化學品": ["化學品名稱", "化學品名", "化學式"],
                 "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "佐證資料": ["引用單據"],
-                "是否為化學品": ["化學品名稱", "化學品名", "化學式", "含碳量(%)"],
-                "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
             },
             # 製成添加物
             "5": {
@@ -2884,7 +2907,6 @@ def add_title(request):
             "16": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量", "每年事業廢水之COD總量", u"CH\u2084"],
-                "內容": ["序號", "Pi:工業部門生產量", "Wi:廢水產生量", "CODi:化學需氧量", "每年事業廢水之COD總量", "Si:污泥移除量", "MCFj:甲烷修正係數", "Bo:最大CH4產生量", "Ri:甲烷移除量", u"CH\u2084"],
                 "佐證資料": ["引用單據"],
             },
             # 廢汙泥

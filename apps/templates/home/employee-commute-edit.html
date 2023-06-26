@@ -32,6 +32,9 @@
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-4">
                                             <div class="col-6">
+                                                {% for error in form.employee_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.employee_id }}
@@ -52,6 +55,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in form.work_days.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年工作天數 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.work_days }}
@@ -80,6 +86,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in form.commute_distance.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>至公司距離(單位:公里) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.commute_distance }}
@@ -94,7 +103,7 @@
                                                 {{ update_formset.management_form }}
                                                 {{ update_formset.non_form_errors }}
                                                 {% for a in update_formset %}
-                                                    <div class="row mb-4 commute" id="0">
+                                                    <div class="row mb-4 commute">
                                                         {% for hidden in a.hidden_fields %}
                                                             {{ hidden }}
                                                         {% endfor %}
@@ -102,9 +111,11 @@
                                                             {{ a.DELETE }}
                                                         </div>
                                                         <div class="col-4">
+                                                            {% for error in a.transportation.errors %}
+                                                                <li style="color: red">{{ error }}</li>
+                                                            {% endfor %}
                                                             <div class="input-group input-group-static mb-4">
                                                                 <label>交通方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                                {{ a.transportation.errors }}
                                                                 {{ a.transportation }}
                                                             </div>
                                                         </div>
@@ -236,10 +247,13 @@
         {#    新增/刪除出差段數#}
 
         //刪除extra=1新增的空白表單
-        var remove_extra = document.querySelectorAll(".commute:last-child")[0]
-        remove_extra.remove()
         var TOTAL_FORMS = document.querySelectorAll("#commute_section > input")[0]
-        var commute_count = parseInt(TOTAL_FORMS.value, 10) - 1
+        var commute_count = parseInt(TOTAL_FORMS.value, 10)
+        if ("{{ dont_remove }}" === ""){
+            let remove_extra = document.querySelectorAll(".commute:last-child")[0]
+            remove_extra.remove()
+            commute_count = commute_count - 1
+        }
         var id_count = commute_count
         TOTAL_FORMS.value = id_count.toString()
 

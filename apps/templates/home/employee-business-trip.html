@@ -43,6 +43,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in EBT_add.business_trip_number.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static">
                                                     <label>出差單號 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ EBT_add.business_trip_number }}
@@ -51,6 +54,9 @@
                                         </div>
                                         <div class="row mb-4">
                                             <div class="col-4">
+                                                {% for error in EBT_add.employee_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static">
                                                     <label>員工編號</label>
                                                     {{ EBT_add.employee_id }}
@@ -72,9 +78,14 @@
                                         <br>
                                         <div class="row mb-4">
                                             出差段數
+                                            {% for error in TripSectionFormSet.non_form_errors %}
+                                                <li style="color: red">{{ error }}</li>
+                                            {% endfor %}
                                         </div>
                                         {{ TripSectionFormSet.management_form }}
-                                        {{ TripSectionFormSet.non_form_errors }}
+                                        {% for error in TripSectionFormSet.non_field_errors %}
+                                            <li style="color: red">{{ error }}</li>
+                                        {% endfor %}
                                         {% for a in TripSectionFormSet %}
                                             <div id="trip_section">
                                                 <div class="row mb-4 trip" id="0">
@@ -82,23 +93,29 @@
                                                         {{ hidden }}
                                                     {% endfor %}
                                                     <div class="col-4">
+                                                        {% for error in a.departure.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.departure.errors }}
                                                             {{ a.departure }}
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
+                                                        {% for error in a.transportation.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>交通工具 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.transportation.errors }}
                                                             {{ a.transportation }}
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
+                                                        {% for error in a.distance.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.distance.errors }}
                                                             {{ a.distance }}
                                                         </div>
                                                     </div>

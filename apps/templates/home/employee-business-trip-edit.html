@@ -44,6 +44,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in form.business_trip_number.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static">
                                                     <label>出差單號 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.business_trip_number }}
@@ -52,6 +55,9 @@
                                         </div>
                                         <div class="row mb-4">
                                             <div class="col-4">
+                                                {% for error in form.employee_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static">
                                                     <label>員工編號</label>
                                                     {{ form.employee_id }}
@@ -73,14 +79,11 @@
                                         <br>
                                         <div class="row mb-4">
                                             出差段數
-                                            {% if update_formset_trip.errors %}
-                                                <div class="alert alert-danger">
-                                                    {{ update_formset_trip.errors }}
-                                                </div>
-                                            {% endif %}
+                                            {% for error in update_formset.non_form_errors %}
+                                                <li style="color: red">{{ error }}</li>
+                                            {% endfor %}
                                         </div>
                                         <div id="trip_section">
-                                            {{ update_formset.non_form_errors }}
                                             {{ update_formset.management_form }}
                                             {% for a in update_formset %}
                                                 <div class="row mb-4 trip" id="0">
@@ -91,24 +94,29 @@
                                                         {{ a.DELETE }}
                                                     </div>
                                                     <div class="col-4">
+                                                        {% for error in a.departure.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.departure.hidden_fields }}
-                                                            {{ a.departure.errors }}
                                                             {{ a.departure }}
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
+                                                        {% for error in a.transportation.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>交通工具 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.transportation.errors }}
                                                             {{ a.transportation }}
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
+                                                        {% for error in a.distance.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.distance.errors }}
                                                             {{ a.distance }}
                                                         </div>
                                                     </div>
@@ -301,10 +309,13 @@
         {#    新增/刪除出差段數#}
 
         //刪除extra=1新增的空白表單
-        var remove_extra = document.querySelectorAll(".trip:last-child")[0]
-        remove_extra.remove()
-        var TOTAL_FORMS = document.querySelectorAll("#trip_section > input")[0]
-        var trip_count = parseInt(TOTAL_FORMS.value, 10) - 1
+        var TOTAL_FORMS = document.querySelectorAll("#commute_section > input")[0]
+        var trip_count = parseInt(TOTAL_FORMS.value, 10)
+        if ("{{ dont_remove }}" === ""){
+            let remove_extra = document.querySelectorAll(".trip:last-child")[0]
+            remove_extra.remove()
+            trip_count = trip_count - 1
+        }
         var id_count = trip_count
         TOTAL_FORMS.value = id_count.toString()
 
