@@ -31,27 +31,22 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.waste_name }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                {% for error in form.waste_weigh.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物重量(單位:噸) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.waste_weigh }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物運送年月度 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.waste_date }}
@@ -60,12 +55,18 @@
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-6">
+                                                {% for error in form.waste_location.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物處置地點 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.waste_location }}
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in form.waste_disposal.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物處理方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.waste_disposal }}
@@ -80,6 +81,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in form.transport_type.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸工具&nbsp;</label>
                                                     {{ form.transport_type }}
@@ -91,27 +95,12 @@
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸燃料</label>
                                                     {{ form.transport_fuel }}
-                                                    {#                                                    <div class="form-check-inline">#}
-                                                    {#                                                        <input type="radio" class="form-check-input" id="transport_fuel1" name="transport_fuel" value="無" checked>#}
-                                                    {#                                                        <label class="form-check-label" for="transport_fuel1">#}
-                                                    {#                                                            無{{ transport_fuel }}#}
-                                                    {#                                                        </label>#}
-                                                    {#                                                    </div>#}
-                                                    {#                                                    <div class="form-check-inline">#}
-                                                    {#                                                        <input type="radio" class="form-check-input" id="transport_fuel2" name="transport_fuel" value="柴油">#}
-                                                    {#                                                        <label class="form-check-label" for="transport_fuel2">#}
-                                                    {#                                                            柴油{{ transport_fuel }}#}
-                                                    {#                                                        </label>#}
-                                                    {#                                                    </div>#}
-                                                    {#                                                    <div class="form-check-inline">#}
-                                                    {#                                                        <input type="radio" class="form-check-input" id="transport_fuel3" name="transport_fuel" value="汽油">#}
-                                                    {#                                                        <label class="form-check-label" for="transport_fuel3">#}
-                                                    {#                                                            汽油{{ transport_fuel }}#}
-                                                    {#                                                        </label>#}
-                                                    {#                                                    </div>#}
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in form.transport_distance.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>運輸距離(單位:公里)</label>
                                                     {{ form.transport_distance }}

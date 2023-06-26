@@ -109,7 +109,7 @@ EXTINGUISHER_TYPE_CHOICES = [
     ('潔淨滅火器HFC-125', '潔淨滅火器HFC-125'),
 ]
 TRANSPORT_TYPE_CHOICES = [
-    ('', '請選擇運輸工具'),
+    ('', '<------請選擇運輸工具------>'),
     ('營業大貨車', '營業大貨車'),
     ('營業小貨車', '營業小貨車'),
     ('自用大貨車', '自用大貨車'),
@@ -216,7 +216,7 @@ SOLVENT_GAS_CHOICES = [
     ('SF6', 'SF6，六氟化硫')
 ]
 # 原物料種類
-MATERIAL_TYPE = [
+MATERIAL_TYPE_CHOICE = [
     ('原料', '原料'),
     ('物料', '物料')
 ]
@@ -228,7 +228,7 @@ CLASSIFICATION_CHOICES = [
 ]
 
 # 廢棄物處置地點
-WASTE_LOCATION = [
+WASTE_LOCATION_CHOICES = [
     ('廢棄物焚化處理服務(岡山垃圾焚化廠)', '廢棄物焚化處理服務(岡山垃圾焚化廠)'),
     ('廢棄物焚化處理服務(苗栗縣垃圾焚化廠)', '廢棄物焚化處理服務(苗栗縣垃圾焚化廠)'),
     ('廢棄物焚化處理服務(臺南市永康垃圾資源回收(焚化)廠)', '廢棄物焚化處理服務(臺南市永康垃圾資源回收(焚化)廠)'),
@@ -1006,6 +1006,12 @@ class EXform(forms.ModelForm):
             raise forms.ValidationError("該欄位必須大於零", 'invalid')
         return chemical_weight
 
+    def clean_inventory(self):
+        inventory = self.cleaned_data.get('inventory')
+        if not inventory > 0:
+            raise forms.ValidationError("該欄位必須大於零", 'invalid')
+        return inventory
+
 
 # 人添清冊
 class PIform(forms.ModelForm):
@@ -1609,10 +1615,10 @@ class WASTEform(forms.ModelForm):
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_weigh': forms.TextInput(attrs={'class': 'form-control'}),
             'waste_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'waste_date'}),
-            'waste_location': forms.Select(attrs={'id': 'waste_location'}, choices=WASTE_LOCATION),
+            'waste_location': forms.Select(attrs={'id': 'waste_location'}, choices=WASTE_LOCATION_CHOICES),
             'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
-            'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES),
+            'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES, attrs={'required': 'required'}),
             'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
             'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
@@ -1626,6 +1632,45 @@ class WASTEform(forms.ModelForm):
         self.fields['transport_distance'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
+
+    def clean_waste_weigh(self):
+        waste_weigh = self.cleaned_data.get('waste_weigh')
+        if not waste_weigh > 0:
+            raise forms.ValidationError("該欄位必須大於零", 'invalid')
+        return waste_weigh
+    
+    def clean_waste_location(self):
+        waste_location = self.cleaned_data['waste_location']
+        for WASTE_LOCATION in WASTE_LOCATION_CHOICES:
+            if waste_location == WASTE_LOCATION[1]:
+                return waste_location
+        print('有低能兒亂改表單:', waste_location)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+    def clean_waste_disposal(self):
+        waste_disposal = self.cleaned_data['waste_disposal']
+        for WASTE_DISPOSAL in WASTE_DISPOSAL_CHOICES:
+            if waste_disposal == WASTE_DISPOSAL[1]:
+                return waste_disposal
+        print('有低能兒亂改表單:', waste_disposal)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+    def clean_transport_type(self):
+        transport_type = self.cleaned_data['transport_type']
+        if transport_type is None:
+            raise forms.ValidationError("請選擇下拉選單", 'invalid')
+        else:
+            for TRANSPORT_TYPE in TRANSPORT_TYPE_CHOICES:
+                if transport_type == TRANSPORT_TYPE[1]:
+                    return transport_type
+            print('有低能兒亂改表單:', transport_type)
+            raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+        
+    def clean_transport_distance(self):
+        transport_distance = self.cleaned_data.get('transport_distance')
+        if not transport_distance > 0:
+            raise forms.ValidationError("該欄位必須大於零", 'invalid')
+        return transport_distance
 
 
 # VOC1
@@ -1731,6 +1776,25 @@ class PWform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_pipe_id(self):
+        pipe_id = self.cleaned_data.get('pipe_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', pipe_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return pipe_id
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
+
 
 # 採購原物料
 class PMform(forms.ModelForm):
@@ -1743,7 +1807,7 @@ class PMform(forms.ModelForm):
             'product_name': forms.TextInput(attrs={'class': 'form-control'}),
             'vendor': forms.TextInput(attrs={'class': 'form-control'}),
             'category_name': forms.Select(choices=DropdownOption.objects.filter(option_group='大類名稱').values_list('option_value', 'option_label')),
-            'material_type': forms.Select(choices=MATERIAL_TYPE),
+            'material_type': forms.Select(choices=MATERIAL_TYPE_CHOICE),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -1764,6 +1828,48 @@ class PMform(forms.ModelForm):
         super(PMform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
+
+    def clean_product_id(self):
+        product_id = self.cleaned_data.get('product_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', product_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return product_id
+
+    def clean_category_name(self):
+        category_name = self.cleaned_data['category_name']
+        if category_name is None:
+            raise forms.ValidationError("請選擇下拉選單", 'invalid')
+        else:
+            dropdown_choices = DropdownOption.objects.filter(option_group='大類名稱').all()
+            for option in dropdown_choices:
+                if category_name == option.option_value:
+                    return category_name
+            print('有低能兒亂改表單:', category_name)
+            raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+    def clean_material_type(self):
+        material_type = self.cleaned_data['material_type']
+        if material_type is None:
+            raise forms.ValidationError("請選擇下拉選單", 'invalid')
+        else:
+            for MATERIAL_TYPE in MATERIAL_TYPE_CHOICE:
+                if material_type == MATERIAL_TYPE[1]:
+                    return material_type
+            print('有低能兒亂改表單:', material_type)
+            raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
 
 
 # 產品間接排放
@@ -1795,3 +1901,22 @@ class PIEform(forms.ModelForm):
         super(PIEform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
+
+    def clean_product_id(self):
+        product_id = self.cleaned_data.get('product_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', product_id):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return product_id
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data

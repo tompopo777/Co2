@@ -644,9 +644,6 @@ def load_table(request):
                     single_data = raw_data[i]
                     # 將計算後的逸散量丟回字典
                     single_data["total_distance"] = tkm
-                    # print("single_data::::::::::::::::::::::::::::::::::::::::", single_data)
-                    t_data.append(single_data)
-                    # print("t_data:::::::::::::::::::::::::::::::::::::::::", t_data)
                     # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
@@ -2234,18 +2231,9 @@ def employee_business_trip_add(request):
                     return redirect('/carbon-system/')
             else:
                 if not not_empty:
-                    # trip_section_formset.errors['請填寫出差段數'] = ['請填寫出差段數']
                     trip_section_formset.non_form_errors().append('請填寫出差段數')
-                    # for form in trip_section_formset:
-                    #     form.add_error(None, '請填寫出差段數')
-
-                # if '__all__' in trip_section_formset.errors:
-                #     custom_error_key = '自定义错误名称'
-                #     trip_section_formset.errors[custom_error_key] = formset.errors.pop('__all__')
-                        # raise ValidationError('請填寫出差段數')
+                    print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", trip_section_formset.non_form_errors())
                 print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", trip_section_formset.errors)
-                print("tripsection_formSet表單錯誤>>>>>>>>>>>>>>>>>>>>\n", trip_section_formset.non_form_errors())
-                # return render(request, 'home/employee-business-trip.html', {'EBT_add': EBT_add, 'TripSectionFormSet': TripSectionFormSet, 'years': request.session.get('years')})
         else:
             print("\n", EBT_add.errors)
     context = {

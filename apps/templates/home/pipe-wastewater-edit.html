@@ -30,27 +30,22 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 mx-3 my-3">
                                         <div class="row my-3">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                {% for error in form.pipe_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>納管編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.pipe_id }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row my-3">
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廠別 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.factory }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>地址 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.address }}
@@ -65,6 +60,18 @@
                                                 月排放量(單位:公噸) <span style="color:red; font-size:16px;">* </span>
                                             </h5>
                                         </div>
+                                        {% if form.errors %}
+                                            <div class="col-12 text-center">
+                                                {% for error in form.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% for error in form.errors.數值必須大於零 %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
                                         <table class="table">
                                             <thead>
                                             <tr>
@@ -221,6 +228,30 @@
 
 
     <script>
+        $(document).ready(function () {
+            {% if form.errors %}
+                let error_name = "";
+                let error_input;
+                let parentDiv;
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        error_name = "{{ field.label }}"
+                        if (
+                            error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                            error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                            error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
+                        ) {
+                            error_name = error_name.toLowerCase()
+                            error_input = document.querySelector("[name=" + error_name + "]");
+                            parentDiv = error_input.parentNode;
+                            parentDiv.classList.add("border", "border-danger", "border-3");
+                        }
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+        });
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
