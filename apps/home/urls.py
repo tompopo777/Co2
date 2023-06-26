@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.conf.urls import url
 from django.urls import path, re_path
-from apps.home import views, csv, count
+from apps.home import views, csv, count, inventory
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -66,6 +66,8 @@ urlpatterns = [
                   path('delete_device/', views.delete_device, name='delete_device'),
                   # 匯出總表
                   path("calculate_summary/", count.calculate_summary, name='calculate_summary'),
+                  # 匯出清冊
+                  path("inventory_summary/", inventory.inventory_summary, name='inventory_summary'),
                   # Matches any html file
                   re_path(r'^.*\.*', views.pages, name='pages'),
 
