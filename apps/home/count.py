@@ -577,10 +577,6 @@ def employee_count(years, factory_id, coefficient_source, gwp_version):
 def extinguisher_count(years, factory_id, coefficient_source, gwp_version):
     final = pd.DataFrame()
     try:
-        # years = 2023
-        # factory_id = 1
-        # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-        # gwp_version = 6
         raw_data = pd.DataFrame(list(extinguisher.objects.filter(years=years).filter(company_id=factory_id).values('extinguisher_type').annotate(
             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
             device_name=Value('滅火器', output_field=models.CharField(max_length=50)),
@@ -718,8 +714,6 @@ def employee_commute_count(years, factory_id, coefficient_source, gwp_version):
                 return '臺灣鐵路運輸服務(柴聯車)'
             elif row['transportation'] == '計程車':
                 return '營業小客車(汽油)'
-            elif row['transportation'] == '高鐵':
-                return '高速鐵路運輸服務'
             elif row['transportation'] == '機車':
                 return '機器腳踏車(汽油)'
             elif row['transportation'] == '捷運':
@@ -770,8 +764,6 @@ def employee_business_trip_count(years, factory_id, coefficient_source, gwp_vers
                 return '臺灣鐵路運輸服務(柴聯車)'
             elif row['transportation'] == '計程車':
                 return '營業小客車(汽油)'
-            elif row['transportation'] == '高鐵':
-                return '高速鐵路運輸服務'
             elif row['transportation'] == '機車':
                 return '機器腳踏車(汽油)'
             elif row['transportation'] == '捷運':
@@ -816,9 +808,9 @@ def waste_transport_count(years, factory_id, coefficient_source, gwp_version):
         raw_data = raw_data.groupby(['waste_disposal', 'transport_type', 'transport_fuel']).agg({'waste_weigh': 'first', 'transport_distance': 'sum', 'sum_count': 'sum', 'process_area': 'first', 'data_unit': 'first'}).reset_index()
         raw_data['new_transport'] = raw_data.apply(lambda x: f"{x['transport_type']}({x['transport_fuel']})", axis=1)
         a_part = raw_data
-        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='產品碳足跡資訊網').filter(cause__in=a_part['transport_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
+        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='產品碳足跡資訊網').filter(cause__in=a_part['new_transport']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
             coefficient_unit=Value('公噸' + '/延噸公里', output_field=models.CharField(max_length=50)))))
-        ab_part = pd.merge(a_part, coefficient_part, left_on='transport_type', right_on='cause', how='left')
+        ab_part = pd.merge(a_part, coefficient_part, left_on='new_transport', right_on='cause', how='left')
         gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
         final = pd.merge(ab_part, gwp, on='gas_name', how='left')
         final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
@@ -835,14 +827,18 @@ def waste_transport_count(years, factory_id, coefficient_source, gwp_version):
 def waste_process_count(years, factory_id, coefficient_source, gwp_version):
     final = pd.DataFrame()
     try:
-        raw_data = pd.DataFrame(list(waste.objects.filter(years=years).filter(company_id=factory_id).values('waste_disposal', 'waste_name', 'waste_weigh').annotate(
+        # years = 2023
+        # factory_id = 1
+        # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+        # gwp_version = 6
+        raw_data = pd.DataFrame(list(waste.objects.filter(years=years).filter(company_id=factory_id).values('waste_disposal', 'waste_name', 'waste_location', 'waste_weigh').annotate(
             process_area=Value('公司營運所產生廢棄物處置', output_field=models.CharField(max_length=50)),
             data_unit=Value('公噸', output_field=models.CharField(max_length=50)))))
-        raw_data = raw_data.groupby(['waste_disposal']).agg({'waste_name': 'first', 'waste_weigh': 'sum', 'process_area': 'first', 'data_unit': 'first'}).reset_index()
+        raw_data = raw_data.groupby(['waste_disposal']).agg({'waste_name': 'first', 'waste_weigh': 'sum', 'process_area': 'first', 'data_unit': 'first', 'waste_location': 'first'}).reset_index()
         a_part = raw_data.rename(columns={'waste_weigh': 'sum_count'})
-        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='產品碳足跡資訊網').filter(cause__in=a_part['waste_disposal']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
+        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='產品碳足跡資訊網').filter(cause__in=a_part['waste_location']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
             coefficient_unit=Value('公噸' + '/延噸公里', output_field=models.CharField(max_length=50)))))
-        ab_part = pd.merge(a_part, coefficient_part, left_on='waste_disposal', right_on='cause', how='left')
+        ab_part = pd.merge(a_part, coefficient_part, left_on='waste_location', right_on='cause', how='left')
         gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
         final = pd.merge(ab_part, gwp, on='gas_name', how='left')
         final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)

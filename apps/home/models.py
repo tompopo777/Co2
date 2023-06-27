@@ -871,7 +871,7 @@ class product_indirect_emissions(models.Model):
 # 固定、移動係數表表格
 class coefficient(models.Model):
     id = models.AutoField(primary_key=True)
-    cause = models.CharField(max_length=30)
+    cause = models.CharField(max_length=100)
     gas_name = models.CharField(max_length=50)
     coefficient = models.DecimalField(max_digits=20, decimal_places=10, default=0)
     coefficient_source = models.CharField(max_length=50)
