@@ -35,12 +35,11 @@
                             <li><a class="dropdown-item border-radius-md border-bottom text-center" href="javascript:;">產生報告書</a></li>
                         </ul>
                     </li>
-                        <a class="nav-link ps-2 d-flex cursor-pointer me-1"
-                           data-bs-toggle="modal" data-bs-target="#settings" type="button">
-                            <i class="fa-solid fa-gear me-1 mt-1"></i>
-                            <p class="d-inline text-sm z-index-1 font-weight-bold">設定</p>
-                        </a>
-                    </li>
+                    <a class="nav-link ps-2 d-flex cursor-pointer me-1"
+                       data-bs-toggle="modal" data-bs-target="#settingsModal" type="button">
+                        <i class="fa-solid fa-gear me-1 mt-1"></i>
+                        <p class="d-inline text-sm z-index-1 font-weight-bold">設定</p>
+                    </a>
                     <li class="nav-item ms-lg-auto nav-link nav-link-icon me-2">
                         <i class="fa-solid fa-user me-1"></i>
                         <p class="d-inline text-sm z-index-1 font-weight-bold">{{ request.user.username }}</p>
@@ -61,51 +60,70 @@
 </nav>
 
 <!-- Modal -->
+
+{#產生總表#}
 <div class="modal fade" id="CalculateSummaryModal" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="CalculateSummaryModalLabel">產生總表</h5></div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-title">
+                    <div class="row ps-4" style="width: 466px">
+                        <h5 class="text-warning bg-dark d-flex justify-content-center" id="CalculateSummaryModalLabel">產生總表</h5>
+                    </div>
+                    <div class="row">
+                        <h5 class="text-primary d-flex justify-content-center">如需更改請至"設定"</h5>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
-                <form action="/calculate_summary/" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="row d-flex align-items-center mb-3">
-                        <div class="col-auto">
-                            <h6>請選擇GWP版本: </h6>
-                        </div>
-                        <div class="form-check form-check-inline col-auto m-0" id="gwpVersion_radio">
-                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault1" value=4>
-                            <label class="form-check-label me-2" for="flexRadioDefault1">
-                                GWP 4
-                            </label>
-                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault2" value=5>
-                            <label class="form-check-label me-2" for="flexRadioDefault2">
-                                GWP 5
-                            </label>
-                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault3" value=6 checked>
-                            <label class="form-check-label me-2" for="flexRadioDefault3">
-                                GWP 6
-                            </label>
-                        </div>
+                <div class="row d-flex align-items-center mb-3">
+                    <div class="col-auto">
+                        <h6>GWP版本: </h6>
                     </div>
-                    <div class="row d-flex align-items-center">
-                        <div class="col-auto">
-                            <h6>請選擇係數來源: </h6>
-                        </div>
-                        <div class="form-check form-check-inline col-auto m-0" id="coefficient_source_radio">
-                            <input class="form-check-input" type="radio" name="coefficient_source" id="604" value="環保署溫室氣體排放係數管理表6.0.4" checked>
-                            <label class="form-check-label me-2" for="604">
-                                環保署溫室氣體排放係數管理表6.0.4
-                            </label>
-                        </div>
+                    <div class="form-check form-check-inline col-auto m-0">
+                        {% for version in gwp_list %}
+                            {% if version == request.session.gwp_version %}
+                                <input class="form-check-input disabled_scc" type="radio" name="gwpVersion_calculate" id="flexRadioDefault{{ version }}" value={{ version }} disabled checked>
+                                <label class="form-check-label me-2" for="flexRadioDefault{{ version }}">
+                                    GWP {{ version }}
+                                </label>
+                            {% else %}
+                                <input class="form-check-input disabled_scc" type="radio" name="gwpVersion_calculate" id="flexRadioDefault{{ version }}" value={{ version }} disabled>
+                                <label class="form-check-label me-2" for="flexRadioDefault{{ version }}">
+                                    GWP {{ version }}
+                                </label>
+                            {% endif %}
+                        {% endfor %}
                     </div>
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-danger" id="calculate_summary" data-bs-dismiss="modal">確認</button>
+                </div>
+                <div class="row d-flex align-items-start mb-3">
+                    <div class="col-auto">
+                        <h6>係數來源: </h6>
                     </div>
-                </form>
+                    <div class="form-check col-auto m-0">
+                        {% for version in coefficient_list %}
+                            {% if version == request.session.coefficient_source %}
+                                <div class="col-auto">
+                                    <input class="form-check-input disabled_scc" type="radio" name="coefficient_source_calculate" id="{{ version }}" value={{ version }} disabled checked>
+                                    <label class="form-check-label me-2" for="{{ version }}">
+                                        {{ version }}
+                                    </label>
+                                </div>
+                            {% else %}
+                                <div class="col-auto">
+                                    <input class="form-check-input disabled_scc" type="radio" name="coefficient_source_calculate" id="{{ version }}" value={{ version }} disabled>
+                                    <label class="form-check-label me-2" for="{{ version }}">
+                                        {{ version }}
+                                    </label>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-danger" id="calculate_summary" data-bs-dismiss="modal" onclick="location.href='{% url 'calculate_summary' %}'">確認</button>
+                </div>
             </div>
         </div>
     </div>
@@ -116,47 +134,64 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="InventorySummaryModalLabel">產生清冊</h5></div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-title">
+                    <div class="row ps-4" style="width: 466px">
+                        <h5 class="text-warning bg-dark d-flex justify-content-center" id="InventorySummaryModalLabel">產生清冊</h5>
+                    </div>
+                    <div class="row">
+                        <h5 class="text-primary d-flex justify-content-center">如需更改請至"設定"</h5>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
-                <form action="/inventory_summary/" method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div class="row d-flex align-items-center mb-3">
-                        <div class="col-auto">
-                            <h6>請選擇GWP版本: </h6>
-                        </div>
-                        <div class="form-check form-check-inline col-auto m-0" id="gwpVersion_radio">
-                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault1" value=4>
-                            <label class="form-check-label me-2" for="flexRadioDefault1">
-                                GWP 4
-                            </label>
-                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault2" value=5>
-                            <label class="form-check-label me-2" for="flexRadioDefault2">
-                                GWP 5
-                            </label>
-                            <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault3" value=6 checked>
-                            <label class="form-check-label me-2" for="flexRadioDefault3">
-                                GWP 6
-                            </label>
-                        </div>
+                <div class="row d-flex align-items-center mb-3">
+                    <div class="col-auto">
+                        <h6>GWP版本: </h6>
                     </div>
-                    <div class="row d-flex align-items-center">
-                        <div class="col-auto">
-                            <h6>請選擇係數來源: </h6>
-                        </div>
-                        <div class="form-check form-check-inline col-auto m-0" id="coefficient_source_radio">
-                            <input class="form-check-input" type="radio" name="coefficient_source" id="604" value="環保署溫室氣體排放係數管理表6.0.4" checked>
-                            <label class="form-check-label me-2" for="604">
-                                環保署溫室氣體排放係數管理表6.0.4
-                            </label>
-                        </div>
+                    <div class="form-check form-check-inline col-auto m-0">
+                        {% for version in gwp_list %}
+                            {% if version == request.session.gwp_version %}
+                                <input class="form-check-input disabled_scc" type="radio" name="gwpVersion_inventory" id="flexRadioDefault{{ version }}" value={{ version }} disabled checked>
+                                <label class="form-check-label me-2" for="flexRadioDefault{{ version }}">
+                                    GWP {{ version }}
+                                </label>
+                            {% else %}
+                                <input class="form-check-input disabled_scc" type="radio" name="gwpVersion_inventory" id="flexRadioDefault{{ version }}" value={{ version }} disabled>
+                                <label class="form-check-label me-2" for="flexRadioDefault{{ version }}">
+                                    GWP {{ version }}
+                                </label>
+                            {% endif %}
+                        {% endfor %}
                     </div>
-                    <div class="modal-footer d-flex justify-content-center">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                        <button type="submit" class="btn btn-danger" id="calculate_summary" data-bs-dismiss="modal">確認</button>
+                </div>
+                <div class="row d-flex align-items-start mb-3">
+                    <div class="col-auto">
+                        <h6>係數來源: </h6>
                     </div>
-                </form>
+                    <div class="form-check col-auto m-0">
+                        {% for version in coefficient_list %}
+                            {% if version == request.session.coefficient_source %}
+                                <div class="col-auto">
+                                    <input class="form-check-input" type="radio" name="coefficient_source_inventory" id="{{ version }}" value={{ version }} disabled checked>
+                                    <label class="form-check-label me-2" for="{{ version }}">
+                                        {{ version }}
+                                    </label>
+                                </div>
+                            {% else %}
+                                <div class="col-auto">
+                                    <input class="form-check-input" type="radio" name="coefficient_source_inventory" id="{{ version }}" value={{ version }} disabled>
+                                    <label class="form-check-label me-2" for="{{ version }}">
+                                        {{ version }}
+                                    </label>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-danger" id="inventory_summary" data-bs-dismiss="modal" onclick="location.href='{% url 'inventory_summary' %}'">確認</button>
+                </div>
             </div>
         </div>
     </div>
@@ -170,4 +205,4 @@
     <script>
 
     </script>
-    {% endblock javascripts %}
+{% endblock javascripts %}

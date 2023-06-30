@@ -15,12 +15,23 @@ from datetime import datetime
 from .forms import *
 from apps.home.models import *
 from .csv import *
+from django.db.models import Max
 
 
 @login_required(login_url="/login/")
 def index(request):
     context = {'segment': 'index'}
     html_template = loader.get_template('home/index.html')
+    lasted_gwp_version = coefficient_gwp.objects.aggregate(Max('version'))
+    lasted_coefficient_version = coefficient.objects.aggregate(Max('coefficient_source'))
+
+    default_session = {
+        'years': str(datetime.today().year),
+        'gwp_version': lasted_gwp_version['version__max'],
+        'coefficient_source': lasted_coefficient_version['coefficient_source__max'],
+
+    }
+    request.session.update(default_session)
     if request.user.groups.filter(name='公司帳號').exists():
         pass
     else:
@@ -2379,10 +2390,28 @@ def product_indirect_emissions_add(request):
     return render(request, 'home/product-indirect-emissions.html', context)
 
 
-# ~~~
+@login_required(login_url="/login/")
+def system_setting(request):
+    if request.method == 'POST':
+        years = request.POST.get('years')
+        gwp_version = int(request.POST.get('gwpVersion'))
+        coefficient_source = request.POST.get('coefficient_source')
+
+        context = {
+            'years': years,
+            'gwp_version': gwp_version,
+            'coefficient_source': coefficient_source,
+        }
+        request.session.update(context)
+
+        request.method = 'GET'
+        return carbon_system(request)
+
+
 @login_required(login_url="/login/")
 def carbon_system(request, message=None):
     if request.method == 'GET':
+        years = request.session.get('years')
         # if request.user.is_authenticated:
         #     username = request.user.username
         #     print("username: ", username)
@@ -2397,13 +2426,21 @@ def carbon_system(request, message=None):
         factory_group = factory.objects.exclude(factory_name='永續發展暨建值管理中心')
         user = Profile.objects.get(user_id=request.user.id)
         company_group = factory.objects.filter(company_id=user.company_id)
+
+        gwp_list = list(coefficient_gwp.objects.values_list('version', flat=True).distinct())
+        gwp_list.sort()
+        coefficient_list = list(coefficient.objects.values_list('coefficient_source', flat=True).distinct())
+        coefficient_list.sort()
         context = {
+            "years": years,
             "groups_query": groups_query,
             "factory_group": factory_group,
             "company_group": company_group,
             "message": "",
             "count_error": "",
-            "export_error": ""
+            "export_error": "",
+            "gwp_list": gwp_list,
+            "coefficient_list": coefficient_list,
         }
         if message:
             context.update(message)
@@ -2416,12 +2453,11 @@ def carbon_system(request, message=None):
         dropdown_three = request.POST.get('dropdown_three')
         factory_id = request.POST.get('factory_dropdown')
         company_id = request.POST.get('company_dropdown')
-        years = request.POST.get('years')
+        # years = request.POST.get('years')
         if company_id is None:
             if factory_id is None:
                 factory_id = current_user_group_id(request)
-            # factory_id = current_user_group_id(request)
-        print('factory_id', factory_id)
+        # print('factory_id', factory_id)
         # print('company_id', company_id)
         dropdown = {
             'dropdown_one': dropdown_one,
@@ -2429,7 +2465,6 @@ def carbon_system(request, message=None):
             'dropdown_three': dropdown_three,
             'factory_id': factory_id,
             'company_id': company_id,
-            'years': years,
         }
         request.session.update(dropdown)
         return redirect('/carbon-system/')

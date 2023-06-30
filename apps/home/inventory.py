@@ -21,47 +21,43 @@ pd.set_option('display.width', 200)
 
 @login_required(login_url="/login/")
 def inventory_summary(request):
-    if request.method == "POST":
-        coefficient_source = request.POST.get("coefficient_source")
-        gwp_version = request.POST.get("gwpVersion")
-        gwp_version = int(gwp_version)
-        # 判斷使用者是否為公司帳號。
-        if request.user.groups.filter(name='公司帳號').exists():
-            factory_id = request.session.get('company_id')
-        else:
-            factory_id = request.session.get('factory_id')
-        years = request.session.get('years')
-        if years is None:
-            years = str(datetime.date.today().year)
+    coefficient_source = request.session.get('coefficient_source')
+    gwp_version = request.session.get('gwp_version')
+    # 判斷使用者是否為公司帳號。
+    if request.user.groups.filter(name='公司帳號').exists():
+        factory_id = request.session.get('company_id')
+    else:
+        factory_id = request.session.get('factory_id')
+    years = request.session.get('years')
 
-        try:
-            company_name = str(factory.objects.filter(id=factory_id).get())
-            print('company_name', company_name)
-        except:
-            company_name = ''
+    try:
+        company_name = str(factory.objects.filter(id=factory_id).get())
+        # print('company_name', company_name)
+    except:
+        company_name = ''
 
-        emergency_generators_device = emergency_generators_inventory(years, factory_id, coefficient_source, gwp_version)
-        combustion_equipment_device = combustion_equipment_inventory(years, factory_id, coefficient_source, gwp_version)
-        output = pd.concat([emergency_generators_device, combustion_equipment_device])
+    emergency_generators_device = emergency_generators_inventory(years, factory_id, coefficient_source, gwp_version)
+    combustion_equipment_device = combustion_equipment_inventory(years, factory_id, coefficient_source, gwp_version)
+    output = pd.concat([emergency_generators_device, combustion_equipment_device])
 
-        if output.empty:
-            message = {
-                'count_error': '沒有任何資料!'
-            }
-            request.method = "GET"
-            return carbon_system(request, message)
+    if output.empty:
+        message = {
+            'count_error': '沒有任何資料!'
+        }
+        request.method = "GET"
+        return carbon_system(request, message)
 
-        output = output.rename(
-            columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'gas_name': '可能產生溫室氣體種類'})
-        new_order = ['過程或區域', '排放源設施', '原燃物料', '可能產生溫室氣體種類']
-        output = output.reindex(columns=new_order)
-        display(output)
-        response = HttpResponse(content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放量統計總表-' + company_name + '_' + years + '.xlsx', encoding="UTF-8")
+    output = output.rename(
+        columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'gas_name': '可能產生溫室氣體種類'})
+    new_order = ['過程或區域', '排放源設施', '原燃物料', '可能產生溫室氣體種類']
+    output = output.reindex(columns=new_order)
+    display(output)
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放量統計總表-' + company_name + '_' + years + '.xlsx', encoding="UTF-8")
 
-        # 匯出Excel檔案
-        output.to_excel(response, index=False)
-        return response
+    # 匯出Excel檔案
+    output.to_excel(response, index=False)
+    return response
 
 
 def emergency_generators_inventory(years, factory_id, coefficient_source, gwp_version):

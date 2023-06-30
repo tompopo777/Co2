@@ -25,8 +25,7 @@
                     <div class="card-body px-0">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
-                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: {{ years }}</code>
                             <div class="d-flex dropdown-area">
                                 <div class="col-4">
                                     <label class="lead form-label ms-0" for="factory_dropdown" style="color: whitesmoke">公司廠別</label>
@@ -85,8 +84,7 @@
                     <div class="card-body px-0">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
-                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: {{ years }}</code>
                             <div class="d-flex dropdown-area">
                                 <div class="col-4">
                                     <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">子廠名稱</label>
@@ -146,8 +144,7 @@
                     <div class="card-body">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
-                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: {{ years }}</code>
                             <div class="d-flex">
                                 <div class="col-5 dropdown-area">
                                     <label class="lead form-label ms-0" for="dropdown_one" style="color: whitesmoke">類別</label>
@@ -228,10 +225,7 @@
 
     <!-- 刪除資料 -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        {#    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="false" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">#}
-        {#    <div class="modal fade" id="staticBackdrop" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
         <div class="modal-dialog modal-dialog-centered">
-            {#        <div class="modal-dialog">#}
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="staticBackdropLabel">注意!!!</h5></div>
@@ -248,25 +242,74 @@
     </div>
 
     <!-- 盤查設定 -->
-    <div class="modal fade" id="settings" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="col">
-                        <h5 class="modal-title text-light bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
+                        <h5 class="modal-title text-light bg-dark d-flex justify-content-center" id="settingsModalLabel">盤查設定</h5>
                     </div>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row">
-                        <label for="yearInput" class="col-3 col-form-label">盤查年度:</label>
-                        <div class="col">
-                            <input type="text" class="form-control" id="yearInput" name="years">
+                    <form action="/system_setting/" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row d-flex align-items-center mb-3">
+                            <div class="col-auto">
+                                <h6 class="m-0">盤查年度:</h6>
+                            </div>
+                            <div class="form-check form-check-inline col-auto m-0">
+                                <input type="text" class="form-control" id="yearInput" name="years">
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="updateYear()">確認</button>
+                        <div class="row d-flex align-items-center mb-3">
+                            <div class="col-auto">
+                                <h6>GWP版本: </h6>
+                            </div>
+                            <div class="form-check form-check-inline col-auto m-0">
+                                {% for version in gwp_list %}
+                                    {% if version == request.session.gwp_version %}
+                                        <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault{{ version }}" value={{ version }} checked>
+                                        <label class="form-check-label me-2" for="flexRadioDefault{{ version }}">
+                                            GWP {{ version }}
+                                        </label>
+                                    {% else %}
+                                        <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault{{ version }}" value={{ version }}>
+                                        <label class="form-check-label me-2" for="flexRadioDefault{{ version }}">
+                                            GWP {{ version }}
+                                        </label>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-start mb-3">
+                            <div class="col-auto">
+                                <h6 class="mt-1">係數來源: </h6>
+                            </div>
+                            <div class="form-check col-auto m-0">
+                                {% for version in coefficient_list %}
+                                    {% if version == request.session.coefficient_source %}
+                                        <div class="col-auto">
+                                            <input class="form-check-input" type="radio" name="coefficient_source" id="{{ version }}" value={{ version }} checked>
+                                            <label class="form-check-label me-2" for="{{ version }}">
+                                                {{ version }}
+                                            </label>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-auto">
+                                            <input class="form-check-input" type="radio" name="coefficient_source" id="{{ version }}" value={{ version }}>
+                                            <label class="form-check-label me-2" for="{{ version }}">
+                                                {{ version }}
+                                            </label>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-danger" id="system_setting" data-bs-dismiss="modal">確認</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -323,12 +366,6 @@
 
 
     <script>
-        var myModalEl = document.getElementById('staticBackdrop')
-        myModalEl.addEventListener('show.bs.modal', function (event) {
-            // do something...
-            {#console.warn('pl')#}
-        })
-
         {#下拉選單樣式#}
         /*
         $(document).ready(function () {
@@ -652,9 +689,9 @@
                             value.forEach((item, index) => {
                                 var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框
                                 thead_row_name.appendChild(cr_n)
-                                if(item !== '刪除'){
+                                if (item !== '刪除') {
                                     cr_n.innerHTML = item;//"標題"框框填質
-                                }else {
+                                } else {
                                     let trash = document.createElement('a')//加入"trash button"tag
                                     cr_n.appendChild(trash)
 
@@ -794,6 +831,24 @@
                 input[i].disabled = true;
             }
         });
+
+        // modal(settingModal)
+
+        let myModalEl = document.getElementById('settingsModal')
+        myModalEl.addEventListener('show.bs.modal', function (event) {
+            let yearInput = document.getElementById('yearInput')
+            yearInput.value = "{{ request.session.years }}"
+            let gwp_version = document.getElementsByName('gwpVersion')
+            gwp_version.forEach(function (item, index) {
+                item.checked = item.value.toString() === "{{ request.session.gwp_version }}";
+            })
+            let coefficient_source = document.getElementsByName('coefficient_source')
+            coefficient_source.forEach(function (item, index) {
+                item.checked = item.value.toString() === "{{ request.session.coefficient_source }}";
+            })
+        })
+
+
     </script>
 
 
@@ -802,8 +857,8 @@
         $(document).on('click', ".delete_btn", function () {
             let delete_checkbox = document.getElementsByClassName('delete_checkbox')
             let delete_str = ""
-            for(let i=0; i<delete_checkbox.length; i++){
-                if(delete_checkbox[i].checked){
+            for (let i = 0; i < delete_checkbox.length; i++) {
+                if (delete_checkbox[i].checked) {
                     delete_str += delete_checkbox[i].id + " "
                 }
             }
@@ -876,19 +931,6 @@
                     }
                 });
             });
-        });
-    </script>
-    <script>
-        function updateYear() {
-            const yearInput = document.getElementById("yearInput");
-            const yearDisplay = document.getElementById("yearDisplay");
-            const hiddenYearsInput = document.getElementById("hiddenYearsInput");
-            yearDisplay.textContent = yearInput.value;
-            hiddenYearsInput.value = yearInput.value;
-        }
-
-        window.addEventListener('load', function () {
-            updateYear();
         });
     </script>
 
