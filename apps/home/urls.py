@@ -68,6 +68,8 @@ urlpatterns = [
                   path("calculate_summary/", count.calculate_summary, name='calculate_summary'),
                   # 匯出清冊
                   path("inventory_summary/", inventory.inventory_summary, name='inventory_summary'),
+                  # 盤查設定
+                  path("system_setting/", views.system_setting, name='system_setting'),
                   # Matches any html file
                   re_path(r'^.*\.*', views.pages, name='pages'),
 

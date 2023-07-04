@@ -22,71 +22,68 @@ pd.set_option('display.width', 200)
 
 @login_required(login_url="/login/")
 def calculate_summary(request):
-    if request.method == "POST":
-        coefficient_source = request.POST.get("coefficient_source")
-        gwp_version = request.POST.get("gwpVersion")
-        gwp_version = int(gwp_version)
-        # 判斷使用者是否為公司帳號。
-        if request.user.groups.filter(name='公司帳號').exists():
-            factory_id = request.session.get('company_id')
-        else:
-            factory_id = request.session.get('factory_id')
-        years = request.session.get('years')
-        if years is None:
-            years = str(datetime.date.today().year)
+    coefficient_source = request.session.get('coefficient_source')
+    gwp_version = request.session.get('gwp_version')
+    # 判斷使用者是否為公司帳號。
+    if request.user.groups.filter(name='公司帳號').exists():
+        factory_id = request.session.get('company_id')
+    else:
+        factory_id = request.session.get('factory_id')
+    years = request.session.get('years')
 
-        try:
-            company_name = str(factory.objects.filter(id=factory_id).get())
-            print('company_name', company_name)
-        except:
-            company_name = ''
+    try:
+        company_name = str(factory.objects.filter(id=factory_id).get())
+        # print('company_name', company_name)
+    except:
+        company_name = ''
 
-        emergency_generators_device = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)
-        combustion_equipment_device = combustion_equipment_count(years, factory_id, coefficient_source, gwp_version)
-        official_car_device = official_car_count(years, factory_id, coefficient_source, gwp_version)
-        refrigerator_device = refrigerator_count(years, factory_id, coefficient_source, gwp_version)
-        airconditioner_device = airconditioner_count(years, factory_id, coefficient_source, gwp_version)
-        vehicle_device = vehicle_count(years, factory_id, coefficient_source, gwp_version)
-        water_dispenser_device = water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
-        ice_water_dispenser_device = ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
-        ice_maker_device = ice_maker_count(years, factory_id, coefficient_source, gwp_version)
-        other_device_device = other_device_count(years, factory_id, coefficient_source, gwp_version)
-        solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_count(years, factory_id, coefficient_source, gwp_version)
-        personnel_inventory_device = personnel_inventory_count(years, factory_id, coefficient_source, gwp_version)
-        employee_device = employee_count(years, factory_id, coefficient_source, gwp_version)
-        extinguisher_device = extinguisher_count(years, factory_id, coefficient_source, gwp_version)
-        waste_water_device = waste_water_count(years, factory_id, coefficient_source, gwp_version)
-        electricity_device = electricity_count(years, factory_id, coefficient_source, gwp_version)
-        employee_commute_device = employee_commute_count(years, factory_id, coefficient_source, gwp_version)
-        employee_business_trip_device = employee_business_trip_count(years, factory_id, coefficient_source, gwp_version)
-        waste_transport_device = waste_transport_count(years, factory_id, coefficient_source, gwp_version)
-        waste_process_device = waste_process_count(years, factory_id, coefficient_source, gwp_version)
-        purchase_material_device = purchase_material_count(years, factory_id, coefficient_source, gwp_version)
+    emergency_generators_device = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)
+    combustion_equipment_device = combustion_equipment_count(years, factory_id, coefficient_source, gwp_version)
+    official_car_device = official_car_count(years, factory_id, coefficient_source, gwp_version)
+    refrigerator_device = refrigerator_count(years, factory_id, coefficient_source, gwp_version)
+    airconditioner_device = airconditioner_count(years, factory_id, coefficient_source, gwp_version)
+    vehicle_device = vehicle_count(years, factory_id, coefficient_source, gwp_version)
+    water_dispenser_device = water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
+    ice_water_dispenser_device = ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
+    ice_maker_device = ice_maker_count(years, factory_id, coefficient_source, gwp_version)
+    other_device_device = other_device_count(years, factory_id, coefficient_source, gwp_version)
+    solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_count(years, factory_id, coefficient_source, gwp_version)
+    personnel_inventory_device = personnel_inventory_count(years, factory_id, coefficient_source, gwp_version)
+    employee_device = employee_count(years, factory_id, coefficient_source, gwp_version)
+    extinguisher_device = extinguisher_count(years, factory_id, coefficient_source, gwp_version)
+    waste_water_device = waste_water_count(years, factory_id, coefficient_source, gwp_version)
+    electricity_device = electricity_count(years, factory_id, coefficient_source, gwp_version)
+    employee_commute_device = employee_commute_count(years, factory_id, coefficient_source, gwp_version)
+    employee_business_trip_device = employee_business_trip_count(years, factory_id, coefficient_source, gwp_version)
+    waste_transport_device = waste_transport_count(years, factory_id, coefficient_source, gwp_version)
+    waste_process_device = waste_process_count(years, factory_id, coefficient_source, gwp_version)
+    purchase_material_device = purchase_material_count(years, factory_id, coefficient_source, gwp_version)
 
-        output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, refrigerator_device, airconditioner_device,
-                            vehicle_device, water_dispenser_device, ice_water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device,
-                            personnel_inventory_device, employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device,
-                            employee_business_trip_device, waste_transport_device, waste_process_device, purchase_material_device])
+    output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, refrigerator_device, airconditioner_device,
+                        vehicle_device, water_dispenser_device, ice_water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device,
+                        personnel_inventory_device, employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device,
+                        employee_business_trip_device, waste_transport_device, waste_process_device, purchase_material_device])
 
-        if output.empty:
-            message = {
-                'count_error': '沒有任何資料!'
-            }
-            request.method = "GET"
-            return carbon_system(request, message)
+    if output.empty:
+        message = {
+            'count_error': '沒有任何資料!'
+        }
+        request.method = "GET"
+        return carbon_system(request, message)
 
-        output = output.rename(
-            columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'sum_count': '活動數據總量', 'data_unit': '數據單位', 'emission': '排放當量公噸(公噸/數據期間)', 'gas_name': '可能產生溫室氣體種類', 'coefficient': '排放係數', 'coefficient_unit': '排放係數單位',
-                     'coefficient_source': '係數來源', 'gwp_coefficient': 'ICPP報告GWP值'})
-        new_order = ['過程或區域', '排放源設施', '原燃物料', '活動數據總量', '數據單位', '排放當量公噸(公噸/數據期間)', '可能產生溫室氣體種類', '排放係數', '排放係數單位', '係數來源', 'ICPP報告GWP值']
-        output = output.reindex(columns=new_order)
-        display(output)
-        response = HttpResponse(content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放量統計總表-' + company_name + '_' + years + '.xlsx', encoding="UTF-8")
+    output = output.rename(
+        columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'sum_count': '活動數據總量', 'data_unit': '數據單位', 'emission': '排放當量公噸(公噸/數據期間)', 'gas_name': '可能產生溫室氣體種類', 'coefficient': '排放係數', 'coefficient_unit': '排放係數單位',
+                 'coefficient_source': '係數來源', 'gwp_coefficient': 'ICPP報告GWP值'})
+    new_order = ['過程或區域', '排放源設施', '原燃物料', '活動數據總量', '數據單位', '排放當量公噸(公噸/數據期間)', '可能產生溫室氣體種類', '排放係數', '排放係數單位', '係數來源', 'ICPP報告GWP值']
+    output = output.reindex(columns=new_order)
+    display(output)
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放量統計總表-' + company_name + '_' + years + '.xlsx', encoding="UTF-8")
 
-        # 匯出Excel檔案
-        output.to_excel(response, index=False)
-        return response
+    # 匯出Excel檔案
+    output.to_excel(response, index=False)
+    # return carbon_system(request, request)
+    return response
 
 
 # 發電機

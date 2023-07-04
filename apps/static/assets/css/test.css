@@ -158,11 +158,11 @@ thead, .table {
     transform: rotate(45deg);
 }
 
-input:disabled {
+input:disabled:not(.disabled_scc) {
     background: #dddddd;
 }
 
-input:disabled + label {
+input:disabled:not(.disabled_scc) + label {
     color: #ccc;
     outline: #dddddd !important;
 }
