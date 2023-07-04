@@ -64,42 +64,173 @@ def inventory_summary(request):
         return response
 
 
+# 發電機
 def emergency_generators_inventory(years, factory_id, coefficient_source, gwp_version):
     df = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'emission', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    # 合併所有的氣體
+    row_data['gas_name'] = row_data['gas_name'].str.cat(sep=',')
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    # row_data = row_data.groupby(['process_area']).agg({'device_name': 'first', 'fuel_type': 'first', 'gas_name': 'first', 'emission': 'sum'}).reset_index()
     return row_data
 
 
+# 燃燒設備
 def combustion_equipment_inventory(years, factory_id, coefficient_source, gwp_version):
     df = combustion_equipment_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'emission', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    # 合併所有的氣體
+    row_data['fuel_type'] = row_data.groupby('device_name')['fuel_type'].transform(lambda x: ','.join(x))
+    row_data['gas_name'] = row_data.groupby('device_name')['gas_name'].transform(lambda x: ','.join(x))
+    # split將字串用逗號分割，然後再用set去除重複的
+    row_data['fuel_type'] = row_data['fuel_type'].str.split(',').apply(lambda x: ','.join(set(x)))
+    row_data['gas_name'] = row_data['gas_name'].str.split(',').apply(lambda x: ','.join(set(x)))
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
     return row_data
 
 
-# # 合并相同值的单元格
-# output = output.style
-# output.set_properties(**{'text-align': 'left'})  # 设置单元格对齐方式为左对齐
-# output = output.set_table_styles([{'selector': 'td', 'props': [('text-align', 'left')]}])  # 设置表格中单元格的对齐方式
-# output = output.set_caption('溫室氣體排放量統計總表')  # 设置标题
-#
-# # 创建一个新的Excel工作簿
-# workbook = Workbook()
-# sheet = workbook.active
-#
-# # 将DataFrame的样式应用到工作表
-# for row in dataframe_to_rows(output.data, index=False, header=True):
-#     sheet.append(row)
-#
-# # 合并相同值的单元格
-# prev_value = None
-# start_row = 2  # 跳过标题行，从第二行开始
-# for row in range(2, sheet.max_row + 1):
-#     current_value = sheet.cell(row=row, column=1).value
-#     if current_value != prev_value:
-#         if prev_value is not None:
-#             # 合并单元格
-#             sheet.merge_cells(start_row=start_row, start_column=1, end_row=row - 1, end_column=1)
-#         prev_value = current_value
-#         start_row = row
+# 公務車
+def official_car_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = official_car_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    # 合併所有的氣體
+    row_data['fuel_type'] = row_data.groupby('device_name')['fuel_type'].transform(lambda x: ','.join(x))
+    row_data['gas_name'] = row_data.groupby('device_name')['gas_name'].transform(lambda x: ','.join(x))
+    # split將字串用逗號分割，然後再用set去除重複的
+    row_data['fuel_type'] = row_data['fuel_type'].str.split(',').apply(lambda x: ','.join(set(x)))
+    row_data['gas_name'] = row_data['gas_name'].str.split(',').apply(lambda x: ','.join(set(x)))
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 冷媒全部
+def refrigerant_inventory(years, factory_id, coefficient_source, gwp_version):
+    refrigerator = refrigerator_count(years, factory_id, coefficient_source, gwp_version)
+    airconditioner = airconditioner_count(years, factory_id, coefficient_source, gwp_version)
+    vehicle = vehicle_count(years, factory_id, coefficient_source, gwp_version)
+    water_dispenser = water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
+    ice_water_dispenser = ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
+    ice_maker = ice_maker_count(years, factory_id, coefficient_source, gwp_version)
+    other_device = other_device_count(years, factory_id, coefficient_source, gwp_version)
+    refrigerant_device = pd.concat([refrigerator, airconditioner, vehicle, water_dispenser, ice_water_dispenser, ice_maker, other_device], axis=0)
+    row_data = refrigerant_device.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data['fuel_type'] = '冷媒'
+    # 合併所有的氣體
+    row_data['device_name'] = row_data.groupby('fuel_type')['device_name'].transform(lambda x: ','.join(x))
+    # # split將字串用逗號分割，然後再用set去除重複的
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 人天清冊
+def personnel_inventory_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = personnel_inventory_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 委外人員
+def employee_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = employee_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 滅火器
+def extinguisher_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = extinguisher_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 厭氧廢水
+def waste_water_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = waste_water_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 用電量
+def electricity_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = electricity_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 員工通勤
+def employee_commute_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = employee_commute_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data['device_name'] = '員工通勤'
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 員工出差
+def employee_business_trip_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = employee_business_trip_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data['device_name'] = '員工出差'
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 廢棄物運輸
+def waste_transport_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = waste_transport_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data['device_name'] = '廢棄物運輸'
+    row_data['fuel_type'] = row_data['fuel_type'].str.split('(', 1).str[1].str.rstrip(')')
+    row_data['fuel_type'] = row_data['fuel_type'].apply(lambda x: '運輸車輛-' + x)
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 廢棄物處理
+def waste_process_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = waste_process_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+# 原物料採購
+def purchase_material_inventory(years, factory_id, coefficient_source, gwp_version):
+    df = purchase_material_count(years, factory_id, coefficient_source, gwp_version)
+    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+    return row_data
+
+
+years = 2023
+factory_id = 1
+coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+gwp_version = 6
+emergency_generators_device = emergency_generators_inventory(years, factory_id, coefficient_source, gwp_version)
+combustion_equipment_device = combustion_equipment_inventory(years, factory_id, coefficient_source, gwp_version)
+official_car_device = official_car_inventory(years, factory_id, coefficient_source, gwp_version)
+refrigerant_device = refrigerant_inventory(years, factory_id, coefficient_source, gwp_version)
+personnel_inventory_device = personnel_inventory_inventory(years, factory_id, coefficient_source, gwp_version)
+employee_device = employee_inventory(years, factory_id, coefficient_source, gwp_version)
+# solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_inventory(years, factory_id, coefficient_source, gwp_version)
+extinguisher_device = extinguisher_inventory(years, factory_id, coefficient_source, gwp_version)
+waste_water_device = waste_water_inventory(years, factory_id, coefficient_source, gwp_version)
+electricity_device = electricity_inventory(years, factory_id, coefficient_source, gwp_version)
+employee_commute_device = employee_commute_inventory(years, factory_id, coefficient_source, gwp_version)
+employee_business_trip_device = employee_business_trip_inventory(years, factory_id, coefficient_source, gwp_version)
+waste_transport_device = waste_transport_inventory(years, factory_id, coefficient_source, gwp_version)
+waste_process_device = waste_process_inventory(years, factory_id, coefficient_source, gwp_version)
+# purchase_material_device = purchase_material_inventory(years, factory_id, coefficient_source, gwp_version)
+
+output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, refrigerant_device, personnel_inventory_device,
+                    employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device, employee_business_trip_device,
+                    waste_transport_device, waste_process_device])
+output['total_emission'] = output['emission'].sum()
+output = output.drop_duplicates(subset=output.columns.difference(['total_emission']))
+print(output)
+
