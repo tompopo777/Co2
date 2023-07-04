@@ -1,5 +1,5 @@
 import datetime
-from urllib import request, parse
+from urllib import request, parse, response
 import pandas as pd
 from IPython.core.display import display
 from django.contrib.auth.decorators import login_required
@@ -8,11 +8,12 @@ from django.db.models.functions import Cast
 from decimal import *
 from django.http import HttpResponse
 from .count import *
-
+import openpyxl
 from .models import *
 import json
-
 from .views import carbon_system
+from openpyxl.utils.dataframe import *
+from openpyxl.styles import *
 
 pd.set_option('display.unicode.ambiguous_as_wide', True)
 pd.set_option('display.unicode.east_asian_width', True)
@@ -36,9 +37,29 @@ def inventory_summary(request):
     except:
         company_name = ''
 
+    # years = 2023
+    # factory_id = 1
+    # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+    # gwp_version = 6
     emergency_generators_device = emergency_generators_inventory(years, factory_id, coefficient_source, gwp_version)
     combustion_equipment_device = combustion_equipment_inventory(years, factory_id, coefficient_source, gwp_version)
-    output = pd.concat([emergency_generators_device, combustion_equipment_device])
+    official_car_device = official_car_inventory(years, factory_id, coefficient_source, gwp_version)
+    refrigerant_device = refrigerant_inventory(years, factory_id, coefficient_source, gwp_version)
+    personnel_inventory_device = personnel_inventory_inventory(years, factory_id, coefficient_source, gwp_version)
+    employee_device = employee_inventory(years, factory_id, coefficient_source, gwp_version)
+    # solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_inventory(years, factory_id, coefficient_source, gwp_version)
+    extinguisher_device = extinguisher_inventory(years, factory_id, coefficient_source, gwp_version)
+    waste_water_device = waste_water_inventory(years, factory_id, coefficient_source, gwp_version)
+    electricity_device = electricity_inventory(years, factory_id, coefficient_source, gwp_version)
+    employee_commute_device = employee_commute_inventory(years, factory_id, coefficient_source, gwp_version)
+    employee_business_trip_device = employee_business_trip_inventory(years, factory_id, coefficient_source, gwp_version)
+    waste_transport_device = waste_transport_inventory(years, factory_id, coefficient_source, gwp_version)
+    waste_process_device = waste_process_inventory(years, factory_id, coefficient_source, gwp_version)
+    # purchase_material_device = purchase_material_inventory(years, factory_id, coefficient_source, gwp_version)
+
+    output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, refrigerant_device, personnel_inventory_device,
+                        employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device, employee_business_trip_device,
+                        waste_transport_device, waste_process_device])
 
     if output.empty:
         message = {
@@ -47,17 +68,35 @@ def inventory_summary(request):
         request.method = "GET"
         return carbon_system(request, message)
 
+    output['total_emission'] = output['emission'].sum()
+    output = output.drop_duplicates(subset=output.columns.difference(['total_emission']))
+    print(output)
+
     output = output.rename(
-        columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'gas_name': '可能產生溫室氣體種類'})
-    new_order = ['過程或區域', '排放源設施', '原燃物料', '可能產生溫室氣體種類']
+        columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'gas_name': '可能產生溫室氣體種類', 'emission': '排放當量公噸(公噸/數據期間)', 'total_emission': '加總排放當量(公噸CO2e/年)'})
+    new_order = ['過程或區域', '排放源設施', '原燃物料', '可能產生溫室氣體種類', '排放當量公噸(公噸/數據期間)', '加總排放當量(公噸CO2e/年)']
     output = output.reindex(columns=new_order)
+
     display(output)
     response = HttpResponse(content_type='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放量統計總表-' + company_name + '_' + years + '.xlsx', encoding="UTF-8")
+    response['Content-Disposition'] = 'attachment; filename=' + parse.quote('溫室氣體排放清冊-' + company_name + '_' + years + '.xlsx', encoding="UTF-8")
 
-    # 匯出Excel檔案
-    output.to_excel(response, index=False)
+    # 将 DataFrame 写入指定位置的工作表
+    sheet_name = "Sheet35"  # 指定工作表名
+    start_row = 5  # 起始行
+    end_row = start_row + len(output) - 1  # 合并的结束行
+    start_col = 2  # 起始列
+
+    # 合并 G 列的单元格
+    merge_range = f'G{start_row}:G{end_row}'
+    output.to_excel(response, index=False, sheet_name=sheet_name, startrow=start_row - 1, startcol=start_col - 1)
+
+    # 返回响应
     return response
+
+    # # 匯出Excel檔案
+    # output.to_excel(response, index=False)
+    # return response
 
 
 # 發電機
@@ -203,30 +242,5 @@ def purchase_material_inventory(years, factory_id, coefficient_source, gwp_versi
     return row_data
 
 
-years = 2023
-factory_id = 1
-coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-gwp_version = 6
-emergency_generators_device = emergency_generators_inventory(years, factory_id, coefficient_source, gwp_version)
-combustion_equipment_device = combustion_equipment_inventory(years, factory_id, coefficient_source, gwp_version)
-official_car_device = official_car_inventory(years, factory_id, coefficient_source, gwp_version)
-refrigerant_device = refrigerant_inventory(years, factory_id, coefficient_source, gwp_version)
-personnel_inventory_device = personnel_inventory_inventory(years, factory_id, coefficient_source, gwp_version)
-employee_device = employee_inventory(years, factory_id, coefficient_source, gwp_version)
-# solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_inventory(years, factory_id, coefficient_source, gwp_version)
-extinguisher_device = extinguisher_inventory(years, factory_id, coefficient_source, gwp_version)
-waste_water_device = waste_water_inventory(years, factory_id, coefficient_source, gwp_version)
-electricity_device = electricity_inventory(years, factory_id, coefficient_source, gwp_version)
-employee_commute_device = employee_commute_inventory(years, factory_id, coefficient_source, gwp_version)
-employee_business_trip_device = employee_business_trip_inventory(years, factory_id, coefficient_source, gwp_version)
-waste_transport_device = waste_transport_inventory(years, factory_id, coefficient_source, gwp_version)
-waste_process_device = waste_process_inventory(years, factory_id, coefficient_source, gwp_version)
-# purchase_material_device = purchase_material_inventory(years, factory_id, coefficient_source, gwp_version)
 
-output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, refrigerant_device, personnel_inventory_device,
-                    employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device, employee_business_trip_device,
-                    waste_transport_device, waste_process_device])
-output['total_emission'] = output['emission'].sum()
-output = output.drop_duplicates(subset=output.columns.difference(['total_emission']))
-print(output)
 
