@@ -1669,9 +1669,13 @@ class WASTEform(forms.ModelForm):
         
     def clean_transport_distance(self):
         transport_distance = self.cleaned_data.get('transport_distance')
-        if not transport_distance > 0:
-            raise forms.ValidationError("該欄位必須大於零", 'invalid')
-        return transport_distance
+        if transport_distance is not None:
+            if not transport_distance > 0:
+                raise forms.ValidationError("該欄位必須大於零", 'invalid')
+            else:
+                return transport_distance
+        else:
+            return transport_distance
 
 
 # VOC1
