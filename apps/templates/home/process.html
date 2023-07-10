@@ -250,31 +250,7 @@
 
 
     <script>
-        {#    顯示新增成功訊息#}
-        $(document).ready(function () {
-            {% if messages %}
-                {% for message in messages %}
-                    let success_message = "{{ message }}"
-                    alert(success_message);
-                {% endfor %}
-            {% endif %}
-            // 顯示錯誤框
-            {% for field in PC_add %}
-                {% for error in field.errors %}
-                    error_name = "{{ field.label }}"
-                    if (
-                        error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
-                        error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
-                        error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
-                    ) {
-                        error_name = error_name.toLowerCase()
-                        error_input = document.querySelector("[name=" + error_name + "]");
-                        parentDiv = error_input.parentNode;
-                        parentDiv.classList.add("border", "border-danger", "border-3");
-                    }
-                {% endfor %}
-            {% endfor %}
-        });
+
 
 
         {#    禁止enter鍵#}
