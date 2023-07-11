@@ -65,7 +65,7 @@ def inventory_summary(request):
     category_three = pd.concat([employee_commute_device, employee_business_trip_device, waste_transport_device])
     category_four = pd.concat([waste_process_device])
 
-    if category_one.empty and category_two.empty and category_three.empty and category_four:
+    if category_one.empty and category_two.empty and category_three.empty and category_four.empty:
         message = {
             'count_error': '沒有任何資料!'
         }
@@ -76,6 +76,26 @@ def inventory_summary(request):
     category_two['total_emission'] = category_two['emission'].sum()
     category_three['total_emission'] = category_three['emission'].sum()
     category_four['total_emission'] = category_four['emission'].sum()
+
+    if len(category_one) == 1 and category_one['emission'].iloc[0] == 0:
+        category_one[['emission', 'total_emission']] = ''
+    elif len(category_one) > 1:
+        category_one = category_one[category_one['process_area'] != ''].reset_index(drop=True)
+
+    if len(category_two) == 1 and category_two['emission'].iloc[0] == 0:
+        category_two[['emission', 'total_emission']] = ''
+    elif len(category_two) > 1:
+        category_two = category_two[category_two['process_area'] != ''].reset_index(drop=True)
+
+    if len(category_three) == 1 and category_three['emission'].iloc[0] == 0:
+        category_three[['emission', 'total_emission']] = ''
+    elif len(category_three) > 1:
+        category_three = category_three[category_three['process_area'] != ''].reset_index(drop=True)
+
+    if len(category_four) == 1 and category_four['emission'].iloc[0] == 0:
+        category_four[['emission', 'total_emission']] = ''
+    elif len(category_four) > 1:
+        category_four = category_four[category_four['process_area'] != ''].reset_index(drop=True)
 
     category_one = category_one.rename(columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'gas_name': '可能產生溫室氣體種類', 'emission': '排放當量公噸(公噸/數據期間)', 'total_emission': '加總排放當量(公噸CO2e/年)'})
     category_two = category_two.rename(columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'gas_name': '可能產生溫室氣體種類', 'emission': '排放當量公噸(公噸/數據期間)', 'total_emission': '加總排放當量(公噸CO2e/年)'})
@@ -228,7 +248,7 @@ def inventory_summary(request):
 
     # 類別四開始--------------------------------------------------------------------------------------------------------------------------------
     # 插入一行字串
-    rows_4 = dataframe_to_rows(category_two, index=False, header=False)
+    rows_4 = dataframe_to_rows(category_four, index=False, header=False)
     category_four_row = end_row3_merge + 1
     category_four_header = ['類別四']  # 新增一行空白
     for c_idx, value in enumerate(category_four_header, start=start_column):
@@ -405,145 +425,229 @@ def inventory_summary(request):
 
 # 發電機
 def emergency_generators_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    # 合併所有的氣體
-    row_data['gas_name'] = row_data['gas_name'].str.cat(sep=',')
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    # row_data = row_data.groupby(['process_area']).agg({'device_name': 'first', 'fuel_type': 'first', 'gas_name': 'first', 'emission': 'sum'}).reset_index()
-    return row_data
+    try:
+        df = emergency_generators_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        # 合併所有的氣體
+        row_data['gas_name'] = row_data['gas_name'].str.cat(sep=',')
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        # row_data = row_data.groupby(['process_area']).agg({'device_name': 'first', 'fuel_type': 'first', 'gas_name': 'first', 'emission': 'sum'}).reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 燃燒設備
 def combustion_equipment_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = combustion_equipment_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    # 合併所有的氣體
-    row_data['fuel_type'] = row_data.groupby('device_name')['fuel_type'].transform(lambda x: ','.join(sorted(x)))
-    row_data['gas_name'] = row_data.groupby('device_name')['gas_name'].transform(lambda x: ','.join(sorted(x)))
-    # split將字串用逗號分割，然後再用set去除重複的
-    row_data['fuel_type'] = row_data['fuel_type'].str.split(',').apply(lambda x: ','.join(set(x)))
-    row_data['gas_name'] = row_data['gas_name'].str.split(',').apply(lambda x: ','.join(set(x)))
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = combustion_equipment_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        # 合併所有的氣體
+        row_data['fuel_type'] = row_data.groupby('device_name')['fuel_type'].transform(lambda x: ','.join(sorted(x)))
+        row_data['gas_name'] = row_data.groupby('device_name')['gas_name'].transform(lambda x: ','.join(sorted(x)))
+        # split將字串用逗號分割，然後再用set去除重複的
+        row_data['fuel_type'] = row_data['fuel_type'].str.split(',').apply(lambda x: ','.join(set(x)))
+        row_data['gas_name'] = row_data['gas_name'].str.split(',').apply(lambda x: ','.join(set(x)))
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 公務車
 def official_car_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = official_car_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    # 合併所有的氣體
-    row_data['fuel_type'] = row_data.groupby('device_name')['fuel_type'].transform(lambda x: ','.join(sorted(x)))
-    row_data['gas_name'] = row_data.groupby('device_name')['gas_name'].transform(lambda x: ','.join(sorted(x)))
-    # split將字串用逗號分割，然後再用set去除重複的
-    row_data['fuel_type'] = row_data['fuel_type'].str.split(',').apply(lambda x: ','.join(set(x)))
-    row_data['gas_name'] = row_data['gas_name'].str.split(',').apply(lambda x: ','.join(set(x)))
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = official_car_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        # 合併所有的氣體
+        row_data['fuel_type'] = row_data.groupby('device_name')['fuel_type'].transform(lambda x: ','.join(sorted(x)))
+        row_data['gas_name'] = row_data.groupby('device_name')['gas_name'].transform(lambda x: ','.join(sorted(x)))
+        # split將字串用逗號分割，然後再用set去除重複的
+        row_data['fuel_type'] = row_data['fuel_type'].str.split(',').apply(lambda x: ','.join(set(x)))
+        row_data['gas_name'] = row_data['gas_name'].str.split(',').apply(lambda x: ','.join(set(x)))
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 冷媒全部
 def refrigerant_inventory(years, factory_id, coefficient_source, gwp_version):
-    refrigerator = refrigerator_count(years, factory_id, coefficient_source, gwp_version)
-    airconditioner = airconditioner_count(years, factory_id, coefficient_source, gwp_version)
-    vehicle = vehicle_count(years, factory_id, coefficient_source, gwp_version)
-    water_dispenser = water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
-    ice_water_dispenser = ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
-    ice_maker = ice_maker_count(years, factory_id, coefficient_source, gwp_version)
-    other_device = other_device_count(years, factory_id, coefficient_source, gwp_version)
-    refrigerant_device = pd.concat([refrigerator, airconditioner, vehicle, water_dispenser, ice_water_dispenser, ice_maker, other_device], axis=0)
-    row_data = refrigerant_device.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data['fuel_type'] = '冷媒'
-    # 合併所有的氣體
-    row_data['device_name'] = row_data.groupby('fuel_type')['device_name'].transform(lambda x: ','.join(sorted(x)))
-    # # split將字串用逗號分割，然後再用set去除重複的
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        refrigerator = refrigerator_count(years, factory_id, coefficient_source, gwp_version)
+        airconditioner = airconditioner_count(years, factory_id, coefficient_source, gwp_version)
+        vehicle = vehicle_count(years, factory_id, coefficient_source, gwp_version)
+        water_dispenser = water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
+        ice_water_dispenser = ice_water_dispenser_count(years, factory_id, coefficient_source, gwp_version)
+        ice_maker = ice_maker_count(years, factory_id, coefficient_source, gwp_version)
+        other_device = other_device_count(years, factory_id, coefficient_source, gwp_version)
+        refrigerant_device = pd.concat([refrigerator, airconditioner, vehicle, water_dispenser, ice_water_dispenser, ice_maker, other_device], axis=0)
+        row_data = refrigerant_device.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        row_data['fuel_type'] = '冷媒'
+        # 合併所有的氣體
+        row_data['device_name'] = row_data.groupby('fuel_type')['device_name'].transform(lambda x: ','.join(sorted(x)))
+        # # split將字串用逗號分割，然後再用set去除重複的
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 人天清冊
 def personnel_inventory_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = personnel_inventory_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = personnel_inventory_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 委外人員
 def employee_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = employee_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = employee_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 滅火器
 def extinguisher_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = extinguisher_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = extinguisher_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 厭氧廢水
 def waste_water_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = waste_water_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = waste_water_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 用電量
 def electricity_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = electricity_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = electricity_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 員工通勤
 def employee_commute_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = employee_commute_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data['device_name'] = '員工通勤'
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = employee_commute_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        row_data['device_name'] = '員工通勤'
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 員工出差
 def employee_business_trip_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = employee_business_trip_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data['device_name'] = '員工出差'
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = employee_business_trip_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        row_data['device_name'] = '員工出差'
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        print(final)
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 廢棄物運輸
 def waste_transport_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = waste_transport_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data['device_name'] = '廢棄物運輸'
-    row_data['fuel_type'] = row_data['fuel_type'].str.split('(', 1).str[1].str.rstrip(')')
-    row_data['fuel_type'] = row_data['fuel_type'].apply(lambda x: '運輸車輛-' + x)
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = waste_transport_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        row_data['device_name'] = '廢棄物運輸'
+        row_data['fuel_type'] = row_data['fuel_type'].str.split('(', 1).str[1].str.rstrip(')')
+        row_data['fuel_type'] = row_data['fuel_type'].apply(lambda x: '運輸車輛-' + x)
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 廢棄物處理
 def waste_process_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = waste_process_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = waste_process_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 原物料採購
 def purchase_material_inventory(years, factory_id, coefficient_source, gwp_version):
-    df = purchase_material_count(years, factory_id, coefficient_source, gwp_version)
-    row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
-    row_data = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
-    return row_data
+    try:
+        df = purchase_material_count(years, factory_id, coefficient_source, gwp_version)
+        row_data = df.drop(columns=['sum_count', 'data_unit', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient'])
+        row_data.dropna(inplace=True)  # 删除包含空值的行
+        final = row_data.groupby(['process_area', 'device_name', 'fuel_type', 'gas_name'])['emission'].sum().reset_index()
+        return final
+    except:
+        print('沒有該設備')
+        final = pd.DataFrame(data=[['', '', '', '', 0]], columns=['process_area', 'device_name', 'fuel_type', 'gas_name', 'emission'])
+        return final
 
 
 # 類別一七大溫室氣體排放量統計
@@ -698,10 +802,10 @@ def all_categories(years, factory_id, coefficient_source, gwp_version):
 
     all_category = pd.DataFrame(columns=['類別', '第1類', '第2類', '第3類', '第4類', '第5、6類', '總量'])
     category = '排放當量(公噸CO2e/年)'
-    emission_category_1 = decimal.Decimal(category_one['emission'].sum().quantize(decimal.Decimal('0.0000'), rounding=decimal.ROUND_HALF_UP))
-    emission_category_2 = decimal.Decimal(category_two['emission'].sum().quantize(decimal.Decimal('0.0000'), rounding=decimal.ROUND_HALF_UP))
-    emission_category_3 = decimal.Decimal(category_three['emission'].sum().quantize(decimal.Decimal('0.0000'), rounding=decimal.ROUND_HALF_UP))
-    emission_category_4 = decimal.Decimal(category_four['emission'].sum().quantize(decimal.Decimal('0.0000'), rounding=decimal.ROUND_HALF_UP))
+    emission_category_1 = decimal.Decimal(str(category_one['emission'].sum())).quantize(decimal.Decimal('0.0000'), rounding=decimal.ROUND_HALF_UP)
+    emission_category_2 = decimal.Decimal(str(category_two['emission'].sum())).quantize(decimal.Decimal('0.0000'), rounding=decimal.ROUND_HALF_UP)
+    emission_category_3 = decimal.Decimal(str(category_three['emission'].sum())).quantize(decimal.Decimal('0.0000'), rounding=decimal.ROUND_HALF_UP)
+    emission_category_4 = decimal.Decimal(str(category_four['emission'].sum())).quantize(decimal.Decimal('0.0000'), rounding=decimal.ROUND_HALF_UP)
     emission_category_5_6 = decimal.Decimal('0.0000')
     total_emission = (emission_category_1 + emission_category_2 + emission_category_3 + emission_category_4 + emission_category_5_6).quantize(decimal.Decimal('0.000'), rounding=decimal.ROUND_HALF_UP)
     all_category.loc[0] = [category, emission_category_1, emission_category_2, emission_category_3, emission_category_4, emission_category_5_6, total_emission]
