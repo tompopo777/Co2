@@ -39,7 +39,6 @@ def login_view(request):
                 # 登入成功
                 if user is not None:
                     pre_key = now_user.session_key
-                    print('pre_key', pre_key)
                     if pre_key is not None:
                         try:
                             pre_user = Session.objects.get(session_key=pre_key)
