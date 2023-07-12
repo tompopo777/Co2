@@ -54,25 +54,13 @@ class Profile(models.Model):
     company = models.ForeignKey(company, on_delete=models.CASCADE, null=True, db_column='company', verbose_name='該帳號屬於公司名稱')
     factory = models.ForeignKey(factory, on_delete=models.CASCADE, null=True, db_column='factory', verbose_name='該帳號屬於廠名稱')
 
+    failed_login_attempts = models.IntegerField(default=0)
+    locked_until = models.DateTimeField(null=True, blank=True)
+    session_key = models.CharField(max_length=255, null=True)
+    # is_login = models.BooleanField(default=False)
+
     def __str__(self):
         return self.user.username
-
-
-# # 客製權限
-# class CustomUser(AbstractUser):
-#     company = models.ForeignKey(company, on_delete=models.CASCADE)
-#     factory = models.ForeignKey(factory, on_delete=models.CASCADE, null=True, blank=True)
-
-
-# # 客製權限
-# # class CustomUser(AbstractUser):
-# class CustomUser(models.Model):
-#     # pass
-#     id = models.AutoField(primary_key=True)
-#     is_staff = models.BooleanField(default=False)
-#     is_superuser = models.BooleanField(default=False)
-#     username = models.CharField(max_length=100)
-#     company = models.ForeignKey(company, on_delete=models.CASCADE)
 
 
 class section_one(models.Model):

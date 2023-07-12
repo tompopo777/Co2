@@ -24,7 +24,9 @@ def index(request):
     html_template = loader.get_template('home/index.html')
     lasted_gwp_version = coefficient_gwp.objects.aggregate(Max('version'))
     lasted_coefficient_version = coefficient.objects.aggregate(Max('coefficient_source'))
-
+    now_user = Profile.objects.get(user_id=User.objects.get(username=request.user.username).id)
+    now_user.session_key = request.session.session_key
+    now_user.save()
     default_session = {
         'years': str(datetime.today().year),
         'gwp_version': lasted_gwp_version['version__max'],
@@ -72,10 +74,7 @@ def pages(request):
 def load_process(request):
     if request.method == 'GET':
         current_class = request.GET.get('currentClass')
-        # print("000000000000000000000000000000000000000000000000000000")
         if current_class:
-            # all = list(section_one.objects.all())
-            # print("777777777777777777777777777777777777777777777",all)
             data = list(section_one.objects.filter(c_name=current_class).values("p_name", "cpid"))
             return JsonResponse(data, safe=False)
 
