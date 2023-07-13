@@ -393,26 +393,6 @@
             }
         });
 
-
-        {#    年度篩選器#}
-        {#        $("#years").datepicker({#}
-        {#            format: "yyyy",#}
-        {#            viewMode: "years",#}
-        {#            minViewMode: "years",#}
-        {#            orientation: "bottom",#}
-        {#            autoclose: "true",#}
-        {#        }).datepicker("setDate", 'now');#}
-
-
-        {#    購買年份篩選器#}
-        $("#years_purchased").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
         // 依照checkbox選擇顯示對應框
         document.addEventListener("DOMContentLoaded", function () {
             let oil = document.getElementById("id_metering_method_0");

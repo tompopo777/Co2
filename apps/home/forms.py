@@ -641,6 +641,7 @@ class RFform(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(RFform, self).__init__(*args, **kwargs)
+        self.fields['years_purchased'].required = False
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -690,6 +691,7 @@ class ACform(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(ACform, self).__init__(*args, **kwargs)
+        self.fields['years_purchased'].required = False
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -739,6 +741,7 @@ class VCform(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(VCform, self).__init__(*args, **kwargs)
+        self.fields['years_purchased'].required = False
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -788,6 +791,7 @@ class WDform(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(WDform, self).__init__(*args, **kwargs)
+        self.fields['years_purchased'].required = False
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -837,6 +841,7 @@ class IWDform(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(IWDform, self).__init__(*args, **kwargs)
+        self.fields['years_purchased'].required = False
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -886,6 +891,7 @@ class IMform(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(IMform, self).__init__(*args, **kwargs)
+        self.fields['years_purchased'].required = False
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
@@ -935,6 +941,7 @@ class ODform(forms.ModelForm):
 
     def __init__(self, request, *args, **kwargs):
         super(ODform, self).__init__(*args, **kwargs)
+        self.fields['years_purchased'].required = False
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
         self.fields['filling_volume'].required = False
