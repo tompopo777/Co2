@@ -2,6 +2,8 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
+import decimal
+
 import django.contrib.auth.models
 from django import template
 from django.contrib import messages
@@ -154,28 +156,29 @@ def load_table(request):
                                                                                                           "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
                 # 計算使用量合計/熱值平均
                 for i in range(raw_data.count()):
-                    Total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
+                    total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
                                  raw_data[i].get("fuel_may") + raw_data[i].get("fuel_june") + raw_data[i].get("fuel_july") + raw_data[i].get("fuel_august") + \
                                  raw_data[i].get("fuel_september") + raw_data[i].get("fuel_october") + raw_data[i].get("fuel_november") + raw_data[i].get("fuel_december")
-
-                    Total_heat = heat_data[i].get("heat_january") + heat_data[i].get("heat_february") + heat_data[i].get("heat_march") + heat_data[i].get("heat_april") + \
-                                 heat_data[i].get("heat_may") + heat_data[i].get("heat_june") + heat_data[i].get("heat_july") + heat_data[i].get("heat_august") + \
-                                 heat_data[i].get("heat_september") + heat_data[i].get("heat_october") + heat_data[i].get("heat_november") + heat_data[i].get("heat_december")
-                    avg_heat = Total_heat / 12
-                    # print("fuel::::::::::::::::::::::::::::::::::::::::", Total_fuel)
                     # 抓單筆資料
                     single_data = raw_data[i]
                     # print("Total_fuel", Total_fuel)
-                    Total_fuel = Total_fuel.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
-                    avg_heat = avg_heat.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    total_fuel = total_fuel.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     # 將計算後的「合計」丟回字典
-                    single_data["Total_fuel"] = Total_fuel
-                    for j in heat_data[i]:
-                        # 「合計」後的資料(每月熱值)丟回字典
-                        single_data[j] = heat_data[i].get(j)
-                    # 將計算後的「平均熱值」丟回字典
-                    single_data["avg_heat"] = avg_heat
+                    single_data["Total_fuel"] = total_fuel
                     # 顯示有引用單據
+                    total_heat = decimal.Decimal('0')
+                    if raw_data[i].get("fuel_type") == '天然氣':
+                        for k in heat_data[i]:
+                            single_data[k] = heat_data[i].get(k)  # 「逐一」將資料(尿素)丟回字典
+                            total_heat += heat_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
+                        avg_heat = total_heat / 12
+                        avg_heat = avg_heat.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                        single_data["avg_heat"] = avg_heat  # 如果沒有(尿素)，設為空值
+                    else:
+                        for n in heat_data[i]:
+                            single_data[n] = None  # 「逐一」將資料(尿素)丟回字典
+                        single_data["avg_heat"] = None  # 如果沒有(尿素)，設為空值
+
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
                     else:
