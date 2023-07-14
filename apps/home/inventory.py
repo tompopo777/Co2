@@ -292,6 +292,7 @@ def inventory_summary(request):
     # 插入額外標題
     category_one_header_cell = sheet.cell(row=start_row_category - 1, column=start_column_category, value=category_one_header)
     category_one_header_cell.font = header_font  # 設定額外標題的樣式
+    category_one_header_cell.border = border_style
     category_one_header_cell.alignment = alignment  # 設定水平居中對齊
     category_one_header_cell.fill = fill
 
@@ -323,6 +324,10 @@ def inventory_summary(request):
         for cell in row:
             cell.alignment = alignment
 
+    print(category_one)
+    print(category_two)
+    print(category_three)
+    print(category_four)
     # 開始--------------------------------------------------------------------------------------------------------------------------------
     # 七大氣體排放
     # 將 all_coefficient 資料框輸出到 Excel 的 K2 儲存格
@@ -335,6 +340,7 @@ def inventory_summary(request):
     # 插入額外標題
     all_category_header_cell = sheet.cell(row=start_row_all_category - 1, column=start_column_all_category, value=all_category_header)
     all_category_header_cell.font = header_font  # 設定額外標題的樣式
+    all_category_header_cell.border = border_style
     all_category_header_cell.alignment = alignment
     all_category_header_cell.fill = fill
 
@@ -378,6 +384,7 @@ def inventory_summary(request):
     # 插入額外標題
     all_categories_header_cell = sheet.cell(row=start_row_all_categories - 1, column=start_column_all_categories, value=all_categories_header)
     all_categories_header_cell.font = header_font  # 設定額外標題的樣式
+    all_categories_header_cell.border = border_style
     all_categories_header_cell.alignment = alignment
     all_categories_header_cell.fill = fill
 
