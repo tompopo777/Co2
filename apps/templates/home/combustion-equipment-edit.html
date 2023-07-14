@@ -149,7 +149,7 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                <tr>
+                                                <tr id="heat">
                                                     <th>
                                                         熱值
                                                     </th>
@@ -313,6 +313,15 @@
                     {% endfor %}
                 {% endfor %}
             {% endif %}
+
+            let fuel_type =  document.getElementById('id_fuel_type').value
+            let heat_tabel = document.getElementById('heat')
+            if(fuel_type !== '天然氣'){
+                heat_tabel.style.display = "none";
+            }
+            else {
+                heat_tabel.style.display = "table-row"
+            }
         });
 
         {#    禁止enter鍵#}
@@ -356,6 +365,17 @@
                 // 刪除後更新輸入文件中的文件
                 document.getElementById('attachment').files = dt.files;
             });
+        });
+
+        $("#id_fuel_type").on('change', function (e) {
+            let fuel_type = this.value;
+            let heat_tabel = document.getElementById('heat')
+            if(fuel_type !== '天然氣'){
+                heat_tabel.style.display = "none";
+            }
+            else {
+                heat_tabel.style.display = "table-row"
+            }
         });
     </script>
 {% endblock javascripts %}

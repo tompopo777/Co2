@@ -2,6 +2,8 @@
 """
 Copyright (c) 2019 - present AppSeed.us
 """
+import decimal
+
 import django.contrib.auth.models
 from django import template
 from django.contrib import messages
@@ -24,7 +26,9 @@ def index(request):
     html_template = loader.get_template('home/index.html')
     lasted_gwp_version = coefficient_gwp.objects.aggregate(Max('version'))
     lasted_coefficient_version = coefficient.objects.aggregate(Max('coefficient_source'))
-
+    now_user = Profile.objects.get(user_id=User.objects.get(username=request.user.username).id)
+    now_user.session_key = request.session.session_key
+    now_user.save()
     default_session = {
         'years': str(datetime.today().year),
         'gwp_version': lasted_gwp_version['version__max'],
@@ -72,10 +76,7 @@ def pages(request):
 def load_process(request):
     if request.method == 'GET':
         current_class = request.GET.get('currentClass')
-        # print("000000000000000000000000000000000000000000000000000000")
         if current_class:
-            # all = list(section_one.objects.all())
-            # print("777777777777777777777777777777777777777777777",all)
             data = list(section_one.objects.filter(c_name=current_class).values("p_name", "cpid"))
             return JsonResponse(data, safe=False)
 
@@ -154,29 +155,37 @@ def load_table(request):
                 heat_data = combustion_equipment.objects.filter(company_id=factory_id, years=year).values("heat_january", "heat_february", "heat_march", "heat_april", "heat_may", "heat_june",
                                                                                                           "heat_july", "heat_august", "heat_september", "heat_october", "heat_november", "heat_december")
                 # 計算使用量合計/熱值平均
+                # total_hot = None
                 for i in range(raw_data.count()):
-                    Total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
+                    total_fuel = raw_data[i].get("fuel_january") + raw_data[i].get("fuel_february") + raw_data[i].get("fuel_march") + raw_data[i].get("fuel_april") + \
                                  raw_data[i].get("fuel_may") + raw_data[i].get("fuel_june") + raw_data[i].get("fuel_july") + raw_data[i].get("fuel_august") + \
                                  raw_data[i].get("fuel_september") + raw_data[i].get("fuel_october") + raw_data[i].get("fuel_november") + raw_data[i].get("fuel_december")
-
-                    Total_heat = heat_data[i].get("heat_january") + heat_data[i].get("heat_february") + heat_data[i].get("heat_march") + heat_data[i].get("heat_april") + \
-                                 heat_data[i].get("heat_may") + heat_data[i].get("heat_june") + heat_data[i].get("heat_july") + heat_data[i].get("heat_august") + \
-                                 heat_data[i].get("heat_september") + heat_data[i].get("heat_october") + heat_data[i].get("heat_november") + heat_data[i].get("heat_december")
-                    avg_heat = Total_heat / 12
-                    # print("fuel::::::::::::::::::::::::::::::::::::::::", Total_fuel)
+                    total_hot = (raw_data[i].get("fuel_january") * heat_data[i].get("heat_january")) + (raw_data[i].get("fuel_february") * heat_data[i].get("heat_february")) + \
+                                (raw_data[i].get("fuel_march") * heat_data[i].get("heat_march")) + (raw_data[i].get("fuel_april") * heat_data[i].get("heat_april")) + \
+                                (raw_data[i].get("fuel_may") * heat_data[i].get("heat_may")) + (raw_data[i].get("fuel_june") * heat_data[i].get("heat_june")) + \
+                                (raw_data[i].get("fuel_july") * heat_data[i].get("heat_july")) + (raw_data[i].get("fuel_august") * heat_data[i].get("heat_august")) + \
+                                (raw_data[i].get("fuel_september") * heat_data[i].get("heat_september")) + (raw_data[i].get("fuel_october") * heat_data[i].get("heat_october")) + \
+                                (raw_data[i].get("fuel_november") * heat_data[i].get("heat_november")) + (raw_data[i].get("fuel_december") * heat_data[i].get("heat_december"))
                     # 抓單筆資料
                     single_data = raw_data[i]
-                    # print("Total_fuel", Total_fuel)
-                    Total_fuel = Total_fuel.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
-                    avg_heat = avg_heat.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                    total_fuel = total_fuel.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
                     # 將計算後的「合計」丟回字典
-                    single_data["Total_fuel"] = Total_fuel
-                    for j in heat_data[i]:
-                        # 「合計」後的資料(每月熱值)丟回字典
-                        single_data[j] = heat_data[i].get(j)
-                    # 將計算後的「平均熱值」丟回字典
-                    single_data["avg_heat"] = avg_heat
+                    single_data["Total_fuel"] = total_fuel
                     # 顯示有引用單據
+                    if raw_data[i].get("fuel_type") == '天然氣':
+                        for k in heat_data[i]:
+                            single_data[k] = heat_data[i].get(k)  # 「逐一」將資料(尿素)丟回字典
+                        if total_hot != 0:
+                            low_heat = (total_hot / total_fuel) * decimal.Decimal('0.9')
+                            low_heat = low_heat.quantize(Decimal('.0001'), rounding=ROUND_HALF_UP)
+                            single_data['low_heat'] = low_heat
+                        else:
+                            single_data['low_heat'] = decimal.Decimal('0.0000')
+                    else:
+                        for n in heat_data[i]:
+                            single_data[n] = None  # 「逐一」將資料(尿素)丟回字典
+                        single_data["avg_heat"] = None  # 如果沒有(尿素)，設為空值
+
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
                     else:
@@ -2847,7 +2856,7 @@ def add_title(request):
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "名稱", "編號", "燃料種類"],
                 "使用量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "平均"],
+                "熱值(Kcal/kg)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "低位熱值"],
                 "佐證資料": ["引用單據"],
             },
             # 公務車

@@ -819,21 +819,23 @@
         })
 
         // 按下查詢才可操作button
-        $(".dropdown-area").change(function disableButtons() {
+        function disableButtons() {
             let section = document.getElementById("disable-section");
             let buttons = section.getElementsByTagName("button");
             let input = section.getElementsByTagName("input");
-
             for (let i = 0; i < buttons.length; i++) {
                 buttons[i].disabled = true;
             }
             for (let i = 0; i < input.length; i++) {
                 input[i].disabled = true;
             }
-        });
+        }
+        if ("{{ request.session.dropdown_three }}" === ""){
+            disableButtons()
+        }
+        $(".dropdown-area").change(disableButtons);
 
         // modal(settingModal)
-
         let myModalEl = document.getElementById('settingsModal')
         myModalEl.addEventListener('show.bs.modal', function (event) {
             let yearInput = document.getElementById('yearInput')

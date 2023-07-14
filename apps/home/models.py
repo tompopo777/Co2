@@ -54,25 +54,13 @@ class Profile(models.Model):
     company = models.ForeignKey(company, on_delete=models.CASCADE, null=True, db_column='company', verbose_name='該帳號屬於公司名稱')
     factory = models.ForeignKey(factory, on_delete=models.CASCADE, null=True, db_column='factory', verbose_name='該帳號屬於廠名稱')
 
+    failed_login_attempts = models.IntegerField(default=0)
+    locked_until = models.DateTimeField(null=True, blank=True)
+    session_key = models.CharField(max_length=255, null=True)
+    # is_login = models.BooleanField(default=False)
+
     def __str__(self):
         return self.user.username
-
-
-# # 客製權限
-# class CustomUser(AbstractUser):
-#     company = models.ForeignKey(company, on_delete=models.CASCADE)
-#     factory = models.ForeignKey(factory, on_delete=models.CASCADE, null=True, blank=True)
-
-
-# # 客製權限
-# # class CustomUser(AbstractUser):
-# class CustomUser(models.Model):
-#     # pass
-#     id = models.AutoField(primary_key=True)
-#     is_staff = models.BooleanField(default=False)
-#     is_superuser = models.BooleanField(default=False)
-#     username = models.CharField(max_length=100)
-#     company = models.ForeignKey(company, on_delete=models.CASCADE)
 
 
 class section_one(models.Model):
@@ -261,7 +249,7 @@ class refrigerator(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    years_purchased = models.IntegerField()
+    years_purchased = models.CharField(max_length=20, null=True)
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -281,7 +269,7 @@ class airconditioner(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    years_purchased = models.IntegerField()
+    years_purchased = models.CharField(max_length=20, null=True)
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -301,7 +289,7 @@ class vehicle(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    years_purchased = models.IntegerField()
+    years_purchased = models.CharField(max_length=20, null=True)
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -321,7 +309,7 @@ class water_dispenser(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    years_purchased = models.IntegerField()
+    years_purchased = models.CharField(max_length=20, null=True)
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -341,7 +329,7 @@ class ice_water_dispenser(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    years_purchased = models.IntegerField()
+    years_purchased = models.CharField(max_length=20, null=True)
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -361,7 +349,7 @@ class ice_maker(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    years_purchased = models.IntegerField()
+    years_purchased = models.CharField(max_length=20, null=True)
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
@@ -381,7 +369,7 @@ class other_device(models.Model):
     brand_name = models.CharField(max_length=30, null=True)
     model_type = models.CharField(max_length=50)
     position = models.CharField(max_length=100, null=True)
-    years_purchased = models.IntegerField()
+    years_purchased = models.CharField(max_length=20, null=True)
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     effusion_rate = models.FloatField()
     refrigerant_type = models.CharField(max_length=20)
