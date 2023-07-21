@@ -316,24 +316,6 @@
         });
 
 
-        {# 帶入下拉選單資料#}
-        $(document).ready(function () {
-            $.ajax({
-                url: "{% url 'chemical_dropdowm' %}",
-                data: {},
-                type: 'GET',
-                dataType: 'json',
-                success: function (chemical_add) {
-                    chemical_add.forEach((item) => {
-                        for (const [key, value] of Object.entries((item))) {
-                            $("#single-select-field").append("<option>" + value + "</option>");
-                        }
-                    })
-                }
-            });
-        })
-
-
         {# 自動帶入化學品名稱、化學式#}
         var chemical_name = $(".chemical_name")
         var chemical_formula = $(".chemical_formula")

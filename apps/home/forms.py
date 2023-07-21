@@ -539,9 +539,10 @@ class MTform(forms.ModelForm):
 
     def clean_carbon_content(self):
         carbon_content = self.cleaned_data.get('carbon_content')
-        if not re.match(r'^[0-9]+(.[0-9]{0,2})?$', str(carbon_content)):
+        if carbon_content is None or re.match(r'^[0-9]+(.[0-9]{0,2})?$', str(carbon_content)):
+            return carbon_content
+        else:
             raise forms.ValidationError("只能輸入正實數(小數點後兩位)", 'invalid')
-        return carbon_content
 
     def clean(self):
         cleaned_data = self.cleaned_data
