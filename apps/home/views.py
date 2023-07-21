@@ -25,7 +25,7 @@ def index(request):
     context = {'segment': 'index'}
     html_template = loader.get_template('home/index.html')
     lasted_gwp_version = coefficient_gwp.objects.aggregate(Max('version'))
-    lasted_coefficient_version = coefficient.objects.aggregate(Max('coefficient_source'))
+    lasted_coefficient_version = coefficient.objects.filter(coefficient_source__startswith='環保署溫室氣體排放係數管理表').aggregate(Max('coefficient_source'))
     now_user = Profile.objects.get(user_id=User.objects.get(username=request.user.username).id)
     now_user.session_key = request.session.session_key
     now_user.save()
@@ -2438,8 +2438,11 @@ def carbon_system(request, message=None):
 
         gwp_list = list(coefficient_gwp.objects.values_list('version', flat=True).distinct())
         gwp_list.sort()
+        epa_coefficient_list = list(coefficient.objects.filter(coefficient_source__startswith='環保署溫室氣體排放係數管理表').values_list('coefficient_source', flat=True).distinct())
+        epa_coefficient_list.sort()
         coefficient_list = list(coefficient.objects.values_list('coefficient_source', flat=True).distinct())
-        coefficient_list.sort()
+        excluded_coefficient_list = [item for item in coefficient_list if item not in epa_coefficient_list]
+
         context = {
             "years": years,
             "groups_query": groups_query,
@@ -2449,7 +2452,10 @@ def carbon_system(request, message=None):
             "count_error": "",
             "export_error": "",
             "gwp_list": gwp_list,
-            "coefficient_list": coefficient_list,
+            # "coefficient_list": coefficient_list,
+            "epa_coefficient_list": epa_coefficient_list,
+            "excluded_coefficient_list": excluded_coefficient_list,
+            # "coefficient_list": coefficient_version,
         }
         if message:
             context.update(message)
