@@ -179,7 +179,7 @@
                     <div class="form-check col-auto m-0">
                         {% for version in excluded_coefficient_list %}
                             <div class="col-auto">
-                                <input class="form-check-input" type="checkbox" name="default_coefficient_source_inventory" id="{{ version }}" value={{ version }} disabled>
+                                <input class="form-check-input disabled_scc" type="checkbox" name="default_coefficient_source_inventory" id="{{ version }}" value={{ version }} disabled checked>
                                 <label class="form-check-label me-2" for="{{ version }}">
                                     {{ version }}
                                 </label>
@@ -188,14 +188,14 @@
                         {% for version in epa_coefficient_list %}
                             {% if version == request.session.coefficient_source %}
                                 <div class="col-auto">
-                                    <input class="form-check-input" type="radio" name="coefficient_source_inventory" id="{{ version }}" value={{ version }} disabled checked>
+                                    <input class="form-check-input disabled_scc" type="radio" name="coefficient_source_inventory" id="{{ version }}" value={{ version }} disabled checked>
                                     <label class="form-check-label me-2" for="{{ version }}">
                                         {{ version }}
                                     </label>
                                 </div>
                             {% else %}
                                 <div class="col-auto">
-                                    <input class="form-check-input" type="radio" name="coefficient_source_inventory" id="{{ version }}" value={{ version }} disabled>
+                                    <input class="form-check-input disabled_scc" type="radio" name="coefficient_source_inventory" id="{{ version }}" value={{ version }} disabled>
                                     <label class="form-check-label me-2" for="{{ version }}">
                                         {{ version }}
                                     </label>
