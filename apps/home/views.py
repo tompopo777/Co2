@@ -1965,7 +1965,7 @@ def solvent_aerosol_emission_sources_add(request):
             print("\n", SAES_add.errors)
     context['SAES_add'] = SAES_add
     context['years'] = request.session.get('years')
-    return render(request, 'home/solvent-aerosol-emission-sources.html', {'SAES_add': SAES_add})
+    return render(request, 'home/solvent-aerosol-emission-sources.html', context)
 
 
 # VOCs1表單儲存
