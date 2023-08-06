@@ -309,7 +309,7 @@
         {#    新增/刪除出差段數#}
 
         //刪除extra=1新增的空白表單
-        var TOTAL_FORMS = document.querySelectorAll("#commute_section > input")[0]
+        var TOTAL_FORMS = document.querySelectorAll("#trip_section > input")[0]
         var trip_count = parseInt(TOTAL_FORMS.value, 10)
         if ("{{ dont_remove }}" === ""){
             let remove_extra = document.querySelectorAll(".trip:last-child")[0]
