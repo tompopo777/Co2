@@ -324,7 +324,7 @@ class EGform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -398,7 +398,7 @@ class CEform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -470,7 +470,7 @@ class OFform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -533,7 +533,7 @@ class MTform(forms.ModelForm):
 
     def clean_material_id(self):
         material_id = self.cleaned_data.get('material_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(material_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return material_id
 
@@ -596,7 +596,7 @@ class PCform(forms.ModelForm):
 
     def clean_material_id(self):
         material_id = self.cleaned_data.get('material_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(material_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return material_id
 
@@ -652,7 +652,7 @@ class RFform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -702,7 +702,7 @@ class ACform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -752,7 +752,7 @@ class VCform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -952,7 +952,7 @@ class ODform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -1213,15 +1213,16 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
     class Meta:
         model = solvent_aerosol_emission_sources
         fields = ('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit',
-                  'gas_name', 'gas_ratio', 'density', 'image_note', 'message_board')
+                  # 'gas_name', 'gas_ratio', 'density',
+                  'image_note', 'message_board')
         widgets = {
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
             'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數'}),
             'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'solvent_capacity_unit': forms.Select(attrs={'id': 'solvent_capacity_unit', 'style': 'width:100px'}, choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
-            'gas_name': forms.Select(attrs={'id': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
-            'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-            'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
+            # 'gas_name': forms.Select(attrs={'id': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
+            # 'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1235,6 +1236,8 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         solvent_amount = self.cleaned_data.get('solvent_amount')
         if not re.match(r'^[0-9]+$', str(solvent_amount)):
             raise forms.ValidationError("只能輸入正整數字", 'invalid')
+        if str(solvent_amount) == '0':
+            raise forms.ValidationError("數量需大於0", "invalid")
         return solvent_amount
 
     def clean_solvent_capacity(self):
@@ -1242,6 +1245,53 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(solvent_capacity)):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return solvent_capacity
+
+    # def clean_gas_name(self):
+    #     gas_name = self.cleaned_data.get('gas_name')
+    #     if gas_name == "":
+    #         raise forms.ValidationError("請選擇氣體名稱", 'invalid')
+    #     return gas_name
+    #
+    # def clean_gas_ratio(self):
+    #     gas_ratio = self.cleaned_data.get('gas_ratio')
+    #     if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(gas_ratio)):
+    #         raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+    #     return gas_ratio
+    #
+    # def clean_density(self):
+    #     density = self.cleaned_data.get('density')
+    #     if not re.match(r'^[0-9]+(.[0-9]{0,10})?$', str(density)):
+    #         raise forms.ValidationError("只能輸入正實數(小數點後十位)", 'invalid')
+    #     return density
+
+
+# 添加氣體(溶劑噴霧劑表中表)
+class GasAddFormSet(forms.ModelForm):
+    class Meta:
+        model = gas_add
+        fields = ('gas_name', 'gas_ratio', 'density', )
+        widgets = {
+            # 'gas_name': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'gas_ratio': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
+            # 'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'})
+            'gas_name': forms.Select(attrs={'class': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
+            'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
+            'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
+        }
+
+    # def clean_transportation(self):
+    #     transportation = self.cleaned_data['transportation']
+    #     for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
+    #         if transportation == BUSINESS_TRANSPORTATION[1]:
+    #             return transportation
+    #     print('有低能兒亂改表單:', transportation)
+    #     raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+    #
+    # def clean_distance(self):
+    #     distance = self.cleaned_data.get('distance')
+    #     if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(distance)) or distance <= 0:
+    #         raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+    #     return distance
 
     def clean_gas_name(self):
         gas_name = self.cleaned_data.get('gas_name')
@@ -1260,6 +1310,9 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         if not re.match(r'^[0-9]+(.[0-9]{0,10})?$', str(density)):
             raise forms.ValidationError("只能輸入正實數(小數點後十位)", 'invalid')
         return density
+
+
+GasAddFormSet = inlineformset_factory(solvent_aerosol_emission_sources, gas_add, form=GasAddFormSet, extra=1)
 
 
 # 發電量
@@ -1296,7 +1349,7 @@ class ELECform(forms.ModelForm):
 
     def clean_EMI_id(self):
         EMI_id = self.cleaned_data.get('EMI_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', EMI_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(EMI_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return EMI_id
 
@@ -1508,7 +1561,7 @@ class ECform(forms.ModelForm):
 
     def clean_employee_id(self):
         employee_id = self.cleaned_data.get('employee_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', employee_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(employee_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return employee_id
 
@@ -1574,15 +1627,16 @@ class EBTform(forms.ModelForm):
 
     def clean_business_trip_number(self):
         business_trip_number = self.cleaned_data.get('business_trip_number')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', business_trip_number):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(business_trip_number)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return business_trip_number
 
     def clean_employee_id(self):
         employee_id = self.cleaned_data.get('employee_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', employee_id):
+        if employee_id is None or re.match(r'^[a-zA-Z0-9_-]*$', str(employee_id)):
+            return employee_id
+        else:
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
-        return employee_id
 
 
 # 出差段數(員工出差表中表)
@@ -1647,7 +1701,7 @@ class WASTEform(forms.ModelForm):
         if not waste_weigh > 0:
             raise forms.ValidationError("該欄位必須大於零", 'invalid')
         return waste_weigh
-    
+
     def clean_waste_location(self):
         waste_location = self.cleaned_data['waste_location']
         for WASTE_LOCATION in WASTE_LOCATION_CHOICES:
@@ -1674,7 +1728,7 @@ class WASTEform(forms.ModelForm):
                     return transport_type
             print('有低能兒亂改表單:', transport_type)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
-        
+
     def clean_transport_distance(self):
         transport_distance = self.cleaned_data.get('transport_distance')
         if transport_distance is not None:
@@ -1791,7 +1845,7 @@ class PWform(forms.ModelForm):
 
     def clean_pipe_id(self):
         pipe_id = self.cleaned_data.get('pipe_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', pipe_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(pipe_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return pipe_id
 
@@ -1844,7 +1898,7 @@ class PMform(forms.ModelForm):
 
     def clean_product_id(self):
         product_id = self.cleaned_data.get('product_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', product_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(product_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return product_id
 
@@ -1917,7 +1971,7 @@ class PIEform(forms.ModelForm):
 
     def clean_product_id(self):
         product_id = self.cleaned_data.get('product_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', product_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(product_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return product_id
 
@@ -1933,3 +1987,13 @@ class PIEform(forms.ModelForm):
                     self._errors[month] = [month]
                     # break
         return cleaned_data
+
+
+# class EmergencyGeneratorsImport(forms.Form):
+#     class Meta:
+#         model = emergency_generators
+#         fields = " __all__"
+#         # fields = ('device_id', 'device_capacity', 'position', 'department', 'estimate',
+#         #           'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
+#         #           'november', 'december', 'image_note', 'message_board')
+

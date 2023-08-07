@@ -523,12 +523,18 @@ class solvent_aerosol_emission_sources(models.Model):
     solvent_amount = models.DecimalField(max_digits=20, decimal_places=0)
     solvent_capacity = models.DecimalField(max_digits=20, decimal_places=4)
     solvent_capacity_unit = models.CharField(max_length=20)
-    gas_name = models.CharField(max_length=20)
-    gas_ratio = models.CharField(max_length=20)
-    density = models.DecimalField(max_digits=30, decimal_places=10)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
+
+
+# 員工出差段數
+class gas_add(models.Model):
+    id = models.AutoField(primary_key=True)
+    gas_name = models.CharField(max_length=20)
+    gas_ratio = models.CharField(max_length=20)
+    density = models.DecimalField(max_digits=30, decimal_places=10)
+    gas_id = models.ForeignKey(solvent_aerosol_emission_sources, on_delete=models.CASCADE, db_column='gas_id')
 
 
 # 用電量

@@ -9,6 +9,7 @@ from django.shortcuts import render
 from urllib import parse
 from datetime import datetime
 from IPython.core.display import display
+# from .resource import *
 from django.contrib import messages
 from openpyxl import load_workbook
 # from .views import current_user_group_id
@@ -418,6 +419,13 @@ def public_version(request):
     else:
         # 呈現選擇保存位置的表格
         return render(request, 'home/carbon-system.html')
+
+
+# def import_excel(request):
+#     if request.method == 'POST':
+#         emergency_generators = EmergencyGeneratorsResource()
+#         # data = Dataset()
+#         pass
 
 
 @csrf_exempt

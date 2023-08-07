@@ -526,17 +526,28 @@ def load_table(request):
                         raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "溶劑、噴霧劑":
-                t_data = list(solvent_aerosol_emission_sources.objects.filter(company_id=factory_id, years=year).values("id", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit", "gas_name", "gas_ratio", "density"))
-                # 顯示有引用單據
-                for raw_data in t_data:
-                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
-                        raw_data["image"] = "✔"
+                t_data = []
+                raw_data = solvent_aerosol_emission_sources.objects.filter(company_id=factory_id, years=year).values("id", "solvent_name", "solvent_amount", "solvent_capacity", "solvent_capacity_unit")
+                for i in range(raw_data.count()):
+                    single_data = raw_data[i]
+                    solvent_aerosol_emission_sources_id = raw_data[i].get('id')
+                    gas = gas_add.objects.filter(gas_id=solvent_aerosol_emission_sources_id).values("gas_name", "gas_ratio", "density")
+                    if len(gas) > 1:
+                        single_data["gas_name"] = gas.first().get('gas_name') + "*"
                     else:
-                        raw_data["image"] = None
+                        single_data["gas_name"] = gas.first().get('gas_name')
+                    single_data["gas_ratio"] = gas.first().get('gas_ratio')
+                    single_data["density"] = gas.first().get('density')
+                # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "用電量":
                 t_data = []
-                # 將要運算的值分別撈出(逸散率/填充量)
+                # 將要運算的值分別撈出(逸散率/填充量)1
                 raw_data = electricity.objects.filter(company_id=factory_id, years=year).values("id", "EMI_id", "meter_location", "address",
                                                                                                 "january", "february", "march", "april",
                                                                                                 "may", "june", "july", "august",
@@ -1945,8 +1956,8 @@ def waste_sludge_add(request):
 # 溶劑、噴霧劑
 @login_required(login_url="/login/")
 def solvent_aerosol_emission_sources_add(request):
-    context = {}
     SAES_add = SolventAerosolEmissionSourcesForm(request)
+    gas_add_formset = GasAddFormSet
     if request.method == "POST":
         SAES_add = SolventAerosolEmissionSourcesForm(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
@@ -1954,17 +1965,33 @@ def solvent_aerosol_emission_sources_add(request):
             solvent = SAES_add.save(commit=False)
             solvent.company_id = factory_id
             solvent.years = request.session.get('years')
-            solvent.save()
-            # 根據前端submit input的name判斷
-            if 'addAnother' in request.POST:
-                messages.success(request, '表單已成功提交！')
-                return redirect('/solvent_aerosol_emission_sources_add/')
+            gas_add_formset = GasAddFormSet(request.POST, request.FILES, instance=solvent)
+            not_empty = False
+            for form in gas_add_formset:
+                if form.has_changed():
+                    not_empty = True
+                    break
+            if gas_add_formset.is_valid() and not_empty:
+                solvent.save()
+                gas_add_formset.save()
+                # 根據前端submit input的name判斷
+                if 'addAnother' in request.POST:
+                    messages.success(request, '表單已成功提交！')
+                    return redirect('/solvent_aerosol_emission_sources_add/')
+                else:
+                    return redirect('/carbon-system/')
             else:
-                return redirect('/carbon-system/')
+                if not not_empty:
+                    gas_add_formset.non_form_errors().append('請填寫添加氣體')
+                    print("gas_add_formset表單錯誤>>>>>>>>>>>>>>>>>>>>\n", gas_add_formset.non_form_errors())
+                print("gas_add_formset表單錯誤>>>>>>>>>>>>>>>>>>>>\n", gas_add_formset.errors)
         else:
             print("\n", SAES_add.errors)
-    context['SAES_add'] = SAES_add
-    context['years'] = request.session.get('years')
+    context = {
+        'SAES_add': SAES_add,
+        'GasAddFormSet': gas_add_formset,
+        'years':  request.session.get('years')
+    }
     return render(request, 'home/solvent-aerosol-emission-sources.html', context)
 
 
@@ -2244,7 +2271,6 @@ def employee_business_trip_add(request):
                 # 根據前端submit input的name判斷
                 if 'addAnother' in request.POST:
                     messages.success(request, '表單已成功提交！')
-                    print('request.method', request.method)
                     print('表單已成功提交')
                     return redirect('/employee_business_trip_add/')
                 else:
@@ -2551,6 +2577,9 @@ def bar_action(request):
             else:
                 return message
 
+        # if 'import_excel' in request.GET:
+        #     pass
+
 
 # 編輯轉跳
 @permission_required('home.change_emergency_generators', login_url="/login/", raise_exception=True)
@@ -2597,7 +2626,7 @@ def edit_device(request, error_from=None, error_formset=None):
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
     }
     formsetName = {
-        "24": CommuteFormSet, "25": TripSectionFormSet
+        "18": GasAddFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -2764,7 +2793,8 @@ def update_device(request, single_dataID):
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
     }
     formsetName = {
-        "24": CommuteFormSet, "25": TripSectionFormSet
+        "18": GasAddFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
+
     }
     datasheet_id = request.session.get('dropdown_three')
     if modelName.get(datasheet_id) and formName.get(datasheet_id):
