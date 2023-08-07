@@ -1212,17 +1212,12 @@ class WasteSludgeForm(forms.ModelForm):
 class SolventAerosolEmissionSourcesForm(forms.ModelForm):
     class Meta:
         model = solvent_aerosol_emission_sources
-        fields = ('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit',
-                  # 'gas_name', 'gas_ratio', 'density',
-                  'image_note', 'message_board')
+        fields = ('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'image_note', 'message_board')
         widgets = {
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
             'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數'}),
             'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'solvent_capacity_unit': forms.Select(attrs={'id': 'solvent_capacity_unit', 'style': 'width:100px'}, choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
-            # 'gas_name': forms.Select(attrs={'id': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
-            # 'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1246,52 +1241,17 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return solvent_capacity
 
-    # def clean_gas_name(self):
-    #     gas_name = self.cleaned_data.get('gas_name')
-    #     if gas_name == "":
-    #         raise forms.ValidationError("請選擇氣體名稱", 'invalid')
-    #     return gas_name
-    #
-    # def clean_gas_ratio(self):
-    #     gas_ratio = self.cleaned_data.get('gas_ratio')
-    #     if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(gas_ratio)):
-    #         raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
-    #     return gas_ratio
-    #
-    # def clean_density(self):
-    #     density = self.cleaned_data.get('density')
-    #     if not re.match(r'^[0-9]+(.[0-9]{0,10})?$', str(density)):
-    #         raise forms.ValidationError("只能輸入正實數(小數點後十位)", 'invalid')
-    #     return density
-
 
 # 添加氣體(溶劑噴霧劑表中表)
 class GasAddFormSet(forms.ModelForm):
     class Meta:
         model = gas_add
-        fields = ('gas_name', 'gas_ratio', 'density', )
+        fields = ('gas_name', 'gas_ratio', 'density',)
         widgets = {
-            # 'gas_name': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'gas_ratio': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
-            # 'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'})
             'gas_name': forms.Select(attrs={'class': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
             'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
             'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
         }
-
-    # def clean_transportation(self):
-    #     transportation = self.cleaned_data['transportation']
-    #     for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
-    #         if transportation == BUSINESS_TRANSPORTATION[1]:
-    #             return transportation
-    #     print('有低能兒亂改表單:', transportation)
-    #     raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
-    #
-    # def clean_distance(self):
-    #     distance = self.cleaned_data.get('distance')
-    #     if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(distance)) or distance <= 0:
-    #         raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
-    #     return distance
 
     def clean_gas_name(self):
         gas_name = self.cleaned_data.get('gas_name')
@@ -1582,7 +1542,7 @@ class ECform(forms.ModelForm):
 class CommuteFormSet(forms.ModelForm):
     class Meta:
         model = transportation_way
-        fields = ('transportation', )
+        fields = ('transportation',)
         widgets = {
             'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
             # 'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control', 'required': 'required'}),
@@ -1643,7 +1603,7 @@ class EBTform(forms.ModelForm):
 class TripSectionFormSet(forms.ModelForm):
     class Meta:
         model = trip_section
-        fields = ('departure', 'transportation', 'distance', )
+        fields = ('departure', 'transportation', 'distance',)
         widgets = {
             'departure': forms.TextInput(attrs={'class': 'form-control'}),
             'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
@@ -1988,7 +1948,6 @@ class PIEform(forms.ModelForm):
                     # break
         return cleaned_data
 
-
 # class EmergencyGeneratorsImport(forms.Form):
 #     class Meta:
 #         model = emergency_generators
@@ -1996,4 +1955,3 @@ class PIEform(forms.ModelForm):
 #         # fields = ('device_id', 'device_capacity', 'position', 'department', 'estimate',
 #         #           'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
 #         #           'november', 'december', 'image_note', 'message_board')
-

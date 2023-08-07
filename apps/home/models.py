@@ -528,7 +528,7 @@ class solvent_aerosol_emission_sources(models.Model):
     company_id = models.IntegerField()
 
 
-# 員工出差段數
+# 添加氣體
 class gas_add(models.Model):
     id = models.AutoField(primary_key=True)
     gas_name = models.CharField(max_length=20)
