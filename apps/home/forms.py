@@ -45,11 +45,10 @@ EBT_TRANSPORTATION_CHOICES = [
     ('飛機', '飛機'),
 ]
 FUEL_TYPE_CHOICES = [
-    ('92汽油', '92汽油'),
-    ('95汽油', '95汽油'),
-    ('98汽油', '98汽油'),
+    ('', '------'),
+    ('汽油', '汽油'),
     ('柴油', '柴油'),
-    ('電動車', '電動車'),
+    ('電力', '電力(不列入計算)'),
 ]
 METERING_METHOD_CHOICES = [
     ('油車', '油車'),
@@ -73,7 +72,8 @@ VEHICLE_TYPE_CHOICES = [
     ('貨車', '貨車'),
     ('堆高機', '堆高機'),
     ('電動車', '電動車'),
-    ('摩托車', '摩托車')
+    ('油電車', '油電車'),
+    ('機車', '機車')
 ]
 PROCESS_UNIT_CHOICES = [
     ('公斤', '公斤'),
@@ -422,18 +422,19 @@ class CEform(forms.ModelForm):
 class OFform(forms.ModelForm):
     class Meta:
         model = official_car
-        fields = ('vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method',
+        fields = ('vehicle_type', 'device_id', 'fuel_type', 'department',
+                  # 'metering_method',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december',
                   'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july', 'urea_august',
                   'urea_september', 'urea_october', 'urea_november', 'urea_december',
-                  'image_note', 'message_board')
+                  'urea_content_median', 'urea_water_median', 'image_note', 'message_board')
         widgets = {
-            'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
+            'vehicle_type': forms.Select(attrs={'id': 'vehicle_type', 'style': 'width:150px'}, choices=VEHICLE_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
+            'fuel_type': forms.Select(attrs={'id': 'fuel_type', 'style': 'width:150px'}, choices=FUEL_TYPE_CHOICES),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
-            'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES, attrs={'class': 'form-check-input'}),
+            # 'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES, attrs={'class': 'form-check-input'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -458,6 +459,12 @@ class OFform(forms.ModelForm):
             'urea_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_content_median': forms.TextInput(attrs={'class': 'form-control'}),
+            'urea_water_median': forms.TextInput(attrs={'class': 'form-control'}),
+            # 'urea_content_median': forms.TextInput(attrs={'class': 'form-control', 'value': '32.50'}),
+            # 'urea_water_median': forms.TextInput(attrs={'class': 'form-control', 'value': '1.09'}),
+            # 'urea_content_median': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            # 'urea_water_median': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -465,6 +472,8 @@ class OFform(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
+        self.fields['urea_content_median'].required = False
+        self.fields['urea_water_median'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -473,6 +482,28 @@ class OFform(forms.ModelForm):
         if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
+
+    def clean_urea_content_median(self):
+        fuel_type = self.cleaned_data.get('fuel_type')
+        urea_content_median = self.cleaned_data.get('urea_content_median')
+        if fuel_type == '柴油':
+            if urea_content_median is None:
+                raise forms.ValidationError("柴油請輸入該欄位，中油參考值(32.5)", 'invalid')
+
+        # if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
+        #     raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return urea_content_median
+
+    def clean_urea_water_median(self):
+        fuel_type = self.cleaned_data.get('fuel_type')
+        urea_water_median = self.cleaned_data.get('urea_water_median')
+        if fuel_type == '柴油':
+            if urea_water_median is None:
+                raise forms.ValidationError("柴油請輸入該欄位，中油參考值(1.09)", 'invalid')
+
+        # if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
+        #     raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return urea_water_median
 
     def clean(self):
         cleaned_data = self.cleaned_data

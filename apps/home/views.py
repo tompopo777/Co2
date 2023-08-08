@@ -195,13 +195,15 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.filter(company_id=factory_id, years=year).values("id", "vehicle_type", "device_id", "fuel_type", "department", "metering_method")
+                raw_data = official_car.objects.filter(company_id=factory_id, years=year).values("id", "vehicle_type", "device_id", "department", "fuel_type", "urea_content_median", "urea_water_median")
+
                 consumptions_data = official_car.objects.filter(company_id=factory_id, years=year).values("january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                           "september", "october", "november", "december")
 
                 urea_data = official_car.objects.filter(company_id=factory_id, years=year).values("urea_january", "urea_february", "urea_march", "urea_april",
                                                                                                   "urea_may", "urea_june", "urea_july", "urea_august",
                                                                                                   "urea_september", "urea_october", "urea_november", "urea_december")
+
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
                     single_data = raw_data[i]
@@ -2898,7 +2900,7 @@ def add_title(request):
             # 公務車
             "3": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "類別", "編號", "燃料種類", "所屬單位", "計程方式"],
+                "內容": ["序號", "類別", "編號", "所屬單位", "燃料種類", "尿素含量中間值(%)", "尿素水換算中間值(g/cm<sup>3</sup>)"],
                 "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "佐證資料": ["引用單據"],
