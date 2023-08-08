@@ -47,12 +47,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-2">
+                                                {% for error in form.vehicle_type.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>車輛類別 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.vehicle_type }}
                                                 </div>
                                             </div>
                                             <div class="col-2">
+                                                {% for error in form.fuel_type.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.fuel_type }}
@@ -330,46 +336,8 @@
             }
         });
 
-        /*
-        function handleCheckboxClick() {
-            let oil = document.getElementById("id_metering_method_0");
-            let electric = document.getElementById("id_metering_method_1");
-            let miles = document.getElementById("id_metering_method_2");
-            let amountTable = document.getElementById("amountTable");
-            let ureaTable = document.getElementById("ureaTable");
-            let descriptionColumn = document.getElementById("descriptionColumn");
-            let spanElement = document.createElement("span");
-            spanElement.innerHTML = '<span style="color:red; font-size:16px;">* </span>';
-            if (oil.checked) {
-                amountTable.style.display = "table";
-                ureaTable.style.display = "table-row";
-                descriptionColumn.innerText = ""
-                descriptionColumn.innerText = "加油量(單位：公升) "
-                descriptionColumn.prepend(spanElement);
-
-            } else if (electric.checked) {
-                amountTable.style.display = "table";
-                ureaTable.style.display = "none";
-                descriptionColumn.innerText = ""
-                descriptionColumn.innerText = "用電量(單位：度) "
-                descriptionColumn.prepend(spanElement);
-
-            } else if (miles.checked) {
-                amountTable.style.display = "table";
-                ureaTable.style.display = "none";
-                descriptionColumn.innerText = ""
-                descriptionColumn.innerText = "公里數(單位：公里) "
-                descriptionColumn.prepend(spanElement);
-
-            } else {
-                amountTable.style.display = "none";
-            }
-        }
-         */
-
         // 表單錯誤提示
         $(document).ready(function () {
-            {#handleCheckboxClick()#}
             // 表單錯誤提示
             {% if form.errors %}
                 let error_name = "";
@@ -533,6 +501,7 @@
             }
         })
 
+        // 燃料種類選擇柴油
         fuel_type.addEventListener('change', function () {
             let ureaTable = document.getElementById('ureaTable')
             let urea_median = document.getElementById('urea_median')
@@ -550,13 +519,16 @@
             }
         })
 
+        // 送出時取消表單上的disabled
         $(".submit").on('click', function () {
+            console.warn('submit')
             let gas_input = document.querySelectorAll("#monthTable > td > div > input")
             let fuel_type = document.getElementById("fuel_type")
             for (let i = 0; i < gas_input.length; i++) {
                 gas_input[i].disabled = false;
             }
             fuel_type.disabled = false;
+            fuel_type.options[3].disabled = false;
         })
     </script>
 {% endblock javascripts %}

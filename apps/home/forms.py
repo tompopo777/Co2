@@ -50,11 +50,6 @@ FUEL_TYPE_CHOICES = [
     ('柴油', '柴油'),
     ('電力', '電力(不列入計算)'),
 ]
-METERING_METHOD_CHOICES = [
-    ('油車', '油車'),
-    ('電動車', '電動車'),
-    ('公里數', '公里數'),
-]
 WASTE_DISPOSAL_CHOICES = [
     ('焚化', '焚化'),
     ('洗淨', '洗淨'),
@@ -423,7 +418,6 @@ class OFform(forms.ModelForm):
     class Meta:
         model = official_car
         fields = ('vehicle_type', 'device_id', 'fuel_type', 'department',
-                  # 'metering_method',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december',
                   'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july', 'urea_august',
@@ -434,7 +428,6 @@ class OFform(forms.ModelForm):
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'fuel_type': forms.Select(attrs={'id': 'fuel_type', 'style': 'width:150px'}, choices=FUEL_TYPE_CHOICES),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
-            # 'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES, attrs={'class': 'form-check-input'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -461,10 +454,6 @@ class OFform(forms.ModelForm):
             'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'urea_content_median': forms.TextInput(attrs={'class': 'form-control'}),
             'urea_water_median': forms.TextInput(attrs={'class': 'form-control'}),
-            # 'urea_content_median': forms.TextInput(attrs={'class': 'form-control', 'value': '32.50'}),
-            # 'urea_water_median': forms.TextInput(attrs={'class': 'form-control', 'value': '1.09'}),
-            # 'urea_content_median': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            # 'urea_water_median': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -489,9 +478,6 @@ class OFform(forms.ModelForm):
         if fuel_type == '柴油':
             if urea_content_median is None:
                 raise forms.ValidationError("柴油請輸入該欄位，中油參考值(32.5)", 'invalid')
-
-        # if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
-        #     raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return urea_content_median
 
     def clean_urea_water_median(self):
@@ -500,10 +486,23 @@ class OFform(forms.ModelForm):
         if fuel_type == '柴油':
             if urea_water_median is None:
                 raise forms.ValidationError("柴油請輸入該欄位，中油參考值(1.09)", 'invalid')
-
-        # if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
-        #     raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return urea_water_median
+
+    def clean_vehicle_type(self):
+        vehicle_type = self.cleaned_data['vehicle_type']
+        for VEHICLE_TYPE in VEHICLE_TYPE_CHOICES:
+            if vehicle_type == VEHICLE_TYPE[0]:
+                return vehicle_type
+        print('亂改表單內容:', vehicle_type)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+    def clean_fuel_type(self):
+        fuel_type = self.cleaned_data['fuel_type']
+        for FUEL_TYPE in FUEL_TYPE_CHOICES:
+            if fuel_type == FUEL_TYPE[0]:
+                return fuel_type
+        print('亂改表單內容:', fuel_type)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -1576,13 +1575,12 @@ class CommuteFormSet(forms.ModelForm):
         fields = ('transportation',)
         widgets = {
             'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
-            # 'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control', 'required': 'required'}),
         }
 
     def clean_transportation(self):
         transportation = self.cleaned_data['transportation']
         for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
-            if transportation == BUSINESS_TRANSPORTATION[1]:
+            if transportation == BUSINESS_TRANSPORTATION[0]:
                 return transportation
         print('有低能兒亂改表單:', transportation)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1644,7 +1642,7 @@ class TripSectionFormSet(forms.ModelForm):
     def clean_transportation(self):
         transportation = self.cleaned_data['transportation']
         for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
-            if transportation == BUSINESS_TRANSPORTATION[1]:
+            if transportation == BUSINESS_TRANSPORTATION[0]:
                 return transportation
         print('有低能兒亂改表單:', transportation)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1696,7 +1694,7 @@ class WASTEform(forms.ModelForm):
     def clean_waste_location(self):
         waste_location = self.cleaned_data['waste_location']
         for WASTE_LOCATION in WASTE_LOCATION_CHOICES:
-            if waste_location == WASTE_LOCATION[1]:
+            if waste_location == WASTE_LOCATION[0]:
                 return waste_location
         print('有低能兒亂改表單:', waste_location)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1704,7 +1702,7 @@ class WASTEform(forms.ModelForm):
     def clean_waste_disposal(self):
         waste_disposal = self.cleaned_data['waste_disposal']
         for WASTE_DISPOSAL in WASTE_DISPOSAL_CHOICES:
-            if waste_disposal == WASTE_DISPOSAL[1]:
+            if waste_disposal == WASTE_DISPOSAL[0]:
                 return waste_disposal
         print('有低能兒亂改表單:', waste_disposal)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1715,7 +1713,7 @@ class WASTEform(forms.ModelForm):
             raise forms.ValidationError("請選擇下拉選單", 'invalid')
         else:
             for TRANSPORT_TYPE in TRANSPORT_TYPE_CHOICES:
-                if transport_type == TRANSPORT_TYPE[1]:
+                if transport_type == TRANSPORT_TYPE[0]:
                     return transport_type
             print('有低能兒亂改表單:', transport_type)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1911,7 +1909,7 @@ class PMform(forms.ModelForm):
             raise forms.ValidationError("請選擇下拉選單", 'invalid')
         else:
             for MATERIAL_TYPE in MATERIAL_TYPE_CHOICE:
-                if material_type == MATERIAL_TYPE[1]:
+                if material_type == MATERIAL_TYPE[0]:
                     return material_type
             print('有低能兒亂改表單:', material_type)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')

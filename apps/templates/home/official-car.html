@@ -47,12 +47,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-2">
+                                                {% for error in OffCar_add.vehicle_type.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>車輛類別 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ OffCar_add.vehicle_type }}
                                                 </div>
                                             </div>
                                             <div class="col-2">
+                                                {% for error in OffCar_add.fuel_type.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>燃料種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ OffCar_add.fuel_type }}
@@ -510,6 +516,7 @@
             }
         })
 
+        // 燃料種類選擇柴油
         let fuel_type = document.getElementById('fuel_type')
         fuel_type.addEventListener('change', function () {
             let ureaTable = document.getElementById('ureaTable')
@@ -528,6 +535,7 @@
             }
         })
 
+        // 送出時取消表單上的disabled
         $(".submit").on('click', function () {
             let gas_input = document.querySelectorAll("#monthTable > td > div > input")
             let fuel_type = document.getElementById("fuel_type")
@@ -535,6 +543,7 @@
                     gas_input[i].disabled = false;
                 }
             fuel_type.disabled = false;
+            fuel_type.options[3].disabled = false;
         })
     </script>
 
