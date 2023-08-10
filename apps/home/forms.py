@@ -218,8 +218,9 @@ MATERIAL_TYPE_CHOICE = [
 
 # 人添清冊
 CLASSIFICATION_CHOICES = [
-    ('員工', '員工'),
-    ('員工宿舍', '員工宿舍'),
+    ('內部人員', '內部人員'),
+    ('外部人員', '外部人員'),
+    ('宿舍', '宿舍'),
 ]
 
 # 廢棄物處置地點
@@ -1055,36 +1056,104 @@ class EXform(forms.ModelForm):
 class PIform(forms.ModelForm):
     class Meta:
         model = personnel_inventory
-        fields = ('classification', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
-                  'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november',
-                  'WKhours_december', 'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june',
-                  'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'message_board')
+        fields = ('classification',
+                  'people_number_jan', 'people_number_feb', 'people_number_mar', 'people_number_apr', 'people_number_may',
+                  'people_number_jun', 'people_number_jul', 'people_number_aug', 'people_number_sept', 'people_number_oct', 'people_number_nov', 'people_number_dec',
+                  'daily_working_hours_jan', 'daily_working_hours_feb', 'daily_working_hours_mar', 'daily_working_hours_apr', 'daily_working_hours_may',
+                  'daily_working_hours_jun', 'daily_working_hours_jul', 'daily_working_hours_aug', 'daily_working_hours_sept', 'daily_working_hours_oct', 'daily_working_hours_nov', 'daily_working_hours_dec',
+                  'work_day_jan', 'work_day_feb', 'work_day_mar', 'work_day_apr', 'work_day_may', 'work_day_jun', 'work_day_jul', 'work_day_aug', 'work_day_sept', 'work_day_oct', 'work_day_nov', 'work_day_dec',
+                  'holidays_jan', 'holidays_feb', 'holidays_mar', 'holidays_apr', 'holidays_may', 'holidays_jun', 'holidays_jul', 'holidays_aug', 'holidays_sept', 'holidays_oct', 'holidays_nov', 'holidays_dec',
+                  'overtime_jan', 'overtime_feb', 'overtime_mar', 'overtime_apr', 'overtime_may', 'overtime_jun', 'overtime_jul', 'overtime_aug', 'overtime_sept', 'overtime_oct', 'overtime_nov', 'overtime_dec',
+                  'leave_hours_jan', 'leave_hours_feb', 'leave_hours_mar', 'leave_hours_apr', 'leave_hours_may', 'leave_hours_jun', 'leave_hours_jul', 'leave_hours_aug', 'leave_hours_sept', 'leave_hours_oct', 'leave_hours_nov', 'leave_hours_dec',
+                  'compensatory_leave_hours_jan', 'compensatory_leave_hours_feb', 'compensatory_leave_hours_mar', 'compensatory_leave_hours_apr', 'compensatory_leave_hours_may',
+                  'compensatory_leave_hours_jun', 'compensatory_leave_hours_jul', 'compensatory_leave_hours_aug', 'compensatory_leave_hours_sept', 'compensatory_leave_hours_oct', 'compensatory_leave_hours_nov', 'compensatory_leave_hours_dec',
+                  'image_note', 'message_board')
         widgets = {
             'classification': forms.Select(attrs={'id': 'classification', 'style': 'width:100px'}, choices=CLASSIFICATION_CHOICES),
-            'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1094,65 +1163,36 @@ class PIform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_classification(self):
+        classification = self.cleaned_data['classification']
+        for CLASSIFICATION in CLASSIFICATION_CHOICES:
+            if classification == CLASSIFICATION[0]:
+                return classification
+        print('亂改表單內容:', classification)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
-# 委外人員清冊
-class EMPform(forms.ModelForm):
-    class Meta:
-        model = employee
-        fields = ('career',
-                  'employeeNum_january', 'employeeNum_february', 'employeeNum_march', 'employeeNum_april', 'employeeNum_may', 'employeeNum_june', 'employeeNum_july', 'employeeNum_august',
-                  'employeeNum_september', 'employeeNum_october', 'employeeNum_november', 'employeeNum_december',
-                  'WKdays_january', 'WKdays_february', 'WKdays_march', 'WKdays_april', 'WKdays_may', 'WKdays_june', 'WKdays_july', 'WKdays_august',
-                  'WKdays_september', 'WKdays_october', 'WKdays_november', 'WKdays_december',
-                  'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august',
-                  'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
-                  'image_note', 'message_board')
-        widgets = {
-            'career': forms.Select(attrs={'id': 'career', 'style': 'width:100px'}, choices=CAREER_CHOICES),
-            'employeeNum_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
-        }
-
-    def __init__(self, request, *args, **kwargs):
-        super(EMPform, self).__init__(*args, **kwargs)
-        self.fields['image_note'].required = False
-        self.fields['message_board'].required = False
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['people_number_jan', 'people_number_feb', 'people_number_mar', 'people_number_apr', 'people_number_may',
+                  'people_number_jun', 'people_number_jul', 'people_number_aug', 'people_number_sept', 'people_number_oct', 'people_number_nov', 'people_number_dec',
+                  'daily_working_hours_jan', 'daily_working_hours_feb', 'daily_working_hours_mar', 'daily_working_hours_apr', 'daily_working_hours_may',
+                  'daily_working_hours_jun', 'daily_working_hours_jul', 'daily_working_hours_aug', 'daily_working_hours_sept', 'daily_working_hours_oct', 'daily_working_hours_nov', 'daily_working_hours_dec',
+                  'work_day_jan', 'work_day_feb', 'work_day_mar', 'work_day_apr', 'work_day_may', 'work_day_jun', 'work_day_jul', 'work_day_aug', 'work_day_sept', 'work_day_oct', 'work_day_nov', 'work_day_dec',
+                  'holidays_jan', 'holidays_feb', 'holidays_mar', 'holidays_apr', 'holidays_may', 'holidays_jun', 'holidays_jul', 'holidays_aug', 'holidays_sept', 'holidays_oct', 'holidays_nov', 'holidays_dec',
+                  'overtime_jan', 'overtime_feb', 'overtime_mar', 'overtime_apr', 'overtime_may', 'overtime_jun', 'overtime_jul', 'overtime_aug', 'overtime_sept', 'overtime_oct', 'overtime_nov', 'overtime_dec',
+                  'leave_hours_jan', 'leave_hours_feb', 'leave_hours_mar', 'leave_hours_apr', 'leave_hours_may', 'leave_hours_jun', 'leave_hours_jul', 'leave_hours_aug', 'leave_hours_sept', 'leave_hours_oct', 'leave_hours_nov', 'leave_hours_dec',
+                  'compensatory_leave_hours_jan', 'compensatory_leave_hours_feb', 'compensatory_leave_hours_mar', 'compensatory_leave_hours_apr', 'compensatory_leave_hours_may',
+                  'compensatory_leave_hours_jun', 'compensatory_leave_hours_jul', 'compensatory_leave_hours_aug', 'compensatory_leave_hours_sept', 'compensatory_leave_hours_oct', 'compensatory_leave_hours_nov', 'compensatory_leave_hours_dec'
+                  ]
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    print('value', month)
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
 
 
 # 廢水

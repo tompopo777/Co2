@@ -208,16 +208,20 @@ def load_table(request):
                 for i in range(raw_data.count()):
                     single_data = raw_data[i]
                     consumption_total = 0
-                    for j in consumptions_data[i]:
-                        # 「逐一」將資料(耗用量)丟回字典
-                        single_data[j] = consumptions_data[i].get(j)
-                        consumption_total += consumptions_data[i].get(j)
-                    # 將計算後的耗用量丟回字典
-                    single_data["consumption_total"] = consumption_total
+                    if raw_data[i].get('fuel_type') == '電力':
+                        for j in consumptions_data[i]:
+                            single_data[j] = None
+                        single_data["consumption_total"] = None
+                    else:
+                        for j in consumptions_data[i]:
+                            # 「逐一」將資料(耗用量)丟回字典
+                            single_data[j] = consumptions_data[i].get(j)
+                            consumption_total += consumptions_data[i].get(j)
+                        # 將計算後的耗用量丟回字典
+                        single_data["consumption_total"] = consumption_total
                     urea_total = 0
                     for k in urea_data[i]:
                         urea_total += urea_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
-
                     if urea_total == 0:
                         for n in urea_data[i]:
                             single_data[n] = None  # 「逐一」將資料(尿素)丟回字典
@@ -445,34 +449,38 @@ def load_table(request):
                         raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "人天清冊":
-                t_data = list(
-                    personnel_inventory.objects.filter(company_id=factory_id, years=year).values("id", "classification",
-                                                                                                 "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june",
-                                                                                                 "WKhours_july", "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december",
-                                                                                                 "WKnum_january", "WKnum_february", "WKnum_march", "WKnum_april", "WKnum_may", "WKnum_june",
-                                                                                                 "WKnum_july", "WKnum_august", "WKnum_september", "WKnum_october", "WKnum_november", "WKnum_december"))
-                # 顯示有引用單據
-                for raw_data in t_data:
-                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
-                        raw_data["image"] = "✔"
+                t_data = []
+                # 「合計」前後的資料分開抓
+                raw_data = personnel_inventory.objects.filter(company_id=factory_id, years=year).values(
+                    "id", "classification",
+                    'people_number_jan', 'people_number_feb', 'people_number_mar', 'people_number_apr', 'people_number_may',
+                    'people_number_jun', 'people_number_jul', 'people_number_aug', 'people_number_sept', 'people_number_oct', 'people_number_nov', 'people_number_dec',
+                    'daily_working_hours_jan', 'daily_working_hours_feb', 'daily_working_hours_mar', 'daily_working_hours_apr', 'daily_working_hours_may',
+                    'daily_working_hours_jun', 'daily_working_hours_jul', 'daily_working_hours_aug', 'daily_working_hours_sept', 'daily_working_hours_oct', 'daily_working_hours_nov', 'daily_working_hours_dec',
+                    'work_day_jan', 'work_day_feb', 'work_day_mar', 'work_day_apr', 'work_day_may', 'work_day_jun', 'work_day_jul', 'work_day_aug', 'work_day_sept', 'work_day_oct', 'work_day_nov', 'work_day_dec')
+
+                without_outer = personnel_inventory.objects.filter(company_id=factory_id, years=year).values(
+                    'holidays_jan', 'holidays_feb', 'holidays_mar', 'holidays_apr', 'holidays_may', 'holidays_jun', 'holidays_jul', 'holidays_aug', 'holidays_sept', 'holidays_oct', 'holidays_nov', 'holidays_dec',
+                    'overtime_jan', 'overtime_feb', 'overtime_mar', 'overtime_apr', 'overtime_may', 'overtime_jun', 'overtime_jul', 'overtime_aug', 'overtime_sept', 'overtime_oct', 'overtime_nov', 'overtime_dec',
+                    'leave_hours_jan', 'leave_hours_feb', 'leave_hours_mar', 'leave_hours_apr', 'leave_hours_may', 'leave_hours_jun', 'leave_hours_jul', 'leave_hours_aug', 'leave_hours_sept', 'leave_hours_oct', 'leave_hours_nov', 'leave_hours_dec',
+                    'compensatory_leave_hours_jan', 'compensatory_leave_hours_feb', 'compensatory_leave_hours_mar', 'compensatory_leave_hours_apr', 'compensatory_leave_hours_may',
+                    'compensatory_leave_hours_jun', 'compensatory_leave_hours_jul', 'compensatory_leave_hours_aug', 'compensatory_leave_hours_sept', 'compensatory_leave_hours_oct', 'compensatory_leave_hours_nov', 'compensatory_leave_hours_dec')
+
+                # 類型=外部人員，後面四個欄位轉為空值
+                for i in range(raw_data.count()):
+                    single_data = raw_data[i]
+                    if raw_data[i].get('classification') == '外部人員':
+                        for j in without_outer[i]:
+                            single_data[j] = None
                     else:
-                        raw_data["image"] = None
-                return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "委外人員清冊":
-                t_data = list(
-                    employee.objects.filter(company_id=factory_id, years=year).values("id", "career",
-                                                                                      "employeeNum_january", "employeeNum_february", "employeeNum_march", "employeeNum_april", "employeeNum_may", "employeeNum_june",
-                                                                                      "employeeNum_july", "employeeNum_august", "employeeNum_september", "employeeNum_october", "employeeNum_november", "employeeNum_december",
-                                                                                      "WKdays_january", "WKdays_february", "WKdays_march", "WKdays_april", "WKdays_may", "WKdays_june", "WKdays_july", "WKdays_august",
-                                                                                      "WKdays_september", "WKdays_october", "WKdays_november", "WKdays_december",
-                                                                                      "WKhours_january", "WKhours_february", "WKhours_march", "WKhours_april", "WKhours_may", "WKhours_june", "WKhours_july",
-                                                                                      "WKhours_august", "WKhours_september", "WKhours_october", "WKhours_november", "WKhours_december"))
-                # 顯示有引用單據
-                for raw_data in t_data:
-                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
-                        raw_data["image"] = "✔"
+                        for j in without_outer[i]:
+                            single_data[j] = without_outer[i].get(j)
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
                     else:
-                        raw_data["image"] = None
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢水":
                 t_data = []
@@ -540,7 +548,7 @@ def load_table(request):
                         single_data["gas_name"] = gas.first().get('gas_name')
                     single_data["gas_ratio"] = gas.first().get('gas_ratio')
                     single_data["density"] = gas.first().get('density')
-                # 顯示有引用單據
+                    # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
                     else:
@@ -790,7 +798,7 @@ def copy_last_year_data(request):
             "12": other_device,
             "13": extinguisher,
             "14": personnel_inventory,
-            "15": employee,
+            # "15": employee,
             "16": waste_water,
             "17": waste_sludge,
             "18": solvent_aerosol_emission_sources,
@@ -1854,39 +1862,6 @@ def personnel_inventory_add(request):
     return render(request, 'home/personnel-inventory.html', context)
 
 
-@login_required(login_url="/login/")
-def employee_add(request):
-    context = {}
-    EMP_add = EMPform(request)
-    if request.method == "POST":
-        EMP_add = EMPform(request, request.POST, request.FILES)
-        factory_id = request.session.get('factory_id')
-        if EMP_add.is_valid():
-            EMP_add = EMP_add.save(commit=False)
-            EMP_add.company_id = factory_id
-            EMP_add.years = request.session.get('years')
-            EMP_add.save()
-            stage = request.POST.get('stage')
-            image_path = request.FILES.getlist('file_field')
-            last_id = employee.objects.values("id").last().get("id")
-            table_id = employee.objects.values("did").last().get("did")
-            for img in image_path:
-                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
-                print(stage)
-                photo.save()
-            # 根據前端submit input的name判斷
-            if 'addAnother' in request.POST:
-                messages.success(request, '表單已成功提交！')
-                return redirect('/employee_add/')
-            else:
-                return redirect('/carbon-system/')
-        else:
-            print("\n", EMP_add.errors)
-    context['EMP_add'] = EMP_add
-    context['years'] = request.session.get('years')
-    return render(request, 'home/employee.html', context)
-
-
 # 廢水
 @login_required(login_url="/login/")
 def waste_water_add(request):
@@ -1992,7 +1967,7 @@ def solvent_aerosol_emission_sources_add(request):
     context = {
         'SAES_add': SAES_add,
         'GasAddFormSet': gas_add_formset,
-        'years':  request.session.get('years')
+        'years': request.session.get('years')
     }
     return render(request, 'home/solvent-aerosol-emission-sources.html', context)
 
@@ -2542,7 +2517,7 @@ def bar_action(request):
                 "12": other_device_add(request),
                 "13": extinguisher_add(request),
                 "14": personnel_inventory_add(request),
-                "15": employee_add(request),
+                # "15": employee_add(request),
                 "16": waste_water_add(request),
                 "17": waste_sludge_add(request),
                 "18": solvent_aerosol_emission_sources_add(request),
@@ -2603,7 +2578,7 @@ def edit_device(request, error_from=None, error_formset=None):
         "12": other_device,
         "13": extinguisher,
         "14": personnel_inventory,
-        "15": employee,
+        # "15": employee,
         "16": waste_water,
         "17": waste_sludge,
         "18": solvent_aerosol_emission_sources,
@@ -2622,7 +2597,8 @@ def edit_device(request, error_from=None, error_formset=None):
     formlName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
-        "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
+        "11": IMform, "12": ODform, "13": EXform, "14": PIform,
+        # "15": EMPform,
         "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
@@ -2770,7 +2746,7 @@ def update_device(request, single_dataID):
         "12": other_device,
         "13": extinguisher,
         "14": personnel_inventory,
-        "15": employee,
+        # "15": employee,
         "16": waste_water,
         "17": waste_sludge,
         "18": solvent_aerosol_emission_sources,
@@ -2789,7 +2765,8 @@ def update_device(request, single_dataID):
     formName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
         "6": RFform, "7": ACform, "8": VCform, "9": WDform, "10": IWDform,
-        "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
+        "11": IMform, "12": ODform, "13": EXform, "14": PIform,
+        # "15": EMPform,
         "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
@@ -2852,7 +2829,7 @@ def delete_device(request):
             "12": other_device,
             "13": extinguisher,
             "14": personnel_inventory,
-            "15": employee,
+            # "15": employee,
             "16": waste_water,
             "17": waste_sludge,
             "18": solvent_aerosol_emission_sources,
@@ -2901,7 +2878,7 @@ def add_title(request):
             "3": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "類別", "編號", "所屬單位", "燃料種類", "尿素含量中間值(%)", "尿素水換算中間值(g/cm<sup>3</sup>)"],
-                "耗用量(單位:油車𝓁/電車kWh/公里數km)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "耗用量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
                 "佐證資料": ["引用單據"],
             },
@@ -2972,8 +2949,13 @@ def add_title(request):
             "14": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "類型"],
-                "時數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
-                "人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "當月人數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "當月每日工時": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "當月工作天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "當月公休天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "當月加班天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "當月請假天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                "當月補休天數": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "佐證資料": ["引用單據"],
             },
             # 委外人員

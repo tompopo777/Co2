@@ -28,7 +28,6 @@ urlpatterns = [
                   path("other_device_add/", views.other_device_add),
                   path("extinguisher_add/", views.extinguisher_add),
                   path("personnel_inventory_add/", views.personnel_inventory_add),
-                  path("employee_add/", views.employee_add),
                   path("waste_water_add/", views.waste_water_add),
                   path("waste_sludge_add/", views.waste_sludge_add),
                   path("solvent_aerosol_emission_sources_add/", views.solvent_aerosol_emission_sources_add),
