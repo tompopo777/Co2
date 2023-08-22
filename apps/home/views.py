@@ -234,7 +234,7 @@ def load_table(request):
             elif a["d_name"] == "原物料使用":
                 t_data = list(
                     material.objects.filter(company_id=factory_id, years=year).values("id", "material_id", "material_type", "material_name",
-                                                                                      "process_add_name", "chemical_name", "chemical_formula", "carbon_content",
+                                                                                      "welding_rod_id", "welding_rod_name", "welding_rod_format", "carbon_content",
                                                                                       "january", "february", "march", "april",
                                                                                       "may", "june", "july", "august",
                                                                                       "september", "october", "november", "december"))
@@ -247,8 +247,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "製程添加化學品":
                 t_data = []
-                raw_data = process.objects.filter(company_id=factory_id, years=year).values("id", "process_stage", "material_id", "process_add_name",
-                                                                                            "carbon_content", "burn", "VOCs",
+                raw_data = process.objects.filter(company_id=factory_id, years=year).values("id", "process_stage", "chemical_id", "process_add_name",
+                                                                                            "chemical_name", "chemical_formula", "CAS_NO", "burn",
                                                                                             "january", "february", "march", "april",
                                                                                             "may", "june", "july", "august",
                                                                                             "september", "october", "november", "december")
@@ -266,7 +266,6 @@ def load_table(request):
                     single_data["total"] = consumption_total
                     # 將 estimate 替換成中文
                     single_data["burn"] = "是" if single_data["burn"] else "否"
-                    single_data["VOCs"] = "是" if single_data["VOCs"] else "否"
                     # 將單位丟回字典
                     for j in unit[i]:
                         single_data[j] = unit[i].get(j)
@@ -276,6 +275,17 @@ def load_table(request):
                     else:
                         single_data["image"] = None
                     t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "氣體":
+                t_data = list(
+                    material.objects.filter(company_id=factory_id, years=year).values("id", "receipt_number", "department", "receipt_date",
+                                                                                      "gas_name", "amount", "unit", "per_amount", "per_unit"))
+                # 顯示有引用單據
+                for raw_data in t_data:
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
+                        raw_data["image"] = "✔"
+                    else:
+                        raw_data["image"] = None
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
@@ -409,11 +419,11 @@ def load_table(request):
                         single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "設備清單":
+            elif a["d_name"] == "冷媒":
                 t_data = []
                 raw_data = other_device.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
                                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
-                                                                                                 "effusion_rate")
+                                                                                                 "filling_fix_volume", "device_type", "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -565,12 +575,11 @@ def load_table(request):
             elif a["d_name"] == "上游運輸":
                 t_data = list(
                     upstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW",
-                                                                                                     "organizational_use_products", "customer", "supplier", "supplier_address",
-                                                                                                     "trade_term", "receiving_address", "delivery_address",
-                                                                                                     "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                                                                     "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
-                                                                                                     "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
-                                                                                                     "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
+                                                                                                     "customer", "trade_term", "receiving_address", "delivery_address",
+                                                                                                     "transport_distance", "transport_country", "transport_type", "transport_fuel", "trips",
+                                                                                                     "overseas_transport_distance_nm", "overseas_transport_distance_km", "overseas_delivery", "overseas_arrive", "overseas_trips",
+                                                                                                     "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_trips",
+                                                                                                     "air_transport_distance", "air_delivery", "air_arrive", "air_trips"))
                 # 顯示有引用單據
                 for raw_data in t_data:
                     if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
@@ -580,10 +589,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "下游運輸":
                 t_data = list(
-                    downstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "supplier", "supplier_address",
-                                                                                                       "trade_term", "receiving_address", "delivery_address",
+                    downstream_transportation.objects.filter(company_id=factory_id, years=year).values("id", "acceptance_receipt", "commodity_name", "weight", "commodity_NW", "customer", "trade_term", "receiving_address", "delivery_address",
                                                                                                        "transport_distance", "transport_country", "transport_type", "transport_fuel", "paid", "trips",
-                                                                                                       "overseas_transport_distance", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
+                                                                                                       "overseas_transport_distance_nm", "overseas_transport_distance_km", "overseas_delivery", "overseas_arrive", "overseas_paid", "overseas_trips",
                                                                                                        "special_transport_distance", "special_transport_country", "special_transport_type", "special_transport_fuel", "special_paid", "special_trips",
                                                                                                        "air_transport_distance", "air_delivery", "air_arrive", "air_paid", "air_trips"))
                 # 顯示有引用單據
@@ -648,11 +656,33 @@ def load_table(request):
                         single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "廢棄物":
+            elif a["d_name"] == "廢棄物運輸":
                 t_data = []
                 raw_data = waste.objects.filter(company_id=factory_id, years=year).values("id", "waste_name", "waste_weigh", "waste_date",
                                                                                           "waste_location", "waste_disposal", "waste_disposal_vendor",
                                                                                           "transport_type", "transport_fuel", "transport_distance")
+                for i in range(raw_data.count()):
+                    # 計算單筆距離合計
+                    if raw_data[i].get("transport_distance") is None:
+                        tkm = "-"
+                    else:
+                        tkm = raw_data[i].get("waste_weigh") * raw_data[i].get("transport_distance")
+                    # print("Tkm::::::::::::::::::::::::::::::::::::::::", Tkm)
+                    # 抓單筆資料
+                    single_data = raw_data[i]
+                    # 將計算後的逸散量丟回字典
+                    single_data["total_distance"] = tkm
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
+                return JsonResponse(t_data, safe=False)
+            elif a["d_name"] == "廢棄物":
+                t_data = []
+                raw_data = waste.objects.filter(company_id=factory_id, years=year).values("id", "waste_name", "waste_weigh", "waste_date",
+                                                                                          "waste_location", "waste_disposal", "waste_disposal_vendor")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計
                     if raw_data[i].get("transport_distance") is None:
@@ -2265,6 +2295,39 @@ def employee_business_trip_add(request):
 
 
 @login_required(login_url="/login/")
+def waste_process_add(request):
+    context = {}
+    WP_add = WPform(request)
+    if request.method == "POST":
+        WP_add = WPform(request, request.POST, request.FILES)
+        factory_id = request.session.get('factory_id')
+        if WP_add.is_valid():
+            WP_add = WP_add.save(commit=False)
+            WP_add.company_id = factory_id
+            WP_add.years = request.session.get('years')
+            WP_add.save()
+            stage = request.POST.get('stage')
+            image_path = request.FILES.getlist('file_field')
+            last_id = waste.objects.values("id").last().get("id")
+            table_id = waste.objects.values("did").last().get("did")
+            for img in image_path:
+                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+                print(stage)
+                photo.save()
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                return redirect('/waste_add/')
+            else:
+                return redirect('/carbon-system/')
+        else:
+            print("\n", WP_add.errors)
+    context['WP_add'] = WP_add
+    context['years'] = request.session.get('years')
+    return render(request, 'home/waste-process.html', context)
+
+
+@login_required(login_url="/login/")
 def waste_add(request):
     context = {}
     WASTE_add = WASTEform(request)
@@ -2399,6 +2462,40 @@ def product_indirect_emissions_add(request):
     return render(request, 'home/product-indirect-emissions.html', context)
 
 
+# 製程-氣體
+@login_required(login_url="/login/")
+def process_gas_add(request):
+    context = {}
+    PG_add = PGform(request)
+    if request.method == "POST":
+        PG_add = PGform(request, request.POST, request.FILES)
+        factory_id = request.session.get('factory_id')
+        if PG_add.is_valid():
+            PG_add = PG_add.save(commit=False)
+            PG_add.company_id = factory_id
+            PG_add.years = request.session.get('years')
+            PG_add.save()
+            # stage = request.POST.get('stage')
+            # image_path = request.FILES.getlist('file_field')
+            # last_id = product_indirect_emissions.objects.values("id").last().get("id")
+            # table_id = product_indirect_emissions.objects.values("did").last().get("did")
+            # for img in image_path:
+            #     photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+            #     print(stage)
+            #     photo.save()
+            # 根據前端submit input的name判斷
+            if 'addAnother' in request.POST:
+                messages.success(request, '表單已成功提交！')
+                return redirect('/process_gas_add/')
+            else:
+                return redirect('/carbon-system/')
+        else:
+            print("\n", PG_add.errors)
+    context['PG_add'] = PG_add
+    context['years'] = request.session.get('years')
+    return render(request, 'home/process-gas.html', context)
+
+
 @login_required(login_url="/login/")
 def system_setting(request):
     if request.method == 'POST':
@@ -2528,7 +2625,9 @@ def bar_action(request):
                 "26": waste_add(request),
                 "27": pipe_wastewater_add(request),
                 "28": purchase_material_add(request),
-                "29": product_indirect_emissions_add(request)
+                "29": product_indirect_emissions_add(request),
+                "33": process_gas_add(request),
+                "34": waste_process(request)
             }
             device_function = None
             if function_dic.get(device_id):
@@ -2586,7 +2685,9 @@ def edit_device(request, error_from=None, error_formset=None):
         "26": waste,
         "27": pipe_wastewater,
         "28": purchase_material,
-        "29": product_indirect_emissions
+        "29": product_indirect_emissions,
+        "33": process_gas,
+        "34": waste_process
     }
     formlName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
@@ -2594,7 +2695,7 @@ def edit_device(request, error_from=None, error_formset=None):
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
         "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
-        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform, "33": PGform, "34": WPform
     }
     formsetName = {
         "24": CommuteFormSet, "25": TripSectionFormSet
@@ -2661,6 +2762,8 @@ def edit_device(request, error_from=None, error_formset=None):
                 "27": "home/pipe-wastewater-edit.html",
                 "28": "home/purchase-material-edit.html",
                 "29": "home/product-indirect-emissions-edit.html",
+                "33": "home/process-gas-edit.html",
+                "34": "home/waste-process-edit.html"
             }
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
@@ -2715,6 +2818,8 @@ def edit_device(request, error_from=None, error_formset=None):
                 "27": "home/pipe-wastewater-edit.html",
                 "28": "home/purchase-material-edit.html",
                 "29": "home/product-indirect-emissions-edit.html",
+                "33": "home/process-gas-edit.html",
+                "34": "home/waste-process-edit.html"
             }
             if htmlName.get(datasheet_id):
                 EditDevice_page = htmlName.get(datasheet_id)
@@ -2753,7 +2858,9 @@ def update_device(request, single_dataID):
         "26": waste,
         "27": pipe_wastewater,
         "28": purchase_material,
-        "29": product_indirect_emissions
+        "29": product_indirect_emissions,
+        "33": process_gas,
+        "34": waste_process
     }
     formName = {
         "1": EGform, "2": CEform, "3": OFform, "4": MTform, "5": PCform,
@@ -2761,7 +2868,7 @@ def update_device(request, single_dataID):
         "11": IMform, "12": ODform, "13": EXform, "14": PIform, "15": EMPform,
         "16": WASTEWATERform, "17": WasteSludgeForm, "18": SolventAerosolEmissionSourcesForm,
         "19": VOCsOneForm, "20": VOCsTwoForm, "21": ELECform, "22": UTform,
-        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform,
+        "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform, "33": PGform, "34": WPform
     }
     formsetName = {
         "24": CommuteFormSet, "25": TripSectionFormSet
@@ -2834,7 +2941,9 @@ def delete_device(request):
             "26": waste,
             "27": pipe_wastewater,
             "28": purchase_material,
-            "29": product_indirect_emissions
+            "29": product_indirect_emissions,
+            "33": process_gas,
+            "34": waste_process
         }
         if modelName.get(datasheet_id):
             dbName = modelName.get(datasheet_id)
@@ -2877,14 +2986,14 @@ def add_title(request):
             "4": {
                 "編輯區": ["刪除", "修改"],
                 "內容": ["序號", "原物料號", "原/物料", "名稱"],
-                "是否為化學品": ["化學品名稱", "化學品名", "化學式", "含碳量(%)"],
+                "是否為化學品": ["焊條料號", "焊條品名", "焊條規格", "含碳量(%)"],
                 "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "佐證資料": ["引用單據"],
             },
             # 製成添加物
             "5": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "製程階段", "料號", "製程添加名稱", "含碳量(%)", "是否燃燒", "VOCs"],
+                "內容": ["序號", "製程階段", "料號", "製程添加名稱", "化學品名", "化學式", "CAS編號", "是否燃燒"],
                 "使用量(單位:公斤)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "總計", "使用量單位"],
                 "佐證資料": ["引用單據"],
             },
@@ -2927,7 +3036,7 @@ def add_title(request):
             # 設備清單
             "12": {
                 "編輯區": ["刪除", "修改"],
-                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "設備種類", "逸散率(%)", "逸散量"],
                 "佐證資料": ["引用單據"],
             },
             # 滅火器
@@ -2994,19 +3103,19 @@ def add_title(request):
             # 上游運輸
             "22": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "組織使用產品", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
-                "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
-                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"],
+                "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "貿易條件", "接貨地點", "送貨地點"],
+                "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "趟次"],
+                "海運": ["海運距離(nm)", "海運距離(Km)", "出貨港口", "到達港口", "趟次"],
+                "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "趟次"],
+                "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "趟次"],
                 "佐證資料": ["引用單據"],
             },
             # 下游運輸
             "23": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "供應商名稱", "供應商地址", "貿易條件", "接貨地點", "送貨地點"],
+                "內容": ["序號", "單號", "商品", "淨/毛重", "重量(噸)", "客戶", "貿易條件", "接貨地點", "送貨地點"],
                 "陸運": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
-                "海運": ["海運距離(nm)", "出貨港口", "到達港口", "支付方", "趟次"],
+                "海運": ["海運距離(nm)", "海運距離(Km)", "出貨港口", "到達港口", "支付方", "趟次"],
                 "陸運(特殊)": ["單趟運輸距離(km)", "運輸國家", "交通工具", "燃料", "支付方", "趟次"],
                 "空運": ["單趟運輸距離(km)", "出貨機場", "到達機場", "支付方", "趟次"],
                 "佐證資料": ["引用單據"],
@@ -3025,10 +3134,18 @@ def add_title(request):
                 "距離(pkm)": ["自駕汽車", "高鐵", "火車(電聯)", "火車(柴聯)", "計程車", "機車", "捷運", "飛機", "船舶"],
                 "佐證資料": ["引用單據"],
             },
+
+            # 廢棄物運輸
+            "34": {
+                "編輯區": ["刪除", "修改"],
+                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+                "佐證資料": ["引用單據"],
+            },
+
             # 廢棄物
             "26": {
                 "編輯區": ["刪除", "修改"],
-                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱", "運輸方式", "運輸燃料", "運輸距離(km)", "T*km"],
+                "廢棄物處理": ["序號", "名稱", "重量(噸)", "運送時間", "處置地點", "處理方式", "處理廠商名稱"],
                 "佐證資料": ["引用單據"],
             },
 
@@ -3055,6 +3172,13 @@ def add_title(request):
                 "產品間接排放量": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "小計(公噸)"],
                 "佐證資料": ["引用單據"],
             },
+
+            # 製程-氣體
+            "33": {
+                "編輯區": ["刪除", "修改"],
+                "內容": ["序號", "單號", "所屬部門", "領用日期", "氣體名稱", "數量", "數量單位", "每單位規格", "單位"],
+                "佐證資料": ["引用單據"],
+            }
         }
         # 如果沒有刪除、編輯權限，把編輯區拿掉
         if not request.user.has_perm('home.add_emergency_generators'):

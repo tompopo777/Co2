@@ -43,6 +43,8 @@ urlpatterns = [
                   path("pipe_wastewater_add/", views.pipe_wastewater_add),
                   path("purchase_material_add/", views.purchase_material_add),
                   path("product_indirect_emissions_add/", views.product_indirect_emissions_add),
+                  path("process_gas_add/", views.process_gas_add),
+                  path("waste_process_add/", views.waste_process),
                   # ajax傳質
                   path("ajax/process", views.load_process, name='loadprocess'),
                   path("ajax/device", views.load_device, name='loaddevice'),
