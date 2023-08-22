@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'apps.home',  # Enable the inner home (home)
     # 'django_select2',
     # 'brutebuster',
+    'import_export'
 ]
 
 MIDDLEWARE = [

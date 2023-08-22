@@ -183,3 +183,7 @@ input:disabled:not(.disabled_scc) + label {
         opacity: 0;
     }
 }
+
+.display_none {
+    display: none;
+}

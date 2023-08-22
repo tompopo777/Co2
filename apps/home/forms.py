@@ -45,16 +45,10 @@ EBT_TRANSPORTATION_CHOICES = [
     ('飛機', '飛機'),
 ]
 FUEL_TYPE_CHOICES = [
-    ('92汽油', '92汽油'),
-    ('95汽油', '95汽油'),
-    ('98汽油', '98汽油'),
+    ('', '------'),
+    ('汽油', '汽油'),
     ('柴油', '柴油'),
-    ('電動車', '電動車'),
-]
-METERING_METHOD_CHOICES = [
-    ('油車', '油車'),
-    ('電動車', '電動車'),
-    ('公里數', '公里數'),
+    ('電力', '電力(不列入計算)'),
 ]
 WASTE_DISPOSAL_CHOICES = [
     ('焚化', '焚化'),
@@ -73,7 +67,8 @@ VEHICLE_TYPE_CHOICES = [
     ('貨車', '貨車'),
     ('堆高機', '堆高機'),
     ('電動車', '電動車'),
-    ('摩托車', '摩托車')
+    ('油電車', '油電車'),
+    ('機車', '機車')
 ]
 PROCESS_UNIT_CHOICES = [
     ('公斤', '公斤'),
@@ -282,8 +277,9 @@ MATERIAL_TYPE_CHOICE = [
 
 # 人添清冊
 CLASSIFICATION_CHOICES = [
-    ('員工', '員工'),
-    ('員工宿舍', '員工宿舍'),
+    ('內部人員', '內部人員'),
+    ('外部人員', '外部人員'),
+    ('宿舍', '宿舍'),
 ]
 
 # 廢棄物處置地點
@@ -383,7 +379,7 @@ class EGform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -457,7 +453,7 @@ class CEform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -481,18 +477,17 @@ class CEform(forms.ModelForm):
 class OFform(forms.ModelForm):
     class Meta:
         model = official_car
-        fields = ('vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method',
+        fields = ('vehicle_type', 'device_id', 'fuel_type', 'department',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december',
                   'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july', 'urea_august',
                   'urea_september', 'urea_october', 'urea_november', 'urea_december',
-                  'image_note', 'message_board')
+                  'urea_content_median', 'urea_water_median', 'image_note', 'message_board')
         widgets = {
-            'vehicle_type': forms.Select(choices=VEHICLE_TYPE_CHOICES),
+            'vehicle_type': forms.Select(attrs={'id': 'vehicle_type', 'style': 'width:150px'}, choices=VEHICLE_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'fuel_type': forms.Select(choices=FUEL_TYPE_CHOICES),
+            'fuel_type': forms.Select(attrs={'id': 'fuel_type', 'style': 'width:150px'}, choices=FUEL_TYPE_CHOICES),
             'department': forms.TextInput(attrs={'class': 'form-control', 'placeholder': ''}),
-            'metering_method': forms.RadioSelect(choices=METERING_METHOD_CHOICES, attrs={'class': 'form-check-input'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -517,6 +512,8 @@ class OFform(forms.ModelForm):
             'urea_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'urea_content_median': forms.TextInput(attrs={'class': 'form-control'}),
+            'urea_water_median': forms.TextInput(attrs={'class': 'form-control'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -524,14 +521,48 @@ class OFform(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
+        self.fields['urea_content_median'].required = False
+        self.fields['urea_water_median'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
+
+    def clean_urea_content_median(self):
+        fuel_type = self.cleaned_data.get('fuel_type')
+        urea_content_median = self.cleaned_data.get('urea_content_median')
+        if fuel_type == '柴油':
+            if urea_content_median is None:
+                raise forms.ValidationError("柴油請輸入該欄位，中油參考值(32.5)", 'invalid')
+        return urea_content_median
+
+    def clean_urea_water_median(self):
+        fuel_type = self.cleaned_data.get('fuel_type')
+        urea_water_median = self.cleaned_data.get('urea_water_median')
+        if fuel_type == '柴油':
+            if urea_water_median is None:
+                raise forms.ValidationError("柴油請輸入該欄位，中油參考值(1.09)", 'invalid')
+        return urea_water_median
+
+    def clean_vehicle_type(self):
+        vehicle_type = self.cleaned_data['vehicle_type']
+        for VEHICLE_TYPE in VEHICLE_TYPE_CHOICES:
+            if vehicle_type == VEHICLE_TYPE[0]:
+                return vehicle_type
+        print('亂改表單內容:', vehicle_type)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+    def clean_fuel_type(self):
+        fuel_type = self.cleaned_data['fuel_type']
+        for FUEL_TYPE in FUEL_TYPE_CHOICES:
+            if fuel_type == FUEL_TYPE[0]:
+                return fuel_type
+        print('亂改表單內容:', fuel_type)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -592,7 +623,7 @@ class MTform(forms.ModelForm):
 
     def clean_material_id(self):
         material_id = self.cleaned_data.get('material_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(material_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return material_id
 
@@ -659,7 +690,7 @@ class PCform(forms.ModelForm):
 
     def clean_material_id(self):
         material_id = self.cleaned_data.get('material_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(material_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return material_id
 
@@ -715,7 +746,7 @@ class RFform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -765,7 +796,7 @@ class ACform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -815,7 +846,7 @@ class VCform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -1016,7 +1047,7 @@ class ODform(forms.ModelForm):
 
     def clean_device_id(self):
         device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', device_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
@@ -1089,36 +1120,104 @@ class EXform(forms.ModelForm):
 class PIform(forms.ModelForm):
     class Meta:
         model = personnel_inventory
-        fields = ('classification', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may',
-                  'WKhours_june', 'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november',
-                  'WKhours_december', 'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june',
-                  'WKnum_july', 'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'image_note', 'message_board')
+        fields = ('classification',
+                  'people_number_jan', 'people_number_feb', 'people_number_mar', 'people_number_apr', 'people_number_may',
+                  'people_number_jun', 'people_number_jul', 'people_number_aug', 'people_number_sept', 'people_number_oct', 'people_number_nov', 'people_number_dec',
+                  'daily_working_hours_jan', 'daily_working_hours_feb', 'daily_working_hours_mar', 'daily_working_hours_apr', 'daily_working_hours_may',
+                  'daily_working_hours_jun', 'daily_working_hours_jul', 'daily_working_hours_aug', 'daily_working_hours_sept', 'daily_working_hours_oct', 'daily_working_hours_nov', 'daily_working_hours_dec',
+                  'work_day_jan', 'work_day_feb', 'work_day_mar', 'work_day_apr', 'work_day_may', 'work_day_jun', 'work_day_jul', 'work_day_aug', 'work_day_sept', 'work_day_oct', 'work_day_nov', 'work_day_dec',
+                  'holidays_jan', 'holidays_feb', 'holidays_mar', 'holidays_apr', 'holidays_may', 'holidays_jun', 'holidays_jul', 'holidays_aug', 'holidays_sept', 'holidays_oct', 'holidays_nov', 'holidays_dec',
+                  'overtime_jan', 'overtime_feb', 'overtime_mar', 'overtime_apr', 'overtime_may', 'overtime_jun', 'overtime_jul', 'overtime_aug', 'overtime_sept', 'overtime_oct', 'overtime_nov', 'overtime_dec',
+                  'leave_hours_jan', 'leave_hours_feb', 'leave_hours_mar', 'leave_hours_apr', 'leave_hours_may', 'leave_hours_jun', 'leave_hours_jul', 'leave_hours_aug', 'leave_hours_sept', 'leave_hours_oct', 'leave_hours_nov', 'leave_hours_dec',
+                  'compensatory_leave_hours_jan', 'compensatory_leave_hours_feb', 'compensatory_leave_hours_mar', 'compensatory_leave_hours_apr', 'compensatory_leave_hours_may',
+                  'compensatory_leave_hours_jun', 'compensatory_leave_hours_jul', 'compensatory_leave_hours_aug', 'compensatory_leave_hours_sept', 'compensatory_leave_hours_oct', 'compensatory_leave_hours_nov', 'compensatory_leave_hours_dec',
+                  'image_note', 'message_board')
         widgets = {
             'classification': forms.Select(attrs={'id': 'classification', 'style': 'width:100px'}, choices=CLASSIFICATION_CHOICES),
-            'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKnum_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'people_number_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'daily_working_hours_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'work_day_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'holidays_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'overtime_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'leave_hours_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_jan': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_feb': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_mar': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_apr': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_jun': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_jul': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_aug': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_sept': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_oct': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_nov': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
+            'compensatory_leave_hours_dec': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1128,65 +1227,36 @@ class PIform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_classification(self):
+        classification = self.cleaned_data['classification']
+        for CLASSIFICATION in CLASSIFICATION_CHOICES:
+            if classification == CLASSIFICATION[0]:
+                return classification
+        print('亂改表單內容:', classification)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
-# 委外人員清冊
-class EMPform(forms.ModelForm):
-    class Meta:
-        model = employee
-        fields = ('career',
-                  'employeeNum_january', 'employeeNum_february', 'employeeNum_march', 'employeeNum_april', 'employeeNum_may', 'employeeNum_june', 'employeeNum_july', 'employeeNum_august',
-                  'employeeNum_september', 'employeeNum_october', 'employeeNum_november', 'employeeNum_december',
-                  'WKdays_january', 'WKdays_february', 'WKdays_march', 'WKdays_april', 'WKdays_may', 'WKdays_june', 'WKdays_july', 'WKdays_august',
-                  'WKdays_september', 'WKdays_october', 'WKdays_november', 'WKdays_december',
-                  'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july', 'WKhours_august',
-                  'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
-                  'image_note', 'message_board')
-        widgets = {
-            'career': forms.Select(attrs={'id': 'career', 'style': 'width:100px'}, choices=CAREER_CHOICES),
-            'employeeNum_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'employeeNum_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKdays_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'WKhours_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
-            'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
-        }
-
-    def __init__(self, request, *args, **kwargs):
-        super(EMPform, self).__init__(*args, **kwargs)
-        self.fields['image_note'].required = False
-        self.fields['message_board'].required = False
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['people_number_jan', 'people_number_feb', 'people_number_mar', 'people_number_apr', 'people_number_may',
+                  'people_number_jun', 'people_number_jul', 'people_number_aug', 'people_number_sept', 'people_number_oct', 'people_number_nov', 'people_number_dec',
+                  'daily_working_hours_jan', 'daily_working_hours_feb', 'daily_working_hours_mar', 'daily_working_hours_apr', 'daily_working_hours_may',
+                  'daily_working_hours_jun', 'daily_working_hours_jul', 'daily_working_hours_aug', 'daily_working_hours_sept', 'daily_working_hours_oct', 'daily_working_hours_nov', 'daily_working_hours_dec',
+                  'work_day_jan', 'work_day_feb', 'work_day_mar', 'work_day_apr', 'work_day_may', 'work_day_jun', 'work_day_jul', 'work_day_aug', 'work_day_sept', 'work_day_oct', 'work_day_nov', 'work_day_dec',
+                  'holidays_jan', 'holidays_feb', 'holidays_mar', 'holidays_apr', 'holidays_may', 'holidays_jun', 'holidays_jul', 'holidays_aug', 'holidays_sept', 'holidays_oct', 'holidays_nov', 'holidays_dec',
+                  'overtime_jan', 'overtime_feb', 'overtime_mar', 'overtime_apr', 'overtime_may', 'overtime_jun', 'overtime_jul', 'overtime_aug', 'overtime_sept', 'overtime_oct', 'overtime_nov', 'overtime_dec',
+                  'leave_hours_jan', 'leave_hours_feb', 'leave_hours_mar', 'leave_hours_apr', 'leave_hours_may', 'leave_hours_jun', 'leave_hours_jul', 'leave_hours_aug', 'leave_hours_sept', 'leave_hours_oct', 'leave_hours_nov', 'leave_hours_dec',
+                  'compensatory_leave_hours_jan', 'compensatory_leave_hours_feb', 'compensatory_leave_hours_mar', 'compensatory_leave_hours_apr', 'compensatory_leave_hours_may',
+                  'compensatory_leave_hours_jun', 'compensatory_leave_hours_jul', 'compensatory_leave_hours_aug', 'compensatory_leave_hours_sept', 'compensatory_leave_hours_oct', 'compensatory_leave_hours_nov', 'compensatory_leave_hours_dec'
+                  ]
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    print('value', month)
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
 
 
 # 廢水
@@ -1276,16 +1346,12 @@ class WasteSludgeForm(forms.ModelForm):
 class SolventAerosolEmissionSourcesForm(forms.ModelForm):
     class Meta:
         model = solvent_aerosol_emission_sources
-        fields = ('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit',
-                  'gas_name', 'gas_ratio', 'density', 'image_note', 'message_board')
+        fields = ('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'image_note', 'message_board')
         widgets = {
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
             'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數'}),
             'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
             'solvent_capacity_unit': forms.Select(attrs={'id': 'solvent_capacity_unit', 'style': 'width:100px'}, choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
-            'gas_name': forms.Select(attrs={'id': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
-            'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
-            'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1299,6 +1365,8 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         solvent_amount = self.cleaned_data.get('solvent_amount')
         if not re.match(r'^[0-9]+$', str(solvent_amount)):
             raise forms.ValidationError("只能輸入正整數字", 'invalid')
+        if str(solvent_amount) == '0':
+            raise forms.ValidationError("數量需大於0", "invalid")
         return solvent_amount
 
     def clean_solvent_capacity(self):
@@ -1306,6 +1374,18 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(solvent_capacity)):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return solvent_capacity
+
+
+# 添加氣體(溶劑噴霧劑表中表)
+class GasAddFormSet(forms.ModelForm):
+    class Meta:
+        model = gas_add
+        fields = ('gas_name', 'gas_ratio', 'density',)
+        widgets = {
+            'gas_name': forms.Select(attrs={'class': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
+            'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
+            'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
+        }
 
     def clean_gas_name(self):
         gas_name = self.cleaned_data.get('gas_name')
@@ -1324,6 +1404,9 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
         if not re.match(r'^[0-9]+(.[0-9]{0,10})?$', str(density)):
             raise forms.ValidationError("只能輸入正實數(小數點後十位)", 'invalid')
         return density
+
+
+GasAddFormSet = inlineformset_factory(solvent_aerosol_emission_sources, gas_add, form=GasAddFormSet, extra=1)
 
 
 # 發電量
@@ -1360,7 +1443,7 @@ class ELECform(forms.ModelForm):
 
     def clean_EMI_id(self):
         EMI_id = self.cleaned_data.get('EMI_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', EMI_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(EMI_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return EMI_id
 
@@ -1562,7 +1645,7 @@ class ECform(forms.ModelForm):
 
     def clean_employee_id(self):
         employee_id = self.cleaned_data.get('employee_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', employee_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(employee_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return employee_id
 
@@ -1586,13 +1669,12 @@ class CommuteFormSet(forms.ModelForm):
         fields = ('transportation',)
         widgets = {
             'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
-            # 'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control', 'required': 'required'}),
         }
 
     def clean_transportation(self):
         transportation = self.cleaned_data['transportation']
         for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
-            if transportation == BUSINESS_TRANSPORTATION[1]:
+            if transportation == BUSINESS_TRANSPORTATION[0]:
                 return transportation
         print('有低能兒亂改表單:', transportation)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1628,15 +1710,16 @@ class EBTform(forms.ModelForm):
 
     def clean_business_trip_number(self):
         business_trip_number = self.cleaned_data.get('business_trip_number')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', business_trip_number):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(business_trip_number)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return business_trip_number
 
     def clean_employee_id(self):
         employee_id = self.cleaned_data.get('employee_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', employee_id):
+        if employee_id is None or re.match(r'^[a-zA-Z0-9_-]*$', str(employee_id)):
+            return employee_id
+        else:
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
-        return employee_id
 
 
 # 出差段數(員工出差表中表)
@@ -1653,7 +1736,7 @@ class TripSectionFormSet(forms.ModelForm):
     def clean_transportation(self):
         transportation = self.cleaned_data['transportation']
         for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
-            if transportation == BUSINESS_TRANSPORTATION[1]:
+            if transportation == BUSINESS_TRANSPORTATION[0]:
                 return transportation
         print('有低能兒亂改表單:', transportation)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1699,7 +1782,7 @@ class WPform(forms.ModelForm):
     def clean_waste_location(self):
         waste_location = self.cleaned_data['waste_location']
         for WASTE_LOCATION in WASTE_LOCATION_CHOICES:
-            if waste_location == WASTE_LOCATION[1]:
+            if waste_location == WASTE_LOCATION[0]:
                 return waste_location
         print('有低能兒亂改表單:', waste_location)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1707,7 +1790,7 @@ class WPform(forms.ModelForm):
     def clean_waste_disposal(self):
         waste_disposal = self.cleaned_data['waste_disposal']
         for WASTE_DISPOSAL in WASTE_DISPOSAL_CHOICES:
-            if waste_disposal == WASTE_DISPOSAL[1]:
+            if waste_disposal == WASTE_DISPOSAL[0]:
                 return waste_disposal
         print('有低能兒亂改表單:', waste_disposal)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1718,7 +1801,7 @@ class WPform(forms.ModelForm):
             raise forms.ValidationError("請選擇下拉選單", 'invalid')
         else:
             for TRANSPORT_TYPE in TRANSPORT_TYPE_CHOICES:
-                if transport_type == TRANSPORT_TYPE[1]:
+                if transport_type == TRANSPORT_TYPE[0]:
                     return transport_type
             print('有低能兒亂改表單:', transport_type)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1905,7 +1988,7 @@ class PWform(forms.ModelForm):
 
     def clean_pipe_id(self):
         pipe_id = self.cleaned_data.get('pipe_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', pipe_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(pipe_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return pipe_id
 
@@ -1958,7 +2041,7 @@ class PMform(forms.ModelForm):
 
     def clean_product_id(self):
         product_id = self.cleaned_data.get('product_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', product_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(product_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return product_id
 
@@ -1980,7 +2063,7 @@ class PMform(forms.ModelForm):
             raise forms.ValidationError("請選擇下拉選單", 'invalid')
         else:
             for MATERIAL_TYPE in MATERIAL_TYPE_CHOICE:
-                if material_type == MATERIAL_TYPE[1]:
+                if material_type == MATERIAL_TYPE[0]:
                     return material_type
             print('有低能兒亂改表單:', material_type)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -2031,7 +2114,7 @@ class PIEform(forms.ModelForm):
 
     def clean_product_id(self):
         product_id = self.cleaned_data.get('product_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', product_id):
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(product_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return product_id
 
@@ -2095,3 +2178,10 @@ class PGform(forms.ModelForm):
     #                 self._errors["數值必須大於零"] = ["數值必須大於零"]
     #                 self._errors[month] = [month]
     #     return cleaned_data
+# class EmergencyGeneratorsImport(forms.Form):
+#     class Meta:
+#         model = emergency_generators
+#         fields = " __all__"
+#         # fields = ('device_id', 'device_capacity', 'position', 'department', 'estimate',
+#         #           'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
+#         #           'november', 'december', 'image_note', 'message_board')
