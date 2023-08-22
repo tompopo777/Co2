@@ -284,8 +284,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "氣體":
                 t_data = list(
-                    material.objects.filter(company_id=factory_id, years=year).values("id", "receipt_number", "department", "receipt_date",
-                                                                                      "gas_name", "amount", "unit", "per_amount", "per_unit"))
+                    process_gas.objects.filter(company_id=factory_id, years=year).values("id", "receipt_number", "department", "receipt_date",
+                                                                                         "gas_name", "amount", "unit", "per_amount", "per_unit"))
                 # 顯示有引用單據
                 for raw_data in t_data:
                     if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
@@ -679,9 +679,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "廢棄物運輸":
                 t_data = []
-                raw_data = waste.objects.filter(company_id=factory_id, years=year).values("id", "waste_name", "waste_weigh", "waste_date",
-                                                                                          "waste_location", "waste_disposal", "waste_disposal_vendor",
-                                                                                          "transport_type", "transport_fuel", "transport_distance")
+                raw_data = waste_process.objects.filter(company_id=factory_id, years=year).values("id", "waste_name", "waste_weigh", "waste_date",
+                                                                                                  "waste_location", "waste_disposal", "waste_disposal_vendor",
+                                                                                                  "transport_type", "transport_fuel", "transport_distance")
                 for i in range(raw_data.count()):
                     # 計算單筆距離合計
                     if raw_data[i].get("transport_distance") is None:
@@ -2311,8 +2311,8 @@ def waste_process_add(request):
             WP_add.save()
             stage = request.POST.get('stage')
             image_path = request.FILES.getlist('file_field')
-            last_id = waste.objects.values("id").last().get("id")
-            table_id = waste.objects.values("did").last().get("did")
+            last_id = waste_process.objects.values("id").last().get("id")
+            table_id = waste_process.objects.values("did").last().get("did")
             for img in image_path:
                 photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
                 print(stage)
@@ -2630,7 +2630,7 @@ def bar_action(request):
                 "28": purchase_material_add(request),
                 "29": product_indirect_emissions_add(request),
                 "33": process_gas_add(request),
-                "34": waste_process(request)
+                "34": waste_process_add(request)
             }
             device_function = None
             if function_dic.get(device_id):

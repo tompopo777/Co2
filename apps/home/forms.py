@@ -1676,7 +1676,7 @@ class CommuteFormSet(forms.ModelForm):
         for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
             if transportation == BUSINESS_TRANSPORTATION[0]:
                 return transportation
-        print('有低能兒亂改表單:', transportation)
+        print('亂改表單內容:', transportation)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
 
@@ -1738,7 +1738,7 @@ class TripSectionFormSet(forms.ModelForm):
         for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
             if transportation == BUSINESS_TRANSPORTATION[0]:
                 return transportation
-        print('有低能兒亂改表單:', transportation)
+        print('亂改表單內容:', transportation)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_distance(self):
@@ -1751,11 +1751,12 @@ class TripSectionFormSet(forms.ModelForm):
 TripSectionFormSet = inlineformset_factory(employee_business_trip, trip_section, form=TripSectionFormSet, extra=1)
 
 
-# 廢棄物
+# 廢棄物運輸
 class WPform(forms.ModelForm):
     class Meta:
         model = waste_process
         fields = ('waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
+                  'transport_type', 'transport_fuel', 'transport_distance',
                   'image_note', 'message_board')
         widgets = {
             'waste_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1764,6 +1765,9 @@ class WPform(forms.ModelForm):
             'waste_location': forms.Select(attrs={'id': 'waste_location'}, choices=WASTE_LOCATION_CHOICES),
             'waste_disposal': forms.Select(choices=WASTE_DISPOSAL_CHOICES),
             'waste_disposal_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入處理廠商名稱'}),
+            'transport_type': forms.Select(choices=TRANSPORT_TYPE_CHOICES, attrs={'required': 'required'}),
+            'transport_fuel': forms.RadioSelect(choices=TRANSPORT_FUEL_CHOICES),
+            'transport_distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '僅公司責任需要填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1784,7 +1788,7 @@ class WPform(forms.ModelForm):
         for WASTE_LOCATION in WASTE_LOCATION_CHOICES:
             if waste_location == WASTE_LOCATION[0]:
                 return waste_location
-        print('有低能兒亂改表單:', waste_location)
+        print('亂改表單內容:', waste_location)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_waste_disposal(self):
@@ -1792,7 +1796,7 @@ class WPform(forms.ModelForm):
         for WASTE_DISPOSAL in WASTE_DISPOSAL_CHOICES:
             if waste_disposal == WASTE_DISPOSAL[0]:
                 return waste_disposal
-        print('有低能兒亂改表單:', waste_disposal)
+        print('亂改表單內容:', waste_disposal)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_transport_type(self):
@@ -1803,7 +1807,7 @@ class WPform(forms.ModelForm):
             for TRANSPORT_TYPE in TRANSPORT_TYPE_CHOICES:
                 if transport_type == TRANSPORT_TYPE[0]:
                     return transport_type
-            print('有低能兒亂改表單:', transport_type)
+            print('亂改表單內容:', transport_type)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_transport_distance(self):
@@ -1850,7 +1854,7 @@ class WASTEform(forms.ModelForm):
         for WASTE_LOCATION in WASTE_LOCATION_CHOICES:
             if waste_location == WASTE_LOCATION[1]:
                 return waste_location
-        print('有低能兒亂改表單:', waste_location)
+        print('亂改表單內容:', waste_location)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_waste_disposal(self):
@@ -1858,7 +1862,7 @@ class WASTEform(forms.ModelForm):
         for WASTE_DISPOSAL in WASTE_DISPOSAL_CHOICES:
             if waste_disposal == WASTE_DISPOSAL[1]:
                 return waste_disposal
-        print('有低能兒亂改表單:', waste_disposal)
+        print('亂改表單內容:', waste_disposal)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_transport_type(self):
@@ -1869,7 +1873,7 @@ class WASTEform(forms.ModelForm):
             for TRANSPORT_TYPE in TRANSPORT_TYPE_CHOICES:
                 if transport_type == TRANSPORT_TYPE[1]:
                     return transport_type
-            print('有低能兒亂改表單:', transport_type)
+            print('亂改表單內容:', transport_type)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_transport_distance(self):
@@ -2054,7 +2058,7 @@ class PMform(forms.ModelForm):
             for option in dropdown_choices:
                 if category_name == option.option_value:
                     return category_name
-            print('有低能兒亂改表單:', category_name)
+            print('亂改表單內容:', category_name)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_material_type(self):
@@ -2065,7 +2069,7 @@ class PMform(forms.ModelForm):
             for MATERIAL_TYPE in MATERIAL_TYPE_CHOICE:
                 if material_type == MATERIAL_TYPE[0]:
                     return material_type
-            print('有低能兒亂改表單:', material_type)
+            print('亂改表單內容:', material_type)
             raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean(self):
