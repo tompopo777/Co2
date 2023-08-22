@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} 製程添加化學品 {% endblock %}
+{% block title %} 化學品使用 {% endblock %}
 
 {% block body_class %} process {% endblock %}
 
@@ -22,7 +22,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 製程添加化學品</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 化學品使用</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -30,46 +30,57 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>製程使用階段</label>
                                                     {{ PC_add.process_stage }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-3">
                                                 {% for error in PC_add.material_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>料號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PC_add.material_id }}
+                                                    <label>化學品料號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PC_add.chemical_id }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-4">
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>製程添加名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PC_add.process_add_name }}
+                                                    <label>化學品係數 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PC_add.chemical_coefficient }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                {% for error in PC_add.carbon_content.errors %}
-                                                    <li style="color: red">{{ error }}</li>
-                                                {% endfor %}
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>含碳量(%) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PC_add.carbon_content }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class=" form-check ps-1">
                                                     {{ PC_add.burn }}
                                                     <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
                                                 </div>
-                                                <div class=" form-check ps-1">
-                                                    {{ PC_add.VOCs }}
-                                                    <label>揮發性有機化合物(VOCs) <span style="color:red; font-size:16px;">* </span></label>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static">
+                                                    <label>製程添加物名稱(學名) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PC_add.process_add_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>化學品名</label>
+                                                    {{ PC_add.chemical_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>化學式 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PC_add.chemical_formula }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>CAS編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PC_add.CAS_NO }}
                                                 </div>
                                             </div>
                                         </div>
@@ -250,7 +261,6 @@
 
 
     <script>
-
 
 
         {#    禁止enter鍵#}
