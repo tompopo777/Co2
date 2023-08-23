@@ -1092,7 +1092,7 @@ def copy_last_year_data(request):
         #         ice_maker.objects.bulk_create(
         #             [ice_maker(**data) for data in last_year_data]
         #         )
-        #     elif a["d_name"] == '設備清單':
+        #     elif a["d_name"] == '冷媒':
         #         last_year_data = other_device.objects.filter(company_id=factory_id, years=last_year).values()
         #         # 如果去年沒有資料，顯示 alert 訊息
         #         if not last_year_data:
@@ -2309,18 +2309,18 @@ def waste_process_add(request):
             WP_add.company_id = factory_id
             WP_add.years = request.session.get('years')
             WP_add.save()
-            stage = request.POST.get('stage')
-            image_path = request.FILES.getlist('file_field')
-            last_id = waste_process.objects.values("id").last().get("id")
-            table_id = waste_process.objects.values("did").last().get("did")
-            for img in image_path:
-                photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
-                print(stage)
-                photo.save()
+            # stage = request.POST.get('stage')
+            # image_path = request.FILES.getlist('file_field')
+            # last_id = waste.objects.values("id").last().get("id")
+            # table_id = waste.objects.values("did").last().get("did")
+            # for img in image_path:
+            #     photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
+            #     print(stage)
+            #     photo.save()
             # 根據前端submit input的name判斷
             if 'addAnother' in request.POST:
                 messages.success(request, '表單已成功提交！')
-                return redirect('/waste_add/')
+                return redirect('/WP_add/')
             else:
                 return redirect('/carbon-system/')
         else:
@@ -3042,7 +3042,7 @@ def add_title(request):
                 "製冰機清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "逸散率(%)", "逸散量"],
                 "佐證資料": ["引用單據"],
             },
-            # 設備清單
+            # 冷媒
             "12": {
                 "編輯區": ["刪除", "修改"],
                 "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "設備種類", "逸散率(%)", "逸散量"],

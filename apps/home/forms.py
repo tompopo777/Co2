@@ -1013,7 +1013,7 @@ class IMform(forms.ModelForm):
         return effusion_rate
 
 
-# 設備清單
+# 冷媒
 class ODform(forms.ModelForm):
     class Meta:
         model = other_device

@@ -49,7 +49,7 @@ def calculate_summary(request):
     other_device_device = other_device_count(years, factory_id, coefficient_source, gwp_version)
     solvent_aerosol_emission_sources_device = solvent_aerosol_emission_sources_count(years, factory_id, coefficient_source, gwp_version)
     personnel_inventory_device = personnel_inventory_count(years, factory_id, coefficient_source, gwp_version)
-    employee_device = employee_count(years, factory_id, coefficient_source, gwp_version)
+    # employee_device = employee_count(years, factory_id, coefficient_source, gwp_version)
     extinguisher_device = extinguisher_count(years, factory_id, coefficient_source, gwp_version)
     waste_water_device = waste_water_count(years, factory_id, coefficient_source, gwp_version)
     electricity_device = electricity_count(years, factory_id, coefficient_source, gwp_version)
@@ -61,7 +61,7 @@ def calculate_summary(request):
 
     output = pd.concat([emergency_generators_device, combustion_equipment_device, official_car_device, refrigerator_device, airconditioner_device,
                         vehicle_device, water_dispenser_device, ice_water_dispenser_device, ice_maker_device, other_device_device, solvent_aerosol_emission_sources_device,
-                        personnel_inventory_device, employee_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device,
+                        personnel_inventory_device, extinguisher_device, waste_water_device, electricity_device, employee_commute_device,
                         employee_business_trip_device, waste_transport_device, waste_process_device, purchase_material_device])
 
     if output.empty:
@@ -124,24 +124,34 @@ def emergency_generators_count(years, factory_id, coefficient_source, gwp_versio
 def combustion_equipment_count(years, factory_id, coefficient_source, gwp_version):
     final = pd.DataFrame()
     try:
-        # years = 2023
-        # factory_id = 1
-        # coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-        # gwp_version = 6
-        raw_data = pd.DataFrame(list(combustion_equipment.objects.filter(years=years).filter(company_id=factory_id).values('device_name', 'fuel_type').annotate(
+#         years = 2023
+#         factory_id = 1
+#         coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+#         gwp_version = 6
+        natural_gas_data = pd.DataFrame(list(combustion_equipment.objects.filter(years=years).filter(company_id=factory_id).filter(fuel_type='天然氣').values('device_name', 'fuel_type').annotate(
             process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
             sum_count=Cast(Sum(F('fuel_january') + F('fuel_february') + F('fuel_march') + F('fuel_april') + F('fuel_may') + F('fuel_june') + F('fuel_july') + F('fuel_august') + F('fuel_september') + F('fuel_october') + F('fuel_november') + F('fuel_december')) * 1.818 / 1000,
                            output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+            heat_count=Cast(Sum(F('heat_january') + F('heat_february') + F('heat_march') + F('heat_april') + F('heat_may') + F('heat_june') + F('heat_july') + F('heat_august') + F('heat_september') + F('heat_october') + F('heat_november') + F('heat_december')) * 0.9,
+                            output_field=models.DecimalField(max_digits=20, decimal_places=4)),
             data_unit=Value('公秉', output_field=models.CharField(max_length=50))
         ).order_by('device_name', 'fuel_type')))
-        # coefficient_part = None
-        # for query in raw_data:
-        #     fuel_type = query['fuel_type']
-        #     coefficient_data = coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause=fuel_type).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))
-        #     coefficient_part = pd.DataFrame(list(coefficient_data))
-        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=raw_data['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))))
+        # raw_data = pd.DataFrame(list(combustion_equipment.objects.filter(years=years).filter(company_id=factory_id).values('device_name', 'fuel_type').annotate(
+        #     process_area=Value('固定式燃燒', output_field=models.CharField(max_length=50)),
+        #     sum_count=Cast(Sum(F('fuel_january') + F('fuel_february') + F('fuel_march') + F('fuel_april') + F('fuel_may') + F('fuel_june') + F('fuel_july') + F('fuel_august') + F('fuel_september') + F('fuel_october') + F('fuel_november') + F('fuel_december')) * 1.818 / 1000,
+        #                    output_field=models.DecimalField(max_digits=20, decimal_places=4)),
+        #     data_unit=Value('公秉', output_field=models.CharField(max_length=50))
+        # ).order_by('device_name', 'fuel_type')))
+        coefficient_part = pd.DataFrame(
+            list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=natural_gas_data['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))))
         gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
-        a_b_part = pd.merge(raw_data, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+        a_b_part = pd.merge(natural_gas_data, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+        formular = Decimal(56100 * (4186.8 * (10 ** (-9)) * (10 ** (-3))))
+        print(formular)
+        # a_b_part['coefficient'] = a_b_part.apply(lambda x: x['heat_count'] * Decimal(str(formular)).quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP), axis=1)
+        a_b_part['coefficient'] = (a_b_part['heat_count'] * formular).apply(lambda x: round(x, 4))
+        # a_b_part['coefficient'] = round(Decimal(a_b_part['coefficient']), 4)
+        print(a_b_part)
         final = pd.merge(a_b_part, gwp, left_on='gas_name', right_on='gas_name', how='left')
         # 將(A)、(B)、(C)轉為float才能取round
         final['emission'] = final.apply(lambda x: (Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient'])).quantize(Decimal('0.0001'), rounding=ROUND_HALF_UP), axis=1)
@@ -149,6 +159,7 @@ def combustion_equipment_count(years, factory_id, coefficient_source, gwp_versio
         # display(final['emission'])
         new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
         final = final.reindex(columns=new_order)
+        print(final)
         # display(final)
         # display(final.shape)
         return final
@@ -174,7 +185,8 @@ def official_car_count(years, factory_id, coefficient_source, gwp_version):
         ).order_by('vehicle_type', 'fuel_type')
         a_part = pd.DataFrame(list(raw_data))
         a_part['fuel_type'] = a_part['fuel_type'].replace(['92汽油', '95汽油', '98汽油'], '車用汽油')
-        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))))
+        coefficient_part = pd.DataFrame(
+            list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(coefficient_unit=Value('公噸' + '/公秉', output_field=models.CharField(max_length=50)))))
         gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=coefficient_part['gas_name']).values('gas_name', 'gwp_coefficient')))
         raw_data = pd.DataFrame(list(raw_data))
         a_b_part = pd.merge(a_part, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
@@ -532,51 +544,51 @@ def personnel_inventory_count(years, factory_id, coefficient_source, gwp_version
 
 
 # 委外人員
-def employee_count(years, factory_id, coefficient_source, gwp_version):
-    final = pd.DataFrame()
-    try:
-        years = 2023
-        factory_id = 1
-        coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
-        gwp_version = 6
-        raw_data = pd.DataFrame(list(employee.objects.filter(years=years).filter(company_id=factory_id).values('career').annotate(
-            process_area=Value('逸散', output_field=models.CharField(max_length=50)),
-            device_name=Value('委外人員清冊', output_field=CharField(max_length=20)),
-            fuel_type=Value('水肥', output_field=CharField(max_length=20)),
-            data_unit=Value('年/時', output_field=models.CharField(max_length=50)),
-            total_employeeNum=Sum(
-                F('employeeNum_january') + F('employeeNum_february') + F('employeeNum_march') + F('employeeNum_april') + F('employeeNum_may') + F('employeeNum_june') + F('employeeNum_july') + F('employeeNum_august') + F('employeeNum_september') + F('employeeNum_october') + F('employeeNum_november') + F(
-                    'employeeNum_december')),
-            total_WKdays=Sum(F('WKdays_january') + F('WKdays_february') + F('WKdays_march') + F('WKdays_april') + F('WKdays_may') + F('WKdays_june') + F('WKdays_july') + F('WKdays_august') + F('WKdays_september') + F('WKdays_october') + F('WKdays_november') + F('WKdays_december')),
-            total_WKhours=Sum(F('WKhours_january') + F('WKhours_february') + F('WKhours_march') + F('WKhours_april') + F('WKhours_may') + F('WKhours_june') + F('WKhours_july') + F('WKhours_august') + F('WKhours_september') + F('WKhours_october') + F('WKhours_november') + F('WKhours_december')),
-            sum_count=Sum(
-                F('employeeNum_january') * F('WKdays_january') * F('WKhours_january') +
-                F('employeeNum_february') * F('WKdays_february') * F('WKhours_february') +
-                F('employeeNum_march') * F('WKdays_march') * F('WKhours_march') +
-                F('employeeNum_april') * F('WKdays_april') * F('WKhours_april') +
-                F('employeeNum_may') * F('WKdays_may') * F('WKhours_may') +
-                F('employeeNum_june') * F('WKdays_june') * F('WKhours_june') +
-                F('employeeNum_july') * F('WKdays_july') * F('WKhours_july') +
-                F('employeeNum_august') * F('WKdays_august') * F('WKhours_august') +
-                F('employeeNum_september') * F('WKdays_september') * F('WKhours_september') +
-                F('employeeNum_october') * F('WKdays_october') * F('WKhours_october') +
-                F('employeeNum_november') * F('WKdays_november') * F('WKhours_november') +
-                F('employeeNum_december') * F('WKdays_december') * F('WKhours_december')),
-        )))
-        raw_data['sum_count'] = raw_data['sum_count'].apply(lambda x: round(Decimal(x), 4))
-        a_part = raw_data
-        coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
-            coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
-        ab_part = pd.merge(a_part, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
-        gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
-        final = pd.merge(ab_part, gwp, on='gas_name', how='left')
-        final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
-        new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
-        final = final.reindex(columns=new_order)
-        return final
-    except:
-        print('沒有該委外人員設備')
-        return final
+# def employee_count(years, factory_id, coefficient_source, gwp_version):
+#     final = pd.DataFrame()
+#     try:
+#         years = 2023
+#         factory_id = 1
+#         coefficient_source = '環保署溫室氣體排放係數管理表6.0.4'
+#         gwp_version = 6
+#         raw_data = pd.DataFrame(list(employee.objects.filter(years=years).filter(company_id=factory_id).values('career').annotate(
+#             process_area=Value('逸散', output_field=models.CharField(max_length=50)),
+#             device_name=Value('委外人員清冊', output_field=CharField(max_length=20)),
+#             fuel_type=Value('水肥', output_field=CharField(max_length=20)),
+#             data_unit=Value('年/時', output_field=models.CharField(max_length=50)),
+#             total_employeeNum=Sum(
+#                 F('employeeNum_january') + F('employeeNum_february') + F('employeeNum_march') + F('employeeNum_april') + F('employeeNum_may') + F('employeeNum_june') + F('employeeNum_july') + F('employeeNum_august') + F('employeeNum_september') + F('employeeNum_october') + F('employeeNum_november') + F(
+#                     'employeeNum_december')),
+#             total_WKdays=Sum(F('WKdays_january') + F('WKdays_february') + F('WKdays_march') + F('WKdays_april') + F('WKdays_may') + F('WKdays_june') + F('WKdays_july') + F('WKdays_august') + F('WKdays_september') + F('WKdays_october') + F('WKdays_november') + F('WKdays_december')),
+#             total_WKhours=Sum(F('WKhours_january') + F('WKhours_february') + F('WKhours_march') + F('WKhours_april') + F('WKhours_may') + F('WKhours_june') + F('WKhours_july') + F('WKhours_august') + F('WKhours_september') + F('WKhours_october') + F('WKhours_november') + F('WKhours_december')),
+#             sum_count=Sum(
+#                 F('employeeNum_january') * F('WKdays_january') * F('WKhours_january') +
+#                 F('employeeNum_february') * F('WKdays_february') * F('WKhours_february') +
+#                 F('employeeNum_march') * F('WKdays_march') * F('WKhours_march') +
+#                 F('employeeNum_april') * F('WKdays_april') * F('WKhours_april') +
+#                 F('employeeNum_may') * F('WKdays_may') * F('WKhours_may') +
+#                 F('employeeNum_june') * F('WKdays_june') * F('WKhours_june') +
+#                 F('employeeNum_july') * F('WKdays_july') * F('WKhours_july') +
+#                 F('employeeNum_august') * F('WKdays_august') * F('WKhours_august') +
+#                 F('employeeNum_september') * F('WKdays_september') * F('WKhours_september') +
+#                 F('employeeNum_october') * F('WKdays_october') * F('WKhours_october') +
+#                 F('employeeNum_november') * F('WKdays_november') * F('WKhours_november') +
+#                 F('employeeNum_december') * F('WKdays_december') * F('WKhours_december')),
+#         )))
+#         raw_data['sum_count'] = raw_data['sum_count'].apply(lambda x: round(Decimal(x), 4))
+#         a_part = raw_data
+#         coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source=coefficient_source).filter(cause__in=a_part['fuel_type']).values('cause', 'gas_name', 'coefficient', 'coefficient_source').annotate(
+#             coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))
+#         ab_part = pd.merge(a_part, coefficient_part, left_on='fuel_type', right_on='cause', how='left')
+#         gwp = pd.DataFrame(list(coefficient_gwp.objects.filter(version=gwp_version).filter(gas_name__in=ab_part['gas_name']).values('gas_name', 'gwp_coefficient')))
+#         final = pd.merge(ab_part, gwp, on='gas_name', how='left')
+#         final['emission'] = final.apply(lambda x: round(Decimal(x['sum_count']) * Decimal(x['coefficient']) * Decimal(x['gwp_coefficient']), 4), axis=1)
+#         new_order = ['process_area', 'device_name', 'fuel_type', 'sum_count', 'data_unit', 'emission', 'gas_name', 'coefficient', 'coefficient_unit', 'coefficient_source', 'gwp_coefficient']
+#         final = final.reindex(columns=new_order)
+#         return final
+#     except:
+#         print('沒有該委外人員設備')
+#         return final
 
 
 # 滅火器
@@ -596,6 +608,7 @@ def extinguisher_count(years, factory_id, coefficient_source, gwp_version):
                 return 'CO2'
             else:
                 return 'HFCs'
+
         a_part['gas_name'] = a_part.apply(extinguisher_gas, axis=1)
         coefficient_part = pd.DataFrame(list(coefficient.objects.filter(coefficient_source='質量平衡法').filter(cause__in=a_part['device_name']).values('gas_name', 'coefficient', 'coefficient_source').annotate(
             coefficient_unit=Value('公噸' + '/公噸', output_field=models.CharField(max_length=50)))))

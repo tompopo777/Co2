@@ -361,7 +361,7 @@ class ice_maker(models.Model):
     company_id = models.IntegerField()
 
 
-# 設備清單
+# 冷媒
 class other_device(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=12, db_column='did_id')
