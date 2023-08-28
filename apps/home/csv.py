@@ -1,6 +1,10 @@
 ﻿import io
 import os
+
+import django.forms
+import openpyxl
 import pandas as pd
+from django.apps import apps
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -9,12 +13,18 @@ from django.shortcuts import render
 from urllib import parse
 from datetime import datetime
 from IPython.core.display import display
+
+from .decorators import register_model_action, model_actions
 # from .resource import *
+from .forms import *
 from django.contrib import messages
 from openpyxl import load_workbook
+from tablib import Dataset
+
 # from .views import current_user_group_id
 
 from .models import *
+from .resource import *
 
 COLUMN_MAPPING = {
     'emergency_generators': {
@@ -421,219 +431,872 @@ def public_version(request):
         return render(request, 'home/carbon-system.html')
 
 
+def cut_horizontal_df(df):
+    pass
+
+
+# def cut_vertical_df(excel_file):
+#     df = pd.read_excel(excel_file)
+
+def cut_vertical_df(excel_file, sheet_name):
+    df = pd.read_excel(excel_file, sheet_name=sheet_name)
+    display(type(df))
+    df = df.dropna(axis=0, how='all')
+    df = df.dropna(axis=1, how='all')
+
+    # 找到'提供單位'列中值為'例'的行
+    idx = df[df['提供單位'] == '例'].index[0]
+
+    column_names = df.loc[idx - 1].fillna(df.loc[idx - 2])
+    df = df.iloc[idx:]
+
+    # # 找到'提供單位'列中值為'序號'的行
+    # idx = df[df['提供單位'] == '序號'].index[0]
+    # # 該行存在空值
+    # if df.loc[idx].isnull().any():
+    #     #     idx的下一行當作column_name，使用idx行的值填充NaN值
+    #     column_names = df.loc[idx + 1].fillna(df.loc[idx])
+    #     #     刪除idx的下一行以上的行
+    #     df = df.iloc[idx + 2:]
+    # else:
+    #     column_names = df.loc[idx]
+    #     #     删除idx那一行及其以上的所有行
+    #     df = df.iloc[idx + 1:]
+    # 設定column_name
+    df.columns = column_names
+    # 將['序號']欄位型態不為int的row刪除
+    df = df[df['序號'].apply(lambda x: isinstance(x, int))]
+    return df
+
+
+def import_excel(request, myfile):
+    if request.method == 'POST':
+        message = {}
+        factory_id = request.session.get('factory_id')
+        did = request.session.get('dropdown_three')
+        model_name = section_two.objects.get(did=did).t_name
+        model = apps.get_model('home', model_name)
+        years = timezone.now().year
+        rename = {
+            'emergency_generators': {
+                '緊急發電機編號': 'device_id',
+                '緊急發電機容量\n(千瓦)': 'device_capacity',
+                '所屬單位': 'department',
+                '設置地點': 'position',
+                '1月': 'january',
+                '2月': 'february',
+                '3月': 'march',
+                '4月': 'april',
+                '5月': 'may',
+                '6月': 'june',
+                '7月': 'july',
+                '8月': 'august',
+                '9月': 'september',
+                '10月': 'october',
+                '11月': 'november',
+                '12月': 'december',
+            },
+            'combustion_equipment': {
+
+            },
+            'official_car': {
+                '車輛類別': 'vehicle_type',
+                '設備編號/車牌號碼': 'device_id',
+                '所屬部門': 'department',
+                '1月': 'january',
+                '2月': 'february',
+                '3月': 'march',
+                '4月': 'april',
+                '5月': 'may',
+                '6月': 'june',
+                '7月': 'july',
+                '8月': 'august',
+                '9月': 'september',
+                '10月': 'october',
+                '11月': 'november',
+                '12月': 'december',
+
+            },
+            'material': {
+
+            },
+            'process': {
+
+            },
+            'refrigerator': {
+
+            },
+            'airconditioner': {
+
+            },
+            'vehicle': {
+
+            },
+            'water_dispenser': {
+
+            },
+            'ice_water_dispenser': {
+
+            },
+            'ice_maker': {
+
+            },
+            'other_device': {
+
+            },
+            'extinguisher': {
+
+            },
+            'personnel_inventory': {
+
+            },
+            'waste_water': {
+
+            },
+            'waste_sludge': {
+
+            },
+            'solvent_aerosol_emission_sources': {
+
+            },
+            'VOCs_one': {
+
+            },
+            'VOCs_two': {
+
+            },
+            'electricity': {
+
+            },
+            'upstream_transportation': {
+
+            },
+            'downstream_transportation': {
+
+            },
+            'employee_commute': {
+
+            },
+            'employee_business_trip': {
+
+            },
+            'waste': {
+
+            },
+            'pipe_wastewater': {
+
+            },
+            'purchase_material': {
+
+            },
+            'product_indirect_emissions': {
+
+            },
+        }
+
+        def import_to_database(df):
+            # 匯入資料庫
+            df_records = df.to_dict(orient='records')
+            model_instance = [model(**record) for record in df_records]
+            model.objects.bulk_create(model_instance)
+
+        @register_model_action('emergency_generators')
+        def emergency_generator_dataframe(dataframe):
+            validation_results = {}
+
+            def find_key_by_value(dictionary, value_to_find):
+                for key, value in dictionary.items():
+                    if value == value_to_find:
+                        return key
+                return value_to_find
+
+            # validation
+            def clean_device_id(row):
+                device_id = row['device_id']
+                if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)) or pd.isna(device_id):
+                    error_message = f"序號: {row.name + 1}，輸入值: {device_id}"
+                    if "欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)" not in validation_results:
+                        validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"] = []
+                    validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"].append(error_message)
+                    return None
+                return device_id
+
+            def clean_position(row):
+                position = row['position']
+                if pd.isna(position):
+                    error_message = f"序號: {row.name + 1}，輸入值: {position}"
+                    if "欄位: 設置地點 (規則: 不可為空)" not in validation_results:
+                        validation_results["欄位: 設置地點 (規則: 不可為空)"] = []
+                    validation_results["欄位: 設置地點 (規則: 不可為空)"].append(error_message)
+                    return None
+                return position
+
+            def clean_capacity(row):
+                if row['device_capacity'] > 0 and isinstance(row['device_capacity'], (int, float)):
+                    # row['device_capacity'] = round(row['device_capacity'], 4)
+                    return row['device_capacity']
+                else:
+                    error_message = f"序號: {row.name + 1}，輸入值: {row['device_capacity']}"
+                    if '欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)' not in validation_results:
+                        validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'] = []
+                    validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'].append(error_message)
+                    return None
+
+            def clean_month(row):
+                months = ['january', 'february', 'march', 'april', 'may', 'june',
+                          'july', 'august', 'september', 'october', 'november', 'december']
+                for month in months:
+                    value = row[month]
+                    if isinstance(value, (int, float)) and value >= 0:
+                        row[month] = round(value, 4)
+                    else:
+                        conv_mont = find_key_by_value(rename[str(model_name)], month)
+                        error_message = f"序號: {row.name + 1}，輸入值: {value}"
+                        if f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)' not in validation_results:
+                            validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'] = []
+                        validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'].append(error_message)
+                        row[month] = None
+                return row
+
+            # 删除特定統計欄位: '佐證資料'和'合計'
+            dataframe.drop(['佐證資料', '合計'], axis=1, inplace=True)
+            # 除了['序號']欄位以外，刪除整行為空的row
+            df = dataframe.dropna(subset=dataframe.columns.difference(['序號']), how='all')
+            df.drop(['序號'], axis=1, inplace=True)
+            # 重製索引
+            df.reset_index(drop=True, inplace=True)
+
+            # 客製欄位補值
+            df['estimate'] = False
+
+            # 驗證
+            df['device_id'] = df.apply(clean_device_id, axis=1)
+            df['position'] = df.apply(clean_position, axis=1)
+            df['device_capacity'] = df.apply(clean_capacity, axis=1)
+            df = df.apply(clean_month, axis=1)
+
+            if validation_results:
+                for i in validation_results:
+                    print(i)
+                    for j in validation_results[i]:
+                        print(j)
+                return validation_results
+            else:
+                # add common necessary column to dataframe.
+                df['did'] = section_two.objects.get(did=did)
+                df['company_id'] = factory_id
+                df['years'] = years
+
+                return df, '匯入成功!'
+
+        sheet_list = pd.ExcelFile(myfile).sheet_names
+        # print('sheet_list', sheet_list, type(sheet_list))
+
+        if model_name == 'combustion_equipment':
+            for i in range(sheet_list):
+                # df = 'df_' + str(i)
+                # df =
+                df = cut_vertical_df(myfile, sheet_list[i])
+                print(df)
+
+        if model_name in model_actions:
+            df = cut_vertical_df(myfile, sheet_list[0])
+            df.rename(columns=rename[str(model_name)], inplace=True)
+            final_result = model_actions[model_name](df)
+
+            # 如果不同設備要儲存多次資料庫，這段要寫回各自的function裡面
+            if isinstance(final_result, tuple):
+                df, response = final_result
+                # 匯入資料庫
+                import_to_database(df)
+            else:
+                response = final_result
+            # 如果不同設備要儲存多次資料庫，這段要寫回各自的function裡面
+
+            message = {'import_excel': response}
+
+        # display(df)
+
+
+
+        # rename dataframe.
+        # df.rename(columns=rename[str(model_name)], inplace=True)
+
+        # display(df)
+
+        # validation_results = {}
+        # model_actions = {}
+
+        # def register_model_action(models_name):
+        #     def decorator(func):
+        #         model_actions[models_name] = func
+        #         return func
+        #
+        #     return decorator
+        #
+        # @register_model_action('emergency_generators')
+
+
+        # @register_model_action('other_device')
+        # def other_device_dataframe(dataframe):
+        #     def find_key_by_value(dictionary, value_to_find):
+        #         for key, value in dictionary.items():
+        #             if value == value_to_find:
+        #                 return key
+        #         return value_to_find
+        #
+        #     # validation
+        #     def clean_device_id(row):
+        #         device_id = row['device_id']
+        #         if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)) or pd.isna(device_id):
+        #             error_message = f"序號: {row.name + 1}，輸入值: {device_id}"
+        #             if "欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)" not in validation_results:
+        #                 validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"] = []
+        #             validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"].append(error_message)
+        #             return None
+        #         return device_id
+        #
+        #     def clean_position(row):
+        #         position = row['position']
+        #         if pd.isna(position):
+        #             error_message = f"序號: {row.name + 1}，輸入值: {position}"
+        #             if "欄位: 設置地點 (規則: 不可為空)" not in validation_results:
+        #                 validation_results["欄位: 設置地點 (規則: 不可為空)"] = []
+        #             validation_results["欄位: 設置地點 (規則: 不可為空)"].append(error_message)
+        #             return None
+        #         return position
+        #
+        #     def clean_capacity(row):
+        #         if row['device_capacity'] > 0 and isinstance(row['device_capacity'], (int, float)):
+        #             # row['device_capacity'] = round(row['device_capacity'], 4)
+        #             return row['device_capacity']
+        #         else:
+        #             error_message = f"序號: {row.name + 1}，輸入值: {row['device_capacity']}"
+        #             if '欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)' not in validation_results:
+        #                 validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'] = []
+        #             validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'].append(error_message)
+        #             return None
+        #
+        #     def clean_month(row):
+        #         months = ['january', 'february', 'march', 'april', 'may', 'june',
+        #                   'july', 'august', 'september', 'october', 'november', 'december']
+        #         for month in months:
+        #             value = row[month]
+        #             if isinstance(value, (int, float)) and value >= 0:
+        #                 row[month] = round(value, 4)
+        #             else:
+        #                 conv_mont = find_key_by_value(rename[str(model_name)], month)
+        #                 error_message = f"序號: {row.name + 1}，輸入值: {value}"
+        #                 if f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)' not in validation_results:
+        #                     validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'] = []
+        #                 validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'].append(error_message)
+        #                 row[month] = None
+        #         return row
+        #
+        #     df = dataframe
+        #     # 删除特定統計欄位: '佐證資料'和'合計'
+        #     df.drop(['佐證資料', '合計'], axis=1, inplace=True)
+        #     # 除了['序號']欄位以外，刪除整行為空的row
+        #     df = df.dropna(subset=df.columns.difference(['序號']), how='all')
+        #     df = df.drop(['序號'], axis=1)
+        #     # 重製索引
+        #     df.reset_index(drop=True, inplace=True)
+        #
+        #     # 客製欄位補值
+        #     df['estimate'] = False
+        #
+        #     # 驗證
+        #     # validation_results = {}
+        #     df['device_id'] = df.apply(clean_device_id, axis=1)
+        #     df['position'] = df.apply(clean_position, axis=1)
+        #     df['device_capacity'] = df.apply(clean_capacity, axis=1)
+        #     df = df.apply(clean_month, axis=1)
+        #     return df
+
+        # if model_name in model_actions:
+        #     df = model_actions[model_name](df)
+        # display('abcd', df)
+
+        # if validation_results:
+        #     for i in validation_results:
+        #         print(i)
+        #         for j in validation_results[i]:
+        #             print(j)
+        #     message['import_excel'] = validation_results
+        # else:
+        #     # add common necessary column to dataframe.
+        #     df['did'] = section_two.objects.get(did=did)
+        #     df['company_id'] = factory_id
+        #     df['years'] = years
+        #
+        #     # 匯入資料庫
+        #     df_records = df.to_dict(orient='records')
+        #     model_instance = [model(**record) for record in df_records]
+        #     # emergency_generators.objects.bulk_create(model_instance)
+        #     message = {'import_excel': '匯入成功!'}
+
+        return message
+
+# 66666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+# def import_excel(request, myfile):
+#     if request.method == 'POST':
+#         message = {}
+#         factory_id = request.session.get('factory_id')
+#         did = request.session.get('dropdown_three')
+#         model_name = section_two.objects.get(did=did).t_name
+#         model = apps.get_model('home', model_name)
+#         years = timezone.now().year
+#
+#         df = cut_vertical_df(myfile)
+#
+#         rename = {
+#             'emergency_generators': {
+#                 '緊急發電機編號': 'device_id',
+#                 '緊急發電機容量\n(千瓦)': 'device_capacity',
+#                 '所屬單位': 'department',
+#                 '設置地點': 'position',
+#                 '1月': 'january',
+#                 '2月': 'february',
+#                 '3月': 'march',
+#                 '4月': 'april',
+#                 '5月': 'may',
+#                 '6月': 'june',
+#                 '7月': 'july',
+#                 '8月': 'august',
+#                 '9月': 'september',
+#                 '10月': 'october',
+#                 '11月': 'november',
+#                 '12月': 'december',
+#             },
+#             'combustion_equipment': {
+#
+#             },
+#             'official_car': {
+#
+#             },
+#             'material': {
+#
+#             },
+#             'process': {
+#
+#             },
+#             'refrigerator': {
+#
+#             },
+#             'airconditioner': {
+#
+#             },
+#             'vehicle': {
+#
+#             },
+#             'water_dispenser': {
+#
+#             },
+#             'ice_water_dispenser': {
+#
+#             },
+#             'ice_maker': {
+#
+#             },
+#             'other_device': {
+#
+#             },
+#             'extinguisher': {
+#
+#             },
+#             'personnel_inventory': {
+#
+#             },
+#             'waste_water': {
+#
+#             },
+#             'waste_sludge': {
+#
+#             },
+#             'solvent_aerosol_emission_sources': {
+#
+#             },
+#             'VOCs_one': {
+#
+#             },
+#             'VOCs_two': {
+#
+#             },
+#             'electricity': {
+#
+#             },
+#             'upstream_transportation': {
+#
+#             },
+#             'downstream_transportation': {
+#
+#             },
+#             'employee_commute': {
+#
+#             },
+#             'employee_business_trip': {
+#
+#             },
+#             'waste': {
+#
+#             },
+#             'pipe_wastewater': {
+#
+#             },
+#             'purchase_material': {
+#
+#             },
+#             'product_indirect_emissions': {
+#
+#             },
+#         }
+#
+#         # rename dataframe.
+#         df.rename(columns=rename[str(model_name)], inplace=True)
+#
+#         # display(df)
+#
+#         def find_key_by_value(dictionary, value_to_find):
+#             for key, value in dictionary.items():
+#                 if value == value_to_find:
+#                     return key
+#             return value_to_find
+#
+#         # validation
+#         def clean_device_id(row):
+#             device_id = row['device_id']
+#             if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)) or pd.isna(device_id):
+#                 error_message = f"序號: {row.name + 1}，輸入值: {device_id}"
+#                 if "欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)" not in validation_results:
+#                     validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"] = []
+#                 validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"].append(error_message)
+#                 return None
+#             return device_id
+#
+#         def clean_position(row):
+#             position = row['position']
+#             if pd.isna(position):
+#                 error_message = f"序號: {row.name + 1}，輸入值: {position}"
+#                 if "欄位: 設置地點 (規則: 不可為空)" not in validation_results:
+#                     validation_results["欄位: 設置地點 (規則: 不可為空)"] = []
+#                 validation_results["欄位: 設置地點 (規則: 不可為空)"].append(error_message)
+#                 return None
+#             return position
+#
+#         def clean_capacity(row):
+#             if row['device_capacity'] > 0 and isinstance(row['device_capacity'], (int, float)):
+#                 # row['device_capacity'] = round(row['device_capacity'], 4)
+#                 return row['device_capacity']
+#             else:
+#                 error_message = f"序號: {row.name + 1}，輸入值: {row['device_capacity']}"
+#                 if '欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)' not in validation_results:
+#                     validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'] = []
+#                 validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'].append(error_message)
+#                 return None
+#
+#         def clean_month(row):
+#             months = ['january', 'february', 'march', 'april', 'may', 'june',
+#                       'july', 'august', 'september', 'october', 'november', 'december']
+#             for month in months:
+#                 value = row[month]
+#                 if isinstance(value, (int, float)) and value >= 0:
+#                     row[month] = round(value, 4)
+#                 else:
+#                     conv_mont = find_key_by_value(rename[str(model_name)], month)
+#                     error_message = f"序號: {row.name + 1}，輸入值: {value}"
+#                     if f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)' not in validation_results:
+#                         validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'] = []
+#                     validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'].append(error_message)
+#                     row[month] = None
+#             return row
+#
+#         # 驗證
+#         validation_results = {}
+#         df['device_id'] = df.apply(clean_device_id, axis=1)
+#         df['position'] = df.apply(clean_position, axis=1)
+#         df['device_capacity'] = df.apply(clean_capacity, axis=1)
+#         df = df.apply(clean_month, axis=1)
+#
+#         if validation_results:
+#             for i in validation_results:
+#                 print(i)
+#                 for j in validation_results[i]:
+#                     print(j)
+#             message['import_excel'] = validation_results
+#         else:
+#
+#             # add necessary column to dataframe.
+#             df['did'] = section_two.objects.get(did=did)
+#             df['company_id'] = factory_id
+#             df['years'] = years
+#             df['estimate'] = False
+#
+#             # 大家都一樣
+#             df_records = df.to_dict(orient='records')
+#             model_instance = [model(**record) for record in df_records]
+#             emergency_generators.objects.bulk_create(model_instance)
+#             message = {'import_excel': '匯入成功!'}
+#
+#         return message
+# 6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
+
+        # df.rename(columns=dict(zip(column_names, columns)), inplace=True)
+        #
+        #                 # 將df轉換成dict
+        #                 data_dict = df.to_dict('records')
+        #
+        #                 # 將公司編號加入dict中
+        #                 for data in data_dict:
+        #                     data['company_id'] = factory_id
+        #
+        #                     for key, value in data.items():
+        #                         # 判斷值是否為'是'或'否'
+        #                         if value == '是':
+        #                             data[key] = True
+        #                         elif value == '否':
+        #                             data[key] = False
+        #                         elif pd.isna(value) or value == '':  # 檢查是否為 NaN 或空白儲存格
+        #                             data[key] = None  # 將值設為 None，而不是儲存空白值
+        #
+        #                 # 將資料存入資料庫
+        #                 model_list = [globals()[table_name](**data) for data in data_dict]
+        #                 globals()[table_name].objects.bulk_create(model_list)
+
+        # #
+        # message = {'import_excel': '匯入成功!'}
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+# factory_id = request.session.get('factory_id')
+# generators = EmergencyGeneratorsResource(factory_id=factory_id)
+#
+# dataset = Dataset().load(df)
+#
+# # result = generators.import_data(dataset, dry_run=True, raise_errors=True, collect_failed_rows=False)
+# # if not result.has_errors():
+# #     result = generators.import_data(dataset, dry_run=False)
+# #     # result = generators.import_data(df_to_csv, dry_run=False)
+# #     message = {'import_excel': '匯入成功!'}
+# # else:
+# #     print('error\n', result.errors)
+# try:
+#     result = generators.import_data(dataset, dry_run=True, raise_errors=True, collect_failed_rows=False)
+#     if not result.has_errors():
+#         generators.import_data(dataset, dry_run=False)
+#         # result = generators.import_data(df_to_csv, dry_run=False)
+#         message = {'import_excel': '匯入成功!'}
+#     else:
+#         print('error\n', result.errors)
+# except ValueError as e:
+#     # print('e', type(e))
+#     # print(str(e))
+#     message = {'import_excel': str(e)}
+
+
+# @csrf_exempt
+# @require_http_methods(["POST"])
 # def import_excel(request):
 #     if request.method == 'POST':
-#         emergency_generators = EmergencyGeneratorsResource()
-#         # data = Dataset()
-#         pass
-
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def import_excel(request):
-    if request.method == 'POST':
-        # 取得設備編號、公司編號、檔案
-        did = request.session.get('dropdown_three')
-        factory_id = request.session.get('factory_id')
-        file = request.FILES.get('excel_file')
-
-        # 檢查檔案副檔名是否為Excel或CSV
-        file_type = os.path.splitext(file.name)[1]
-        if file_type in ['.xlsx', '.xls', '.csv']:
-            if file_type == '.csv':
-                # 讀取Excel檔案
-                df = pd.read_csv(file)
-                # 將NaN值替換為空值
-                df.fillna(value='', inplace=True)
-            else:
-                # 讀取Excel檔案
-                df = pd.read_excel(file)
-                # 將NaN值替換為空值
-                df.fillna(value='', inplace=True)
-        else:
-            response_data = {
-                'success': False,
-                'message': '檔案格式不正確，請選擇Excel或CSV檔案'
-            }
-            return JsonResponse(response_data)
-
-        # 取得目標資料表名稱
-        section = section_two.objects.get(did=did)
-        table_name = section.t_name
-        device_name = section.d_name
-
-        column_mapping = COLUMN_MAPPING[table_name]
-        column_names = column_mapping['column_names']
-        columns = column_mapping['columns']
-
-        # 檢查今年度是否已存在資料
-        this_year = datetime.now().year
-        if globals()[table_name].objects.filter(company_id=factory_id, years=this_year).exists():
-            response_data = {
-                'success': False,
-                'message': f'今年度已存在 {device_name} 的資料'
-            }
-            return JsonResponse(response_data)
-
-        # 寫入資料庫
-        try:
-            if table_name == 'employee_business_trip':
-                # 轉換欄位名稱
-                df.rename(columns={'年度': 'years', '出差單號': 'business_trip_number', '員工編號': 'employee_id', '部門': 'department', '姓名': 'employee_name', '出差地點': 'business_trip_location', '啟程日期': 'business_trip_date',
-                                   '出發地': 'departure', '交通工具': 'transportation', '距離': 'distance', '出差行程編號': 'trip_id', '備註欄': 'message_board'}, inplace=True)
-                # 分離母子表資料
-                mother_df = df.loc[:, ['years', 'business_trip_number', 'employee_id', 'department', 'employee_name', 'business_trip_location', 'business_trip_date', 'trip_id', 'message_board']]
-                child_df = df.loc[:, ['trip_id', 'departure', 'transportation', 'distance']]
-
-                # 將df轉換成dict
-                mother_data_dict = mother_df.to_dict('records')
-                child_data_dict = child_df.to_dict('records')
-
-                trip_id_dict = {}
-                new_business_trip_data = []
-                new_trip_section_data = []
-
-                # 將公司編號加入dict中
-                for data in mother_data_dict:
-                    old_trip_id = data['trip_id']
-                    if old_trip_id not in trip_id_dict:
-                        data.pop('trip_id')
-                        data['company_id'] = factory_id
-                        new_mother_data = employee_business_trip.objects.create(**data)
-                        new_business_trip_data.append(new_mother_data)
-                        trip_id_dict[old_trip_id] = new_mother_data.id
-                    else:
-                        trip_id_dict[old_trip_id] = trip_id_dict[old_trip_id]
-
-                for data in child_data_dict:
-                    old_trip_id = data['trip_id']
-                    new_trip_id = trip_id_dict[old_trip_id]
-                    data['trip_id'] = employee_business_trip.objects.get(id=new_trip_id)
-                    new_trip = trip_section(**data)
-                    new_trip_section_data.append(new_trip)
-
-                # 儲存新的資料到資料庫中
-                trip_section.objects.bulk_create(new_trip_section_data)
-
-                response_data = {
-                    'success': True,
-                    'message': '匯入Excel成功'
-                }
-                return JsonResponse(response_data)
-
-            elif table_name == 'employee_commute':
-                # 轉換欄位名稱
-                df.rename(columns={'年度': 'years', '員工編號': 'employee_id', '部門': 'department', '姓名': 'employee_name', '居住城市': 'city', '鄉鎮市區': 'township', '行政區公家機關地址': 'address',
-                                   '至公司距離(km)': 'commute_distance', '年工作天數': 'work_days', '交通工具': 'transportation', '員工通勤編號': 'commute_id', '備註欄': 'message_board'}, inplace=True)
-
-                # 分離母子表資料
-
-                mother_df = df.loc[:, ['years', 'employee_id', 'department', 'employee_name', 'city', 'township', 'address', 'commute_distance', 'work_days', 'commute_id', 'message_board']]
-                child_df = df.loc[:, ['commute_id', 'transportation']]
-
-                # 將df轉換成dict
-                mother_data_dict = mother_df.to_dict('records')
-                child_data_dict = child_df.to_dict('records')
-
-                commute_id_dict = {}
-                new_commute_data = []
-                new_transportation_data = []
-
-                # 將公司編號加入dict中
-                for data in mother_data_dict:
-                    old_commute_id = data['commute_id']
-                    if old_commute_id not in commute_id_dict:
-                        data.pop('commute_id')
-                        data['company_id'] = factory_id
-                        new_mother_data = employee_commute.objects.create(**data)
-                        new_commute_data.append(new_mother_data)
-                        commute_id_dict[old_commute_id] = new_mother_data.id
-                    else:
-                        commute_id_dict[old_commute_id] = commute_id_dict[old_commute_id]
-
-                for data in child_data_dict:
-                    old_commute_id = data['commute_id']
-                    new_commute_id = commute_id_dict[old_commute_id]
-                    data['commute_id'] = new_commute_id
-                    new_transportation = transportation_way(**data)
-                    new_transportation_data.append(new_transportation)
-
-                # 儲存新的資料到資料庫中
-                transportation_way.objects.bulk_create(new_transportation_data)
-
-                response_data = {
-                    'success': True,
-                    'message': '匯入Excel成功'
-                }
-                return JsonResponse(response_data)
-
-            else:
-                # 將中文列名轉換為英文列名
-                df.rename(columns=dict(zip(column_names, columns)), inplace=True)
-
-                # 將df轉換成dict
-                data_dict = df.to_dict('records')
-
-                # 將公司編號加入dict中
-                for data in data_dict:
-                    data['company_id'] = factory_id
-
-                    for key, value in data.items():
-                        # 判斷值是否為'是'或'否'
-                        if value == '是':
-                            data[key] = True
-                        elif value == '否':
-                            data[key] = False
-                        elif pd.isna(value) or value == '':  # 檢查是否為 NaN 或空白儲存格
-                            data[key] = None  # 將值設為 None，而不是儲存空白值
-
-                # 將資料存入資料庫
-                model_list = [globals()[table_name](**data) for data in data_dict]
-                globals()[table_name].objects.bulk_create(model_list)
-
-                response_data = {
-                    'success': True,
-                    'message': '匯入Excel成功'
-                }
-                return JsonResponse(response_data)
-
-        # 表示檔案格式不正確
-        except pd.errors.ParserError:
-            response_data = {
-                'success': False,
-                'message': '匯入Excel失敗，請檢查欄位格式是否正確。'
-            }
-            return JsonResponse(response_data)
-
-        except ValueError as error:
-            print('匯入Excel失敗，錯誤原因：', error)
-            response_data = {
-                'success': False,
-                'message': '匯入Excel失敗，請檢是否有選取設備。'
-            }
-            return JsonResponse(response_data, status=400)
-
-        except TypeError as error:
-            print('匯入Excel失敗，錯誤原因：', error)
-            response_data = {
-                'success': False,
-                'message': '匯入Excel失敗，請檢查選擇的檔案是否正確。'
-            }
-            return JsonResponse(response_data)
-
-        except KeyError as error:
-            print('匯入Excel失敗，錯誤原因：', error)
-            response_data = {
-                'success': False,
-                'message': f'匯入Excel失敗，請檢查欄位名稱是否正確。'
-            }
-            return JsonResponse(response_data)
-
-        # 其他可能性錯誤
-        except Exception as error:
-            print('匯入Excel失敗，錯誤原因：', error)
-            response_data = {
-                'success': False,
-                'message': '匯入Excel失敗，錯誤原因：' + str(error)
-            }
-            return JsonResponse(response_data)
+#         # 取得設備編號、公司編號、檔案
+#         did = request.session.get('dropdown_three')
+#         factory_id = request.session.get('factory_id')
+#         file = request.FILES.get('excel_file')
+#
+#         # 檢查檔案副檔名是否為Excel或CSV
+#         file_type = os.path.splitext(file.name)[1]
+#         if file_type in ['.xlsx', '.xls', '.csv']:
+#             if file_type == '.csv':
+#                 # 讀取Excel檔案
+#                 df = pd.read_csv(file)
+#                 # 將NaN值替換為空值
+#                 df.fillna(value='', inplace=True)
+#             else:
+#                 # 讀取Excel檔案
+#                 df = pd.read_excel(file)
+#                 # 將NaN值替換為空值
+#                 df.fillna(value='', inplace=True)
+#         else:
+#             response_data = {
+#                 'success': False,
+#                 'message': '檔案格式不正確，請選擇Excel或CSV檔案'
+#             }
+#             return JsonResponse(response_data)
+#
+#         # 取得目標資料表名稱
+#         section = section_two.objects.get(did=did)
+#         table_name = section.t_name
+#         device_name = section.d_name
+#
+#         column_mapping = COLUMN_MAPPING[table_name]
+#         column_names = column_mapping['column_names']
+#         columns = column_mapping['columns']
+#
+#         # 檢查今年度是否已存在資料
+#         this_year = datetime.now().year
+#         if globals()[table_name].objects.filter(company_id=factory_id, years=this_year).exists():
+#             response_data = {
+#                 'success': False,
+#                 'message': f'今年度已存在 {device_name} 的資料'
+#             }
+#             return JsonResponse(response_data)
+#
+#         # 寫入資料庫
+#         try:
+#             if table_name == 'employee_business_trip':
+#                 # 轉換欄位名稱
+#                 df.rename(columns={'年度': 'years', '出差單號': 'business_trip_number', '員工編號': 'employee_id', '部門': 'department', '姓名': 'employee_name', '出差地點': 'business_trip_location', '啟程日期': 'business_trip_date',
+#                                    '出發地': 'departure', '交通工具': 'transportation', '距離': 'distance', '出差行程編號': 'trip_id', '備註欄': 'message_board'}, inplace=True)
+#                 # 分離母子表資料
+#                 mother_df = df.loc[:, ['years', 'business_trip_number', 'employee_id', 'department', 'employee_name', 'business_trip_location', 'business_trip_date', 'trip_id', 'message_board']]
+#                 child_df = df.loc[:, ['trip_id', 'departure', 'transportation', 'distance']]
+#
+#                 # 將df轉換成dict
+#                 mother_data_dict = mother_df.to_dict('records')
+#                 child_data_dict = child_df.to_dict('records')
+#
+#                 trip_id_dict = {}
+#                 new_business_trip_data = []
+#                 new_trip_section_data = []
+#
+#                 # 將公司編號加入dict中
+#                 for data in mother_data_dict:
+#                     old_trip_id = data['trip_id']
+#                     if old_trip_id not in trip_id_dict:
+#                         data.pop('trip_id')
+#                         data['company_id'] = factory_id
+#                         new_mother_data = employee_business_trip.objects.create(**data)
+#                         new_business_trip_data.append(new_mother_data)
+#                         trip_id_dict[old_trip_id] = new_mother_data.id
+#                     else:
+#                         trip_id_dict[old_trip_id] = trip_id_dict[old_trip_id]
+#
+#                 for data in child_data_dict:
+#                     old_trip_id = data['trip_id']
+#                     new_trip_id = trip_id_dict[old_trip_id]
+#                     data['trip_id'] = employee_business_trip.objects.get(id=new_trip_id)
+#                     new_trip = trip_section(**data)
+#                     new_trip_section_data.append(new_trip)
+#
+#                 # 儲存新的資料到資料庫中
+#                 trip_section.objects.bulk_create(new_trip_section_data)
+#
+#                 response_data = {
+#                     'success': True,
+#                     'message': '匯入Excel成功'
+#                 }
+#                 return JsonResponse(response_data)
+#
+#             elif table_name == 'employee_commute':
+#                 # 轉換欄位名稱
+#                 df.rename(columns={'年度': 'years', '員工編號': 'employee_id', '部門': 'department', '姓名': 'employee_name', '居住城市': 'city', '鄉鎮市區': 'township', '行政區公家機關地址': 'address',
+#                                    '至公司距離(km)': 'commute_distance', '年工作天數': 'work_days', '交通工具': 'transportation', '員工通勤編號': 'commute_id', '備註欄': 'message_board'}, inplace=True)
+#
+#                 # 分離母子表資料
+#
+#                 mother_df = df.loc[:, ['years', 'employee_id', 'department', 'employee_name', 'city', 'township', 'address', 'commute_distance', 'work_days', 'commute_id', 'message_board']]
+#                 child_df = df.loc[:, ['commute_id', 'transportation']]
+#
+#                 # 將df轉換成dict
+#                 mother_data_dict = mother_df.to_dict('records')
+#                 child_data_dict = child_df.to_dict('records')
+#
+#                 commute_id_dict = {}
+#                 new_commute_data = []
+#                 new_transportation_data = []
+#
+#                 # 將公司編號加入dict中
+#                 for data in mother_data_dict:
+#                     old_commute_id = data['commute_id']
+#                     if old_commute_id not in commute_id_dict:
+#                         data.pop('commute_id')
+#                         data['company_id'] = factory_id
+#                         new_mother_data = employee_commute.objects.create(**data)
+#                         new_commute_data.append(new_mother_data)
+#                         commute_id_dict[old_commute_id] = new_mother_data.id
+#                     else:
+#                         commute_id_dict[old_commute_id] = commute_id_dict[old_commute_id]
+#
+#                 for data in child_data_dict:
+#                     old_commute_id = data['commute_id']
+#                     new_commute_id = commute_id_dict[old_commute_id]
+#                     data['commute_id'] = new_commute_id
+#                     new_transportation = transportation_way(**data)
+#                     new_transportation_data.append(new_transportation)
+#
+#                 # 儲存新的資料到資料庫中
+#                 transportation_way.objects.bulk_create(new_transportation_data)
+#
+#                 response_data = {
+#                     'success': True,
+#                     'message': '匯入Excel成功'
+#                 }
+#                 return JsonResponse(response_data)
+#
+#             else:
+#                 # 將中文列名轉換為英文列名
+#                 df.rename(columns=dict(zip(column_names, columns)), inplace=True)
+#
+#                 # 將df轉換成dict
+#                 data_dict = df.to_dict('records')
+#
+#                 # 將公司編號加入dict中
+#                 for data in data_dict:
+#                     data['company_id'] = factory_id
+#
+#                     for key, value in data.items():
+#                         # 判斷值是否為'是'或'否'
+#                         if value == '是':
+#                             data[key] = True
+#                         elif value == '否':
+#                             data[key] = False
+#                         elif pd.isna(value) or value == '':  # 檢查是否為 NaN 或空白儲存格
+#                             data[key] = None  # 將值設為 None，而不是儲存空白值
+#
+#                 # 將資料存入資料庫
+#                 model_list = [globals()[table_name](**data) for data in data_dict]
+#                 globals()[table_name].objects.bulk_create(model_list)
+#
+#                 response_data = {
+#                     'success': True,
+#                     'message': '匯入Excel成功'
+#                 }
+#                 return JsonResponse(response_data)
+#
+#         # 表示檔案格式不正確
+#         except pd.errors.ParserError:
+#             response_data = {
+#                 'success': False,
+#                 'message': '匯入Excel失敗，請檢查欄位格式是否正確。'
+#             }
+#             return JsonResponse(response_data)
+#
+#         except ValueError as error:
+#             print('匯入Excel失敗，錯誤原因：', error)
+#             response_data = {
+#                 'success': False,
+#                 'message': '匯入Excel失敗，請檢是否有選取設備。'
+#             }
+#             return JsonResponse(response_data, status=400)
+#
+#         except TypeError as error:
+#             print('匯入Excel失敗，錯誤原因：', error)
+#             response_data = {
+#                 'success': False,
+#                 'message': '匯入Excel失敗，請檢查選擇的檔案是否正確。'
+#             }
+#             return JsonResponse(response_data)
+#
+#         except KeyError as error:
+#             print('匯入Excel失敗，錯誤原因：', error)
+#             response_data = {
+#                 'success': False,
+#                 'message': f'匯入Excel失敗，請檢查欄位名稱是否正確。'
+#             }
+#             return JsonResponse(response_data)
+#
+#         # 其他可能性錯誤
+#         except Exception as error:
+#             print('匯入Excel失敗，錯誤原因：', error)
+#             response_data = {
+#                 'success': False,
+#                 'message': '匯入Excel失敗，錯誤原因：' + str(error)
+#             }
+#             return JsonResponse(response_data)
