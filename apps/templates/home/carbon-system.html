@@ -205,6 +205,11 @@
                         </form>
                     </div>
                 </div>
+                <form method="post" action="{% url 'bar_action' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="import_file">
+                    <button type="submit" name="import_excel" class="btn btn-outline-light">Import</button>
+                </form>
             </div>
         </div>
     </header>
@@ -785,17 +790,33 @@
             let copy_last_year = "{{ copy_data_message }}" // 顯示成功訊息
             if (copy_last_year !== "") {
                 alert(copy_last_year); // 顯示成功訊息
-                console.warn('copy_last_year', copy_last_year)
+                {#console.warn('copy_last_year', copy_last_year)#}
             }
             let count_error = "{{ count_error }}" // 顯示成功訊息
             if (count_error !== "") {
                 alert(count_error); // 顯示成功訊息
-                console.warn('count_error', count_error)
+                {#console.warn('count_error', count_error)#}
             }
             let export_error = "{{ export_error }}" // 顯示成功訊息
             if (export_error !== "") {
                 alert(export_error); // 顯示成功訊息
-                console.warn('export_error', export_error)
+                {#console.warn('export_error', export_error)#}
+            }
+            let import_excel = "{{ import_excel }}" // 顯示成功訊息
+            if (import_excel !== "") {
+                if (import_excel === "匯入成功!") {
+                    alert(import_excel)
+                } else {
+                    let error_message = "輸入格式有誤!\n\n"
+                    {% for key, value in import_excel.items %}
+                        error_message += '{{ key|escapejs }}\n'
+                        {% for i in value %}
+                            error_message += '{{ i }}\n'
+                        {% endfor %}
+                        error_message += '\n'
+                    {% endfor %}
+                    alert(error_message)
+                }
             }
         });
 

@@ -14,10 +14,16 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from decimal import *
 from datetime import datetime
+
+from tablib import Dataset
+
 from .forms import *
 from apps.home.models import *
 from .csv import *
 from django.db.models import Max
+
+from .resource import *
+from .csv import import_excel
 
 
 @login_required(login_url="/login/")
@@ -118,7 +124,6 @@ def load_table(request):
         # 從db撈每張表要顯示的值
         for a in t_name:
             if a["d_name"] == "柴油發電機":
-                print(a["did"])
                 t_data = []
                 # raw_data = emergency_generators.objects.filter(company_id__in=factory_id_list, years=year).values("id", "device_id", "device_capacity", "position",
                 raw_data = emergency_generators.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_capacity", "position",
@@ -195,14 +200,12 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.filter(company_id=factory_id, years=year).values("id", "vehicle_type", "device_id", "department", "fuel_type", "urea_content_median", "urea_water_median")
+                raw_data = official_car.objects.filter(company_id=factory_id, years=year).values("id", "vehicle_type", "device_id", "department", "fuel_type")
 
                 consumptions_data = official_car.objects.filter(company_id=factory_id, years=year).values("january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                           "september", "october", "november", "december")
 
-                urea_data = official_car.objects.filter(company_id=factory_id, years=year).values("urea_january", "urea_february", "urea_march", "urea_april",
-                                                                                                  "urea_may", "urea_june", "urea_july", "urea_august",
-                                                                                                  "urea_september", "urea_october", "urea_november", "urea_december")
+                urea_data = official_car.objects.filter(company_id=factory_id, years=year).values("urea_total", "urea_content_median", "urea_water_median")
 
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
@@ -219,18 +222,8 @@ def load_table(request):
                             consumption_total += consumptions_data[i].get(j)
                         # 將計算後的耗用量丟回字典
                         single_data["consumption_total"] = consumption_total
-                    urea_total = 0
-                    for k in urea_data[i]:
-                        urea_total += urea_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
-                    if urea_total == 0:
-                        for n in urea_data[i]:
-                            single_data[n] = None  # 「逐一」將資料(尿素)丟回字典
-                        single_data["urea_total"] = None  # 如果沒有(尿素)，設為空值
-                    else:
-                        for e in urea_data[i]:
-                            single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
-                        single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
-                        # 顯示有引用單據
+                    single_data.update(urea_data[i])
+                    # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
                     else:
@@ -2421,7 +2414,8 @@ def system_setting(request):
 
 
 @login_required(login_url="/login/")
-def carbon_system(request, message=None):
+# def carbon_system(request, message=None):
+def carbon_system(request):
     if request.method == 'GET':
         years = request.session.get('years')
         # if request.user.is_authenticated:
@@ -2454,14 +2448,15 @@ def carbon_system(request, message=None):
             "message": "",
             "count_error": "",
             "export_error": "",
+            "import_excel": "",
             "gwp_list": gwp_list,
-            # "coefficient_list": coefficient_list,
             "epa_coefficient_list": epa_coefficient_list,
             "excluded_coefficient_list": excluded_coefficient_list,
-            # "coefficient_list": coefficient_version,
         }
+        message = request.session.get('message', None)
         if message:
             context.update(message)
+            del request.session['message']
         if request.session.get('dropdown_one') and request.session.get('dropdown_two') and request.session.get('dropdown_three'):
             context.update(request.session)
         return render(request, "home/carbon-system.html", context)
@@ -2540,8 +2535,9 @@ def bar_action(request):
 
         if 'copy_last_year' in request.GET:
             message = copy_last_year_data(request)
-            print('message', message)
-            return carbon_system(request, message)
+            # print('message', message)
+            request.session['message'] = message
+            return redirect('/carbon-system/')
 
         if 'public_version' in request.GET:
             return public_version(request)
@@ -2550,12 +2546,28 @@ def bar_action(request):
             message = export_excel(request)
             # 匯出錯誤訊息return字典到carbon_system
             if isinstance(message, dict):
-                return carbon_system(request, message)
+                request.session['message'] = message
+                return redirect('/carbon-system/')
             else:
                 return message
 
-        # if 'import_excel' in request.GET:
-        #     pass
+    if request.method == "POST":
+        if 'import_excel' in request.POST:
+            # item_resource = EmergencyGeneratorsResource()
+            # dataset = Dataset()
+            new_items = request.FILES['import_file']
+            message = import_excel(request, new_items)
+            request.session['message'] = message
+
+            # imported_data = dataset.load(new_items.read(), format='xlsx')
+            # # print('imported_data', imported_data)
+            # result = item_resource.import_data(imported_data, dry_run=True)
+            #
+            # if not result.has_errors():
+            #     item_resource.import_data(imported_data, dry_run=False)
+
+            return redirect('/carbon-system/')
+            # return carbon_system(request, message)
 
 
 # 編輯轉跳
@@ -2877,9 +2889,9 @@ def add_title(request):
             # 公務車
             "3": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "類別", "編號", "所屬單位", "燃料種類", "尿素含量中間值(%)", "尿素水換算中間值(g/cm<sup>3</sup>)"],
+                "內容": ["序號", "類別", "編號", "所屬單位", "燃料種類"],
                 "耗用量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "尿素添加量(單位: 𝓁)": ["添加量", "尿素含量中間值(%)", "尿素水換算中間值(g/cm<sup>3</sup>)"],
                 "佐證資料": ["引用單據"],
             },
             # 原物料

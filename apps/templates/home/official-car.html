@@ -76,7 +76,7 @@
                                                     <div class="col-12 text-center">
                                                         {% for error in OffCar_add.errors %}
                                                             {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error or 'urea_january' == error or 'urea_february' == error or 'urea_march' == error or 'urea_april' == error or 'urea_may' == error or 'urea_june' == error or 'urea_july' == error or 'urea_august' == error or 'urea_september' == error or 'urea_october' == error or 'urea_november' == error or 'urea_december' == error %}
-                                                                <li style="color: red">只能輸入正數</li>
+                                                                <li style="color: red">只能輸入正實數(小數點後四位)</li>
                                                             {% endif %}
                                                         {% endfor %}
                                                         {% for error in OffCar_add.errors.數值必須大於零 %}
@@ -168,77 +168,86 @@
                                                             </div>
                                                         </td>
                                                     </tr>
-                                                    <tr class="display_none" id="ureaTable">
-                                                        <th>
-                                                            尿素
-                                                        </th>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_january }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_february }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_march }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_april }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_may }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_june }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_july }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_august }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_september }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_october }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_november }}
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <div class="d-flex justify-content-center">
-                                                                {{ OffCar_add.urea_december }}
-                                                            </div>
-                                                        </td>
-                                                    </tr>
+{#                                                    <tr class="display_none" id="ureaTable">#}
+{#                                                        <th>#}
+{#                                                            尿素#}
+{#                                                        </th>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_january }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_february }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_march }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_april }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_may }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_june }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_july }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_august }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_september }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_october }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_november }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                        <td>#}
+{#                                                            <div class="d-flex justify-content-center">#}
+{#                                                                {{ OffCar_add.urea_december }}#}
+{#                                                            </div>#}
+{#                                                        </td>#}
+{#                                                    </tr>#}
                                                     </tbody>
                                                 </table>
                                             </div>
                                         </div>
                                         <br>
                                         <div class="row display_none" id="urea_median">
+                                            <div class="col-4">
+                                                {% for error in OffCar_add.urea_total.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>尿素添加量(單位: 公升) </label>
+                                                    {{ OffCar_add.urea_total }}
+                                                </div>
+                                            </div>
                                             <div class="col-4">
                                                 {% for error in OffCar_add.urea_content_median.errors %}
                                                     <li style="color: red">{{ error }}</li>
@@ -371,13 +380,10 @@
 
             //燃料種類=柴油，顯示尿素欄位
             let fuel_type = document.getElementById('fuel_type')
-            let ureaTable = document.getElementById('ureaTable')
             let urea_median = document.getElementById('urea_median')
             if (fuel_type.value === '柴油') {
-                ureaTable.style.display = "table-row";
                 urea_median.classList.remove('display_none')
             } else {
-                ureaTable.style.display = "none";
                 urea_median.classList.add('display_none')
                 UreaTableDefaultZero();
             }
@@ -391,7 +397,6 @@
                     option.selected = option.value === '電力';
                 }
                 fuel_type.disabled = true;
-                ureaTable.style.display = "none";
                 urea_median.classList.add('display_none')
                 for (let i = 0; i < gas_input.length; i++) {
                     gas_input[i].value = '0';
@@ -451,35 +456,11 @@
         });
 
         function UreaTableDefaultZero() {
-            let urea_january = document.getElementById('id_urea_january')
-            let urea_february = document.getElementById('id_urea_february')
-            let urea_march = document.getElementById('id_urea_march')
-            let urea_april = document.getElementById('id_urea_april')
-            let urea_may = document.getElementById('id_urea_may')
-            let urea_june = document.getElementById('id_urea_june')
-            let urea_july = document.getElementById('id_urea_july')
-            let urea_august = document.getElementById('id_urea_august')
-            let urea_september = document.getElementById('id_urea_september')
-            let urea_october = document.getElementById('id_urea_october')
-            let urea_november = document.getElementById('id_urea_november')
-            let urea_december = document.getElementById('id_urea_december')
-
             let urea_content_median = document.getElementById('id_urea_content_median')
             let urea_water_median = document.getElementById('id_urea_water_median')
+            let urea_total = document.getElementById('id_urea_total')
 
-            urea_january.value = "0";
-            urea_february.value = "0";
-            urea_march.value = "0";
-            urea_april.value = "0";
-            urea_may.value = "0";
-            urea_june.value = "0";
-            urea_july.value = "0";
-            urea_august.value = "0";
-            urea_september.value = "0";
-            urea_october.value = "0";
-            urea_november.value = "0";
-            urea_december.value = "0";
-
+            urea_total.value = "";
             urea_content_median.value = "";
             urea_water_median.value = "";
         }
@@ -488,7 +469,7 @@
         $("#vehicle_type").on('change', function () {
             let vehicle_type = document.getElementById('vehicle_type').value
             let fuel_type = document.getElementById('fuel_type')
-            let ureaTable = document.getElementById('ureaTable')
+            {#let ureaTable = document.getElementById('ureaTable')#}
             let urea_median = document.getElementById('urea_median')
             let gas_input = document.querySelectorAll("#monthTable > td > div > input")
             if (vehicle_type === '電動車') {
@@ -497,7 +478,6 @@
                     option.selected = option.value === '電力';
                 }
                 fuel_type.disabled = true;
-                ureaTable.style.display = "none";
                 urea_median.classList.add('display_none')
                 UreaTableDefaultZero()
                 for (let i = 0; i < gas_input.length; i++) {
@@ -507,7 +487,6 @@
             } else {
                 fuel_type.disabled = false;
                 fuel_type.options[0].selected = true;
-                ureaTable.style.display = "none";
                 urea_median.classList.add('display_none')
                 UreaTableDefaultZero()
                 for (let i = 0; i < gas_input.length; i++) {
@@ -519,17 +498,10 @@
         // 燃料種類選擇柴油
         let fuel_type = document.getElementById('fuel_type')
         fuel_type.addEventListener('change', function () {
-            let ureaTable = document.getElementById('ureaTable')
             let urea_median = document.getElementById('urea_median')
-            let urea_content_median = document.getElementById('id_urea_content_median')
-            let urea_water_median = document.getElementById('id_urea_water_median')
             if (fuel_type.value === '柴油') {
-                ureaTable.style.display = "table-row";
                 urea_median.classList.remove('display_none')
-                urea_content_median.value = "32.50";
-                urea_water_median.value = "1.09";
             } else {
-                ureaTable.style.display = "none";
                 urea_median.classList.add('display_none')
                 UreaTableDefaultZero();
             }

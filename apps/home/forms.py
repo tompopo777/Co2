@@ -340,7 +340,7 @@ class EGform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -408,7 +408,7 @@ class CEform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -421,9 +421,7 @@ class OFform(forms.ModelForm):
         fields = ('vehicle_type', 'device_id', 'fuel_type', 'department',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december',
-                  'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july', 'urea_august',
-                  'urea_september', 'urea_october', 'urea_november', 'urea_december',
-                  'urea_content_median', 'urea_water_median', 'image_note', 'message_board')
+                  'urea_total', 'urea_content_median', 'urea_water_median', 'image_note', 'message_board')
         widgets = {
             'vehicle_type': forms.Select(attrs={'id': 'vehicle_type', 'style': 'width:150px'}, choices=VEHICLE_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -441,20 +439,9 @@ class OFform(forms.ModelForm):
             'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_content_median': forms.TextInput(attrs={'class': 'form-control'}),
-            'urea_water_median': forms.TextInput(attrs={'class': 'form-control'}),
+            'urea_total': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "無添加尿素則無需填寫"}),
+            'urea_content_median': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '預設中油參考值(32.5)。'}),
+            'urea_water_median': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '預設中油參考值(1.09)。'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -462,6 +449,7 @@ class OFform(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
+        self.fields['urea_total'].required = False
         self.fields['urea_content_median'].required = False
         self.fields['urea_water_median'].required = False
         self.fields['image_note'].required = False
@@ -472,22 +460,6 @@ class OFform(forms.ModelForm):
         if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
-
-    def clean_urea_content_median(self):
-        fuel_type = self.cleaned_data.get('fuel_type')
-        urea_content_median = self.cleaned_data.get('urea_content_median')
-        if fuel_type == '柴油':
-            if urea_content_median is None:
-                raise forms.ValidationError("柴油請輸入該欄位，中油參考值(32.5)", 'invalid')
-        return urea_content_median
-
-    def clean_urea_water_median(self):
-        fuel_type = self.cleaned_data.get('fuel_type')
-        urea_water_median = self.cleaned_data.get('urea_water_median')
-        if fuel_type == '柴油':
-            if urea_water_median is None:
-                raise forms.ValidationError("柴油請輸入該欄位，中油參考值(1.09)", 'invalid')
-        return urea_water_median
 
     def clean_vehicle_type(self):
         vehicle_type = self.cleaned_data['vehicle_type']
@@ -509,15 +481,42 @@ class OFform(forms.ModelForm):
         cleaned_data = self.cleaned_data
         months = ['january', 'february', 'march', 'april', 'may', 'june',
                   'july', 'august', 'september', 'october', 'november', 'december',
-                  'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june',
-                  'urea_july', 'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december']
+                  ]
         for month in months:
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
+        # 尿素驗證
+        urea_total = cleaned_data.get('urea_total')
+        urea_content_median = cleaned_data.get('urea_content_median')
+        urea_water_median = cleaned_data.get('urea_water_median')
+        if urea_total or urea_content_median or urea_water_median is not None:
+            if urea_total is not None:
+                if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(urea_total)):
+                    self._errors["urea_total"] = ["只能輸入正實數(小數點後四位)"]
+                if urea_content_median is None:
+                    self._errors["urea_content_median"] = ["請輸入該欄位，中油參考值(32.5)"]
+                if urea_water_median is None:
+                    self._errors["urea_water_median"] = ["請輸入該欄位，中油參考值(1.09)"]
+
+            if urea_content_median is not None:
+                if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(urea_content_median)):
+                    self._errors["urea_content_median"] = ["只能輸入正實數(小數點後四位)"]
+                if urea_total is None:
+                    self._errors["urea_total"] = ["請輸入該欄位"]
+                if urea_water_median is None:
+                    self._errors["urea_water_median"] = ["請輸入該欄位，中油參考值(1.09)"]
+
+            if urea_water_median is not None:
+                if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(urea_water_median)):
+                    self._errors["urea_water_median"] = ["只能輸入正實數(小數點後四位)"]
+                if urea_total is None:
+                    self._errors["urea_total"] = ["請輸入該欄位"]
+                if urea_content_median is None:
+                    self._errors["urea_content_median"] = ["請輸入該欄位，中油參考值(32.5)"]
         return cleaned_data
 
 
@@ -583,7 +582,7 @@ class MTform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
         return cleaned_data
 
@@ -645,7 +644,7 @@ class PCform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
         return cleaned_data
 
@@ -1189,7 +1188,7 @@ class PIform(forms.ModelForm):
             if value:
                 if not value >= 0:
                     print('value', month)
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -1391,7 +1390,7 @@ class ELECform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -1886,7 +1885,7 @@ class PWform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -1962,7 +1961,7 @@ class PMform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -2012,15 +2011,7 @@ class PIEform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
-
-# class EmergencyGeneratorsImport(forms.Form):
-#     class Meta:
-#         model = emergency_generators
-#         fields = " __all__"
-#         # fields = ('device_id', 'device_capacity', 'position', 'department', 'estimate',
-#         #           'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
-#         #           'november', 'december', 'image_note', 'message_board')
