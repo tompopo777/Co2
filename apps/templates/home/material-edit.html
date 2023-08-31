@@ -56,28 +56,37 @@
                                         <div class="row">
                                             <div class="form-check ps-1">
                                                 <label>
-                                                    {{ form.chemical }}
-                                                    是否為化學品
+                                                    {{ form.welding_rod }}
+                                                    是否為焊條
                                                 </label>
                                             </div>
                                             <div class="collapse" id="collapsePee">
                                                 <div class="row mt-3">
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static">
-                                                            <label>化學名稱</label>
-                                                            {{ form.process_add_name }}
+                                                            <label>焊條料號</label>
+                                                            {{ form.welding_rod_id }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
-                                                            <label>化學品名</label>
-                                                            {{ form.chemical_name }}
+                                                            <label>焊條品名</label>
+                                                            {{ form.welding_rod_name }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
-                                                            <label>化學式</label>
-                                                            {{ form.chemical_formula }}
+                                                            <label>焊條規格</label>
+                                                            {{ form.welding_rod_format }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in form.carbon_content.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>含碳量(%)</label>
+                                                            {{ form.carbon_content }}
                                                         </div>
                                                     </div>
                                                 </div>

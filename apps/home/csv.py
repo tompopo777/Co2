@@ -37,10 +37,11 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'combustion_equipment': {
-        'columns': ['years', 'device_name', 'device_id', 'fuel_type', 'fuel_january', 'fuel_february', 'fuel_march',
-                    'fuel_april', 'fuel_may', 'fuel_june', 'fuel_july', 'fuel_august', 'fuel_september', 'fuel_october',
-                    'fuel_november', 'fuel_december', 'heat_january', 'heat_february', 'heat_march', 'heat_april', 'heat_may',
-                    'heat_june', 'heat_july', 'heat_august', 'heat_september', 'heat_october', 'heat_november', 'heat_december', 'message_board'],
+        'columns': ['years', 'device_name', 'device_id', 'fuel_type',
+                    'fuel_january', 'fuel_february', 'fuel_march', 'fuel_april', 'fuel_may', 'fuel_june',
+                    'fuel_july', 'fuel_august', 'fuel_september', 'fuel_october', 'fuel_november', 'fuel_december',
+                    'heat_january', 'heat_february', 'heat_march', 'heat_april', 'heat_may', 'heat_june', 'heat_july',
+                    'heat_august', 'heat_september', 'heat_october', 'heat_november', 'heat_december', 'message_board'],
         'column_names': ['年度', '名稱', '編號', '燃料種類', '一月 使用量', '二月 使用量', '三月 使用量', '四月 使用量', '五月 使用量', '六月 使用量',
                          '七月 使用量', '八月 使用量', '九月 使用量', '十月 使用量', '十一月 使用量', '十二月 使用量',
                          '一月 熱值(Kcal/kg)', '二月 熱值(Kcal/kg)', '三月 熱值(Kcal/kg)', '四月 熱值(Kcal/kg)', '五月 熱值(Kcal/kg)', '六月 熱值(Kcal/kg)',
@@ -48,73 +49,80 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'official_car': {
-        'columns': ['years', 'vehicle_type', 'device_id', 'fuel_type', 'department', 'metering_method',
+        'columns': ['years', 'vehicle_type', 'device_id', 'fuel_type', 'department',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                     'september', 'october', 'november', 'december',
                     'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july',
-                    'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december', 'message_board'],
-        'column_names': ['年度', '類別', '編號', '燃料種類', '所屬單位', '計程方式',
+                    'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december',
+                    'urea_content_median', 'urea_water_median', 'message_board'],
+        'column_names': ['年度', '類別', '編號', '燃料種類', '所屬單位',
                          '耗用量 一月', '耗用量 二月', '耗用量 三月', '耗用量 四月', '耗用量 五月', '耗用量 六月',
                          '耗用量 七月', '耗用量 八月', '耗用量 九月', '耗用量 十月', '耗用量 十一月', '耗用量 十二月',
                          '尿素 一月', '尿素 二月', '尿素 三月', '尿素 四月', '尿素 五月', '尿素 六月',
-                         '尿素 七月', '尿素 八月', '尿素 九月', '尿素 十月', '尿素 十一月', '尿素 十二月', '備註欄'],
+                         '尿素 七月', '尿素 八月', '尿素 九月', '尿素 十月', '尿素 十一月', '尿素 十二月',
+                         '尿素含量中間值(%)', '尿素水換算中間值(g/cm3)', '備註欄'],
         'prefix': '類別一_'
     },
     'material': {
-        'columns': ['years', 'material_id', 'material_type', 'material_name', 'chemical', 'process_add_name', 'chemical_name', 'chemical_formula',
+        'columns': ['years', 'material_name', 'material_id', 'material_type', 'welding_rod', 'welding_rod_id', 'welding_rod_name', 'welding_rod_format', 'carbon_content',
                     'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
-        'column_names': ['年度', '原物料號', '原/物料', '名稱', '是否為化學品', '化學品名稱', '化學品名', '化學式', '一月', '二月', '三月', '四月', '五月',
+        'column_names': ['年度', '名稱', '原物料號', '原/物料', '是否為焊條', '焊條料號', '焊條品名', '焊條規格', '含碳量(%)', '一月', '二月', '三月', '四月', '五月',
                          '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
         'prefix': '類別一_'
     },
     'process': {
-        'columns': ['years', 'process_stage', 'material_id', 'process_add_name', 'carbon_content', 'burn', 'VOCs',
-                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board', 'unit'],
-        'column_names': ['年度', '製程階段', '料號', '製程添加名稱', '含碳量(%)', '是否燃燒', 'VOCs',
-                         '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄', '使用量單位'],
-        'prefix': '類別一__'
+        'columns': ['years', 'process_stage', 'chemical_id', 'chemical_coefficient', 'burn', 'process_add_name', 'chemical_name', 'chemical_formula', 'CAS_NO', 'unit',
+                    'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'message_board'],
+        'column_names': ['年度', '製程使用階段', '化學品料號', '化學品系數', '是否燃燒', '製程添加名稱', '化學品名', '化學式', 'CAS編號', '使用量單位',
+                         '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月', '備註欄'],
+        'prefix': '類別一_'
+    },
+    'process_gas': {
+        'columns': ['years', 'receipt_number', 'department', 'receipt_date', 'gas_name', 'amount', 'unit', 'per_amount', 'per_unit', 'message_board'],
+        'column_names': ['年度', '單號', '所屬部門', '領用日期', '氣體名稱', '數量', '數量單位', '每單位規格', '單位', '備註欄'],
+        'prefix': '類別一_'
     },
     'refrigerator': {
         'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
                     'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
         'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
-        'prefix': '類別一__'
+        'prefix': '類別一_'
     },
     'airconditioner': {
         'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
                     'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
         'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
-        'prefix': '類別一__'
+        'prefix': '類別一_'
     },
     'vehicle': {
         'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
                     'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
         'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
-        'prefix': '類別一__'
+        'prefix': '類別一_'
     },
     'water_dispenser': {
         'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
                     'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
         'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
-        'prefix': '類別一__'
+        'prefix': '類別一_'
     },
     'ice_water_dispenser': {
         'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
                     'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
         'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
-        'prefix': '類別一__'
+        'prefix': '類別一_'
     },
     'ice_maker': {
         'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
                     'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
         'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
-        'prefix': '類別一__'
+        'prefix': '類別一_'
     },
     'other_device': {
         'columns': ['years', 'device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
-                    'filling_volume', 'refrigerant_type', 'filling_fix_volume', 'effusion_rate', 'message_board'],
-        'column_names': ['年度', '編號', '名稱', '品牌', '型號', '位置', '購買年份', '規格填充量', '冷媒類型', '維修填充量(kg)', '逸散率(%)', '備註欄'],
-        'prefix': '類別一__'
+                    'filling_volume', 'effusion_rate', 'device_type', 'refrigerant_type', 'filling_fix_volume', 'message_board'],
+        'column_names': ['年度', '設備編號', '設備名稱', '設備品牌', '型號', '放置位置', '該設備購買年月', '規格填充量', '冷媒類型', '維修填充量(kg)', '設備種類', '逸散率(%)', '備註欄'],
+        'prefix': '類別一_'
     },
     'extinguisher': {
         'columns': ['years', 'device_id', 'extinguisher_vendor', 'extinguisher_type', 'position', 'inventory',
@@ -123,30 +131,37 @@ COLUMN_MAPPING = {
         'prefix': '類別一_'
     },
     'personnel_inventory': {
-        'columns': ['years', 'classification', 'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june',
-                    'WKhours_july', 'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december',
-                    'WKnum_january', 'WKnum_february', 'WKnum_march', 'WKnum_april', 'WKnum_may', 'WKnum_june', 'WKnum_july',
-                    'WKnum_august', 'WKnum_september', 'WKnum_october', 'WKnum_november', 'WKnum_december', 'message_board'],
-        'column_names': ['年度', '類型', '時數 一月', '時數 二月', '時數 三月', '時數 四月', '時數 五月', '時數 六月',
-                         '時數 七月', '時數 八月', '時數 九月', '時數 十月', '時數 十一月', '時數 十二月',
-                         '人數 一月', '人數 二月', '人數 三月', '人數 四月', '人數 五月', '人數 六月',
-                         '人數 七月', '人數 八月', '人數 九月', '人數 十月', '人數 十一月', '人數 十二月', '備註欄'],
-        'prefix': '類別一_'
-    },
-    'employee': {
-        'columns': ['years', 'career', 'employeeNum_january', 'employeeNum_february', 'employeeNum_march', 'employeeNum_april', 'employeeNum_may',
-                    'employeeNum_june', 'employeeNum_july', 'employeeNum_august', 'employeeNum_september', 'employeeNum_october', 'employeeNum_november',
-                    'employeeNum_december', 'WKdays_january', 'WKdays_february', 'WKdays_march', 'WKdays_april', 'WKdays_may', 'WKdays_june',
-                    'WKdays_july', 'WKdays_august', 'WKdays_september', 'WKdays_october', 'WKdays_november', 'WKdays_december',
-                    'WKhours_january', 'WKhours_february', 'WKhours_march', 'WKhours_april', 'WKhours_may', 'WKhours_june', 'WKhours_july',
-                    'WKhours_august', 'WKhours_september', 'WKhours_october', 'WKhours_november', 'WKhours_december', 'message_board'],
+        'columns': ['years', 'classification',
+                    'people_number_jan', 'people_number_feb', 'people_number_mar', 'people_number_apr', 'people_number_may', 'people_number_jun',
+                    'people_number_jul', 'people_number_aug', 'people_number_sept', 'people_number_oct', 'people_number_nov', 'people_number_dec',
+                    'daily_working_hours_jan', 'daily_working_hours_feb', 'daily_working_hours_mar', 'daily_working_hours_apr', 'daily_working_hours_may', 'daily_working_hours_jun',
+                    'daily_working_hours_jul', 'daily_working_hours_aug', 'daily_working_hours_sept', 'daily_working_hours_oct', 'daily_working_hours_nov', 'daily_working_hours_dec',
+                    'work_day_jan', 'work_day_feb', 'work_day_mar', 'work_day_apr', 'work_day_may', 'work_day_jun',
+                    'work_day_jul', 'work_day_aug', 'work_day_sept', 'work_day_oct', 'work_day_nov', 'work_day_dec',
+                    'holidays_jan', 'holidays_feb', 'holidays_mar', 'holidays_apr', 'holidays_may', 'holidays_jun',
+                    'holidays_jul', 'holidays_aug', 'holidays_sept', 'holidays_oct', 'holidays_nov', 'holidays_dec',
+                    'overtime_jan', 'overtime_feb', 'overtime_mar', 'overtime_apr', 'overtime_may', 'overtime_jun',
+                    'overtime_jul', 'overtime_aug', 'overtime_sept', 'overtime_oct', 'overtime_nov', 'overtime_dec',
+                    'leave_hours_jan', 'leave_hours_feb', 'leave_hours_mar', 'leave_hours_apr', 'leave_hours_may', 'leave_hours_jun',
+                    'leave_hours_jul', 'leave_hours_aug', 'leave_hours_sept', 'leave_hours_oct', 'leave_hours_nov', 'leave_hours_dec',
+                    'compensatory_leave_hours_jan', 'compensatory_leave_hours_feb', 'compensatory_leave_hours_mar', 'compensatory_leave_hours_apr', 'compensatory_leave_hours_may', 'compensatory_leave_hours_jun',
+                    'compensatory_leave_hours_jul', 'compensatory_leave_hours_aug', 'compensatory_leave_hours_sept', 'compensatory_leave_hours_oct', 'compensatory_leave_hours_nov', 'compensatory_leave_hours_dec',
+                    'message_board'],
         'column_names': ['年度', '人員類別',
-                         '人數 一月', '人數 二月', '人數 三月', '人數 四月', '人數 五月', '人數 六月',
-                         '人數 七月', '人數 八月', '人數 九月', '人數 十月', '人數 十一月', '人數 十二月',
-                         '工作天數 一月', '工作天數 二月', '工作天數 三月', '工作天數 四月', '工作天數 五月', '工作天數 六月',
-                         '工作天數 七月', '工作天數 八月', '工作天數 九月', '工作天數 十月', '工作天數 十一月', '工作天數 十二月',
-                         '時數 一月', '時數 二月', '時數 三月', '時數 四月', '時數 五月', '時數 六月',
-                         '時數 七月', '時數 八月', '時數 九月', '時數 十月', '時數 十一月', '時數 十二月', '備註欄'],
+                         '一月人數', '二月人數', '三月人數', '四月人數', '五月人數', '六月人數',
+                         '七月人數', '八月人數', '九月人數', '十月人數', '十一月人數', '十二月人數',
+                         '一月每日工時', '二月每日工時', '三月每日工時', '四月每日工時', '五月每日工時', '六月每日工時',
+                         '七月每日工時', '八月每日工時', '九月每日工時', '十月每日工時', '十一月每日工時', '十二月每日工時',
+                         '一月工作天數', '二月工作天數', '三月工作天數', '四月工作天數', '五月工作天數', '六月工作天數',
+                         '七月工作天數', '八月工作天數', '九月工作天數', '十月工作天數', '十一月工作天數', '十二月工作天數',
+                         '一月公休天數', '二月公休天數', '三月公休天數', '四月公休天數', '五月公休天數', '六月公休天數',
+                         '七月公休天數', '八月公休天數', '九月公休天數', '十月公休天數', '十一月公休天數', '十二月公休天數',
+                         '一月加班天數', '二月加班天數', '三月加班天數', '四月加班天數', '五月加班天數', '六月加班天數',
+                         '七月加班天數', '八月加班天數', '九月加班天數', '十月加班天數', '十一月加班天數', '十二月加班天數',
+                         '一月請假天數', '二月請假天數', '三月請假天數', '四月請假天數', '五月請假天數', '六月請假天數',
+                         '七月請假天數', '八月請假天數', '九月請假天數', '十月請假天數', '十一月請假天數', '十二月請假天數',
+                         '一月補休天數', '二月補休天數', '三月補休天數', '四月補休天數', '五月補休天數', '六月補休天數',
+                         '七月補休天數', '八月補休天數', '九月補休天數', '十月補休天數', '十一月補休天數', '十二月補休天數','備註欄'],
         'prefix': '類別一_'
     },
     'waste_water': {
@@ -212,10 +227,16 @@ COLUMN_MAPPING = {
                          '空運運輸距離(km)', '出貨機場', '到達機場', '空運支付方', '空運趟次', '備註欄'],
         'prefix': '類別三_'
     },
-    'waste': {
+    'waste_process': {
         'columns': ['years', 'waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
                     'transport_type', 'transport_fuel', 'transport_distance', 'message_board'],
         'column_names': ['年度', '名稱', '重量(噸)', '運送時間', '處置地點', '處理方式', '處理廠商名稱', '運輸方式', '運輸燃料', '運輸距離(km)', '備註欄'],
+        'prefix': '類別四_'
+    },
+    'waste': {
+        'columns': ['years', 'waste_name', 'waste_weigh', 'waste_date', 'waste_location', 'waste_disposal', 'waste_disposal_vendor',
+                    'message_board'],
+        'column_names': ['年度', '名稱', '重量(噸)', '運送時間', '處置地點', '處理方式', '處理廠商名稱', '備註欄'],
         'prefix': '類別四_'
     },
     'pipe_wastewater': {

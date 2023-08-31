@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} 設備清單 - 修改 {% endblock %}
+{% block title %} 冷媒 - 修改 {% endblock %}
 
 {% block body_class %} other-device {% endblock %}
 
@@ -23,11 +23,11 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 設備清單</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 冷媒</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
+                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
@@ -38,18 +38,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.device_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
                                                 {% for error in form.device_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.device_id }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.device_name }}
                                                 </div>
                                             </div>
                                         </div>
@@ -93,6 +93,10 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>設備種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.device_type }}
+                                                </div>
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.refrigerant_type }}
@@ -150,18 +154,23 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認，並新增另一筆
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
                                             </button>
                                         </div>
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
                                             <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
                                             </a>
                                         </div>
                                     </div>
-                            </form>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -238,6 +247,34 @@
             });
         });
 
+        $('#device_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
         $('#refrigerant_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+
+        $('#device_type').on('change', function () {
+            let device_type = document.getElementById('device_type');
+            let effusion_rate = document.getElementById('effusion_rate');
+
+            if (device_type.value === '移動式空氣清淨機') {
+                effusion_rate.value = 15
+            } else if (device_type.value === '住宅及商業建築冷氣機') {
+                effusion_rate.value = 5.5
+            } else if (device_type.value === '家用冷凍、冷藏裝備') {
+                effusion_rate.value = 0.3
+            } else if (device_type.value === '獨立商用冷凍、冷藏裝備') {
+                effusion_rate.value = 8
+            } else if (device_type.value === '中、大型冷凍、冷藏裝備') {
+                effusion_rate.value = 22.5
+            } else if (device_type.value === '交通用冷凍、冷藏裝備') {
+                effusion_rate.value = 32.5
+            } else if (device_type.value === '工業冷凍、冷藏裝備，包括食品加工及冷藏') {
+                effusion_rate.value = 16
+            } else if (device_type.value === '冰水機') {
+                effusion_rate.value = 8.5
+            } else if (device_type.value === '其他') {
+                effusion_rate.value = 0
+            } else {
+                effusion_rate.value = 0
+            }
+        })
     </script>
 {% endblock javascripts %}

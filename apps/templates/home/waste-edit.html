@@ -27,7 +27,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
+                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
@@ -54,7 +54,13 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>處理廠商名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.waste_disposal_vendor }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
                                                 {% for error in form.waste_location.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -63,7 +69,7 @@
                                                     {{ form.waste_location }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
+                                            <div class="col-4">
                                                 {% for error in form.waste_disposal.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
@@ -73,43 +79,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>處理廠商名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.waste_disposal_vendor }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                {% for error in form.transport_type.errors %}
-                                                    <li style="color: red">{{ error }}</li>
-                                                {% endfor %}
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>運輸工具&nbsp;</label>
-                                                    {{ form.transport_type }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>運輸燃料</label>
-                                                    {{ form.transport_fuel }}
-                                                </div>
-                                            </div>
-                                            <div class="col-6">
-                                                {% for error in form.transport_distance.errors %}
-                                                    <li style="color: red">{{ error }}</li>
-                                                {% endfor %}
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>運輸距離(單位:公里)</label>
-                                                    {{ form.transport_distance }}
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div class="d-flex">
-                                        <div class="col-6">
+                                        <div class="col-4">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
                                                 {{ form.image_note }}
@@ -142,12 +114,17 @@
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認，並新增另一筆
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
                                             </button>
                                         </div>
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
                                             <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
                                             </a>
