@@ -205,11 +205,11 @@
                         </form>
                     </div>
                 </div>
-                <form method="post" action="{% url 'bar_action' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="file" name="import_file">
-                    <button type="submit" name="import_excel" class="btn btn-outline-light">Import</button>
-                </form>
+{#                <form method="post" action="{% url 'bar_action' %}" enctype="multipart/form-data">#}
+{#                    {% csrf_token %}#}
+{#                    <input type="file" name="import_file">#}
+{#                    <button type="submit" name="import_excel" class="btn btn-outline-light">Import</button>#}
+{#                </form>#}
             </div>
         </div>
     </header>
@@ -907,21 +907,6 @@
 
     <!-- Excel -->
     <script>
-        {#$(document).ready(function () {#}
-        {#    // 匯出 Excel 按鈕#}
-        {#    $('#export_excel').on('click', function () {#}
-        {#        $.ajax({#}
-        {#            url: "{% url 'export_excel' %}",#}
-        {#            type: "GET",#}
-        {#            success: function (response) {#}
-        {#                if (response.message) {#}
-        {#                    alert(response.message); // 顯示警示訊息#}
-        {#                }#}
-        {#            },#}
-        {#        });#}
-        {#    });#}
-
-
         $(document).ready(function () {
             // 匯入 Excel 按鈕
             $('#importExcel').on('change', function () {
