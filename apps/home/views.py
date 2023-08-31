@@ -45,7 +45,7 @@ def index(request):
     if request.user.groups.filter(name='公司帳號').exists():
         pass
     else:
-        current_user = Profile.objects.filter(user_id=request.user.id).get()
+        current_user = Profile.objects.get(user_id=request.user.id)
         factory_id = current_user.factory_id
         request.session.update({'factory_id': factory_id})
     return HttpResponse(html_template.render(context, request))
@@ -101,7 +101,7 @@ def load_device(request):
 def current_user_group_id(request):
     try:
         user_id = request.user.id
-        current_user = Profile.objects.filter(user_id=user_id).get()
+        current_user = Profile.objects.get(user_id=user_id)
         factory_id = current_user.factory_id
         # factory_name = current_user.factory
         return factory_id
@@ -2408,9 +2408,7 @@ def system_setting(request):
             'coefficient_source': coefficient_source,
         }
         request.session.update(context)
-
-        request.method = 'GET'
-        return carbon_system(request)
+        return redirect('/carbon-system/')
 
 
 @login_required(login_url="/login/")
@@ -2470,8 +2468,6 @@ def carbon_system(request):
         if company_id is None:
             if factory_id is None:
                 factory_id = current_user_group_id(request)
-        # print('factory_id', factory_id)
-        # print('company_id', company_id)
         dropdown = {
             'dropdown_one': dropdown_one,
             'dropdown_two': dropdown_two,

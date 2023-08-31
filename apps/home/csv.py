@@ -2,6 +2,7 @@
 import os
 
 import django.forms
+import numpy as np
 import openpyxl
 import pandas as pd
 from django.apps import apps
@@ -438,35 +439,86 @@ def cut_horizontal_df(df):
 # def cut_vertical_df(excel_file):
 #     df = pd.read_excel(excel_file)
 
-def cut_vertical_df(excel_file, sheet_name):
-    df = pd.read_excel(excel_file, sheet_name=sheet_name)
-    display(type(df))
-    df = df.dropna(axis=0, how='all')
-    df = df.dropna(axis=1, how='all')
+class CutVerticalDF:
+    def __init__(self, excel_file, sheet_name):
+        self.excel_file = excel_file
+        self.sheet_name = sheet_name
+        self.df = None
 
-    # 找到'提供單位'列中值為'例'的行
-    idx = df[df['提供單位'] == '例'].index[0]
+    def read_excel(self):
+        self.df = pd.read_excel(self.excel_file, sheet_name=self.sheet_name)
+        self.df = self.df.dropna(axis=0, how='all')
+        self.df = self.df.dropna(axis=1, how='all')
 
-    column_names = df.loc[idx - 1].fillna(df.loc[idx - 2])
-    df = df.iloc[idx:]
+    def find_column_names(self):
+        # 找到'提供單位'column中值為'例'的row
+        idx = self.df[self.df['提供單位'] == '例'].index[0]
+        column_names = self.df.loc[idx - 1].fillna(self.df.loc[idx - 2])
+        self.df = self.df.iloc[idx:]
+        self.df.columns = column_names
 
-    # # 找到'提供單位'列中值為'序號'的行
-    # idx = df[df['提供單位'] == '序號'].index[0]
-    # # 該行存在空值
-    # if df.loc[idx].isnull().any():
-    #     #     idx的下一行當作column_name，使用idx行的值填充NaN值
-    #     column_names = df.loc[idx + 1].fillna(df.loc[idx])
-    #     #     刪除idx的下一行以上的行
-    #     df = df.iloc[idx + 2:]
-    # else:
-    #     column_names = df.loc[idx]
-    #     #     删除idx那一行及其以上的所有行
-    #     df = df.iloc[idx + 1:]
-    # 設定column_name
-    df.columns = column_names
-    # 將['序號']欄位型態不為int的row刪除
-    df = df[df['序號'].apply(lambda x: isinstance(x, int))]
-    return df
+    def filter_data(self):
+        # 將['序號']欄位型態不為int的row刪除
+        self.df = self.df[self.df['序號'].apply(lambda x: isinstance(x, int))]
+        # 刪除整個為空的column
+        self.df.drop([col for col in self.df.columns if pd.isna(col)], axis=1, inplace=True)
+
+    def final_rebuild(self):
+        # 除了['序號']欄位以外，刪除整個為空的row
+        self.df = self.df.dropna(subset=self.df.columns.difference(['序號']), how='all')
+        self.df.drop(['序號'], axis=1, inplace=True)
+        # 重製索引
+        self.df.reset_index(drop=True, inplace=True)
+
+
+class CutEmergencyGenerator(CutVerticalDF):
+    def drop_column(self):
+        # 删除特定統計欄位: '佐證資料'和'合計'
+        self.df.drop(['佐證資料', '合計'], axis=1, inplace=True)
+
+    def process(self):
+        self.read_excel()
+        self.find_column_names()
+        self.drop_column()
+        self.filter_data()
+        self.final_rebuild()
+
+
+class CutOfficialCar(CutVerticalDF):
+    def drop_column(self):
+        # 删除特定統計欄位: '佐證資料'和'合計'
+        self.df.drop(['佐證資料', '合計'], axis=1, inplace=True)
+
+    def find_urea_median(self):
+        # 找到'尿素含量'跟'尿素水'欄位
+        content = self.df[self.df['是否添加尿素'] == '尿素含量\n中間值 (%)'].index[0]
+        self.df['尿素含量\n中間值 (%)'] = self.df.at[content + 1, '是否添加尿素']
+
+        water = self.df[self.df[self.df.columns[pd.isna(self.df.columns)][0]] == '尿素水換算\n中間值 (g/cm3)'].index[0]
+        self.df['尿素水換算\n中間值 (g/cm3)'] = self.df.at[water + 1, '是否添加尿素']
+
+        # 將'添加尿素'!='有'的'尿素含量'、'尿素水'欄位資料轉成null
+        self.df.loc[self.df['是否添加尿素'] != '有', ['尿素含量\n中間值 (%)', '尿素水換算\n中間值 (g/cm3)']] = np.nan
+
+    def urea_drop_column(self):
+        # 删除特定統計欄位: '佐證資料'和'合計'
+        self.df.drop(['是否添加尿素', '尿素佐證資料'], axis=1, inplace=True)
+
+    def gas_process(self):
+        self.read_excel()
+        self.find_column_names()
+        self.drop_column()
+        self.filter_data()
+        self.final_rebuild()
+
+    def diesel_process(self):
+        self.read_excel()
+        self.find_column_names()
+        self.drop_column()
+        self.find_urea_median()
+        self.urea_drop_column()
+        self.filter_data()
+        self.final_rebuild()
 
 
 def import_excel(request, myfile):
@@ -515,7 +567,9 @@ def import_excel(request, myfile):
                 '10月': 'october',
                 '11月': 'november',
                 '12月': 'december',
-
+                '添加量 (公升)': 'urea_total',
+                '尿素含量\n中間值 (%)': 'urea_content_median',
+                '尿素水換算\n中間值 (g/cm3)': 'urea_water_median',
             },
             'material': {
 
@@ -601,7 +655,8 @@ def import_excel(request, myfile):
             model.objects.bulk_create(model_instance)
 
         @register_model_action('emergency_generators')
-        def emergency_generator_dataframe(dataframe):
+        def emergency_generator_dataframe(myfile, sheet_list):
+        # def emergency_generator_dataframe(dataframe):
             validation_results = {}
 
             def find_key_by_value(dictionary, value_to_find):
@@ -658,13 +713,11 @@ def import_excel(request, myfile):
                         row[month] = None
                 return row
 
-            # 删除特定統計欄位: '佐證資料'和'合計'
-            dataframe.drop(['佐證資料', '合計'], axis=1, inplace=True)
-            # 除了['序號']欄位以外，刪除整行為空的row
-            df = dataframe.dropna(subset=dataframe.columns.difference(['序號']), how='all')
-            df.drop(['序號'], axis=1, inplace=True)
-            # 重製索引
-            df.reset_index(drop=True, inplace=True)
+            # dataframe = cut_vertical_df(myfile, sheet_list[0])
+            data_processor = CutEmergencyGenerator(myfile, sheet_list[0])
+            data_processor.process()
+            df = data_processor.df
+            df.rename(columns=rename[str(model_name)], inplace=True)
 
             # 客製欄位補值
             df['estimate'] = False
@@ -689,21 +742,112 @@ def import_excel(request, myfile):
 
                 return df, '匯入成功!'
 
+        @register_model_action('official_car')
+        def official_car_dataframe(myfile, sheet_list):
+            validation_results = {}
+
+            def find_key_by_value(dictionary, value_to_find):
+                for key, value in dictionary.items():
+                    if value == value_to_find:
+                        return key
+                return value_to_find
+
+            # validation
+            def clean_device_id(row):
+                device_id = row['device_id']
+                if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)) or pd.isna(device_id):
+                    error_message = f"序號: {row.name + 1}，輸入值: {device_id}"
+                    if "欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)" not in validation_results:
+                        validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"] = []
+                    validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"].append(error_message)
+                    return None
+                return device_id
+
+            def clean_position(row):
+                position = row['position']
+                if pd.isna(position):
+                    error_message = f"序號: {row.name + 1}，輸入值: {position}"
+                    if "欄位: 設置地點 (規則: 不可為空)" not in validation_results:
+                        validation_results["欄位: 設置地點 (規則: 不可為空)"] = []
+                    validation_results["欄位: 設置地點 (規則: 不可為空)"].append(error_message)
+                    return None
+                return position
+
+            def clean_capacity(row):
+                if row['device_capacity'] > 0 and isinstance(row['device_capacity'], (int, float)):
+                    # row['device_capacity'] = round(row['device_capacity'], 4)
+                    return row['device_capacity']
+                else:
+                    error_message = f"序號: {row.name + 1}，輸入值: {row['device_capacity']}"
+                    if '欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)' not in validation_results:
+                        validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'] = []
+                    validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'].append(error_message)
+                    return None
+
+            def clean_month(row):
+                months = ['january', 'february', 'march', 'april', 'may', 'june',
+                          'july', 'august', 'september', 'october', 'november', 'december']
+                for month in months:
+                    value = row[month]
+                    if isinstance(value, (int, float)) and value >= 0:
+                        row[month] = round(value, 4)
+                    else:
+                        conv_mont = find_key_by_value(rename[str(model_name)], month)
+                        error_message = f"序號: {row.name + 1}，輸入值: {value}"
+                        if f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)' not in validation_results:
+                            validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'] = []
+                        validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'].append(error_message)
+                        row[month] = None
+                return row
+
+            # 燃料種類(汽油)
+            gas_processor = CutOfficialCar(myfile, sheet_list[0])
+            gas_processor.gas_process()
+            gas_dataframe = gas_processor.df
+            # display(gas_dataframe)
+
+            # 燃料種類(柴油)
+            diesel_processor = CutOfficialCar(myfile, sheet_list[1])
+            diesel_processor.diesel_process()
+            diesel_dataframe = diesel_processor.df
+            # display(diesel_dataframe)
+
+            dataframe = pd.concat([gas_dataframe, diesel_dataframe], ignore_index=True)
+            # display(dataframe)
+
+            df = dataframe.rename(columns=rename[str(model_name)], inplace=False)
+            # display(df)
+
+            # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+            # 客製欄位補值
+
+            # 驗證
+            df['device_id'] = df.apply(clean_device_id, axis=1)
+            df['position'] = df.apply(clean_position, axis=1)
+            df['device_capacity'] = df.apply(clean_capacity, axis=1)
+            df = df.apply(clean_month, axis=1)
+
+            if validation_results:
+                for i in validation_results:
+                    print(i)
+                    for j in validation_results[i]:
+                        print(j)
+                return validation_results
+            else:
+                # add common necessary column to dataframe.
+                df['did'] = section_two.objects.get(did=did)
+                df['company_id'] = factory_id
+                df['years'] = years
+
+                return df, '匯入成功!'
+
         sheet_list = pd.ExcelFile(myfile).sheet_names
         # print('sheet_list', sheet_list, type(sheet_list))
 
-        if model_name == 'combustion_equipment':
-            for i in range(sheet_list):
-                # df = 'df_' + str(i)
-                # df =
-                df = cut_vertical_df(myfile, sheet_list[i])
-                print(df)
-
+        # 利用model_name選擇要呼叫的function
         if model_name in model_actions:
-            df = cut_vertical_df(myfile, sheet_list[0])
-            df.rename(columns=rename[str(model_name)], inplace=True)
-            final_result = model_actions[model_name](df)
-
+            final_result = model_actions[model_name](myfile, sheet_list)
             # 如果不同設備要儲存多次資料庫，這段要寫回各自的function裡面
             if isinstance(final_result, tuple):
                 df, response = final_result
@@ -714,127 +858,6 @@ def import_excel(request, myfile):
             # 如果不同設備要儲存多次資料庫，這段要寫回各自的function裡面
 
             message = {'import_excel': response}
-
-        # display(df)
-
-
-
-        # rename dataframe.
-        # df.rename(columns=rename[str(model_name)], inplace=True)
-
-        # display(df)
-
-        # validation_results = {}
-        # model_actions = {}
-
-        # def register_model_action(models_name):
-        #     def decorator(func):
-        #         model_actions[models_name] = func
-        #         return func
-        #
-        #     return decorator
-        #
-        # @register_model_action('emergency_generators')
-
-
-        # @register_model_action('other_device')
-        # def other_device_dataframe(dataframe):
-        #     def find_key_by_value(dictionary, value_to_find):
-        #         for key, value in dictionary.items():
-        #             if value == value_to_find:
-        #                 return key
-        #         return value_to_find
-        #
-        #     # validation
-        #     def clean_device_id(row):
-        #         device_id = row['device_id']
-        #         if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)) or pd.isna(device_id):
-        #             error_message = f"序號: {row.name + 1}，輸入值: {device_id}"
-        #             if "欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)" not in validation_results:
-        #                 validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"] = []
-        #             validation_results["欄位: 緊急發電機設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"].append(error_message)
-        #             return None
-        #         return device_id
-        #
-        #     def clean_position(row):
-        #         position = row['position']
-        #         if pd.isna(position):
-        #             error_message = f"序號: {row.name + 1}，輸入值: {position}"
-        #             if "欄位: 設置地點 (規則: 不可為空)" not in validation_results:
-        #                 validation_results["欄位: 設置地點 (規則: 不可為空)"] = []
-        #             validation_results["欄位: 設置地點 (規則: 不可為空)"].append(error_message)
-        #             return None
-        #         return position
-        #
-        #     def clean_capacity(row):
-        #         if row['device_capacity'] > 0 and isinstance(row['device_capacity'], (int, float)):
-        #             # row['device_capacity'] = round(row['device_capacity'], 4)
-        #             return row['device_capacity']
-        #         else:
-        #             error_message = f"序號: {row.name + 1}，輸入值: {row['device_capacity']}"
-        #             if '欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)' not in validation_results:
-        #                 validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'] = []
-        #             validation_results['欄位: 緊急發電機容量 (規則: 輸入值須大於零、不可為空)'].append(error_message)
-        #             return None
-        #
-        #     def clean_month(row):
-        #         months = ['january', 'february', 'march', 'april', 'may', 'june',
-        #                   'july', 'august', 'september', 'october', 'november', 'december']
-        #         for month in months:
-        #             value = row[month]
-        #             if isinstance(value, (int, float)) and value >= 0:
-        #                 row[month] = round(value, 4)
-        #             else:
-        #                 conv_mont = find_key_by_value(rename[str(model_name)], month)
-        #                 error_message = f"序號: {row.name + 1}，輸入值: {value}"
-        #                 if f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)' not in validation_results:
-        #                     validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'] = []
-        #                 validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'].append(error_message)
-        #                 row[month] = None
-        #         return row
-        #
-        #     df = dataframe
-        #     # 删除特定統計欄位: '佐證資料'和'合計'
-        #     df.drop(['佐證資料', '合計'], axis=1, inplace=True)
-        #     # 除了['序號']欄位以外，刪除整行為空的row
-        #     df = df.dropna(subset=df.columns.difference(['序號']), how='all')
-        #     df = df.drop(['序號'], axis=1)
-        #     # 重製索引
-        #     df.reset_index(drop=True, inplace=True)
-        #
-        #     # 客製欄位補值
-        #     df['estimate'] = False
-        #
-        #     # 驗證
-        #     # validation_results = {}
-        #     df['device_id'] = df.apply(clean_device_id, axis=1)
-        #     df['position'] = df.apply(clean_position, axis=1)
-        #     df['device_capacity'] = df.apply(clean_capacity, axis=1)
-        #     df = df.apply(clean_month, axis=1)
-        #     return df
-
-        # if model_name in model_actions:
-        #     df = model_actions[model_name](df)
-        # display('abcd', df)
-
-        # if validation_results:
-        #     for i in validation_results:
-        #         print(i)
-        #         for j in validation_results[i]:
-        #             print(j)
-        #     message['import_excel'] = validation_results
-        # else:
-        #     # add common necessary column to dataframe.
-        #     df['did'] = section_two.objects.get(did=did)
-        #     df['company_id'] = factory_id
-        #     df['years'] = years
-        #
-        #     # 匯入資料庫
-        #     df_records = df.to_dict(orient='records')
-        #     model_instance = [model(**record) for record in df_records]
-        #     # emergency_generators.objects.bulk_create(model_instance)
-        #     message = {'import_excel': '匯入成功!'}
-
         return message
 
 # 66666666666666666666666666666666666666666666666666666666666666666666666666666666666666666
