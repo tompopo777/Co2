@@ -2646,23 +2646,23 @@ def bar_action(request):
             else:
                 return message
 
-    # if request.method == "POST":
-    #     if 'import_excel' in request.POST:
-    #         # item_resource = EmergencyGeneratorsResource()
-    #         # dataset = Dataset()
-    #         new_items = request.FILES['import_file']
-    #         message = import_excel(request, new_items)
-    #         request.session['message'] = message
-    #
-    #         # imported_data = dataset.load(new_items.read(), format='xlsx')
-    #         # # print('imported_data', imported_data)
-    #         # result = item_resource.import_data(imported_data, dry_run=True)
-    #         #
-    #         # if not result.has_errors():
-    #         #     item_resource.import_data(imported_data, dry_run=False)
-    #
-    #         return redirect('/carbon-system/')
-    #         # return carbon_system(request, message)
+    if request.method == "POST":
+        if 'import_excel' in request.POST:
+            # item_resource = EmergencyGeneratorsResource()
+            # dataset = Dataset()
+            new_items = request.FILES['import_file']
+            message = import_excel(request, new_items)
+            request.session['message'] = message
+
+            # imported_data = dataset.load(new_items.read(), format='xlsx')
+            # # print('imported_data', imported_data)
+            # result = item_resource.import_data(imported_data, dry_run=True)
+            #
+            # if not result.has_errors():
+            #     item_resource.import_data(imported_data, dry_run=False)
+
+            return redirect('/carbon-system/')
+            # return carbon_system(request, message)
 
 
 # 編輯轉跳

@@ -646,7 +646,7 @@ class MTform(forms.ModelForm):
         return cleaned_data
 
 
-# 製成添加物
+# 製程添加化學品
 class PCform(forms.ModelForm):
     class Meta:
         model = process
@@ -2182,6 +2182,8 @@ class PGform(forms.ModelForm):
     #                 self._errors["數值必須大於零"] = ["數值必須大於零"]
     #                 self._errors[month] = [month]
     #     return cleaned_data
+
+
 # class EmergencyGeneratorsImport(forms.Form):
 #     class Meta:
 #         model = emergency_generators

@@ -205,11 +205,11 @@
                         </form>
                     </div>
                 </div>
-{#                <form method="post" action="{% url 'bar_action' %}" enctype="multipart/form-data">#}
-{#                    {% csrf_token %}#}
-{#                    <input type="file" name="import_file">#}
-{#                    <button type="submit" name="import_excel" class="btn btn-outline-light">Import</button>#}
-{#                </form>#}
+                <form method="post" action="{% url 'bar_action' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="import_file">
+                    <button type="submit" name="import_excel" class="btn btn-outline-light">Import</button>
+                </form>
             </div>
         </div>
     </header>
@@ -804,7 +804,7 @@
             }
             let import_excel = "{{ import_excel }}" // 顯示成功訊息
             if (import_excel !== "") {
-                if (import_excel === "匯入成功!") {
+                if (import_excel === "匯入成功!" || import_excel === "匯入失敗，excel資料為空!") {
                     alert(import_excel)
                 } else {
                     let error_message = "輸入格式有誤!\n\n"
@@ -894,7 +894,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (delete_list) {
-                    console.warn('delete_list', delete_list)
+                    {#console.warn('delete_list', delete_list)#}
                     for (let i = 0; i < delete_list.length; i++) {
                         let single_data = document.getElementById(delete_list[i])
                         single_data.closest("tr").remove()
@@ -906,40 +906,40 @@
 
 
     <!-- Excel -->
-    <script>
-        $(document).ready(function () {
-            // 匯入 Excel 按鈕
-            $('#importExcel').on('change', function () {
-                let dropdown_three = document.getElementById('dropdown_three');
-                let deviceId = dropdown_three.value;
-                let companyValue = $("#factory_dropdown").val();
-                let yearInput = $("#yearInput").val()
-                let formData = new FormData();
-                formData.append('did', deviceId);
-                formData.append('excel_file', $('#importExcel')[0].files[0]);
-                formData.append('company_id', companyValue)
-
-                $.ajax({
-                    url: "/import_excel/",
-                    type: "POST",
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        if (response.success) {
-                            alert(response.message); // 顯示成功訊息
-                            loadtable(deviceId, company_value, yearInput);
-                        } else {
-                            alert(response.message);
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        alert('匯入Excel失敗，錯誤原因：' + error + '\n請檢查欄位格式是否正確');
-                        console.log(error)
-                    }
-                });
-            });
-        });
-    </script>
+{#    <script>#}
+{#        $(document).ready(function () {#}
+{#            // 匯入 Excel 按鈕#}
+{#            $('#importExcel').on('change', function () {#}
+{#                let dropdown_three = document.getElementById('dropdown_three');#}
+{#                let deviceId = dropdown_three.value;#}
+{#                let companyValue = $("#factory_dropdown").val();#}
+{#                let yearInput = $("#yearInput").val()#}
+{#                let formData = new FormData();#}
+{#                formData.append('did', deviceId);#}
+{#                formData.append('excel_file', $('#importExcel')[0].files[0]);#}
+{#                formData.append('company_id', companyValue)#}
+{##}
+{#                $.ajax({#}
+{#                    url: "/import_excel/",#}
+{#                    type: "POST",#}
+{#                    data: formData,#}
+{#                    contentType: false,#}
+{#                    processData: false,#}
+{#                    success: function (response) {#}
+{#                        if (response.success) {#}
+{#                            alert(response.message); // 顯示成功訊息#}
+{#                            loadtable(deviceId, company_value, yearInput);#}
+{#                        } else {#}
+{#                            alert(response.message);#}
+{#                        }#}
+{#                    },#}
+{#                    error: function (xhr, status, error) {#}
+{#                        alert('匯入Excel失敗，錯誤原因：' + error + '\n請檢查欄位格式是否正確');#}
+{#                        console.log(error)#}
+{#                    }#}
+{#                });#}
+{#            });#}
+{#        });#}
+{#    </script>#}
 
 {% endblock javascripts %}
