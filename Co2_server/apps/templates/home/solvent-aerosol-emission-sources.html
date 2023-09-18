@@ -22,8 +22,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 溶劑、噴霧劑</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 溶劑、噴霧劑</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -31,53 +31,80 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-5">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.years }}
+                                                    <label>領用日期 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ SAES_add.receipt_date }}
                                                 </div>
                                             </div>
-                                            <div class="col-7">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>溶劑、噴霧劑名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.solvent_name }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                {% for error in SAES_add.solvent_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-6">
                                                     <label>溶劑、噴霧劑數量(單位: 瓶/罐)<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ SAES_add.solvent_amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-6">
-                                                    <label>溶劑、噴霧劑容量(單位: {{ SAES_add.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.solvent_capacity }}
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>氣體名稱<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.gas_name }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>添加比例(%) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.gas_ratio }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>容量換算密度('oz' 預設為'1')<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ SAES_add.density }}
-                                                </div>
-                                            </div>
+                                        <div class="row mb-4">
+                                            添加氣體
+                                            {% for error in GasAddFormSet.non_form_errors %}
+                                                <li style="color: red">{{ error }}</li>
+                                            {% endfor %}
                                         </div>
+                                        {{ GasAddFormSet.management_form }}
+                                        {% for error in GasAddFormSet.non_field_errors %}
+                                            <li style="color: red">{{ error }}</li>
+                                        {% endfor %}
+                                        {% for a in GasAddFormSet %}
+                                            <div id="gas_add">
+                                                <div class="row mb-4 gas" id="0">
+                                                    {% for hidden in a.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
+                                                    <div class="col-4">
+                                                        {% for error in SAES_add.solvent_capacity.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-6">
+                                                            <label>溶劑、噴霧劑容量(單位: {{ a.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.solvent_capacity }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in a.gas_ratio.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>氣體含量(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.gas_ratio }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in a.density.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>容量換算密度('oz' 預設為'1') <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.density }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <a class="col" onclick="DuplicateGas()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                            <a class="col" onclick="DeleteGas(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                     <div class="d-flex">
@@ -106,6 +133,9 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
+                                                {% for error in SAES_add.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 {{ SAES_add.message_board }}
                                             </div>
                                         </div>
@@ -122,9 +152,9 @@
                                             </button>
                                         </div>
                                         <div class="col-auto mx-3">
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -163,6 +193,13 @@
             {% endif %}
         });
 
+        {#    月份篩選器#}
+        $("#receipt_date").datepicker({
+            format: "yyyy-mm-dd",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
@@ -171,17 +208,6 @@
                 return false;
             }
         });
-
-
-        {#    年度篩選器#}
-        $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
 
         {#    照片顯示檔名+可刪除#}
         const dt = new DataTransfer(); // 允許操作輸入文件的文件
@@ -218,7 +244,52 @@
         });
 
         {#select2#}
-        $('#gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        {#$('#gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});#}
+        {#$('.gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});#}
         $('#solvent_capacity_unit').select2({minimumResultsForSearch: -1}).next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+
+        {#    新增/刪除出差段數#}
+        var gas_count = 0;
+
+        function DuplicateGas() {
+            gas_count += 1;
+            document.getElementById("id_gas_add_set-TOTAL_FORMS").value = (gas_count + 1).toString()
+            var gas_add = document.getElementById("gas_add")
+            var first_trip = document.getElementsByClassName("gas")[0]
+            var clone = first_trip.cloneNode(true);
+            gas_add.appendChild(clone)
+            clone.id = (gas_count)
+            var input = document.querySelectorAll(".gas:last-child > div > div > input")
+            input[0].id = "id_gas_add_set-" + gas_count + "-gas_ratio"
+            input[0].name = "gas_add_set-" + gas_count + "-gas_ratio"
+            input[1].id = "id_gas_add_set-" + gas_count + "-density"
+            input[1].name = "gas_add_set-" + gas_count + "-density"
+            input[0].value = ""
+            input[1].value = ""
+            var select = document.querySelectorAll(".gas:last-child > div > div > select")
+            select[0].id = "id_gas_add_set-" + gas_count + "-gas_name"
+            select[0].name = "gas_add_set-" + gas_count + "-gas_name"
+            select[0].value = ""
+        }
+
+        function DeleteGas(deletbutton) {
+            if (gas_count > 0) {
+                gas_count -= 1;
+                deletbutton.closest("div.gas").remove()
+                document.getElementById("id_gas_add_set-TOTAL_FORMS").value = (gas_count + 1).toString()
+                var gas = document.getElementsByClassName("gas")
+                for (let i = 0; i <= gas_count; i++) {
+                    gas[i].id = i.toString()
+                    let input = document.querySelectorAll(".gas:nth-child(" + (i + 1) + ") > div > div > input")
+                    input[0].id = ("id_gas_add_set-" + i + "-gas_ratio").toString()
+                    input[0].name = ("gas_add_set-" + i + "-gas_ratio").toString()
+                    input[1].id = ("id_gas_add_set-" + i + "-density").toString()
+                    input[1].name = ("gas_add_set-" + i + "-density").toString()
+                    let select = document.querySelectorAll(".gas:nth-child(" + (i + 1) + ") > div > div > select")
+                    select[0].id = ("id_gas_add_set-" + i + "-gas_name").toString()
+                    select[0].name = ("gas_add_set-" + i + "-gas_name").toString()
+                }
+            }
+        }
     </script>
 {% endblock javascripts %}

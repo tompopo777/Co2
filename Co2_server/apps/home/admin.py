@@ -35,12 +35,14 @@ class FactoryAdmin(admin.ModelAdmin):
 class ProfileAdmin(admin.ModelAdmin):
     # list_display = ('id', '')
     # list_filter = ['company_id']
-    pass
+    fields = ('user', 'company', 'factory')
+    # pass
 
 
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
+    fields = ('user', 'company', 'factory')
 
 
 class MyUserAdmin(UserAdmin):

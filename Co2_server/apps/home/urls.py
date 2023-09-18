@@ -5,7 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 
 from django.conf.urls import url
 from django.urls import path, re_path
-from apps.home import views, csv, count
+from apps.home import views, csv, count, inventory
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -28,7 +28,6 @@ urlpatterns = [
                   path("other_device_add/", views.other_device_add),
                   path("extinguisher_add/", views.extinguisher_add),
                   path("personnel_inventory_add/", views.personnel_inventory_add),
-                  path("employee_add/", views.employee_add),
                   path("waste_water_add/", views.waste_water_add),
                   path("waste_sludge_add/", views.waste_sludge_add),
                   path("solvent_aerosol_emission_sources_add/", views.solvent_aerosol_emission_sources_add),
@@ -43,6 +42,8 @@ urlpatterns = [
                   path("pipe_wastewater_add/", views.pipe_wastewater_add),
                   path("purchase_material_add/", views.purchase_material_add),
                   path("product_indirect_emissions_add/", views.product_indirect_emissions_add),
+                  path("process_gas_add/", views.process_gas_add),
+                  path("waste_process_add/", views.waste_process_add),
                   # ajax傳質
                   path("ajax/process", views.load_process, name='loadprocess'),
                   path("ajax/device", views.load_device, name='loaddevice'),
@@ -51,18 +52,25 @@ urlpatterns = [
                   path("edit_device/", views.edit_device, name='loadedit'),
                   path("chemical_dropdowm/", views.chemical_dropdowm, name='chemical_dropdowm'),
                   path("loadchemical/", views.load_chemical, name='loadchemical'),
-                  path("copy_last_year_data/", views.copy_last_year_data, name='copy_last_year_data'),
+                  # path("copy_last_year_data/", views.copy_last_year_data, name='copy_last_year_data'),
                   # Excel
-                  path("export_excel/", csv.export_excel, name='export_excel'),
+                  # path("export_excel/", csv.export_excel, name='export_excel'),
                   path('import_excel/', csv.import_excel, name='import_excel'),
+                  # path('public_version/', csv.public_version, name='public_version'),
+                  # # 新增設備轉跳
+                  # path("new_device/", views.add_page, name='loadadd'),
                   # 新增設備轉跳
-                  path("new_device/", views.add_page, name='loadadd'),
+                  path("bar_action/", views.bar_action, name='bar_action'),
                   # 編輯設備
-                  path('update_device/<str:datasheet_id>&<int:single_dataID>&<str:dropdown_one>&<str:dropdown_two>', views.update_device, name='update_device'),
+                  path('update_device/<int:single_dataID>', views.update_device, name='update_device'),
                   # 刪除設備
                   path('delete_device/', views.delete_device, name='delete_device'),
                   # 匯出總表
                   path("calculate_summary/", count.calculate_summary, name='calculate_summary'),
+                  # 匯出清冊
+                  path("inventory_summary/", inventory.inventory_summary, name='inventory_summary'),
+                  # 盤查設定
+                  path("system_setting/", views.system_setting, name='system_setting'),
                   # Matches any html file
                   re_path(r'^.*\.*', views.pages, name='pages'),
 

@@ -22,12 +22,12 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 員工出差</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 員工出差</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype=multipart/form-data>
+                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-4 d-flex align-items-center">
@@ -44,6 +44,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in form.business_trip_number.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static">
                                                     <label>出差單號 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.business_trip_number }}
@@ -52,6 +55,9 @@
                                         </div>
                                         <div class="row mb-4">
                                             <div class="col-4">
+                                                {% for error in form.employee_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static">
                                                     <label>員工編號</label>
                                                     {{ form.employee_id }}
@@ -73,14 +79,11 @@
                                         <br>
                                         <div class="row mb-4">
                                             出差段數
-                                            {% if update_formset_trip.errors %}
-                                                <div class="alert alert-danger">
-                                                    {{ update_formset_trip.errors }}
-                                                </div>
-                                            {% endif %}
+                                            {% for error in update_formset.non_form_errors %}
+                                                <li style="color: red">{{ error }}</li>
+                                            {% endfor %}
                                         </div>
                                         <div id="trip_section">
-                                            {{ update_formset.non_form_errors }}
                                             {{ update_formset.management_form }}
                                             {% for a in update_formset %}
                                                 <div class="row mb-4 trip" id="0">
@@ -91,24 +94,29 @@
                                                         {{ a.DELETE }}
                                                     </div>
                                                     <div class="col-4">
+                                                        {% for error in a.departure.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>出發地 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.departure.hidden_fields }}
-                                                            {{ a.departure.errors }}
                                                             {{ a.departure }}
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
+                                                        {% for error in a.transportation.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>交通工具 <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.transportation.errors }}
                                                             {{ a.transportation }}
                                                         </div>
                                                     </div>
                                                     <div class="col-3">
+                                                        {% for error in a.distance.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
                                                         <div class="input-group input-group-static mb-4">
                                                             <label>距離(單位:pkm) <span style="color:red; font-size:16px;">* </span></label>
-                                                            {{ a.distance.errors }}
                                                             {{ a.distance }}
                                                         </div>
                                                     </div>
@@ -169,6 +177,9 @@
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
+                                                    {% for error in form.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
                                                     {{ form.message_board }}
                                                 </div>
                                             </div>
@@ -180,10 +191,9 @@
                                                 </button>
                                             </div>
                                             <div class="col-1">
-                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" id="cancel"
-                                                        onclick="history.back()">
+                                                <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                     取消
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -225,7 +235,7 @@
             minViewMode: "days",
             orientation: "bottom",
             autoclose: "true",
-        }).datepicker("setDate", 'now');
+        });
 
         {#    員工出差段數照片顯示檔名+可刪除#}
         const dt1 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
@@ -299,10 +309,13 @@
         {#    新增/刪除出差段數#}
 
         //刪除extra=1新增的空白表單
-        var remove_extra = document.querySelectorAll(".trip:last-child")[0]
-        remove_extra.remove()
         var TOTAL_FORMS = document.querySelectorAll("#trip_section > input")[0]
-        var trip_count = parseInt(TOTAL_FORMS.value, 10) - 1
+        var trip_count = parseInt(TOTAL_FORMS.value, 10)
+        if ("{{ dont_remove }}" === ""){
+            let remove_extra = document.querySelectorAll(".trip:last-child")[0]
+            remove_extra.remove()
+            trip_count = trip_count - 1
+        }
         var id_count = trip_count
         TOTAL_FORMS.value = id_count.toString()
 

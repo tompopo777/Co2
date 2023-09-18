@@ -158,9 +158,32 @@ thead, .table {
     transform: rotate(45deg);
 }
 
-input:disabled {
-    background:#dddddd;
+input:disabled:not(.disabled_scc) {
+    background: #dddddd;
 }
 
-input:disabled+label{color:#ccc; outline: #dddddd !important;}
+input:disabled:not(.disabled_scc) + label {
+    color: #ccc;
+    outline: #dddddd !important;
+}
 
+#staticBackdrop {
+    /*left: initial !important;*/
+    /*height: 300px;*/
+}
+
+.blink {
+    animation: blinker 1.5s linear infinite;
+    color: red;
+    font-family: sans-serif;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+.display_none {
+    display: none;
+}

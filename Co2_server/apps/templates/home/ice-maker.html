@@ -22,8 +22,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 製冰機清單</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 製冰機清單</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -33,11 +33,14 @@
                                         <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>填報年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ IM_add.years }}
+                                                    <label>該設備購買年月 </label>
+                                                    {{ IM_add.years_purchased }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in IM_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ IM_add.device_id }}
@@ -71,25 +74,25 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>該設備購買年份 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ IM_add.years_purchased }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in IM_add.filling_volume.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ IM_add.filling_volume }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in IM_add.effusion_rate.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ IM_add.effusion_rate }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ IM_add.refrigerant_type }}
@@ -124,7 +127,7 @@
                                     <div class="d-flex">
                                         <div class="ps-md-2 align-self-center">
                                             <div class="col-2" multiple="multiple">
-                                                <input type="hidden" name="stage" value="製冰機清單">
+                                                <input type="hidden" name="stage" value="冰箱">
                                                 <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
                                         </div>
@@ -139,6 +142,9 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
+                                                {% for error in IM_add.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 {{ IM_add.message_board }}
                                             </div>
                                         </div>
@@ -155,9 +161,9 @@
                                             </button>
                                         </div>
                                         <div class="col-auto mx-3">
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -202,22 +208,11 @@
             }
         });
 
-
-        {#    年度篩選器#}
-        $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
-
         {#    購買年份篩選器#}
         $("#years_purchased").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');

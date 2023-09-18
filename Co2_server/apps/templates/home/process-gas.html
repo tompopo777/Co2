@@ -1,13 +1,12 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} 廢棄物 {% endblock %}
+{% block title %} 氣體 {% endblock %}
 
-{% block body_class %} waste {% endblock %}
+{% block body_class %} material {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
-    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
     <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
 
 {% endblock stylesheets %}
@@ -23,82 +22,81 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 廢棄物</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 氣體</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/waste_add/" method="POST" enctype="multipart/form-data">
+                                <form action="/process_gas_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_add.waste_name }}
+                                                    <label>單號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PG_add.receipt_number }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                {% for error in WASTE_add.waste_weigh.errors %}
-                                                    <li style="color: red">{{ error }}</li>
-                                                {% endfor %}
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物重量(單位:噸) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_add.waste_weigh }}
+                                                    <label>所屬部門 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PG_add.department }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物運送年月度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_add.waste_date }}
+                                                    <label>領用日期 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PG_add.receipt_date }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>氣體名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PG_add.gas_name }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>處理廠商名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_add.waste_disposal_vendor }}
+                                                    <label>數量 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PG_add.amount }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>數量單位 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PG_add.unit }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                {% for error in WASTE_add.waste_location.errors %}
-                                                    <li style="color: red">{{ error }}</li>
-                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物處置地點 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ WASTE_add.waste_location }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                {% for error in WASTE_add.waste_disposal.errors %}
-                                                    <li style="color: red">{{ error }}</li>
-                                                {% endfor %}
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>廢棄物處理方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ WASTE_add.waste_disposal }}
+                                                    <label>每單位規格( 單位: {{ PG_add.per_unit }} ) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ PG_add.per_amount }}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
                                     <div class="d-flex">
-                                        <div class="col-4">
+                                        <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                {{ WASTE_add.image_note }}
+                                                {{ PG_add.image_note }}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="d-flex">
                                         <div class="ps-md-2 align-self-center">
                                             <div class="col-2" multiple="multiple">
-                                                <input type="hidden" name="stage" value="冷氣">
+                                                <input type="hidden" name="stage" value="原物料">
                                                 <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
                                         </div>
                                         <div id="files-area">
-                                                <span id="filesList">
-                                                    <span id="files-names"></span>
-                                                </span>
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -106,10 +104,10 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
-                                                {% for error in WASTE_add.message_board.errors %}
+                                                {% for error in MT_add.message_board.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
-                                                {{ WASTE_add.message_board }}
+                                                {{ PG_add.message_board }}
                                             </div>
                                         </div>
                                     </div>
@@ -145,11 +143,13 @@
 {% block javascripts %}
     <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
     {#    select2#}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/>
 
 
     <script>
@@ -161,7 +161,31 @@
                     alert(success_message);
                 {% endfor %}
             {% endif %}
+            // 顯示錯誤框
+            {% for field in MT_add %}
+                {% for error in field.errors %}
+                    error_name = "{{ field.label }}"
+                    if (
+                        error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                        error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                        error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
+                    ) {
+                        error_name = error_name.toLowerCase()
+                        error_input = document.querySelector("[name=" + error_name + "]");
+                        parentDiv = error_input.parentNode;
+                        parentDiv.classList.add("border", "border-danger", "border-3");
+                    }
+                {% endfor %}
+            {% endfor %}
         });
+
+
+        {#    月份篩選器#}
+        $("#receipt_date").datepicker({
+            format: "yyyy-mm-dd",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
 
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
@@ -172,14 +196,58 @@
             }
         });
 
-        {#    月份篩選器#}
-        $("#waste_date").datepicker({
-            format: "mm",
-            viewMode: "months",
-            minViewMode: "months",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
+        {# select2#}
+        $('#single-select-field').select2({
+            theme: "bootstrap-5",
+            {#width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',#}
+            {#placeholder: $(this).data('placeholder'),#}
+            width: 300
+        });
+
+
+        {# 自動帶入化學品名稱、化學式#}
+        var chemical_name = $(".chemical_name")
+        var chemical_formula = $(".chemical_formula")
+        $(".process_add_name").on('change', function () {
+            chemical_name.val("")
+            chemical_formula.val("")
+            var add_ch_name = $(this).val();
+            $.ajax({
+                url: "{% url 'loadchemical' %}",
+                data: {
+                    'add_ch_name': add_ch_name
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (chemical_data) {
+                    {#console.warn(chemical_data);#}
+                    var list = [];
+                    chemical_data.forEach((item) => {
+                        for (const [key, value] of Object.entries((item))) {
+                            list.push(value)
+                        }
+                        chemical_name.val(list[0])
+                        chemical_formula.val(list[1])
+                    })
+                },
+            });
+        });
+
+
+        {# 當checkbox勾選，下方摺疊展開#}
+        var process_add_name = $(".process_add_name")
+        var checkbox = document.getElementById("chemical")
+        var collapse = document.getElementById("collapsePee")
+        if (checkbox.checked === true) {
+            collapse.classList.add("show")
+        }
+        $(document).on('click', ".chemical", function () {
+            if (checkbox.checked !== true) {
+                process_add_name.val("")
+                chemical_name.val("")
+                chemical_formula.val("")
+            }
+        });
 
 
         {#    照片顯示檔名+可刪除#}
@@ -215,7 +283,5 @@
                 document.getElementById('attachment').files = dt.files;
             });
         });
-
-        $('#waste_location').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
     </script>
 {% endblock javascripts %}

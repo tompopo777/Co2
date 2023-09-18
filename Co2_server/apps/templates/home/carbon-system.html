@@ -25,8 +25,7 @@
                     <div class="card-body px-0">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
-                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: {{ years }}</code>
                             <div class="d-flex dropdown-area">
                                 <div class="col-4">
                                     <label class="lead form-label ms-0" for="factory_dropdown" style="color: whitesmoke">公司廠別</label>
@@ -85,8 +84,7 @@
                     <div class="card-body px-0">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
-                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: {{ years }}</code>
                             <div class="d-flex dropdown-area">
                                 <div class="col-4">
                                     <label class="lead form-label ms-0" for="company_dropdown" style="color: whitesmoke">子廠名稱</label>
@@ -146,8 +144,7 @@
                     <div class="card-body">
                         <form action="/carbon-system/" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <code style="font-size: 20px; color: whitesmoke">盤查年度: <span id="yearDisplay"></span></code>
-                            <input type="hidden" id="hiddenYearsInput" name="years" readonly>
+                            <code style="font-size: 20px; color: whitesmoke">盤查年度: {{ years }}</code>
                             <div class="d-flex">
                                 <div class="col-5 dropdown-area">
                                     <label class="lead form-label ms-0" for="dropdown_one" style="color: whitesmoke">類別</label>
@@ -190,32 +187,22 @@
                         </form>
                     </div>
                 {% endif %}
-                <div class="d-flex">
-                    <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
-                        <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-center" id="disable-section">
-                                {% if perms.home.add_emergency_generators %}
-                                    <form method="get" action="{% url 'loadadd' %}" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-outline-light me-1">新增</button>
-                                    </form>
-                                    <div class="d-flex justify-content-center">
-                                        <input id="copyLastYear" type="submit" value="複製去年資料" class="btn btn-outline-light me-1">
-                                    </div>
-                                    <form method="post" enctype="multipart/form-data">
-                                        {% csrf_token %}
-                                        <label for="importExcel" class="btn btn-outline-light me-1">
-                                            匯入Excel
-                                        </label>
-                                        <input type="file" id="importExcel" name="importExcel" style="display:none">
-                                    </form>
-                                {% endif %}
-                                <button type="button" class="btn btn-outline-light me-1" id="exportExcel">
-                                    匯出Excel
-                                </button>
-                            </div>
-                        </div>
+                <div class="col-lg-7 mx-auto d-flex justify-content-center flex-column">
+                    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+                    <div class="d-flex justify-content-center mb-4" id="disable-section">
+                        <form method="GET" action="{% url 'bar_action' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% if perms.home.add_emergency_generators %}
+                                <button type="submit" name="add_page" class="btn btn-outline-light me-4">新增</button>
+                                <button type="submit" name="copy_last_year" class="btn btn-outline-light me-4">複製去年資料</button>
+                                <button type="submit" name="public_version" class="btn btn-outline-light me-4">下載公版</button>
+                                <label for="importExcel" class="btn btn-outline-light me-4">
+                                    匯入Excel
+                                </label>
+                                <input type="file" id="importExcel" name="importExcel" style="display:none">
+                            {% endif %}
+                            <button type="submit" name="export_excel" class="btn btn-outline-light me-4">匯出Excel</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -235,14 +222,16 @@
     </div>
 
     <!-- Modal -->
+
+    <!-- 刪除資料 -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="col"><h5 class="modal-title text-warning bg-dark d-flex justify-content-center" id="staticBackdropLabel">注意!!!</h5></div>
                 </div>
                 <div class="modal-body d-flex justify-content-center">
-                    <h6>是否刪除此筆資料</h6>
+                    <h6>確認刪除所選資料</h6>
                 </div>
                 <div class="modal-footer d-flex justify-content-center">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
@@ -253,25 +242,73 @@
     </div>
 
     <!-- 盤查設定 -->
-    <div class="modal fade" id="settings" tabindex="-1" aria-labelledby="CalculateSummaryModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true" data-bs-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="col">
-                        <h5 class="modal-title text-light bg-dark d-flex justify-content-center" id="settingsTitle">盤查設定</h5>
+                        <h5 class="modal-title text-light bg-dark d-flex justify-content-center" id="settingsModalLabel">盤查設定</h5>
                     </div>
                 </div>
                 <div class="modal-body">
-                    <div class="form-group row">
-                        <label for="yearInput" class="col-3 col-form-label">盤查年度:</label>
-                        <div class="col">
-                            <input type="text" class="form-control" id="yearInput" name="years">
+                    <form action="/system_setting/" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row d-flex align-items-center mb-3">
+                            <div class="col-auto">
+                                <h6 class="m-0">盤查年度:</h6>
+                            </div>
+                            <div class="form-check form-check-inline col-auto m-0">
+                                <input type="text" class="form-control" id="yearInput" name="years">
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="updateYear()">確認</button>
+                        <div class="row d-flex align-items-center mb-3">
+                            <div class="col-auto">
+                                <h6>GWP版本: </h6>
+                            </div>
+                            <div class="form-check form-check-inline col-auto m-0">
+                                {% for version in gwp_list %}
+                                    {% if version == request.session.gwp_version %}
+                                        <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault{{ version }}" value={{ version }} checked>
+                                        <label class="form-check-label me-2" for="flexRadioDefault{{ version }}">
+                                            GWP {{ version }}
+                                        </label>
+                                    {% else %}
+                                        <input class="form-check-input" type="radio" name="gwpVersion" id="flexRadioDefault{{ version }}" value={{ version }}>
+                                        <label class="form-check-label me-2" for="flexRadioDefault{{ version }}">
+                                            GWP {{ version }}
+                                        </label>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-start mb-3">
+                            <div class="col-auto">
+                                <h6 class="mt-1">係數來源: </h6>
+                            </div>
+                            <div class="form-check col-auto m-0">
+                                {% for version in excluded_coefficient_list %}
+                                    <div class="col-auto">
+                                        <input class="form-check-input" type="checkbox" name="default_coefficient_source" id="{{ version }}" value={{ version }} disabled checked>
+                                        <label class="form-check-label me-2" for="{{ version }}">
+                                            {{ version }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                                {% for version in epa_coefficient_list %}
+                                    <div class="col-auto">
+                                        <input class="form-check-input" type="radio" name="coefficient_source" id="{{ version }}" value={{ version }}>
+                                        <label class="form-check-label me-2" for="{{ version }}">
+                                            {{ version }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex justify-content-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-danger" id="system_setting" data-bs-dismiss="modal">確認</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -544,8 +581,7 @@
                     if (permission === "True") {
                         let id = 1;
                         t_data.forEach((item, index) => {
-                            var trash = document.createElement('a')//加入"trash button"tag
-                            var trash_i_tag = document.createElement('i')//加入"i"tag
+                            var trash = document.createElement('input')//加入"trash checkbox"tag
                             var pencil = document.createElement('a')//加入"pencil button"tag
                             var pencil_i_tag = document.createElement('i')//加入"i"tag
                             {#var pic = document.createElement('a')//加入"picture button"tag#}
@@ -557,27 +593,21 @@
                             delete_squ.appendChild(trash)
                             edit_squ.appendChild(pencil)
                             {#pic_squ.appendChild(pic)#}
-                            trash.setAttribute('class', 'btn py-0 px-2 m-0 trash_btn')
-                            trash.setAttribute('data-bs-toggle', 'modal')
-                            trash.setAttribute('data-bs-target', '#staticBackdrop')
-                            trash.appendChild(trash_i_tag)
+
+                            trash.setAttribute('class', 'delete_checkbox')
+                            trash.setAttribute('type', 'checkbox')
                             pencil.setAttribute('class', 'btn py-0 px-2 m-0 edit_btn')
                             pencil.appendChild(pencil_i_tag)
                             {#pic.setAttribute('class', 'btn py-0 px-2 m-0 pic_btn')#}
                             {#pic.setAttribute('data-bs-toggle', 'modal')#}
                             {#pic.setAttribute('data-bs-target', '#exampleModalCenter')#}
                             {#pic.appendChild(pic_i_tag)#}
-                            trash_i_tag.setAttribute('class', 'fa-solid fa-trash-can')
                             pencil_i_tag.setAttribute('class', 'fa-solid fa-pencil btn-size')
-                            {#pic_i_tag.setAttribute('class', 'fa-solid fa-image')#}
                             var cr_id = row.insertCell(-1)//加入"序號"框框
-                            cr_id.innerHTML = id
-                            var datasheet_id = dropdown_three.value;
-                            var dropdown_one = $("#dropdown_one").val()
-                            var dropdown_two = $("#dropdown_two").val()
+                            cr_id.innerHTML = id;
                             for (const [key, value] of Object.entries((item))) {
                                 if (key === "id") {
-                                    pencil.setAttribute('href', '/edit_device/?datasheet=' + datasheet_id + '&single_dataID=' + value + '&dropdown_one=' + dropdown_one + '&dropdown_two=' + dropdown_two)//將資料表id、選種資料id加到href裡，一起丟到後端
+                                    pencil.setAttribute('href', '/edit_device/?single_dataID=' + value)//將資料表id、選種資料id加到href裡，一起丟到後端
                                     pencil.setAttribute('id', value)//設定按鈕的id為設備id
                                     trash.setAttribute('id', value)//設定刪除按鈕的id為設備id
                                     {#pic.setAttribute('id', value)//設定圖片按鈕的id為設備id#}
@@ -619,7 +649,7 @@
         }
 
         //載入標題
-        function LoadTitle() {
+        function LoadTitle(callback) {
             $.ajax({
                 url: "{% url 'loadtitle' %}",
                 data: {
@@ -658,7 +688,18 @@
                             value.forEach((item, index) => {
                                 var cr_n = thead_row_name.insertCell(-1)//加入"標題"框框
                                 thead_row_name.appendChild(cr_n)
-                                cr_n.innerHTML = item;//"標題"框框填質
+                                if (item !== '刪除') {
+                                    cr_n.innerHTML = item;//"標題"框框填質
+                                } else {
+                                    let trash = document.createElement('a')//加入"trash button"tag
+                                    cr_n.appendChild(trash)
+
+                                    trash.innerHTML = item;
+                                    trash.setAttribute('class', 'table-active text-danger btn p-0 m-0 blink')
+                                    trash.setAttribute('data-bs-toggle', 'modal')
+                                    trash.setAttribute('data-bs-target', '#staticBackdrop')
+                                    trash.setAttribute('style', 'font-size: 17.3px')
+                                }
                                 if (i === 0) {
                                     if (permission === "True") {
                                         cr_n.setAttribute('class', 'table-active')
@@ -671,6 +712,10 @@
                             i++;
                         }
                     })
+                    try {
+                        callback();
+                    } catch (e) {
+                    }
                 },
             });
         }
@@ -720,7 +765,7 @@
                             if (!executed) {
                                 executed = true;
                                 const dropdown_three_value = "{{ dropdown_three }}";
-                                console.warn(dropdown_three_value)
+                                {#console.warn(dropdown_three_value)#}
                                 for (let option of dropdown_three.options) {
                                     if (option.value === dropdown_three_value) {
                                         option.selected = true;
@@ -732,9 +777,25 @@
                     DropdownTwo(dropdown_two_value, function () {
                         dropdown_three_selected()
                     });
+                    LoadTitle(function () {
+                        loadtable()
+                    });
                 });
-                LoadTitle();
-                loadtable()
+            }
+            let copy_last_year = "{{ copy_data_message }}" // 顯示成功訊息
+            if (copy_last_year !== "") {
+                alert(copy_last_year); // 顯示成功訊息
+                console.warn('copy_last_year', copy_last_year)
+            }
+            let count_error = "{{ count_error }}" // 顯示成功訊息
+            if (count_error !== "") {
+                alert(count_error); // 顯示成功訊息
+                console.warn('count_error', count_error)
+            }
+            let export_error = "{{ export_error }}" // 顯示成功訊息
+            if (export_error !== "") {
+                alert(export_error); // 顯示成功訊息
+                console.warn('export_error', export_error)
             }
         });
 
@@ -757,129 +818,90 @@
         })
 
         // 按下查詢才可操作button
-        $(".dropdown-area").change(function disableButtons() {
-            var section = document.getElementById("disable-section");
-            var buttons = section.getElementsByTagName("button");
-            var input = section.getElementsByTagName("input");
-            var exportExcel = document.getElementById("exportExcel");
-            exportExcel.disabled = true;
-
+        function disableButtons() {
+            let section = document.getElementById("disable-section");
+            let buttons = section.getElementsByTagName("button");
+            let input = section.getElementsByTagName("input");
             for (let i = 0; i < buttons.length; i++) {
                 buttons[i].disabled = true;
             }
             for (let i = 0; i < input.length; i++) {
                 input[i].disabled = true;
             }
-        });
+        }
 
-        $("#copyLastYear").on("click", function () {
-            let csrf_token = "{{ csrf_token }}";
+        if ("{{ request.session.dropdown_three }}" === "") {
+            disableButtons()
+        }
+        $(".dropdown-area").change(disableButtons);
 
-            $.ajax({
-                type: "POST",
-                url: "{% url 'copy_last_year_data' %}",
-                headers: {"X-CSRFToken": csrf_token},
-                data: {},
-                dataType: "json",  // 設定回傳的資料型態為 JSON
-                success: function (response) {
-                    if (response.success) {
-                        alert(response.message); // 顯示成功訊息
-                        $("#yearInput").val(new Date().getFullYear());
-                        updateYear();
-                        loadtable();
-                    } else {
-                        alert(response.message);
-                    }
-                }
-            });
-        });
+        // modal(settingModal)
+        let myModalEl = document.getElementById('settingsModal')
+        myModalEl.addEventListener('show.bs.modal', function (event) {
+            let yearInput = document.getElementById('yearInput')
+            yearInput.value = "{{ request.session.years }}"
+            let gwp_version = document.getElementsByName('gwpVersion')
+            gwp_version.forEach(function (item, index) {
+                item.checked = item.value.toString() === "{{ request.session.gwp_version }}";
+            })
+            let coefficient_source = document.getElementsByName('coefficient_source')
+            coefficient_source.forEach(function (item, index) {
+                item.checked = item.value.toString() === "{{ request.session.coefficient_source }}";
+            })
+        })
+
+
     </script>
+
 
     <!--/*刪除該筆設備*/-->
     <script>
-        var dropdown_three = document.getElementById("dropdown_three")
-        $(document).on('click', ".trash_btn", function () {
-            var single_dataID = this.id;
-            {#console.warn(single_dataID)#}
-            delete_device(single_dataID)
-        })
-    </script>
+        $(document).on('click', ".delete_btn", function () {
+            let delete_checkbox = document.getElementsByClassName('delete_checkbox')
+            let delete_str = ""
+            for (let i = 0; i < delete_checkbox.length; i++) {
+                if (delete_checkbox[i].checked) {
+                    delete_str += delete_checkbox[i].id + " "
+                }
+            }
 
-    <!--/*刪除function*/-->
-    <script>
-        function delete_device(id) {
-            $(document).on('click', ".delete_btn", function () {
-                {#console.warn("single_dataID", id)#}
-                $.ajax({
-                    url: "{% url 'delete_device' %}",
-                    data: {
-                        'single_dataID': id
-                    },
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (single_dataID) {
-                        var single_data = document.getElementById(single_dataID)
-                        {#console.warn(">>>>>>>>>>>", single_data)#}
+            $.ajax({
+                url: "{% url 'delete_device' %}",
+                data: {
+                    'delete_str': delete_str
+                },
+                type: 'GET',
+                dataType: 'json',
+                success: function (delete_list) {
+                    console.warn('delete_list', delete_list)
+                    for (let i = 0; i < delete_list.length; i++) {
+                        let single_data = document.getElementById(delete_list[i])
                         single_data.closest("tr").remove()
                     }
-                });
-            })
-        }
+                }
+            });
+        })
     </script>
 
 
     <!-- Excel -->
     <script>
+        {#$(document).ready(function () {#}
+        {#    // 匯出 Excel 按鈕#}
+        {#    $('#export_excel').on('click', function () {#}
+        {#        $.ajax({#}
+        {#            url: "{% url 'export_excel' %}",#}
+        {#            type: "GET",#}
+        {#            success: function (response) {#}
+        {#                if (response.message) {#}
+        {#                    alert(response.message); // 顯示警示訊息#}
+        {#                }#}
+        {#            },#}
+        {#        });#}
+        {#    });#}
+
+
         $(document).ready(function () {
-            // 匯出 Excel 按鈕
-            $('#exportExcel').on('click', function () {
-                let dropdown_three = document.getElementById('dropdown_three');
-                let selectedValue = dropdown_three.value;
-                let companyValue = $("#factory_dropdown").val();
-                let yearInput = $("#yearInput").val()
-
-                let data = {
-                    did: selectedValue,
-                    company_id: companyValue,
-                    yearInput: yearInput,
-                };
-
-                $.ajax({
-                    url: "{% url 'export_excel' %}",
-                    type: "POST",
-                    data: data,
-                    xhrFields: {
-                        responseType: 'blob'
-                    },
-                    success: function (blob, status, xhr) {
-                        var filename = '';
-                        var contentDisposition = xhr.getResponseHeader('Content-Disposition');
-                        if (contentDisposition && contentDisposition.indexOf('attachment') !== -1) {
-                            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
-                            var matches = filenameRegex.exec(contentDisposition);
-                            if (matches != null && matches[1]) {
-                                filename = decodeURI(matches[1].replace(/['"]/g, ''));
-                            }
-                        }
-
-                        var downloadLink = document.createElement('a');
-                        downloadLink.href = window.URL.createObjectURL(blob);
-                        downloadLink.download = filename || 'download.xlsx';
-                        downloadLink.style.display = 'none';
-                        document.body.appendChild(downloadLink);
-                        downloadLink.click();
-                        document.body.removeChild(downloadLink);
-                    },
-                    error: function (xhr, status, error) {
-                        alert('匯出 Excel 失敗');
-                        console.log(error)
-                    },
-                    contentType: 'application/x-www-form-urlencoded',
-                    processData: true,
-                    cache: false
-                });
-            });
-
             // 匯入 Excel 按鈕
             $('#importExcel').on('change', function () {
                 let dropdown_three = document.getElementById('dropdown_three');
@@ -892,7 +914,7 @@
                 formData.append('company_id', companyValue)
 
                 $.ajax({
-                    url: "{% url 'import_excel' %}",
+                    url: "/import_excel/",
                     type: "POST",
                     data: formData,
                     contentType: false,
@@ -911,19 +933,6 @@
                     }
                 });
             });
-        });
-    </script>
-    <script>
-        function updateYear() {
-            const yearInput = document.getElementById("yearInput");
-            const yearDisplay = document.getElementById("yearDisplay");
-            const hiddenYearsInput = document.getElementById("hiddenYearsInput");
-            yearDisplay.textContent = yearInput.value;
-            hiddenYearsInput.value = yearInput.value;
-        }
-
-        window.addEventListener('load', function () {
-            updateYear();
         });
     </script>
 

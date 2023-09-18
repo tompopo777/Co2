@@ -22,8 +22,8 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 員工通勤</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 員工通勤</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -31,19 +31,16 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-4">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EC_add.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
+                                                {% for error in EC_add.employee_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>員工編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.employee_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-6">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>姓名 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.employee_name }}
@@ -58,6 +55,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in EC_add.work_days.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>年工作天數 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.work_days }}
@@ -86,6 +86,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-6">
+                                                {% for error in EC_add.commute_distance.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>至公司距離(單位:公里) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EC_add.commute_distance }}
@@ -100,14 +103,16 @@
                                             {{ CommuteFormSet.non_form_errors }}
                                             {% for a in CommuteFormSet %}
                                                 <div id="commute_section">
-                                                    <div class="row mb-4 commute" id="0">
+                                                    <div class="row mb-4 commute">
                                                         {% for hidden in a.hidden_fields %}
                                                             {{ hidden }}
                                                         {% endfor %}
                                                         <div class="col-4">
+                                                            {% for error in a.transportation.errors %}
+                                                                <li style="color: red">{{ error }}</li>
+                                                            {% endfor %}
                                                             <div class="input-group input-group-static mb-4">
                                                                 <label>交通方式 <span style="color:red; font-size:16px;">* </span></label>
-                                                                {{ a.transportation.errors }}
                                                                 {{ a.transportation }}
                                                             </div>
                                                         </div>
@@ -148,6 +153,9 @@
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
+                                                    {% for error in EC_add.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
                                                     {{ EC_add.message_board }}
                                                 </div>
                                             </div>
@@ -164,9 +172,9 @@
                                                 </button>
                                             </div>
                                             <div class="col-auto mx-3">
-                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                                <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                     取消
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -211,27 +219,6 @@
                 return false;
             }
         });
-
-
-        {#    年度篩選器#}
-        $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
-
-        {#    購買年份篩選器#}
-        $("#years_purchased").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
 
         {#    照片顯示檔名+可刪除#}
         const dt = new DataTransfer(); // 允許操作輸入文件的文件

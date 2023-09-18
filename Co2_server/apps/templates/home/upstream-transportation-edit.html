@@ -22,15 +22,15 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 上游運輸</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 上游運輸</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype="multipart/form-data">
+                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>單號 <span style="color:red; font-size:16px;">* </span></label>
@@ -50,39 +50,15 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>組織使用產品 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ form.organizational_use_products }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
+                                        <div class="row mb-3">
                                             <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>國內/國外客戶 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ form.customer }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>供應商名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.supplier }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>供應商地址 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.supplier_address }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
+                                                <div class="input-group input-group-static mb-2">
                                                     <label>貿易條件 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.trade_term }}
+                                                </div>
+                                                <div class="input-group input-group-static mb-2">
+                                                    <label>國內/國外客戶 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ form.customer }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
@@ -93,7 +69,7 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>送貨地點 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>最後送貨地點 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.delivery_address }}
                                                 </div>
                                             </div>
@@ -123,18 +99,12 @@
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>支付方</label>
-                                                                    {{ form.paid }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <div class="input-group input-group-static mb-4">
                                                                     <label>運輸工具</label>&nbsp;
                                                                     {{ form.transport_type }}
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        <div class="row">
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸工具燃料</label>&nbsp;
@@ -148,19 +118,27 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="d-flex">
-                                                            <div class="col-6">
-                                                                <div class="input-group input-group-static mb-4">
-                                                                    <label>上傳陸運單據</label>
-                                                                    {{ form.image_note }}
-                                                                </div>
-                                                            </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ form.image_path }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="col-6">#}
+                                                        {#                                                                <div class="input-group input-group-static mb-4">#}
+                                                        {#                                                                    <label>上傳陸運單據</label>#}
+                                                        {#                                                                    {{ form.image_note }}#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="ps-md-2 align-self-center">#}
+                                                        {#                                                                <div class="col-2" multiple="multiple">#}
+                                                        {#                                                                    <input type="hidden" id="stage1" name="stage" value="陸運">#}
+                                                        {#                                                                    <input class="form-control-file" type="file" id="attachment1" name="file_field1" multiple="multiple" accept="image/*, .pdf">#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                            <div id="files-area">#}
+                                                        {#                                                                <span id="filesList1">#}
+                                                        {#                                                                    <span id="files-names1"></span>#}
+                                                        {#                                                                </span>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
                                                     </div>
                                                 </div>
                                             </div>
@@ -173,17 +151,17 @@
                                                 </h2>
                                                 <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
                                                     <div class="accordion-body">
-                                                        <div class="row">
+                                                        <div class="row mb-3">
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>海外運輸距離(單位:海里)</label>
-                                                                    {{ form.overseas_transport_distance }}
+                                                                    {{ form.overseas_transport_distance_nm }}
                                                                 </div>
                                                             </div>
                                                             <div class="col-6">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>支付方</label>
-                                                                    {{ form.overseas_paid }}
+                                                                    <label>海外運輸距離(單位:公里)</label>
+                                                                    {{ form.overseas_transport_distance_km }}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -207,19 +185,27 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="d-flex">
-                                                            <div class="col-6">
-                                                                <div class="input-group input-group-static mb-4">
-                                                                    <label>上傳海運單據</label>
-                                                                    {{ form.overseas_image_note }}
-                                                                </div>
-                                                            </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ form.overseas_image_path }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="col-6">#}
+                                                        {#                                                                <div class="input-group input-group-static mb-4">#}
+                                                        {#                                                                    <label>上傳海運單據</label>#}
+                                                        {#                                                                    {{ form.overseas_image_note }}#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="ps-md-2 align-self-center">#}
+                                                        {#                                                                <div class="col-2" multiple="multiple">#}
+                                                        {#                                                                    <input type="hidden" id="stage2" name="stage" value="海運">#}
+                                                        {#                                                                    <input class="form-control-file" type="file" id="attachment2" name="file_field2" multiple="multiple" accept="image/*, .pdf">#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                            <div id="files-area">#}
+                                                        {#                                                                <span id="filesList2">#}
+                                                        {#                                                                    <span id="files-names2"></span>#}
+                                                        {#                                                                </span>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
                                                     </div>
                                                 </div>
                                             </div>
@@ -227,7 +213,7 @@
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header" id="panelsStayOpen-headingThree">
                                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-                                                        陸運(特殊情況)
+                                                        陸運(二段運輸)
                                                     </button>
                                                 </h2>
                                                 <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
@@ -247,18 +233,12 @@
                                                             </div>
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
-                                                                    <label>支付方</label>
-                                                                    {{ form.overseas_paid }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <div class="input-group input-group-static mb-4">
                                                                     <label>運輸工具</label>&nbsp;
                                                                     {{ form.special_transport_type }}
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        <div class="row">
                                                             <div class="col-4">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>運輸工具燃料</label>&nbsp;
@@ -272,19 +252,27 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="d-flex">
-                                                            <div class="col-6">
-                                                                <div class="input-group input-group-static mb-4">
-                                                                    <label>上傳陸運單據</label>
-                                                                    {{ form.special_image_note }}
-                                                                </div>
-                                                            </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ form.special_image_path }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="col-6">#}
+                                                        {#                                                                <div class="input-group input-group-static mb-4">#}
+                                                        {#                                                                    <label>上傳陸運單據</label>#}
+                                                        {#                                                                    {{ form.special_image_note }}#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="ps-md-2 align-self-center">#}
+                                                        {#                                                                <div class="col-2" multiple="multiple">#}
+                                                        {#                                                                    <input type="hidden" id="stage3" name="stage" value="特殊陸運">#}
+                                                        {#                                                                    <input class="form-control-file" type="file" id="attachment3" name="file_field3" multiple="multiple" accept="image/*, .pdf">#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                            <div id="files-area">#}
+                                                        {#                                                                <span id="filesList3">#}
+                                                        {#                                                                    <span id="files-names3"></span>#}
+                                                        {#                                                                </span>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
                                                     </div>
                                                 </div>
                                             </div>
@@ -298,52 +286,52 @@
                                                 <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
                                                     <div class="accordion-body">
                                                         <div class="row">
-                                                            <div class="col-4">
+                                                            <div class="col-3">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>單趟運輸距離(單位:公里)</label>
                                                                     {{ form.air_transport_distance }}
                                                                 </div>
                                                             </div>
-                                                            <div class="col-4">
+                                                            <div class="col-3">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>出貨機場</label>
                                                                     {{ form.air_delivery }}
                                                                 </div>
                                                             </div>
-                                                            <div class="col-4">
+                                                            <div class="col-3">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>到達機場</label>
                                                                     {{ form.air_arrive }}
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-4">
+                                                            <div class="col-3">
                                                                 <div class="input-group input-group-static mb-4">
                                                                     <label>趟次</label>
                                                                     {{ form.air_trips }}
                                                                 </div>
                                                             </div>
-                                                            <div class="col-4">
-                                                                <div class="input-group input-group-static mb-4">
-                                                                    <label>支付方</label>
-                                                                    {{ form.air_paid }}
-                                                                </div>
-                                                            </div>
                                                         </div>
-                                                        <div class="d-flex">
-                                                            <div class="col-6">
-                                                                <div class="input-group input-group-static mb-4">
-                                                                    <label>上傳空運單據</label>
-                                                                    {{ form.air_image_note }}
-                                                                </div>
-                                                            </div>
-                                                            <div class=" ps-md-2 align-self-center">
-                                                                <div class="col-1 ">
-                                                                    {{ form.air_image_path }}
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="col-6">#}
+                                                        {#                                                                <div class="input-group input-group-static mb-4">#}
+                                                        {#                                                                    <label>上傳空運單據</label>#}
+                                                        {#                                                                    {{ form.air_image_note }}#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="ps-md-2 align-self-center">#}
+                                                        {#                                                                <div class="col-2" multiple="multiple">#}
+                                                        {#                                                                    <input type="hidden" id="stage4" name="stage" value="空運">#}
+                                                        {#                                                                    <input class="form-control-file" type="file" id="attachment4" name="file_field4" multiple="multiple" accept="image/*, .pdf">#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                            <div id="files-area">#}
+                                                        {#                                                                <span id="filesList4">#}
+                                                        {#                                                                    <span id="files-names4"></span>#}
+                                                        {#                                                                </span>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
                                                     </div>
                                                 </div>
                                             </div>
@@ -353,21 +341,28 @@
                                             <div class="col">
                                                 <div class="form-control">
                                                     <label>備註欄</label>
+                                                    {% for error in form.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
                                                     {{ form.message_board }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="d-flex justify-content-center">
-                                            <div class="col-1">
+                                            <div class="col-auto mx-3">
+                                                <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認，並新增另一筆
+                                                </button>
+                                            </div>
+                                            <div class="col-auto mx-3">
                                                 <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                     確認
                                                 </button>
                                             </div>
-                                            <div class="col-1">
-                                                <button type="button" class="btn bg-gradient-secondary mt-3 mb-0"
-                                                        onclick="history.back()">
+                                            <div class="col-auto mx-3">
+                                                <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                     取消
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -533,5 +528,30 @@
                 document.getElementById('attachment4').files = dt4.files;
             });
         });
+        
+                $('#overseas_nm').on('change', function () {
+            let overseas_nm = document.getElementById('overseas_nm');
+            let overseas_km = document.getElementById('overseas_km');
+
+            let x = parseInt(overseas_nm.value) * 1.852
+            overseas_km.value = x.toFixed(4).toString();
+        })
+
+        $('#overseas_km').on('change', function () {
+            let overseas_nm = document.getElementById('overseas_nm');
+            let overseas_km = document.getElementById('overseas_km');
+
+            let x = parseInt(overseas_km.value) / 1.852
+            overseas_nm.value = x.toFixed(4).toString();
+        })
+
+
+        $('#weight').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#trade_term').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#customer').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#transport_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#transport_fuel').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#special_transport_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#special_transport_fuel').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
     </script>
 {% endblock javascripts %}

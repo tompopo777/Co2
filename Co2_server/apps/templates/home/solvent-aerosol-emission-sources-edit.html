@@ -22,62 +22,89 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 溶劑、噴霧劑</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 溶劑、噴霧劑</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype="multipart/form-data">
+                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
                                     {% csrf_token %}
                                     <input type="hidden" name="company_id" value="{{ company_id }}">
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-5">
+                                        <div class="row mb-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
+                                                    <label>領用日期 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.receipt_date }}
                                                 </div>
                                             </div>
-                                            <div class="col-7">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>溶劑、噴霧劑名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.solvent_name }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-6">
+                                            <div class="col-4">
+                                                {% for error in form.solvent_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-6">
                                                     <label>溶劑、噴霧劑數量(單位: 瓶/罐)<span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.solvent_amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-6">
-                                                <div class="input-group input-group-static mb-6">
-                                                    <label>溶劑、噴霧劑容量(單位: {{ form.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.solvent_capacity }}
-                                                </div>
-                                            </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>氣體名稱<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.gas_name }}
+                                        <div class="row mb-4">
+                                            添加氣體
+                                            {% for error in update_formset.non_form_errors %}
+                                                <li style="color: red">{{ error }}</li>
+                                            {% endfor %}
+                                        </div>
+                                        <div id="gas_add">
+                                            {{ update_formset.management_form }}
+                                            {% for a in update_formset %}
+                                                <div class="row mb-4 gas" id="0">
+                                                    {% for hidden in a.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
+                                                    <div style="display: none">
+                                                        {{ a.DELETE }}
+                                                    </div>
+                                                    <div class="col-4">
+                                                        {% for error in form.solvent_capacity.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-6">
+                                                            <label>溶劑、噴霧劑容量(單位: {{ form.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ form.solvent_capacity }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in a.gas_ratio.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>氣體含量(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.gas_ratio }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in a.density.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>容量換算密度('oz' 預設為'1') <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.density }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <a class="col" onclick="DuplicateGas()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                            <a class="col" onclick="DeleteGas(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>添加比例(%) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.gas_ratio }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>容量換算密度('oz' 預設為'1')<span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.density }}
-                                                </div>
-                                            </div>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -107,6 +134,9 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
+                                                {% for error in form.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 {{ form.message_board }}
                                             </div>
                                         </div>
@@ -118,10 +148,9 @@
                                             </button>
                                         </div>
                                         <div class="col-1">
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0"
-                                                    onclick="history.back()">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -159,12 +188,9 @@
             }
         });
 
-
-        {#    年度篩選器#}
-        $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
+        {#    月份篩選器#}
+        $("#receipt_date").datepicker({
+            format: "yyyy-mm-dd",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
@@ -205,7 +231,74 @@
         });
 
         {#select2#}
-        $('#gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
-        $('#solvent_capacity_unit').select2({minimumResultsForSearch : -1}).next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        {#$('.gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});#}
+        $('#solvent_capacity_unit').select2({minimumResultsForSearch: -1}).next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+
+        {#    新增/刪除出差段數#}
+
+        //刪除extra=1新增的空白表單
+        var TOTAL_FORMS = document.querySelectorAll("#gas_add > input")[0]
+        var gas_count = parseInt(TOTAL_FORMS.value, 10)
+        if ("{{ dont_remove }}" === "") {
+            let remove_extra = document.querySelectorAll(".gas:last-child")[0]
+            remove_extra.remove()
+            gas_count = gas_count - 1
+        }
+        var id_count = gas_count
+        TOTAL_FORMS.value = id_count.toString()
+
+        //將initial表單排序
+        let gas_id = document.querySelectorAll(".gas")
+        for (let i = 0; i < id_count; i++) {
+            gas_id[i].id = i.toString();
+        }
+
+        function DeleteGas(deletbutton) {
+            if (gas_count > 1) {
+                gas = deletbutton.closest("div.gas")
+                var delete_checkbox = document.getElementById("id_gas_add_set-" + gas.id + "-DELETE")
+                delete_checkbox.checked = true;
+                gas.style.display = "none";
+                gas_count -= 1;
+            }
+        }
+
+        function DuplicateGas() {
+            document.getElementById("id_gas_add_set-TOTAL_FORMS").value = (id_count + 1).toString()
+            var gas_add = document.getElementById("gas_add")
+            var first_commute = document.getElementsByClassName("gas")[0]
+            var clone = first_commute.cloneNode(true);
+            gas_add.appendChild(clone)
+            clone.id = (id_count)
+            var hidden = document.querySelectorAll(".gas:last-child > input")
+            //主鍵
+            hidden[0].name = "gas_add_set-" + id_count + "-id"
+            hidden[0].id = "id_gas_add_set-" + id_count + "-id"
+            hidden[0].removeAttribute("value")
+
+            //外鍵
+            hidden[1].name = "gas_add_set-" + id_count + "-gas_id"
+            hidden[1].id = "id_gas_add_set-" + id_count + "-gas_id"
+
+            //刪除
+            var deleted = document.querySelectorAll(".gas:last-child > div > input")
+            deleted[0].name = "gas_add_set-" + id_count + "-DELETE"
+            deleted[0].id = "id_gas_add_set-" + id_count + "-DELETE"
+
+            //輸入欄位
+            var input = document.querySelectorAll(".gas:last-child > div > div > input")
+            input[0].id = "id_gas_add_set-" + id_count + "-gas_ratio"
+            input[0].name = "gas_add_set-" + id_count + "-gas_ratio"
+            input[1].id = "id_gas_add_set-" + id_count + "-density"
+            input[1].name = "gas_add_set-" + id_count + "-density"
+            input[0].value = ""
+            input[1].value = ""
+            var select = document.querySelectorAll(".gas:last-child > div > div > select")
+            select[0].name = "gas_add_set-" + id_count + "-gas_name"
+            select[0].id = "id_gas_add_set-" + id_count + "-gas_name"
+            select[0].value = ""
+            id_count += 1;
+            gas_count += 1;
+        }
     </script>
 {% endblock javascripts %}

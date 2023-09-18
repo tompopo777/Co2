@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} 設備清單 {% endblock %}
+{% block title %} 冷媒 {% endblock %}
 
 {% block body_class %} other-device {% endblock %}
 
@@ -22,32 +22,34 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 設備清單</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 冷媒</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <form action="/other_device_add/" method="POST" enctype="multipart/form-data">
-                                {% csrf_token %}
-                                    <input type="hidden" name="company_id" value="{{ company_id }}">
+                                    {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>填報年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ OD_add.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ OD_add.device_id }}
+                                                    <label>該設備購買年月 </label>
+                                                    {{ OD_add.years_purchased }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>設備名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OD_add.device_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                {% for error in OD_add.device_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>設備編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ OD_add.device_id }}
                                                 </div>
                                             </div>
                                         </div>
@@ -72,28 +74,43 @@
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>該設備購買年份 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ OD_add.years_purchased }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in OD_add.filling_volume.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>規格填充量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ OD_add.filling_volume }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in OD_add.device_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ OD_add.effusion_rate }}
+                                                    <label>設備數量 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ OD_add.device_amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static">
+                                                    <label>設備種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ OD_add.device_type }}
+                                                </div>
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ OD_add.refrigerant_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                {% for error in OD_add.effusion_rate.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ OD_add.effusion_rate }}
                                                 </div>
                                             </div>
                                         </div>
@@ -105,7 +122,7 @@
                                                 </label>
                                             </div>
                                             <div class="collapse" id="collapsePee">
-                                                <div class="col-3">
+                                                <div class="col-4">
                                                     <div class="input-group input-group-static mb-4">
                                                         <label>維修填充量(單位:公斤)</label>
                                                         {{ OD_add.filling_fix_volume }}
@@ -125,7 +142,7 @@
                                     <div class="d-flex">
                                         <div class="ps-md-2 align-self-center">
                                             <div class="col-2" multiple="multiple">
-                                                <input type="hidden" name="stage" value="設備清單">
+                                                <input type="hidden" name="stage" value="冰箱">
                                                 <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
                                         </div>
@@ -140,20 +157,28 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
+                                                {% for error in OD_add.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 {{ OD_add.message_board }}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認，並新增另一筆
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
                                             </button>
                                         </div>
-                                        <div class="col-1">
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                        <div class="col-auto mx-3">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -180,6 +205,16 @@
 
 
     <script>
+        {#    顯示新增成功訊息#}
+        $(document).ready(function () {
+            {% if messages %}
+                {% for message in messages %}
+                    let success_message = "{{ message }}"
+                    alert(success_message);
+                {% endfor %}
+            {% endif %}
+        });
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
@@ -189,22 +224,11 @@
             }
         });
 
-
-        {#    年度篩選器#}
-        $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
-
         {#    購買年份篩選器#}
         $("#years_purchased").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
+            format: "yyyy-mm",
+            viewMode: "months",
+            minViewMode: "months",
             orientation: "bottom",
             autoclose: "true",
         }).datepicker("setDate", 'now');
@@ -244,6 +268,35 @@
             });
         });
 
+        $('#device_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
         $('#refrigerant_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+
+        $('#device_type').on('change', function () {
+            let device_type = document.getElementById('device_type');
+            let effusion_rate = document.getElementById('effusion_rate');
+
+            if (device_type.value === '車輛、家用除濕機'){
+                effusion_rate.value = 15
+            }else if (device_type.value === '冷氣') {
+                effusion_rate.value = 5.5
+            }else if (device_type.value === '冰箱、飲水機') {
+                effusion_rate.value = 0.3
+            }else if (device_type.value === '落地形大型冷氣機') {
+                effusion_rate.value = 8
+            }else if (device_type.value === '大型冷凍櫃') {
+                effusion_rate.value = 22.5
+            }else if (device_type.value === '冷凍物流車') {
+                effusion_rate.value = 32.5
+            }else if (device_type.value === '製冰機、切削液冷卻機、工業用除濕機、空氣乾燥機') {
+                effusion_rate.value = 16
+            }else if (device_type.value === '冰水機') {
+                effusion_rate.value = 8.5
+            }else if (device_type.value === '其他') {
+                effusion_rate.value = 0
+            }else{
+                effusion_rate.value = 0
+            }
+        })
+
     </script>
 {% endblock javascripts %}

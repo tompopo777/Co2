@@ -21,55 +21,66 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 製程添加化學品</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 製程添加化學品</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="{% url 'update_device' datasheet_id single_dataID dropdown_one dropdown_two %}" method="POST" enctype="multipart/form-data">
+                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        <div class="row">
-                                            <div class="col-4">
+                                        <div class="row mb-3">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>製程使用階段 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>製程使用階段</label>
                                                     {{ form.process_stage }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
+                                                {% for error in form.material_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>料號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.material_id }}
+                                                    <label>化學品料號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.chemical_id }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>化學品係數 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.chemical_coefficient }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class=" form-check ps-1">
+                                                    {{ form.burn }}
+                                                    <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row mb-4">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>製程添加名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PC_add.process_add_name }}
+                                        <div class="row mb-3">
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static">
+                                                    <label>製程添加物名稱(學名) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.process_add_name }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>含碳量(%) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PC_add.carbon_content }}
+                                                    <label>化學品名</label>
+                                                    {{ form.chemical_name }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                <div class=" form-check ps-1">
-                                                    {{ PC_add.burn }}
-                                                    <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>化學式 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.chemical_formula }}
                                                 </div>
-                                                <div class=" form-check ps-1">
-                                                    {{ PC_add.VOCs }}
-                                                    <label>揮發性有機化合物(VOCs) <span style="color:red; font-size:16px;">* </span></label>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>CAS編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.CAS_NO }}
                                                 </div>
                                             </div>
                                         </div>
@@ -77,10 +88,22 @@
                                         <br>
                                         <div class="d-flex flex-nowrap">
                                             <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
-                                                使用量( 單位:{{ form.unit }} )
+                                                使用量( 單位: {{ form.unit }} )
                                                 <span style="color:red; font-size:16px;">* </span>
                                             </h5>
                                         </div>
+                                        {% if form.errors %}
+                                            <div class="col-12 text-center">
+                                                {% for error in form.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% for error in form.errors.數值必須大於零 %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
                                         <table class="table">
                                             <thead>
                                             <tr>
@@ -175,10 +198,18 @@
                                                 {{ form.image_note }}
                                             </div>
                                         </div>
-                                        <div class=" ps-md-2 align-self-center">
-                                            <div class="col-1 ">
-                                                {{ form.image_path }}
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="ps-md-2 align-self-center">
+                                            <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="製程">
+                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                             </div>
+                                        </div>
+                                        <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -186,20 +217,28 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
+                                                {% for error in form.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 {{ form.message_board }}
                                             </div>
                                         </div>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-1">
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認，並新增另一筆
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
                                             <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
                                                 確認
                                             </button>
                                         </div>
-                                        <div class="col-1">
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                        <div class="col-auto mx-3">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -222,6 +261,33 @@
 
 
     <script>
+        {#    顯示新增成功訊息#}
+        $(document).ready(function () {
+            {% if messages %}
+                {% for message in messages %}
+                    let success_message = "{{ message }}"
+                    alert(success_message);
+                {% endfor %}
+            {% endif %}
+            // 顯示錯誤框
+            {% for field in form %}
+                {% for error in field.errors %}
+                    error_name = "{{ field.label }}"
+                    if (
+                        error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                        error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                        error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
+                    ) {
+                        error_name = error_name.toLowerCase()
+                        error_input = document.querySelector("[name=" + error_name + "]");
+                        parentDiv = error_input.parentNode;
+                        parentDiv.classList.add("border", "border-danger", "border-3");
+                    }
+                {% endfor %}
+            {% endfor %}
+        });
+
+
         {#    禁止enter鍵#}
         $(document).on("keypress", "form", function (e) {
             var code = e.keyCode || e.which;
@@ -230,27 +296,6 @@
                 return false;
             }
         });
-
-
-        {#    年度篩選器#}
-        $("#years").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
-
-        {#    購買年份篩選器#}
-        $("#years_purchased").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
 
         {#    照片顯示檔名+可刪除#}
         const dt = new DataTransfer(); // 允許操作輸入文件的文件

@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} 廢棄物 {% endblock %}
+{% block title %} 廢棄物運輸 {% endblock %}
 
 {% block body_class %} waste {% endblock %}
 
@@ -23,68 +23,96 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 廢棄物</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 廢棄物運輸</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <form action="/waste_add/" method="POST" enctype="multipart/form-data">
+                                <form action="/waste_process_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_add.waste_name }}
+                                                    {{ WP_add.waste_name }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                {% for error in WASTE_add.waste_weigh.errors %}
+                                                {% for error in WP_add.waste_weigh.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物重量(單位:噸) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_add.waste_weigh }}
+                                                    {{ WP_add.waste_weigh }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物運送年月度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_add.waste_date }}
+                                                    {{ WP_add.waste_date }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>處理廠商名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ WASTE_add.waste_disposal_vendor }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                {% for error in WASTE_add.waste_location.errors %}
+                                            <div class="col-6">
+                                                {% for error in WP_add.waste_location.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物處置地點 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ WASTE_add.waste_location }}
+                                                    {{ WP_add.waste_location }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                {% for error in WASTE_add.waste_disposal.errors %}
+                                            <div class="col-6">
+                                                {% for error in WP_add.waste_disposal.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>廢棄物處理方式 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ WASTE_add.waste_disposal }}
+                                                    {{ WP_add.waste_disposal }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>處理廠商名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ WP_add.waste_disposal_vendor }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                {% for error in WP_add.transport_type.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>運輸工具&nbsp;</label>
+                                                    {{ WP_add.transport_type }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>運輸燃料</label>
+                                                    {{ WP_add.transport_fuel }}
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                {% for error in WP_add.transport_distance.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>運輸距離(單位:公里)</label>
+                                                    {{ WP_add.transport_distance }}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="d-flex">
-                                        <div class="col-4">
+                                        <div class="col-6">
                                             <div class="input-group input-group-static mb-4">
                                                 <label>上傳引用單據</label>
-                                                {{ WASTE_add.image_note }}
+                                                {{ WP_add.image_note }}
                                             </div>
                                         </div>
                                     </div>
@@ -106,10 +134,10 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
-                                                {% for error in WASTE_add.message_board.errors %}
+                                                {% for error in WP_add.message_board.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
-                                                {{ WASTE_add.message_board }}
+                                                {{ WP_add.message_board }}
                                             </div>
                                         </div>
                                     </div>

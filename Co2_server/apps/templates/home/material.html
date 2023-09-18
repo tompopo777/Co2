@@ -21,39 +21,31 @@
                     <div class="d-flex flex-column ms-auto me-auto">
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
-                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 原物料使用</h3>
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 原物料使用</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
                                 <form action="/material_add/" method="POST" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
-                                        {#                                        <div class="row">#}
-                                        {#                                            <select class="form-select" id="single-select-field" data-placeholder="請輸入化學品名稱">#}
-                                        {#                                                <option></option>#}
-                                        {#                                            </select>#}
-                                        {#                                        </div>#}
                                         <div class="row mb-3">
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label for="start">年度 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ MT_add.years }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料名稱 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ MT_add.material_name }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in MT_add.material_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料料號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ MT_add.material_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ MT_add.material_type }}
@@ -63,28 +55,37 @@
                                         <div class="row">
                                             <div class="form-check ps-1">
                                                 <label>
-                                                    {{ MT_add.chemical }}
-                                                    是否為化學品
+                                                    {{ MT_add.welding_rod }}
+                                                    是否為焊條
                                                 </label>
                                             </div>
                                             <div class="collapse" id="collapsePee">
                                                 <div class="row mt-3">
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static">
-                                                            <label>化學名稱</label>
-                                                            {{ MT_add.process_add_name }}
+                                                            <label>焊條料號</label>
+                                                            {{ MT_add.welding_rod_id }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
-                                                            <label>化學品名</label>
-                                                            {{ MT_add.chemical_name }}
+                                                            <label>焊條品名</label>
+                                                            {{ MT_add.welding_rod_name }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-3">
                                                         <div class="input-group input-group-static mb-4">
-                                                            <label>化學式</label>
-                                                            {{ MT_add.chemical_formula }}
+                                                            <label>焊條規格</label>
+                                                            {{ MT_add.welding_rod_format }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in MT_add.carbon_content.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>含碳量(%)</label>
+                                                            {{ MT_add.carbon_content }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -98,6 +99,18 @@
                                                 月用量(單位:公噸) <span style="color:red; font-size:16px;">* </span>
                                             </h5>
                                         </div>
+                                        {% if MT_add.errors %}
+                                            <div class="col-12 text-center">
+                                                {% for error in MT_add.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正數</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% for error in MT_add.errors.數值必須大於零 %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
                                         <table class="table">
                                             <thead>
                                             <tr>
@@ -210,6 +223,9 @@
                                         <div class="col">
                                             <div class="form-control">
                                                 <label>備註欄</label>
+                                                {% for error in MT_add.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 {{ MT_add.message_board }}
                                             </div>
                                         </div>
@@ -226,9 +242,9 @@
                                             </button>
                                         </div>
                                         <div class="col-auto mx-3">
-                                            <button type="button" class="btn bg-gradient-secondary mt-3 mb-0" onclick="history.back()">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
                                                 取消
-                                            </button>
+                                            </a>
                                         </div>
                                     </div>
                                 </form>
@@ -264,6 +280,22 @@
                     alert(success_message);
                 {% endfor %}
             {% endif %}
+            // 顯示錯誤框
+            {% for field in MT_add %}
+                {% for error in field.errors %}
+                    error_name = "{{ field.label }}"
+                    if (
+                        error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                        error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                        error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
+                    ) {
+                        error_name = error_name.toLowerCase()
+                        error_input = document.querySelector("[name=" + error_name + "]");
+                        parentDiv = error_input.parentNode;
+                        parentDiv.classList.add("border", "border-danger", "border-3");
+                    }
+                {% endfor %}
+            {% endfor %}
         });
 
         {#    禁止enter鍵#}
@@ -275,17 +307,6 @@
             }
         });
 
-
-        {#    日期篩選器#}
-        $("#datepicker").datepicker({
-            format: "yyyy",
-            viewMode: "years",
-            minViewMode: "years",
-            orientation: "bottom",
-            autoclose: "true",
-        }).datepicker("setDate", 'now');
-
-
         {# select2#}
         $('#single-select-field').select2({
             theme: "bootstrap-5",
@@ -293,24 +314,6 @@
             {#placeholder: $(this).data('placeholder'),#}
             width: 300
         });
-
-
-        {# 帶入下拉選單資料#}
-        $(document).ready(function () {
-            $.ajax({
-                url: "{% url 'chemical_dropdowm' %}",
-                data: {},
-                type: 'GET',
-                dataType: 'json',
-                success: function (chemical_add) {
-                    chemical_add.forEach((item) => {
-                        for (const [key, value] of Object.entries((item))) {
-                            $("#single-select-field").append("<option>" + value + "</option>");
-                        }
-                    })
-                }
-            });
-        })
 
 
         {# 自動帶入化學品名稱、化學式#}
