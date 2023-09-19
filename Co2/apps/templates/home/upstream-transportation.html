@@ -1,0 +1,571 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} 上游運輸 {% endblock %}
+
+{% block body_class %} upstream-transportation {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 上游運輸</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/upstream_transportation_add/" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row mb-3">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>單號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ UT_add.acceptance_receipt }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>商品名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ UT_add.commodity_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>商品{{ UT_add.weight }}(單位:噸) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ UT_add.commodity_NW }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-2">
+                                                    <label>貿易條件 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ UT_add.trade_term }}
+                                                </div>
+                                                <div class="input-group input-group-static mb-2">
+                                                    <label>國內/國外客戶 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
+                                                    {{ UT_add.customer }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>接貨地點 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ UT_add.receiving_address }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>最後送貨地點 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ UT_add.delivery_address }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr id="hidehr" style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="accordion" id="accordionPanelsStayOpenExample">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                                                        陸運
+                                                    </button>
+                                                </h2>
+                                                <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+                                                    <div class="accordion-body">
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>單趟運輸距離(單位:公里)</label>
+                                                                    {{ UT_add.transport_distance }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>運輸國家</label>
+                                                                    {{ UT_add.transport_country }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>運輸工具</label>&nbsp;
+                                                                    {{ UT_add.transport_type }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>運輸工具燃料</label>&nbsp;
+                                                                    {{ UT_add.transport_fuel }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>趟次</label>
+                                                                    {{ UT_add.trips }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="col-6">#}
+                                                        {#                                                                <div class="input-group input-group-static mb-4">#}
+                                                        {#                                                                    <label>上傳陸運單據</label>#}
+                                                        {#                                                                    {{ UT_add.image_note }}#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="ps-md-2 align-self-center">#}
+                                                        {#                                                                <div class="col-2" multiple="multiple">#}
+                                                        {#                                                                    <input type="hidden" id="stage1" name="stage" value="陸運">#}
+                                                        {#                                                                    <input class="form-control-file" type="file" id="attachment1" name="file_field1" multiple="multiple" accept="image/*, .pdf">#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                            <div id="files-area">#}
+                                                        {#                                                                <span id="filesList1">#}
+                                                        {#                                                                    <span id="files-names1"></span>#}
+                                                        {#                                                                </span>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr id="hidehr" style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                                                        海運
+                                                    </button>
+                                                </h2>
+                                                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                                                    <div class="accordion-body">
+                                                        <div class="row mb-3">
+                                                            <div class="col-6">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>海外運輸距離(單位:海里)</label>
+                                                                    {{ UT_add.overseas_transport_distance_nm }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>海外運輸距離(單位:公里)</label>
+                                                                    {{ UT_add.overseas_transport_distance_km }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>出貨港口</label>
+                                                                    {{ UT_add.overseas_delivery }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>到達港口</label>
+                                                                    {{ UT_add.overseas_arrive }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>趟次</label>
+                                                                    {{ UT_add.overseas_trips }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="col-6">#}
+                                                        {#                                                                <div class="input-group input-group-static mb-4">#}
+                                                        {#                                                                    <label>上傳海運單據</label>#}
+                                                        {#                                                                    {{ UT_add.overseas_image_note }}#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="ps-md-2 align-self-center">#}
+                                                        {#                                                                <div class="col-2" multiple="multiple">#}
+                                                        {#                                                                    <input type="hidden" id="stage2" name="stage" value="海運">#}
+                                                        {#                                                                    <input class="form-control-file" type="file" id="attachment2" name="file_field2" multiple="multiple" accept="image/*, .pdf">#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                            <div id="files-area">#}
+                                                        {#                                                                <span id="filesList2">#}
+                                                        {#                                                                    <span id="files-names2"></span>#}
+                                                        {#                                                                </span>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr id="hidehr" style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                                                        陸運(二段運輸)
+                                                    </button>
+                                                </h2>
+                                                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                                                    <div class="accordion-body">
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>單趟運輸距離(單位:公里)</label>
+                                                                    {{ UT_add.special_transport_distance }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>運輸國家</label>
+                                                                    {{ UT_add.special_transport_country }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>運輸工具</label>&nbsp;
+                                                                    {{ UT_add.special_transport_type }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>運輸工具燃料</label>&nbsp;
+                                                                    {{ UT_add.special_transport_fuel }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>趟次</label>
+                                                                    {{ UT_add.special_trips }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="col-6">#}
+                                                        {#                                                                <div class="input-group input-group-static mb-4">#}
+                                                        {#                                                                    <label>上傳陸運單據</label>#}
+                                                        {#                                                                    {{ UT_add.special_image_note }}#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="ps-md-2 align-self-center">#}
+                                                        {#                                                                <div class="col-2" multiple="multiple">#}
+                                                        {#                                                                    <input type="hidden" id="stage3" name="stage" value="特殊陸運">#}
+                                                        {#                                                                    <input class="form-control-file" type="file" id="attachment3" name="file_field3" multiple="multiple" accept="image/*, .pdf">#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                            <div id="files-area">#}
+                                                        {#                                                                <span id="filesList3">#}
+                                                        {#                                                                    <span id="files-names3"></span>#}
+                                                        {#                                                                </span>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr id="hidehr" style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header" id="panelsStayOpen-headingFour">
+                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                                                        空運
+                                                    </button>
+                                                </h2>
+                                                <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingFour">
+                                                    <div class="accordion-body">
+                                                        <div class="row">
+                                                            <div class="col-3">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>單趟運輸距離(單位:公里)</label>
+                                                                    {{ UT_add.air_transport_distance }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>出貨機場</label>
+                                                                    {{ UT_add.air_delivery }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>到達機場</label>
+                                                                    {{ UT_add.air_arrive }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-3">
+                                                                <div class="input-group input-group-static mb-4">
+                                                                    <label>趟次</label>
+                                                                    {{ UT_add.air_trips }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="col-6">#}
+                                                        {#                                                                <div class="input-group input-group-static mb-4">#}
+                                                        {#                                                                    <label>上傳空運單據</label>#}
+                                                        {#                                                                    {{ UT_add.air_image_note }}#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                        {#                                                        <div class="d-flex">#}
+                                                        {#                                                            <div class="ps-md-2 align-self-center">#}
+                                                        {#                                                                <div class="col-2" multiple="multiple">#}
+                                                        {#                                                                    <input type="hidden" id="stage4" name="stage" value="空運">#}
+                                                        {#                                                                    <input class="form-control-file" type="file" id="attachment4" name="file_field4" multiple="multiple" accept="image/*, .pdf">#}
+                                                        {#                                                                </div>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                            <div id="files-area">#}
+                                                        {#                                                                <span id="filesList4">#}
+                                                        {#                                                                    <span id="files-names4"></span>#}
+                                                        {#                                                                </span>#}
+                                                        {#                                                            </div>#}
+                                                        {#                                                        </div>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-control">
+                                                    <label>備註欄</label>
+                                                    {% for error in UT_add.message_board.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
+                                                    {{ UT_add.message_board }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-center">
+                                            <div class="col-auto mx-3">
+                                                <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認，並新增另一筆
+                                                </button>
+                                            </div>
+                                            <div class="col-auto mx-3">
+                                                <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                    確認
+                                                </button>
+                                            </div>
+                                            <div class="col-auto mx-3">
+                                                <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
+                                                    取消
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    {#    select2#}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+    <script>
+        {#    顯示新增成功訊息#}
+        $(document).ready(function () {
+            {% if messages %}
+                {% for message in messages %}
+                    let success_message = "{{ message }}"
+                    alert(success_message);
+                {% endfor %}
+            {% endif %}
+        });
+
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        {#    陸運照片顯示檔名+可刪除#}
+        const dt1 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment1").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc1 = $('<span/>', {class: 'file-block'}),
+                    fileName1 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc1.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName1);
+                $("#filesList1 > #files-names1").append(fileBloc1);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt1.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt1.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt1.items.length; i++) {
+                    // 文件和名稱匹配
+                    if (name === dt1.items[i].getAsFile().name) {
+                        // 在DataTransfer對像中刪除該文件
+                        dt1.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment1').files = dt1.files;
+            });
+        });
+
+        {#    海運照片顯示檔名+可刪除#}
+        const dt2 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment2").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc2 = $('<span/>', {class: 'file-block'}),
+                    fileName2 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc2.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName2);
+                $("#filesList2 > #files-names2").append(fileBloc2);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt2.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt2.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt2.items.length; i++) {
+                    // 文件和名稱匹配
+                    if (name === dt2.items[i].getAsFile().name) {
+                        // 在DataTransfer對像中刪除該文件
+                        dt2.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment2').files = dt2.files;
+            });
+        });
+
+        {#    特殊陸運照片顯示檔名+可刪除#}
+        const dt3 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment3").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc3 = $('<span/>', {class: 'file-block'}),
+                    fileName3 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc3.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName3);
+                $("#filesList3 > #files-names3").append(fileBloc3);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt3.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt3.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt3.items.length; i++) {
+                    // 文件和名稱匹配
+                    if (name === dt3.items[i].getAsFile().name) {
+                        // 在DataTransfer對像中刪除該文件
+                        dt3.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment3').files = dt3.files;
+            });
+        });
+
+        {#    空運照片顯示檔名+可刪除#}
+        const dt4 = new DataTransfer(); // 允許你對輸入文件中的文件進行操作
+        $("#attachment4").on('change', function () {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc4 = $('<span/>', {class: 'file-block'}),
+                    fileName4 = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc4.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName4);
+                $("#filesList4 > #files-names4").append(fileBloc4);
+            }
+            // 將文件添加到DataTransfer對像中
+            for (let file of this.files) {
+                dt4.items.add(file);
+            }
+            // 在添加了以下內容後更新輸入文件
+            this.files = dt4.files;
+
+            // 創建的刪除按鈕的EventListener
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 移除文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt4.items.length; i++) {
+                    // 文件和名稱匹配
+                    if (name === dt4.items[i].getAsFile().name) {
+                        // 在DataTransfer對像中刪除該文件
+                        dt4.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件
+                document.getElementById('attachment4').files = dt4.files;
+            });
+        });
+
+        $('#overseas_nm').on('change', function () {
+            let overseas_nm = document.getElementById('overseas_nm');
+            let overseas_km = document.getElementById('overseas_km');
+
+            let x = parseInt(overseas_nm.value) * 1.852
+            overseas_km.value = x.toFixed(4).toString();
+        })
+
+        $('#overseas_km').on('change', function () {
+            let overseas_nm = document.getElementById('overseas_nm');
+            let overseas_km = document.getElementById('overseas_km');
+
+            let x = parseInt(overseas_km.value) / 1.852
+            overseas_nm.value = x.toFixed(4).toString();
+        })
+
+
+        $('#weight').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#trade_term').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#customer').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#transport_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#transport_fuel').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#special_transport_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+        $('#special_transport_fuel').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+    </script>
+
+{% endblock javascripts %}
