@@ -2181,6 +2181,17 @@ class PGform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = image
+        fields = ('stage', 'image_path')
+        widgets = {
+            'stage': forms.TextInput(attrs={'class': 'form-control'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file'})
+        }
+
+
     # def clean_material_id(self):
     #     material_id = self.cleaned_data.get('material_id')
     #     if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
