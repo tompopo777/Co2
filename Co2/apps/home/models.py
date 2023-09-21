@@ -934,7 +934,7 @@ class DropdownOption(models.Model):
 
 
 # 質量平衡法
-class coefficien_balance_method(models.Model):
+class coefficient_balance_method(models.Model):
     id = models.AutoField(primary_key=True)
     material_name = models.CharField(max_length=20)
     formula = models.CharField(max_length=100)
