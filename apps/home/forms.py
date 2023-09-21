@@ -1013,11 +1013,12 @@ class IMform(forms.ModelForm):
 class ODform(forms.ModelForm):
     class Meta:
         model = other_device
-        fields = ('device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
+        fields = ('device_id', 'device_name', 'device_amount', 'brand_name', 'model_type', 'position', 'years_purchased',
                   'filling_volume', 'effusion_rate', 'device_type', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正整數"}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1046,6 +1047,12 @@ class ODform(forms.ModelForm):
         if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
+
+    def clean_device_amount(self):
+        device_amount = self.cleaned_data.get('device_amount')
+        if device_amount < 1:
+            raise forms.ValidationError("只能輸入正整數(須大於0)", 'invalid')
+        return device_amount
 
     def clean_filling_volume(self):
         filling_volume = self.cleaned_data.get('filling_volume')
