@@ -37,7 +37,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-3">
-                                                {% for error in form.material_id.errors %}
+                                                {% for error in form.chemical_id.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
@@ -46,12 +46,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in form.chemical_coefficient.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>化學品係數 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.chemical_coefficient }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in form.burn.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class=" form-check ps-1">
                                                     {{ form.burn }}
                                                     <label>是否燃燒 <span style="color:red; font-size:16px;">* </span></label>
@@ -60,6 +66,9 @@
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-3">
+                                                {% for error in form.process_add_name.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static">
                                                     <label>製程添加物名稱(學名) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.process_add_name }}
@@ -72,12 +81,18 @@
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in form.chemical_formula.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>化學式 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.chemical_formula }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in form.CAS_NO.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>CAS編號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.CAS_NO }}

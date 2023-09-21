@@ -164,23 +164,5 @@ STATICFILES_DIRS = (
     os.path.join(CORE_DIR, 'apps/static'),
 )
 
-# # 啟用 session
-# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-# SESSION_COOKIE_NAME = 'session_name'
-
-# AUTH_USER_MODEL = 'home.CustomUser'
-
-# # 用于设置禁止登录的选项
-# BRUTEBUSTER_CONFIG = {
-#     'FAILURE_LIMIT': 5,  # 登录失败次数限制
-#     'COOLING_OFF_TIME': 600,  # 禁止登录的时间（秒）
-# }
-#
-# # 在AUTHENTICATION_BACKENDS设置中添加BruteBusterBackend
-# AUTHENTICATION_BACKENDS = [
-#     'brutebuster.backends.BruteBusterBackend',
-#     'django.contrib.auth.backends.ModelBackend',
-# ]
-
 #############################################################
 #############################################################

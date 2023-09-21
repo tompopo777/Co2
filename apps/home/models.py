@@ -169,15 +169,11 @@ class official_car(models.Model):
     company_id = models.IntegerField()
 
 
-# 原物料使用
+# 焊條
 class material(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=4, db_column='did_id')
     years = models.IntegerField(default=timezone.now().year)
-    material_name = models.CharField(max_length=20)
-    material_id = models.CharField(max_length=30)
-    material_type = models.CharField(max_length=10)
-    welding_rod = models.BooleanField(default=False)
     welding_rod_id = models.CharField(max_length=30, null=True)
     welding_rod_name = models.CharField(max_length=20, null=True)
     welding_rod_format = models.CharField(max_length=20, null=True)
@@ -206,7 +202,7 @@ class process(models.Model):
     years = models.IntegerField(default=timezone.now().year)
     process_stage = models.CharField(max_length=20, null=True)
     chemical_id = models.CharField(max_length=30)
-    chemical_coefficient = models.DecimalField(max_digits=20, decimal_places=4)
+    chemical_coefficient = models.DecimalField(max_digits=20, decimal_places=10)
     burn = models.BooleanField(default=False)
     process_add_name = models.CharField(max_length=20)
     chemical_name = models.CharField(max_length=20, null=True)
@@ -376,16 +372,13 @@ class extinguisher(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=13, db_column='did_id')
     years = models.IntegerField(default=timezone.now().year)
-    extinguisher_type = models.CharField(max_length=50)
     device_id = models.CharField(max_length=30, null=True)
-    position = models.CharField(max_length=100)
-    extinguisher_vendor = models.CharField(max_length=30, null=True)
-    chemical_weight = models.DecimalField(max_digits=20, decimal_places=4)
+    position = models.CharField(max_length=100, null=True)
+    extinguisher_type = models.CharField(max_length=50)
     inventory = models.DecimalField(max_digits=20, decimal_places=0)
-    using_amount = models.IntegerField(null=True)
-    monthly = models.CharField(max_length=20, null=True)
-    replace_filling_amount = models.DecimalField(max_digits=20, decimal_places=0)
-    replace_filling_date = models.CharField(max_length=20, null=True)
+    chemical_weight = models.DecimalField(max_digits=20, decimal_places=4)
+    filling_amount = models.DecimalField(max_digits=20, decimal_places=0, null=True)
+    filling_date = models.CharField(max_length=255, null=True)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
@@ -409,6 +402,7 @@ class personnel_inventory(models.Model):
     people_number_oct = models.IntegerField(default=0)
     people_number_nov = models.IntegerField(default=0)
     people_number_dec = models.IntegerField(default=0)
+
     daily_working_hours_jan = models.IntegerField(default=0)
     daily_working_hours_feb = models.IntegerField(default=0)
     daily_working_hours_mar = models.IntegerField(default=0)
@@ -421,6 +415,7 @@ class personnel_inventory(models.Model):
     daily_working_hours_oct = models.IntegerField(default=0)
     daily_working_hours_nov = models.IntegerField(default=0)
     daily_working_hours_dec = models.IntegerField(default=0)
+
     work_day_jan = models.IntegerField(default=0)
     work_day_feb = models.IntegerField(default=0)
     work_day_mar = models.IntegerField(default=0)
@@ -433,6 +428,7 @@ class personnel_inventory(models.Model):
     work_day_oct = models.IntegerField(default=0)
     work_day_nov = models.IntegerField(default=0)
     work_day_dec = models.IntegerField(default=0)
+
     holidays_jan = models.IntegerField(default=0)
     holidays_feb = models.IntegerField(default=0)
     holidays_mar = models.IntegerField(default=0)
@@ -445,6 +441,7 @@ class personnel_inventory(models.Model):
     holidays_oct = models.IntegerField(default=0)
     holidays_nov = models.IntegerField(default=0)
     holidays_dec = models.IntegerField(default=0)
+
     overtime_jan = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     overtime_feb = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     overtime_mar = models.DecimalField(max_digits=20, decimal_places=4, default=0)
@@ -457,6 +454,7 @@ class personnel_inventory(models.Model):
     overtime_oct = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     overtime_nov = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     overtime_dec = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+
     leave_hours_jan = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     leave_hours_feb = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     leave_hours_mar = models.DecimalField(max_digits=20, decimal_places=4, default=0)
@@ -469,6 +467,7 @@ class personnel_inventory(models.Model):
     leave_hours_oct = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     leave_hours_nov = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     leave_hours_dec = models.DecimalField(max_digits=20, decimal_places=4, default=0)
+
     compensatory_leave_hours_jan = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     compensatory_leave_hours_feb = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     compensatory_leave_hours_mar = models.DecimalField(max_digits=20, decimal_places=4, default=0)
@@ -481,7 +480,6 @@ class personnel_inventory(models.Model):
     compensatory_leave_hours_oct = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     compensatory_leave_hours_nov = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     compensatory_leave_hours_dec = models.DecimalField(max_digits=20, decimal_places=4, default=0)
-
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
@@ -842,7 +840,6 @@ class process_gas(models.Model):
     receipt_number = models.CharField(max_length=30)
     department = models.CharField(max_length=100)
     receipt_date = models.CharField(max_length=20)
-    gas_name = models.CharField(max_length=20)
     amount = models.DecimalField(max_digits=20, decimal_places=4)
     unit = models.CharField(max_length=10)
     per_amount = models.DecimalField(max_digits=20, decimal_places=4)
@@ -850,6 +847,14 @@ class process_gas(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
+
+
+# 添加混合氣體
+class ProcessGasAdd(models.Model):
+    id = models.AutoField(primary_key=True)
+    gas_name = models.CharField(max_length=20)
+    gas_ratio = models.CharField(max_length=20)
+    process_gas_id = models.ForeignKey(process_gas, on_delete=models.CASCADE, db_column='process_gas_id')
 
 
 # 廢棄物運輸

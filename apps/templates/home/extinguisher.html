@@ -41,66 +41,52 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廠商</label>
-                                                    {{ EX_add.extinguisher_vendor }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
                                                     <label>滅火器擺放位置(廠別) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EX_add.position }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row  my-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ EX_add.extinguisher_type }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                {% for error in EX_add.chemical_weight.errors %}
-                                                    <li style="color: red">{{ error }}</li>
-                                                {% endfor %}
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ EX_add.chemical_weight }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="col-3">
                                                 {% for error in EX_add.inventory.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>庫存量 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>庫存量(支) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ EX_add.inventory }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row my-3">
                                             <div class="col-3">
+                                                {% for error in EX_add.chemical_weight.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器使用數量 </label>
-                                                    {{ EX_add.using_amount }}
+                                                    <label>藥劑重量(公斤) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ EX_add.chemical_weight }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in EX_add.filling_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>使用月份 </label>
-                                                    {{ EX_add.monthly }}
+                                                    <label>新購或填充數(支) </label>
+                                                    {{ EX_add.filling_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器更換/填充數量 </label>
-                                                    {{ EX_add.replace_filling_amount }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                                {% for error in EX_add.filling_date.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>更換/填充日期 </label>
-                                                    {{ EX_add.replace_filling_date }}
+                                                    {{ EX_add.filling_date }}
                                                 </div>
                                             </div>
                                         </div>
@@ -199,54 +185,7 @@
             }
         });
 
-        {#    月份篩選器#}
-        $("#monthly").datepicker({
-            format: "yyyy-mm",
-            viewMode: "months",
-            minViewMode: "months",
-            orientation: "bottom",
-            autoclose: "true",
-        });
-
-        {#    日期篩選器#}
-        $("#replace_filling_date").datepicker({
-            format: "yyyy-mm-dd",
-            viewMode: "days",
-            minViewMode: "days",
-            orientation: "bottom",
-            autoclose: "true",
-        })
-
         $('#extinguisher_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
-
-        {#    使用月份、更換/填充日期，disabled#}
-        $(document).ready(function () {
-            let using_amount = $('#id_using_amount')
-            let monthly = $('#monthly')
-            monthly.prop('disabled', true);
-            using_amount.on('input', function () {
-                let value = $(this).val();
-                if (value) {
-                    monthly.prop('disabled', false);
-                } else {
-                    monthly.prop('disabled', true);
-                    monthly.val("")
-                }
-            });
-
-            let replace_filling_amount = $('#id_replace_filling_amount')
-            let replace_filling_date = $('#replace_filling_date')
-            replace_filling_date.prop('disabled', true);
-            replace_filling_amount.on('input', function () {
-                let value = $(this).val();
-                if (value) {
-                    replace_filling_date.prop('disabled', false);
-                } else {
-                    replace_filling_date.prop('disabled', true);
-                    replace_filling_date.val("")
-                }
-            });
-        });
 
     </script>
 
