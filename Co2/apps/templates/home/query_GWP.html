@@ -1,0 +1,220 @@
+<!--
+=========================================================
+* Material Kit 2 - v3.0.0
+=========================================================
+
+* Product Page:  https://www.creative-tim.com/product/material-kit
+* Copyright 2021 Creative Tim (https://www.creative-tim.com)
+* Coded by www.creative-tim.com
+
+ =========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="/static/assets/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="/static/assets/img/favicon.png">
+<!--
+    <title>
+        NYUST &#x2071;&#x1D48;&#x02E2;&#x02E1; |  柴油發電機
+    </title>
+-->
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900|Roboto+Slab:400,700"/>
+    <!-- Nucleo Icons -->
+    <link href="/static/assets/css/nucleo-icons.css" rel="stylesheet"/>
+    <link href="/static/assets/css/nucleo-svg.css" rel="stylesheet"/>
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <!-- CSS Files -->
+    <link id="pagestyle" href="/static/assets/css/material-kit.css?v=3.0.0" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="/static/assets/css/test.css"/>
+
+    <!-- Specific Page CSS goes HERE  -->
+
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css "/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+
+</head>
+
+<body class=" emergency-generator  bg-gray-200">
+
+    <!-- Navbar Light -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+    <div class="container">
+        <a class="navbar-brand" href="/" rel="tooltip" title="Designed and Coded by Creative Tim"
+           data-placement="bottom">
+            首頁
+        </a>
+        <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false"
+                aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon mt-2">
+          <span class="navbar-toggler-bar bar1"></span>
+          <span class="navbar-toggler-bar bar2"></span>
+          <span class="navbar-toggler-bar bar3"></span>
+        </span>
+        </button>
+        <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0 ms-lg-12 ps-lg-5" id="navigation">
+            <ul class="navbar-nav navbar-nav-hover ms-auto">
+                <li class="nav-item dropdown dropdown-hover mx-2">
+                    <a class="nav-link ps-2 d-flex cursor-pointer align-items-center"
+                       href="/carbon-system/" class="dropdown-item border-radius-md">
+                        碳盤查系統
+                    </a>
+                </li>
+
+                    <li class="nav-item ms-lg-auto nav-link nav-link-icon me-2">
+                        <i class="fa-solid fa-user me-2"></i>
+                        <p class="d-inline text-sm z-index-1 font-weight-bold">oli</p>
+                    </li>
+                    <li class="nav-item ms-lg-auto">
+                        <a class="nav-link nav-link-icon me-2"
+                           href="/logout/">
+                            <i class="fa fa-sign-out me-1"></i>
+                            <p class="d-inline text-sm z-index-1 font-weight-bold" data-bs-toggle="tooltip"
+                               data-bs-placement="bottom" title="Sign OUT">Logout</p>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <div class="d-flex flex-column ms-auto me-auto">
+        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                    <h3 class="text-white text-primary mb-0 me-2">GWP表查詢 </h3>
+                </div>
+                <div>
+                    <table class="table table-sm" id="table">
+                        <tr>
+                            <th rowspan="2">物質名稱</th>
+                            <th >預設 GWP 值</th>
+                            <th >預設 GWP 值</th>
+                            <th >預設 GWP 值</th>
+
+                        </tr>
+                            <tr>
+                            <th >IPCC第四次評估報告(2007)</th>
+                            <th >IPCC第五次評估報告(2014)</th>
+                            <th >IPCC第六次評估報告(2021)</th>
+
+                        </tr>
+                        <tr>
+                            <th>CO2</th>
+                            <th>1</th>
+                            <th>1</th>
+                            <th>1</th>
+                        </tr>
+                        <tr>
+                            <th>CH4</th>
+                            <th>25.0</th>
+                            <th>28.0</th>
+                            <th>27.9</th>
+                        </tr>
+                        <tr>
+                            <th>N2O</th>
+                            <th>298</th>
+                            <th>265</th>
+                            <th>273</th>
+                        </tr>
+                        <tr>
+                            <th>HFC-134a/R-134a</th>
+                            <th>1430</th>
+                            <th>1300</th>
+                            <th>1530</th>
+                        </tr>
+                        <tr>
+                            <th>R-410A</th>
+                            <th>2088</th>
+                            <th>1924</th>
+                            <th>2256</th>
+                        </tr>
+                        <tr>
+                            <th>R-404A</th>
+                            <th>3922</th>
+                            <th>3943</th>
+                            <th>4728</th>
+                        </tr>
+                        <tr>
+                            <th>R-407C</th>
+                            <th>1174</th>
+                            <th>1624</th>
+                            <th>1908</th>
+                        </tr>
+                        <tr>
+                            <th>R-417A</th>
+                            <th>2346</th>
+                            <th>2127</th>
+                            <th>2508</th>
+                        </tr>
+                        <tr>
+                            <th>R-23</th>
+                            <th>14800</th>
+                            <th>12400</th>
+                            <th>14600</th>
+                        </tr>
+                        <tr>
+                            <th>R-32</th>
+                            <th>675</th>
+                            <th>677</th>
+                            <th>771</th>
+                        </tr>
+                        <tr>
+                            <th colspan="4"  style="text-align: left;">備註：<br>
+                    1.冷媒(R600a)及冷媒(R22)屬於蒙特婁公約管制氣體，環保署未公告其GWP值。<br>
+                    2.第六次評估報告查無GWP值，則以第五次評估報告數值計算，以此類推。"
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+
+
+<!--   Core JS Files   -->
+<script src="/static/assets/js/core/popper.min.js" type="text/javascript"></script>
+<script src="/static/assets/js/core/bootstrap.min.js" type="text/javascript"></script>
+<script src="/static/assets/js/plugins/perfect-scrollbar.min.js"></script>
+
+<!--  Plugin for TypedJS, full documentation here: https://github.com/inorganik/CountUp.js -->
+<script src="/static/assets/js/plugins/countup.min.js"></script>
+<script src="/static/assets/js/plugins/choices.min.js"></script>
+<script src="/static/assets/js/plugins/prism.min.js"></script>
+<script src="/static/assets/js/plugins/highlight.min.js"></script>
+
+<!--  Plugin for Parallax, full documentation here: https://github.com/dixonandmoe/rellax -->
+<script src="/static/assets/js/plugins/rellax.min.js"></script>
+<!--  Plugin for TiltJS, full documentation here: https://gijsroge.github.io/tilt.js/ -->
+<script src="/static/assets/js/plugins/tilt.min.js"></script>
+<!--  Plugin for Selectpicker - ChoicesJS, full documentation here: https://github.com/jshjohnson/Choices -->
+<script src="/static/assets/js/plugins/choices.min.js"></script>
+
+<!--  Plugin for Parallax, full documentation here: https://github.com/wagerfield/parallax 视差插件，完整文档在这里：https://github.com/wagerfield/parallax  -->
+<script src="/static/assets/js/plugins/parallax.min.js"></script>
+
+<!-- Control Center for Material UI Kit: parallax effects, scripts for the example pages etc  Material UI 套件的控制中心：视差效果、示例页面脚本等-->
+<script src="/static/assets/js/material-kit.min.js?v=3.0.0" type="text/javascript"></script>
+
+<!-- Specific Page JS goes HERE  具体页面 JS 在这里 -->
+
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+
+</body>
+</html>
