@@ -427,7 +427,7 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷媒":
                 t_data = []
-                raw_data = other_device.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
+                raw_data = other_device.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position", 'device_amount',
                                                                                                  "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
                                                                                                  "filling_fix_volume", "device_type", "effusion_rate")
                 # 取單筆逸散量計算
@@ -3068,7 +3068,7 @@ def add_title(request):
             # 冷媒
             "12": {
                 "編輯區": ["刪除", "修改"],
-                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "設備種類", "逸散率(%)", "逸散量"],
+                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "設備數量", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "設備種類", "逸散率(%)", "逸散量"],
                 "佐證資料": ["引用單據"],
             },
             # 滅火器
