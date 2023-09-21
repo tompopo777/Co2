@@ -18,6 +18,7 @@
             <ul class="navbar-nav navbar-nav-hover ms-auto">
 
                 {% if request.user.is_authenticated %}
+
                     <li class="nav-item dropdown dropdown-hover mx-2">
                         <a class="nav-link ps-2 d-flex cursor-pointer align-items-center"
                            href="/carbon-system/">
@@ -35,6 +36,68 @@
                             <li><a class="dropdown-item border-radius-md border-bottom text-center" href="javascript:;">產生報告書</a></li>
                         </ul>
                     </li>
+
+{#                    <li class="nav-item dropdown dropdown-hover me-2 ">#}
+{#                        <div class="nav-link ps-2 d-flex cursor-pointer align-items-center">#}
+{#                            <i class="fa-solid fa-list mb-3 me-1"></i>#}
+{#                            <p class="d-inline text-sm z-index-1 font-weight-bold">查看</p>#}
+{#                        </div>#}
+{#                        <ul class="dropdown-menu px-2 py-3" aria-labelledby="dropdownMenuButton">#}
+{#                            <li>#}
+{#                                <div class="btn-group dropend">#}
+{#                                    <button type="button" class="btn  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">#}
+{#                                        基礎設定#}
+{#                                    </button>#}
+{#                                    <ul class="dropdown-menu">#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center" href="#">特定係數資料表</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">評估因子資料維護</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">類別資料維護</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">表格維護</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">活動數據等級表(含排放係數等級、不確定等級)</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">定性及定量等級評估表</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">數據精確程度表</a></li>#}
+{#                                    </ul>#}
+{#                                </div>#}
+{#                                <div class="btn-group dropend">#}
+{#                                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">#}
+{#                                        資料維護#}
+{#                                    </button>#}
+{#                                    <ul class="dropdown-menu">#}
+{##}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">活動數據收集</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">數據表維護</a></li>#}
+{#                                    </ul>#}
+{#                                </div>#}
+{#                                <div class="btn-group dropend">#}
+{#                                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">#}
+{#                                        查詢#}
+{#                                    </button>#}
+{#                                    <ul class="dropdown-menu">#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">顯著性間接溫室氣體排放準則評估表</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">溫室氣體排放量統計AR6</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">溫室氣體排放清冊</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">溫室氣體盤查數據蒐集確認表</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">GWP值</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">係數表</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">不確定定性分析</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">不確定定量分析</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">定性及定量等級評估</a></li>#}
+{#                                    </ul>#}
+{#                                </div>#}
+{#                                <div class="btn-group dropend">#}
+{#                                    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">#}
+{#                                        報表#}
+{#                                    </button>#}
+{#                                    <ul class="dropdown-menu">#}
+{##}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">清冊</a></li>#}
+{#                                        <li><a class="dropdown-item border-radius-md border-bottom text-center">報告書</a></li>#}
+{#                                    </ul>#}
+{#                                </div>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </li>#}
+
                     <a class="nav-link ps-2 d-flex cursor-pointer me-1"
                        data-bs-toggle="modal" data-bs-target="#settingsModal" type="button">
                         <i class="fa-solid fa-gear me-1 mt-1"></i>
@@ -52,6 +115,9 @@
                                data-bs-placement="bottom" title="Sign OUT">Logout</p>
                         </a>
                     </li>
+
+
+
                 {% endif %}
 
             </ul>
