@@ -475,11 +475,13 @@ class CutVerticalDF:
         # 找到'提供單位'column中值為'例' or 1 的row
         try:
             idx = self.df[self.df['提供單位'] == '例'].index[0]
+            column_names = self.df.loc[idx - 1].fillna(self.df.loc[idx - 2])
+            self.df = self.df.iloc[idx:]
         except IndexError:
             idx = self.df[self.df['提供單位'] == 1].index[0]
+            column_names = self.df.loc[idx - 1].fillna(self.df.loc[idx - 2])
+            self.df = self.df.iloc[idx - 1:]
 
-        column_names = self.df.loc[idx - 1].fillna(self.df.loc[idx - 2])
-        self.df = self.df.iloc[idx:]
         self.df.columns = column_names
 
     def filter_data(self):
@@ -488,7 +490,7 @@ class CutVerticalDF:
         # 刪除整個為空的column
         self.df = self.df.loc[:, ~self.df.columns.isna()]
         # 除了['序號']欄位以外，刪除整個為空的row
-        self.df = self.df.dropna(subset=self.df.columns.difference(['序號']), how='all')
+        self.df = self.df.dropna(subset=self.df.columns.difference(['序號', '平均逸散率 (%)', 'device_type']), how='all')
 
     def final_rebuild(self):
         # 刪除'序號'欄位
@@ -641,6 +643,32 @@ class CutProcessGas(CutVerticalDF):
         self.drop_column()
         self.find_perunit_rebuild()
         self.filter_data()
+
+
+class CutRefrigerant(CutVerticalDF):
+    def drop_column(self):
+        # 删除特定統計欄位: '庫存總填充量 (公斤)', '新購或更換填充量 (公斤)', '佐證資料'
+        self.df.drop(['總原始填充量 (公斤)', '維修冷媒填充日', '逸散量 (公斤)', '佐證資料'], axis=1, inplace=True)
+
+    def find_device_type(self):
+        # 尋找'設備名稱'欄位
+        device_type_idx = self.df[self.df['型號'] == '設備名稱'].index[0]
+        device_type_val = self.df.loc[device_type_idx + 1, '型號']
+        self.df['device_type'] = device_type_val
+
+    def final_rebuild(self):
+        # 刪除'序號'欄位
+        # self.df.drop(['序號'], axis=1, inplace=True)
+        # 重製索引
+        self.df.reset_index(drop=True, inplace=True)
+
+    def process(self):
+        super().read_excel()
+        super().find_column_names()
+        self.find_device_type()
+        self.drop_column()
+        super().filter_data()
+        self.final_rebuild()
 
 
 class CutExtinguisher(CutVerticalDF):
@@ -804,26 +832,19 @@ class CutPersonInventory(CutVerticalDF):
 #                 '比例': 'gas_ratio',
 #                 # '每單位規格單位': 'per_unit',
 #             },
-#             'refrigerator': {
-#
-#             },
-#             'airconditioner': {
-#
-#             },
-#             'vehicle': {
-#
-#             },
-#             'water_dispenser': {
-#
-#             },
-#             'ice_water_dispenser': {
-#
-#             },
-#             'ice_maker': {
-#
-#             },
 #             'other_device': {
-#
+#                 '設備編號': 'device_id',
+#                 '設備名稱': 'device_name',
+#                 '設備數量': 'device_amount',
+#                 '設備品牌': 'brand_name',
+#                 '型號': 'model_type',
+#                 '放置位置': 'position',
+#                 '設備購買年/月': 'years_purchased',
+#                 '擺放位置': 'position',
+#                 '原始規格填充量 (公斤)': 'filling_volume',
+#                 '平均逸散率 (%)': 'effusion_rate',
+#                 '冷媒類型': 'refrigerant_type',
+#                 '維修冷媒填充量 (公斤)': 'filling_fix_volume',
 #             },
 #             'extinguisher': {
 #                 '設備編號': 'device_id',
@@ -1504,7 +1525,7 @@ class CutPersonInventory(CutVerticalDF):
 #                     display(df)
 #
 #                 df['connect'] = '1 - ' + str(number + 1)
-#                 result['connect'] = '1 - ' + str(number + 1 )
+#                 result['connect'] = '1 - ' + str(number + 1)
 #                 # # 騙
 #                 # df.drop(['gas_name', 'per_unit'], axis=1, inplace=True)
 #                 main_df = pd.concat([main_df, df])
@@ -1537,6 +1558,137 @@ class CutPersonInventory(CutVerticalDF):
 #             #
 #             # return df, validation_results
 #             return f_df, validation_results
+#
+#         # 逸散-冷媒
+#         @register_model_action('other_device')
+#         def refrigerant_dataframe(file, sheet):
+#             validation_results = {}
+#
+#             # validation
+#             def clean_device_id(row, name):
+#                 device_id = row['device_id']
+#                 index = row['序號']
+#                 if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)) or pd.isna(device_id):
+#                     error_message = f"序號: {index}，輸入值: {device_id}"
+#                     if f"'{name}分頁'欄位: 設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)" not in validation_results:
+#                         validation_results[f"'{name}分頁'欄位: 設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"] = []
+#                     validation_results[f"'{name}分頁'欄位: 設備編號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"].append(error_message)
+#                     return None
+#                 return device_id
+#
+#             def clean_device_name(row, name):
+#                 device_name = row['device_name']
+#                 index = row['序號']
+#                 if pd.isna(device_name):
+#                     error_message = f"序號: {index}，輸入值: {device_name}"
+#                     if f"'{name}分頁'欄位: 設備名稱 (規則: 不可為空)" not in validation_results:
+#                         validation_results[f"'{name}分頁'欄位: 設備名稱 (規則: 不可為空)"] = []
+#                     validation_results[f"'{name}分頁'欄位: 設備名稱 (規則: 不可為空)"].append(error_message)
+#                     return None
+#                 return device_name
+#
+#             def clean_device_amount(row, name):
+#                 device_amount = row['device_amount']
+#                 index = row['序號']
+#                 if not re.match(r'^[1-9]+', str(device_amount)) or pd.isna(device_amount):
+#                     error_message = f"序號: {index}，輸入值: {device_amount}"
+#                     if f"'{name}分頁'欄位: 設備數量 (規則: 只能輸入正整數(須大於0)、不可為空)" not in validation_results:
+#                         validation_results[f"'{name}分頁'欄位: 設備數量 (規則: 只能輸入正整數(須大於0)、不可為空)"] = []
+#                     validation_results[f"'{name}分頁'欄位: 設備數量 (規則: 只能輸入正整數(須大於0)、不可為空)"].append(error_message)
+#                     return None
+#                 return device_amount
+#
+#             def clean_model_type(row, name):
+#                 model_type = row['model_type']
+#                 index = row['序號']
+#                 if pd.isna(model_type):
+#                     error_message = f"序號: {index}，輸入值: {model_type}"
+#                     if f"'{name}分頁'欄位: 型號 (規則: 不可為空)" not in validation_results:
+#                         validation_results[f"'{name}分頁'欄位: 型號 (規則: 不可為空)"] = []
+#                     validation_results[f"'{name}分頁'欄位: 型號 (規則: 不可為空)"].append(error_message)
+#                     return None
+#                 return model_type
+#
+#             def clean_filling_volume(row, name):
+#                 filling_volume = row['filling_volume']
+#                 index = row['序號']
+#                 if not isinstance(filling_volume, (int, float)) or pd.isna(filling_volume):
+#                     error_message = f"序號: {index}，輸入值: {filling_volume}"
+#                     if f"'{name}分頁'欄位: 原始規格填充量 (公斤) (規則: 只能輸入正實數(小數點後四位、不可為空)" not in validation_results:
+#                         validation_results[f"'{name}分頁'欄位: 原始規格填充量 (公斤) (規則: 只能輸入正實數(小數點後四位、不可為空)"] = []
+#                     validation_results[f"'{name}分頁'欄位: 原始規格填充量 (公斤) (規則: 只能輸入正實數(小數點後四位、不可為空)"].append(error_message)
+#                     return None
+#                 filling_volume = round(filling_volume, 4)
+#                 return filling_volume
+#
+#             def clean_effusion_rate(row, name):
+#                 effusion_rate = row['effusion_rate']
+#                 index = row['序號']
+#                 if not isinstance(effusion_rate, (int, float)) or pd.isna(effusion_rate):
+#                     error_message = f"序號: {index}，輸入值: {effusion_rate}"
+#                     if f"'{name}分頁'欄位: 平均逸散率 (%) (規則: 只能輸入正實數(小數點後四位、不可為空)" not in validation_results:
+#                         validation_results[f"'{name}分頁'欄位: 平均逸散率 (%) (規則: 只能輸入正實數(小數點後四位、不可為空)"] = []
+#                     validation_results[f"'{name}分頁'欄位: 平均逸散率 (%) (規則: 只能輸入正實數(小數點後四位、不可為空)"].append(error_message)
+#                     return None
+#                 effusion_rate = round(effusion_rate * 100, 2)
+#                 return effusion_rate
+#
+#             def clean_refrigerant_type(row, name):
+#                 refrigerant_type = row['refrigerant_type']
+#                 index = row['序號']
+#                 for REFRIGERANT_TYPE in REFRIGERANT_TYPE_CHOICES:
+#                     if refrigerant_type == REFRIGERANT_TYPE[0]:
+#                         return refrigerant_type
+#                 error_message = f"序號: {index}，輸入值: {refrigerant_type}"
+#                 if f"'{name}分頁'欄位: 滅火器類型 (規則: 請勿自行修改excel下拉選單、不可為空)" not in validation_results:
+#                     validation_results[f"'{name}分頁'欄位: 滅火器類型 (規則: 請勿自行修改excel下拉選單、不可為空)"] = []
+#                 validation_results[f"'{name}分頁'欄位: 滅火器類型 (規則: 請勿自行修改excel下拉選單、不可為空)"].append(error_message)
+#                 return None
+#
+#             def clean_filling_fix_volume(row, name):
+#                 filling_fix_volume = row['filling_fix_volume']
+#                 index = row['序號']
+#                 if pd.isna(filling_fix_volume):
+#                     filling_fix_volume = 0
+#                     return filling_fix_volume
+#                 else:
+#                     if isinstance(filling_fix_volume, (int, float)):
+#                         filling_fix_volume = round(filling_fix_volume, 4)
+#                         return filling_fix_volume
+#                     else:
+#                         error_message = f"序號: {index}，輸入值: {filling_fix_volume}"
+#                         if f"'{name}分頁'欄位: 維修冷媒填充量 (公斤) (規則: 只能輸入正實數(小數點後四位、不可為空)" not in validation_results:
+#                             validation_results[f"'{name}分頁'欄位: 維修冷媒填充量 (公斤) (規則: 只能輸入正實數(小數點後四位、不可為空)"] = []
+#                         validation_results[f"'{name}分頁'欄位: 維修冷媒填充量 (公斤) (規則: 只能輸入正實數(小數點後四位、不可為空)"].append(error_message)
+#                         return None
+#
+#             df = pd.DataFrame({})
+#             for number in range(len(sheet)):
+#                 sheet_name = sheet[number]
+#                 refrigerant_processor = CutRefrigerant(file, sheet_name)
+#                 refrigerant_processor.process()
+#                 sub_df = refrigerant_processor.df
+#                 sub_df.rename(columns=rename[str(model_name)], inplace=True)
+#                 if not sub_df.empty:
+#                     # 客製欄位補值
+#
+#                     # 驗證
+#                     sub_df['device_id'] = sub_df.apply(clean_device_id, axis=1, args=(sheet_name,))
+#                     sub_df['device_name'] = sub_df.apply(clean_device_name, axis=1, args=(sheet_name,))
+#                     sub_df['device_amount'] = sub_df.apply(clean_device_amount, axis=1, args=(sheet_name,))
+#                     sub_df['model_type'] = sub_df.apply(clean_model_type, axis=1, args=(sheet_name,))
+#                     sub_df['filling_volume'] = sub_df.apply(clean_filling_volume, axis=1, args=(sheet_name,))
+#                     sub_df['effusion_rate'] = sub_df.apply(clean_effusion_rate, axis=1, args=(sheet_name,))
+#                     sub_df['refrigerant_type'] = sub_df.apply(clean_refrigerant_type, axis=1, args=(sheet_name,))
+#                     sub_df['filling_fix_volume'] = sub_df.apply(clean_filling_fix_volume, axis=1, args=(sheet_name,))
+#                 sub_df.drop(['序號'], axis=1, inplace=True)
+#                 df = pd.concat([df, sub_df])
+#
+#             display(df)
+#             if df.empty:
+#                 validation_results = '匯入失敗，excel資料為空!'
+#
+#             return df, validation_results
 #
 #         # 逸散-滅火器
 #         @register_model_action('extinguisher')
@@ -1633,6 +1785,7 @@ class CutPersonInventory(CutVerticalDF):
 #         @register_model_action('personnel_inventory')
 #         def personnel_inventory_dataframe(file, sheet):
 #             validation_results = {}
+#
 #             # validation
 #
 #             def clean_int(row, sheet_name, column):
@@ -1734,6 +1887,96 @@ class CutPersonInventory(CutVerticalDF):
 #                 df.fillna(0, inplace=True)
 #                 # 重製索引
 #                 df.reset_index(drop=True, inplace=True)
+#             return df, validation_results
+#
+#         # 製程-焊條
+#         @register_model_action('material')
+#         def welding_rod_dataframe(file, sheet):
+#             validation_results = {}
+#
+#             def find_key_by_value(dictionary, value_to_find):
+#                 for key, value in dictionary.items():
+#                     if value == value_to_find:
+#                         return key
+#                 return value_to_find
+#
+#             # validation
+#             def clean_welding_rod_id(row):
+#                 welding_rod_id = row['welding_rod_id']
+#                 if not re.match(r'^[a-zA-Z0-9_-]*$', str(welding_rod_id)) or pd.isna(welding_rod_id):
+#                     error_message = f"序號: {row.name + 1}，輸入值: {welding_rod_id}"
+#                     if "欄位: 料號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)" not in validation_results:
+#                         validation_results["欄位: 料號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"] = []
+#                     validation_results["欄位: 料號 (規則: 只能輸入'英文'、'數字'、'-'、'_'、不可為空)"].append(error_message)
+#                     return None
+#                 return welding_rod_id
+#
+#             def clean_welding_rod_name(row):
+#                 welding_rod_name = row['welding_rod_name']
+#                 if pd.isna(welding_rod_name):
+#                     error_message = f"序號: {row.name + 1}，輸入值: {welding_rod_name}"
+#                     if "欄位: 品名 (規則: 不可為空)" not in validation_results:
+#                         validation_results["欄位: 品名 (規則: 不可為空)"] = []
+#                     validation_results["欄位: 品名 (規則: 不可為空)"].append(error_message)
+#                     return None
+#                 return welding_rod_name
+#
+#             def clean_welding_rod_format(row):
+#                 welding_rod_format = row['welding_rod_format']
+#                 if pd.isna(welding_rod_format):
+#                     error_message = f"序號: {row.name + 1}，輸入值: {welding_rod_format}"
+#                     if "欄位: 規格 (規則: 不可為空)" not in validation_results:
+#                         validation_results["欄位: 規格 (規則: 不可為空)"] = []
+#                     validation_results["欄位: 規格 (規則: 不可為空)"].append(error_message)
+#                     return None
+#                 return welding_rod_format
+#
+#             def clean_carbon_content(row):
+#                 carbon_content = row['carbon_content']
+#                 if not re.match(r'^[0-9]+(.[0-9]{0,2})?$', str(carbon_content)) or pd.isna(carbon_content):
+#                     error_message = f"序號: {row.name + 1}，輸入值: {carbon_content}"
+#                     if "欄位: 含碳量(%) (規則: 只能輸入正實數(小數點後兩位、不可為空))" not in validation_results:
+#                         validation_results["欄位: 含碳量(%) (規則: 只能輸入正實數(小數點後兩位、不可為空))"] = []
+#                     validation_results["欄位: 含碳量(%) (規則: 只能輸入正實數(小數點後兩位、不可為空))"].append(error_message)
+#                     return None
+#                 return carbon_content
+#
+#             def clean_month(row):
+#                 months = ['january', 'february', 'march', 'april', 'may', 'june',
+#                           'july', 'august', 'september', 'october', 'november', 'december']
+#                 for month in months:
+#                     value = row[month]
+#                     if isinstance(value, (int, float)) and value >= 0:
+#                         row[month] = round(value, 4)
+#                     else:
+#                         conv_mont = find_key_by_value(rename[str(model_name)], month)
+#                         error_message = f"序號: {row.name + 1}，輸入值: {value}"
+#                         if f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)' not in validation_results:
+#                             validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'] = []
+#                         validation_results[f'欄位: {conv_mont} (規則: 輸入值須大於等於零、不可為空)'].append(error_message)
+#                         row[month] = None
+#                 return row
+#
+#             welding_rod_processor = CutWeldingRod(file, sheet[0])
+#             welding_rod_processor.process()
+#             df = welding_rod_processor.df
+#             df.rename(columns=rename[str(model_name)], inplace=True)
+#             display(df)
+#
+#             # 如果excel為空，跳過驗證直接回傳
+#             if not df.empty:
+#                 # 客製欄位補值
+#
+#                 # 驗證
+#                 df['welding_rod_id'] = df.apply(clean_welding_rod_id, axis=1)
+#                 df['welding_rod_name'] = df.apply(clean_welding_rod_name, axis=1)
+#                 df['welding_rod_format'] = df.apply(clean_welding_rod_format, axis=1)
+#                 df['carbon_content'] = df.apply(clean_carbon_content, axis=1)
+#                 df = df.apply(clean_month, axis=1)
+#
+#             else:
+#                 validation_results = '匯入失敗，excel資料為空!'
+#
 #             return df, validation_results
 #
 #         # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>start<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
