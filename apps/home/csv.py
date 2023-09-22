@@ -647,7 +647,7 @@ class CutProcessGas(CutVerticalDF):
 
 class CutRefrigerant(CutVerticalDF):
     def drop_column(self):
-        # 删除特定統計欄位: '庫存總填充量 (公斤)', '新購或更換填充量 (公斤)', '佐證資料'
+        # 删除特定統計欄位: '總原始填充量 (公斤)', '維修冷媒填充日', '逸散量 (公斤)', '佐證資料'
         self.df.drop(['總原始填充量 (公斤)', '維修冷媒填充日', '逸散量 (公斤)', '佐證資料'], axis=1, inplace=True)
 
     def find_device_type(self):
