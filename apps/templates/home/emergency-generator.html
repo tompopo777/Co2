@@ -183,17 +183,29 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex">
-                                        <div class="ps-md-2 align-self-center">
-                                            <div class="col-2" multiple="multiple">
-                                                <input type="hidden" name="stage" value="柴油">
-                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
-                                            </div>
-                                        </div>
-                                        <div id="files-area">
-                                            <span id="filesList">
-                                                <span id="files-names"></span>
-                                            </span>
+{#                                    <div class="d-flex">#}
+{#                                        <div class="ps-md-2 align-self-center">#}
+{#                                            <div class="col-2" multiple="multiple">#}
+{#                                                {{ Image_add.stage }}#}
+{#                                                {{ Image_add.image_path }}#}
+{#                                                <input type="hidden" name="stage" value="柴油">#}
+{#                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                        <div id="files-area">#}
+{#                                            <span id="filesList">#}
+{#                                                <span id="files-names"></span>#}
+{#                                            </span>#}
+{#                                        </div>#}
+{#                                    </div>#}
+
+                                    <div class="ps-md-2 align-self-center">
+                                        <div class="col" multiple="multiple">
+                                            <label>上傳檔案</label>
+                                            {% for error in Image_add.image_path.errors %}
+                                                <li style="color: red">{{ error }}</li>
+                                            {% endfor %}
+                                            {{ Image_add.image_path }}
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -281,50 +293,50 @@
         });
 
         {#    照片顯示檔名+可刪除#}
-        $("#attachment").on('change', function (e) {
-            let allowedTypes = ['image/jpeg', 'image/png', 'application/pdf']; // 允許的檔案類型
-            let filesList = $("#filesList > #files-names");
-            let dt = new DataTransfer(); // 允許操作輸入文件的文件
-
-            for (let i = 0; i < this.files.length; i++) {
-                let file = this.files[i];
-                let fileType = file.type;
-
-                // 檢查檔案類型是否為允許的類型
-                if (allowedTypes.includes(fileType)) {
-                    let fileBloc = $('<span/>', {class: 'file-block'}),
-                        fileName = $('<span/>', {class: 'name', text: file.name});
-                    fileBloc.append('<span class="file-delete"><span>+</span></span>')
-                        .append(fileName);
-                    filesList.append(fileBloc);
-
-                    // 將文件添加到 DataTransfer 對象
-                    dt.items.add(file);
-                } else {
-                    // 不是允許的檔案類型，顯示警告
-                    alert("只能選擇圖片檔或PDF檔，無效的檔案類型: " + file.name);
-                }
-            }
-
-            // 更新輸入文件中的文件
-            this.files = dt.files;
-
-            // 創建刪除按鈕的事件監聽器
-            $('span.file-delete').click(function () {
-                let name = $(this).next('span.name').text();
-                // 抑製文件名的顯示
-                $(this).parent().remove();
-                for (let i = 0; i < dt.items.length; i++) {
-                    // 匹配文件名
-                    if (name === dt.items[i].getAsFile().name) {
-                        // 刪除 DataTransfer 對像中的文件
-                        dt.items.remove(i);
-                    }
-                }
-                // 刪除後更新輸入文件中的文件
-                document.getElementById('attachment').files = dt.files;
-            });
-        });
+{#        $("#attachment").on('change', function (e) {#}
+{#            let allowedTypes = ['image/jpeg', 'image/png', 'application/pdf']; // 允許的檔案類型#}
+{#            let filesList = $("#filesList > #files-names");#}
+{#            let dt = new DataTransfer(); // 允許操作輸入文件的文件#}
+{##}
+{#            for (let i = 0; i < this.files.length; i++) {#}
+{#                let file = this.files[i];#}
+{#                let fileType = file.type;#}
+{##}
+{#                // 檢查檔案類型是否為允許的類型#}
+{#                if (allowedTypes.includes(fileType)) {#}
+{#                    let fileBloc = $('<span/>', {class: 'file-block'}),#}
+{#                        fileName = $('<span/>', {class: 'name', text: file.name});#}
+{#                    fileBloc.append('<span class="file-delete"><span>+</span></span>')#}
+{#                        .append(fileName);#}
+{#                    filesList.append(fileBloc);#}
+{##}
+{#                    // 將文件添加到 DataTransfer 對象#}
+{#                    dt.items.add(file);#}
+{#                } else {#}
+{#                    // 不是允許的檔案類型，顯示警告#}
+{#                    alert("只能選擇圖片檔或PDF檔，無效的檔案類型: " + file.name);#}
+{#                }#}
+{#            }#}
+{##}
+{#            // 更新輸入文件中的文件#}
+{#            this.files = dt.files;#}
+{##}
+{#            // 創建刪除按鈕的事件監聽器#}
+{#            $('span.file-delete').click(function () {#}
+{#                let name = $(this).next('span.name').text();#}
+{#                // 抑製文件名的顯示#}
+{#                $(this).parent().remove();#}
+{#                for (let i = 0; i < dt.items.length; i++) {#}
+{#                    // 匹配文件名#}
+{#                    if (name === dt.items[i].getAsFile().name) {#}
+{#                        // 刪除 DataTransfer 對像中的文件#}
+{#                        dt.items.remove(i);#}
+{#                    }#}
+{#                }#}
+{#                // 刪除後更新輸入文件中的文件#}
+{#                document.getElementById('attachment').files = dt.files;#}
+{#            });#}
+{#        });#}
 
 
     </script>

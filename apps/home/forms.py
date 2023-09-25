@@ -59,8 +59,8 @@ WASTE_DISPOSAL_CHOICES = [
 CE_FUEL_TYPE_CHOICES = [
     ('天然氣', '天然氣'),
     ('液化石油氣', '液化石油氣'),
-    ('液化天然氣', '液化天然氣'),
-    ('燃煤', '燃煤')
+    ('燃煤', '燃煤'),
+    ('蒸餘油(燃料油)', '蒸餘油(燃料油)')
 ]
 VEHICLE_TYPE_CHOICES = [
     ('汽車', '汽車'),
@@ -71,8 +71,13 @@ VEHICLE_TYPE_CHOICES = [
     ('機車', '機車')
 ]
 PROCESS_UNIT_CHOICES = [
+    ('公噸', '公噸'),
     ('公斤', '公斤'),
     ('公升', '公升'),
+    ('立方公尺', '立方公尺')
+]
+PROCESS_GAS_UNIT_CHOICES = [
+    ('公斤', '公斤'),
     ('立方公尺', '立方公尺')
 ]
 VOC1_UNIT_CHOICES = [
@@ -81,13 +86,13 @@ VOC1_UNIT_CHOICES = [
 ]
 DEVICE_TYPE_CHOICES = [
     ('', '----------------'),
-    ('移動式空氣清淨機', '移動式空氣清淨機'),
-    ('住宅及商業建築冷氣機', '住宅及商業建築冷氣機'),
-    ('家用冷凍、冷藏裝備', '家用冷凍、冷藏裝備'),
-    ('獨立商用冷凍、冷藏裝備', '獨立商用冷凍、冷藏裝備'),
-    ('中、大型冷凍、冷藏裝備', '中、大型冷凍、冷藏裝備'),
+    ('車輛、家用除濕機', '車輛、家用除濕機'),
+    ('冷氣', '冷氣'),
+    ('冰箱、飲水機', '冰箱、飲水機'),
+    ('落地形大型冷氣機', '落地形大型冷氣機'),
+    ('大型冷凍櫃', '大型冷凍櫃'),
     ('交通用冷凍、冷藏裝備', '交通用冷凍、冷藏裝備'),
-    ('工業冷凍、冷藏裝備，包括食品加工及冷藏', '工業冷凍、冷藏裝備，包括食品加工及冷藏'),
+    ('冷凍物流車', '冷凍物流車'),
     ('冰水機', '冰水機'),
     ('其他', '其他')
 ]
@@ -160,9 +165,14 @@ REFRIGERANT_TYPE_CHOICES = [
     ('R-1234yf', 'R-1234yf'),
 ]
 EXTINGUISHER_TYPE_CHOICES = [
-    ('二氧化碳滅火器', '二氧化碳滅火器'),
-    ('潔淨滅火器HFC-227ea(FM-200、FE-227)', '潔淨滅火器HFC-227ea(FM-200、FE-227)'),
-    ('潔淨滅火器HFC-125', '潔淨滅火器HFC-125'),
+    ('ABC型乾粉滅火器', 'ABC型乾粉滅火器'),
+    ('BC型乾粉滅火器', 'BC型乾粉滅火器'),
+    ('CO2滅火器', 'CO2滅火器'),
+    ('FM200滅火器', 'FM200滅火器'),
+    ('HFC滅火器', 'HFC滅火器'),
+    ('強化液滅火器', '強化液滅火器'),
+    ('泡沫滅火器', '泡沫滅火器'),
+    ('海龍滅火器', '海龍滅火器'),
 ]
 TRANSPORT_TYPE_CHOICES = [
     ('', '---------------------'),
@@ -192,13 +202,6 @@ CAREER_CHOICES = [
     ('清潔工', '清潔工'),
     ('其他', '其他')
 ]
-ORGANIZATIONAL_USE_PRODUCTS_CHOICES = [
-    ('組織購買原/物料開採、製造與加工過程所產生溫室氣體排放', '組織購買原/物料開採、製造與加工過程所產生溫室氣體排放'),
-    ('資本財製造與加工過程所產生溫室氣體排放', '資本財製造與加工過程所產生溫室氣體排放'),
-    ('處置固體與液體廢棄物產生之運輸排放', '處置固體與液體廢棄物產生之運輸排放'),
-    ('資本財租賃使用之溫室氣體排放', '資本財租賃使用之溫室氣體排放'),
-    ('輔導、清潔、維護、郵遞、銀行業務等服務所產生的溫室氣體排放', '輔導、清潔、維護、郵遞、銀行業務等服務所產生的溫室氣體排放')
-]
 WEIGHT_CHOICES = [
     ('淨重', '淨重'),
     ('毛重', '毛重'),
@@ -221,25 +224,30 @@ TRADE_TERM_CHOICES = [
     ('DAP', 'DAP 目的地交貨'),
     ('DDP', 'DDP 完稅後交貨')
 ]
-UP_PAID_CHOICES = [
-    ('公司支付', '公司支付'),
-    ('供應商支付', '供應商支付')
-]
 DOWN_PAID_CHOICES = [
-    ('客戶支付', '客戶支付'),
-    ('公司支付(上游計算)', '公司支付(上游計算)'),
+    ('我方支付', '我方支付'),
+    ('客戶支付(上游計算)', '客戶支付(上游計算)'),
+]
+COMMUTE_TRANSPORTATION_CHOICES = [
+    ('', '------'),
+    ('機車', '機車'),
+    ('電動機車', '電動機車'),
+    ('汽車(汽油)', '汽車(汽油)'),
+    ('汽車(柴油)', '汽車(柴油)'),
+    ('汽車(油電)', '汽車(油電)'),
+    ('公車', '公車'),
+    ('火車', '火車'),
+    ('捷運', '捷運'),
+    ('高鐵', '高鐵'),
 ]
 BUSINESS_TRANSPORTATION_CHOICES = [
     ('', '------'),
-    ('自駕汽車', '自駕汽車'),
+    ('汽車', '汽車'),
+    ('火車', '火車'),
     ('高鐵', '高鐵'),
-    ('火車(電聯)', '火車(電聯)'),
-    ('火車(柴聯)', '火車(柴聯)'),
-    ('計程車', '計程車'),
-    ('機車', '機車'),
     ('捷運', '捷運'),
-    ('飛機', '飛機'),
     ('船舶', '船舶'),
+    ('飛機', '飛機'),
 ]
 SOLVENT_GAS_CHOICES = [
     ('', '-------'),
@@ -1018,7 +1026,7 @@ class ODform(forms.ModelForm):
     class Meta:
         model = other_device
         fields = ('device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
-                  'filling_volume', 'effusion_rate', 'device_type', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
+                  'filling_volume', 'device_amount', 'effusion_rate', 'device_type', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -1027,6 +1035,7 @@ class ODform(forms.ModelForm):
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
+            'device_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正整數)"}),
             'effusion_rate': forms.TextInput(attrs={'id': 'effusion_rate', 'class': 'form-control'}),
             'device_type': forms.Select(attrs={'id': 'device_type', 'style': 'width:250px'}, choices=DEVICE_TYPE_CHOICES),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:250px'}, choices=REFRIGERANT_TYPE_CHOICES),
@@ -1040,7 +1049,6 @@ class ODform(forms.ModelForm):
         self.fields['years_purchased'].required = False
         self.fields['brand_name'].required = False
         self.fields['position'].required = False
-        self.fields['filling_volume'].required = False
         self.fields['filling_fix_volume'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
@@ -1056,6 +1064,12 @@ class ODform(forms.ModelForm):
         if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(filling_volume)):
             raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
         return filling_volume
+
+    def clean_device_amount(self):
+        device_amount = self.cleaned_data.get('device_amount')
+        if not device_amount > 0:
+            raise forms.ValidationError("該欄位必須大於零", 'invalid')
+        return device_amount
 
     def clean_effusion_rate(self):
         effusion_rate = self.cleaned_data.get('effusion_rate')
@@ -1346,12 +1360,11 @@ class WasteSludgeForm(forms.ModelForm):
 class SolventAerosolEmissionSourcesForm(forms.ModelForm):
     class Meta:
         model = solvent_aerosol_emission_sources
-        fields = ('solvent_name', 'solvent_amount', 'solvent_capacity', 'solvent_capacity_unit', 'image_note', 'message_board')
+        fields = ('receipt_date', 'solvent_name', 'solvent_amount', 'image_note', 'message_board')
         widgets = {
+            'receipt_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'receipt_date'}),
             'solvent_name': forms.TextInput(attrs={'class': 'form-control'}),
             'solvent_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數'}),
-            'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
-            'solvent_capacity_unit': forms.Select(attrs={'id': 'solvent_capacity_unit', 'style': 'width:100px'}, choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1369,29 +1382,24 @@ class SolventAerosolEmissionSourcesForm(forms.ModelForm):
             raise forms.ValidationError("數量需大於0", "invalid")
         return solvent_amount
 
-    def clean_solvent_capacity(self):
-        solvent_capacity = self.cleaned_data.get('solvent_capacity')
-        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(solvent_capacity)):
-            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
-        return solvent_capacity
-
 
 # 添加氣體(溶劑噴霧劑表中表)
 class GasAddFormSet(forms.ModelForm):
     class Meta:
         model = gas_add
-        fields = ('gas_name', 'gas_ratio', 'density',)
+        fields = ('solvent_capacity', 'solvent_capacity_unit', 'gas_ratio', 'density',)
         widgets = {
-            'gas_name': forms.Select(attrs={'class': 'gas_name'}, choices=SOLVENT_GAS_CHOICES),
+            'solvent_capacity': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'solvent_capacity_unit': forms.Select(attrs={'id': 'solvent_capacity_unit', 'style': 'width:100px'}, choices=(("毫升", "毫升"), ("公升", "公升"), ("oz", "oz"))),
             'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
             'density': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後十位)'}),
         }
 
-    def clean_gas_name(self):
-        gas_name = self.cleaned_data.get('gas_name')
-        if gas_name == "":
-            raise forms.ValidationError("請選擇氣體名稱", 'invalid')
-        return gas_name
+    def clean_solvent_capacity(self):
+        solvent_capacity = self.cleaned_data.get('solvent_capacity')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(solvent_capacity)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return solvent_capacity
 
     def clean_gas_ratio(self):
         gas_ratio = self.cleaned_data.get('gas_ratio')
@@ -1536,6 +1544,20 @@ class UTform(forms.ModelForm):
         self.fields['air_image_note'].required = False
         self.fields['message_board'].required = False
 
+    def clean_acceptance_receipt(self):
+        acceptance_receipt = self.cleaned_data.get('acceptance_receipt')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(acceptance_receipt)):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return acceptance_receipt
+
+    def clean_commodity_NW(self):
+        commodity_NW = self.cleaned_data.get('commodity_NW')
+        if not re.match(r'^[0-9]+$', str(commodity_NW)):
+            raise forms.ValidationError("只能輸入正整數字", 'invalid')
+        if str(commodity_NW) == '0':
+            raise forms.ValidationError("數量需大於0", "invalid")
+        return commodity_NW
+
 
 # 下游運輸
 class DTform(forms.ModelForm):
@@ -1668,13 +1690,13 @@ class CommuteFormSet(forms.ModelForm):
         model = transportation_way
         fields = ('transportation',)
         widgets = {
-            'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
+            'transportation': forms.Select(choices=TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
         }
 
     def clean_transportation(self):
         transportation = self.cleaned_data['transportation']
-        for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
-            if transportation == BUSINESS_TRANSPORTATION[0]:
+        for COMMUTE_TRANSPORTATION in TRANSPORTATION_CHOICES:
+            if transportation == COMMUTE_TRANSPORTATION[0]:
                 return transportation
         print('亂改表單內容:', transportation)
         raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
@@ -1729,13 +1751,13 @@ class TripSectionFormSet(forms.ModelForm):
         fields = ('departure', 'transportation', 'distance',)
         widgets = {
             'departure': forms.TextInput(attrs={'class': 'form-control'}),
-            'transportation': forms.Select(choices=BUSINESS_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
+            'transportation': forms.Select(choices=EBT_TRANSPORTATION_CHOICES, attrs={'class': 'form-control'}),
             'distance': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'})
         }
 
     def clean_transportation(self):
         transportation = self.cleaned_data['transportation']
-        for BUSINESS_TRANSPORTATION in BUSINESS_TRANSPORTATION_CHOICES:
+        for BUSINESS_TRANSPORTATION in EBT_TRANSPORTATION_CHOICES:
             if transportation == BUSINESS_TRANSPORTATION[0]:
                 return transportation
         print('亂改表單內容:', transportation)
@@ -2148,7 +2170,7 @@ class PGform(forms.ModelForm):
             'amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+(.[0-9]{1,4})', 'title': '只能輸入正數到小數點第四位'}),
             'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "ex.瓶、罐"}),
             'per_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+(.[0-9]{1,4})', 'title': '只能輸入正數到小數點第四位'}),
-            'per_unit': forms.Select(choices=PROCESS_UNIT_CHOICES),
+            'per_unit': forms.Select(choices=PROCESS_GAS_UNIT_CHOICES),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -2158,6 +2180,58 @@ class PGform(forms.ModelForm):
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
+
+class ImageForm(forms.ModelForm):
+    class Meta:
+        model = image
+        fields = ('stage', 'image_path')
+        widgets = {
+            'stage': forms.TextInput(attrs={'class': 'form-control', 'value': '柴油發電機'}),
+            'image_path': forms.FileInput(attrs={'class': 'form-control-file', 'multiple': True, 'type': 'file', 'accept': 'image/*, .pdf, application/*'}),
+        }
+
+    def __init__(self, request, *args, **kwargs):
+        super(ImageForm, self).__init__(*args, **kwargs)
+        self.fields['stage'].required = False
+        self.fields['image_path'].required = False
+
+    def clean_image_path(self):
+        uploaded_file = self.cleaned_data.get('image_path')
+        if uploaded_file is None:
+            return None
+        allowed_type = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx']
+        file_type = uploaded_file.name.split('.')[-1].lower()
+        print(file_type)
+        if file_type not in allowed_type:
+            raise forms.ValidationError('只允許上傳以下檔案類型：PDF, JPG, PNG, DOC, DOCX, XLS, XLSX, PPT, PPTX')
+        return uploaded_file
+
+    def clean_device_id(self):
+        device_id = self.cleaned_data.get('device_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return device_id
+
+    def clean_device_capacity(self):
+        device_capacity = self.cleaned_data.get('device_capacity')
+        if device_capacity < 0:
+            raise forms.ValidationError("只能輸入正整數")
+        elif device_capacity == 0:
+            raise forms.ValidationError("輸入數值不得為零")
+        return device_capacity
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        months = ['january', 'february', 'march', 'april', 'may', 'june',
+                  'july', 'august', 'september', 'october', 'november', 'december']
+        for month in months:
+            value = cleaned_data.get(month)
+            if value:
+                if not value >= 0:
+                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors[month] = [month]
+                    # break
+        return cleaned_data
     # def clean_material_id(self):
     #     material_id = self.cleaned_data.get('material_id')
     #     if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):

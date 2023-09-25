@@ -217,7 +217,7 @@ class process(models.Model):
     years = models.IntegerField(default=timezone.now().year)
     process_stage = models.CharField(max_length=20, null=True)
     chemical_id = models.CharField(max_length=30)
-    chemical_coefficient = models.DecimalField(max_digits=20, decimal_places=4)
+    chemical_coefficient = models.DecimalField(max_digits=20, decimal_places=10)
     burn = models.BooleanField(default=False)
     process_add_name = models.CharField(max_length=20)
     chemical_name = models.CharField(max_length=20, null=True)
@@ -373,7 +373,8 @@ class other_device(models.Model):
     position = models.CharField(max_length=100, null=True)
     years_purchased = models.CharField(max_length=20, null=True)
     filling_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
-    effusion_rate = models.FloatField()
+    device_amount = models.IntegerField()
+    effusion_rate = models.DecimalField(max_digits=20, decimal_places=2)
     device_type = models.CharField(max_length=20)
     refrigerant_type = models.CharField(max_length=20)
     filling_fix_volume = models.DecimalField(max_digits=20, decimal_places=4, default=0)
@@ -492,7 +493,6 @@ class personnel_inventory(models.Model):
     compensatory_leave_hours_oct = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     compensatory_leave_hours_nov = models.DecimalField(max_digits=20, decimal_places=4, default=0)
     compensatory_leave_hours_dec = models.DecimalField(max_digits=20, decimal_places=4, default=0)
-
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
@@ -536,10 +536,9 @@ class solvent_aerosol_emission_sources(models.Model):
     id = models.AutoField(primary_key=True)
     did = models.ForeignKey(section_two, on_delete=models.CASCADE, default=18, db_column='did_id')
     years = models.IntegerField(default=timezone.now().year)
+    receipt_date = models.CharField(max_length=20)
     solvent_name = models.CharField(max_length=100)
     solvent_amount = models.DecimalField(max_digits=20, decimal_places=0)
-    solvent_capacity = models.DecimalField(max_digits=20, decimal_places=4)
-    solvent_capacity_unit = models.CharField(max_length=20)
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
@@ -548,7 +547,8 @@ class solvent_aerosol_emission_sources(models.Model):
 # 添加氣體
 class gas_add(models.Model):
     id = models.AutoField(primary_key=True)
-    gas_name = models.CharField(max_length=20)
+    solvent_capacity = models.DecimalField(max_digits=20, decimal_places=4)
+    solvent_capacity_unit = models.CharField(max_length=20)
     gas_ratio = models.CharField(max_length=20)
     density = models.DecimalField(max_digits=30, decimal_places=10)
     gas_id = models.ForeignKey(solvent_aerosol_emission_sources, on_delete=models.CASCADE, db_column='gas_id')
@@ -784,15 +784,6 @@ class chemical_table(models.Model):
     chemical_formula = models.CharField(max_length=50)
 
 
-# 照片
-class image(models.Model):
-    id = models.AutoField(primary_key=True)
-    table_id = models.IntegerField()
-    single_id = models.IntegerField()
-    stage = models.CharField(max_length=30, null=True)
-    image_path = models.FileField(upload_to='images/%Y/%m', validators=[validators.FileExtensionValidator(['jpg', 'png', 'pdf'])], null=True, default=None)
-
-
 # 納管廢水
 class pipe_wastewater(models.Model):
     id = models.AutoField(primary_key=True)
@@ -904,6 +895,15 @@ class product_indirect_emissions(models.Model):
     image_note = models.CharField(max_length=30, null=True)
     message_board = models.CharField(max_length=255, null=True)
     company_id = models.IntegerField()
+
+
+# 照片
+class image(models.Model):
+    id = models.AutoField(primary_key=True)
+    table_id = models.IntegerField()
+    single_id = models.IntegerField()
+    stage = models.CharField(max_length=30, null=True)
+    image_path = models.FileField(upload_to='images/%Y/%m', validators=[validators.FileExtensionValidator(['pdf', 'jpg', 'png', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'])], null=True, default=None)
 
 
 # 固定、移動係數表表格
