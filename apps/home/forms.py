@@ -8,6 +8,7 @@ from .models import *
 from decimal import *
 from django.forms import inlineformset_factory
 
+# 前面: 存DB，後面: 顯示
 MONTH_CHOICES = [
     ('1', '一月'),
     ('2', '二月'),
@@ -299,34 +300,6 @@ WASTE_LOCATION_CHOICES = [
     ('廢棄物焚化清理服務(南部科學工業園區-台南園區)', '廢棄物焚化清理服務(南部科學工業園區-台南園區)'),
 ]
 
-
-# 前面: 存DB，後面: 顯示
-# COMPANY_CHOICES = []
-# company_name = company.objects.values("company_name")
-# for name in company_name:
-#     value = name.get('company_name')
-#     id_query = django.contrib.auth.models.Group.objects.filter(name=value).values("id")
-#     for a in id_query:
-#         key = a.get("id")
-#         COMPANY_CHOICES.append((key, value))
-# print("COMPANY_CHOICES:", COMPANY_CHOICES)
-
-# profile form(user)
-# class CustomUserCreationForm(UserCreationForm):
-#     company = forms.ModelChoiceField(queryset=company.objects.all())
-#     factory = forms.ModelChoiceField(queryset=factory.objects.all())
-#
-#     class Meta:
-#         model = User
-#         fields = ('username', 'password1', 'password2', 'company', 'factory')
-#
-#     # def save(self, commit=True):
-#     #     user = super().save(commit=False)
-#     #     user_profile = Profile(user=user, company=self.cleaned_data['company'], factory=self.cleaned_data['factory'])
-#     #     if commit:
-#     #         user.save()
-#     #         user_profile.save()
-#     #     return user
 
 
 class CompanyForm(forms.ModelForm):
@@ -2251,7 +2224,7 @@ ProcessGasAddFormSet = inlineformset_factory(process_gas, ProcessGasAdd, form=Pr
 
 
 
-
+# 圖片
 class ImageForm(forms.ModelForm):
     class Meta:
         model = image
@@ -2276,61 +2249,3 @@ class ImageForm(forms.ModelForm):
         if file_type not in allowed_type:
             raise forms.ValidationError('只允許上傳以下檔案類型：PDF, JPG, PNG, DOC, DOCX, XLS, XLSX, PPT, PPTX')
         return uploaded_file
-
-    def clean_device_id(self):
-        device_id = self.cleaned_data.get('device_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
-            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
-        return device_id
-
-    def clean_device_capacity(self):
-        device_capacity = self.cleaned_data.get('device_capacity')
-        if device_capacity < 0:
-            raise forms.ValidationError("只能輸入正整數")
-        elif device_capacity == 0:
-            raise forms.ValidationError("輸入數值不得為零")
-        return device_capacity
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        months = ['january', 'february', 'march', 'april', 'may', 'june',
-                  'july', 'august', 'september', 'october', 'november', 'december']
-        for month in months:
-            value = cleaned_data.get(month)
-            if value:
-                if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
-                    self._errors[month] = [month]
-                    # break
-        return cleaned_data
-    # def clean_material_id(self):
-    #     material_id = self.cleaned_data.get('material_id')
-    #     if not re.match(r'^[a-zA-Z0-9_-]*$', material_id):
-    #         raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
-    #     return material_id
-    #
-    # def clean_carbon_content(self):
-    #     carbon_content = self.cleaned_data.get('carbon_content')
-    #     if carbon_content is None or re.match(r'^[0-9]+(.[0-9]{0,2})?$', str(carbon_content)):
-    #         return carbon_content
-    #     else:
-    #         raise forms.ValidationError("只能輸入正實數(小數點後兩位)", 'invalid')
-    #
-    # def clean(self):
-    #     cleaned_data = self.cleaned_data
-    #     months = ['january', 'february', 'march', 'april', 'may', 'june',
-    #               'july', 'august', 'september', 'october', 'november', 'december']
-    #     for month in months:
-    #         value = cleaned_data.get(month)
-    #         if value:
-    #             if not value >= 0:
-    #                 self._errors["數值必須大於零"] = ["數值必須大於零"]
-    #                 self._errors[month] = [month]
-    #     return cleaned_data
-# class EmergencyGeneratorsImport(forms.Form):
-#     class Meta:
-#         model = emergency_generators
-#         fields = " __all__"
-#         # fields = ('device_id', 'device_capacity', 'position', 'department', 'estimate',
-#         #           'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october',
-#         #           'november', 'december', 'image_note', 'message_board')
