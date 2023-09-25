@@ -84,14 +84,16 @@
                                                 </div>
                                             </div>
                                             <div class="col-4">
-                                                {% for error in form.effusion_rate.errors %}
+                                                {% for error in form.device_amount.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.effusion_rate }}
+                                                    <label>設備數量 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.device_amount }}
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row mb-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static">
                                                     <label>設備種類 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
@@ -100,6 +102,15 @@
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>冷媒類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.refrigerant_type }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                {% for error in form.effusion_rate.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>逸散率(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.effusion_rate }}
                                                 </div>
                                             </div>
                                         </div>
@@ -254,25 +265,25 @@
             let device_type = document.getElementById('device_type');
             let effusion_rate = document.getElementById('effusion_rate');
 
-            if (device_type.value === '移動式空氣清淨機') {
+            if (device_type.value === '車輛、家用除濕機'){
                 effusion_rate.value = 15
-            } else if (device_type.value === '住宅及商業建築冷氣機') {
+            }else if (device_type.value === '冷氣') {
                 effusion_rate.value = 5.5
-            } else if (device_type.value === '家用冷凍、冷藏裝備') {
+            }else if (device_type.value === '冰箱、飲水機') {
                 effusion_rate.value = 0.3
-            } else if (device_type.value === '獨立商用冷凍、冷藏裝備') {
+            }else if (device_type.value === '落地形大型冷氣機') {
                 effusion_rate.value = 8
-            } else if (device_type.value === '中、大型冷凍、冷藏裝備') {
+            }else if (device_type.value === '大型冷凍櫃') {
                 effusion_rate.value = 22.5
-            } else if (device_type.value === '交通用冷凍、冷藏裝備') {
+            }else if (device_type.value === '交通用冷凍、冷藏裝備') {
                 effusion_rate.value = 32.5
-            } else if (device_type.value === '工業冷凍、冷藏裝備，包括食品加工及冷藏') {
+            }else if (device_type.value === '冷凍物流車') {
                 effusion_rate.value = 16
-            } else if (device_type.value === '冰水機') {
+            }else if (device_type.value === '冰水機') {
                 effusion_rate.value = 8.5
-            } else if (device_type.value === '其他') {
+            }else if (device_type.value === '其他') {
                 effusion_rate.value = 0
-            } else {
+            }else{
                 effusion_rate.value = 0
             }
         })
