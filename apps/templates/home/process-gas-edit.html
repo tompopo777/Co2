@@ -30,50 +30,105 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in form.receipt_number.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>單號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.receipt_number }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in form.department.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>所屬部門 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.department }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in form.receipt_date.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>領用日期 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.receipt_date }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>氣體名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.gas_name }}
-                                                </div>
-                                            </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in form.amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>數量 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in form.unit.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>數量單位 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.unit }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in form.per_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>每單位規格( 單位: {{ form.per_unit }} ) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.per_amount }}
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="row mb-4">
+                                            添加氣體
+                                            {% for error in update_formset.non_form_errors %}
+                                                <li style="color: red">{{ error }}</li>
+                                            {% endfor %}
+                                        </div>
+                                        <div id="gas_add">
+                                            {{ update_formset.management_form }}
+                                            {% for a in update_formset %}
+                                                <div class="row mb-4 gas" id="0">
+                                                    {% for hidden in a.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
+                                                    <div style="display: none">
+                                                        {{ a.DELETE }}
+                                                    </div>
+                                                    <div class="col-4">
+                                                        {% for error in a.gas_name.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>氣體名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.gas_name }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in a.gas_ratio.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>氣體含量(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.gas_ratio }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <a class="col" onclick="DuplicateGas()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                            <a class="col" onclick="DeleteGas(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -199,56 +254,8 @@
         {# select2#}
         $('#single-select-field').select2({
             theme: "bootstrap-5",
-            {#width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',#}
-            {#placeholder: $(this).data('placeholder'),#}
             width: 300
         });
-
-
-        {# 自動帶入化學品名稱、化學式#}
-        var chemical_name = $(".chemical_name")
-        var chemical_formula = $(".chemical_formula")
-        $(".process_add_name").on('change', function () {
-            chemical_name.val("")
-            chemical_formula.val("")
-            var add_ch_name = $(this).val();
-            $.ajax({
-                url: "{% url 'loadchemical' %}",
-                data: {
-                    'add_ch_name': add_ch_name
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function (chemical_data) {
-                    {#console.warn(chemical_data);#}
-                    var list = [];
-                    chemical_data.forEach((item) => {
-                        for (const [key, value] of Object.entries((item))) {
-                            list.push(value)
-                        }
-                        chemical_name.val(list[0])
-                        chemical_formula.val(list[1])
-                    })
-                },
-            });
-        });
-
-
-        {# 當checkbox勾選，下方摺疊展開#}
-        var process_add_name = $(".process_add_name")
-        var checkbox = document.getElementById("chemical")
-        var collapse = document.getElementById("collapsePee")
-        if (checkbox.checked === true) {
-            collapse.classList.add("show")
-        }
-        $(document).on('click', ".chemical", function () {
-            if (checkbox.checked !== true) {
-                process_add_name.val("")
-                chemical_name.val("")
-                chemical_formula.val("")
-            }
-        });
-
 
         {#    照片顯示檔名+可刪除#}
         const dt = new DataTransfer(); // 允許操作輸入文件的文件
@@ -283,5 +290,69 @@
                 document.getElementById('attachment').files = dt.files;
             });
         });
+
+        {#    新增/刪除氣體段數#}
+
+        //刪除extra=1新增的空白表單
+        var TOTAL_FORMS = document.querySelectorAll("#gas_add > input")[0]
+        var gas_count = parseInt(TOTAL_FORMS.value, 10)
+        console.warn("123", "{{ dont_remove }}")
+        if ("{{ dont_remove }}" === ""){
+            let remove_extra = document.querySelectorAll(".gas:last-child")[0]
+            remove_extra.remove()
+            gas_count = gas_count - 1
+        }
+        var id_count = gas_count
+        TOTAL_FORMS.value = id_count.toString()
+
+        //將initial表單排序
+        let gas_id = document.querySelectorAll(".gas")
+        for (let i = 0; i < id_count; i++) {
+            gas_id[i].id = i.toString();
+        }
+
+        function DeleteGas(deletbutton) {
+            if (gas_count > 1) {
+                gas = deletbutton.closest("div.gas")
+                var delete_checkbox = document.getElementById("id_processgasadd_set-" + gas.id + "-DELETE")
+                delete_checkbox.checked = true;
+                gas.style.display = "none";
+                gas_count -= 1;
+            }
+        }
+
+        function DuplicateGas() {
+            document.getElementById("id_processgasadd_set-TOTAL_FORMS").value = (id_count + 1).toString()
+            var gas_add = document.getElementById("gas_add")
+            var first_commute = document.getElementsByClassName("gas")[0]
+            var clone = first_commute.cloneNode(true);
+            gas_add.appendChild(clone)
+            clone.id = (id_count)
+            var hidden = document.querySelectorAll(".gas:last-child > input")
+            //主鍵
+            hidden[0].name = "processgasadd_set-" + id_count + "-id"
+            hidden[0].id = "id_processgasadd_set-" + id_count + "-id"
+            hidden[0].removeAttribute("value")
+
+            //外鍵
+            hidden[1].name = "processgasadd_set-" + id_count + "-gas_id"
+            hidden[1].id = "id_processgasadd_set-" + id_count + "-gas_id"
+
+            //刪除
+            var deleted = document.querySelectorAll(".gas:last-child > div > input")
+            deleted[0].name = "processgasadd_set-" + id_count + "-DELETE"
+            deleted[0].id = "id_processgasadd_set-" + id_count + "-DELETE"
+
+            //輸入欄位
+            var input = document.querySelectorAll(".gas:last-child > div > div > input")
+            input[0].id = "id_processgasadd_set-" + id_count + "-gas_name"
+            input[0].name = "processgasadd_set-" + id_count + "-gas_name"
+            input[1].id = "id_processgasadd_set-" + id_count + "-gas_ratio"
+            input[1].name = "processgasadd_set-" + id_count + "-gas_ratio"
+            input[0].value = ""
+            input[1].value = ""
+            id_count += 1;
+            gas_count += 1;
+        }
     </script>
 {% endblock javascripts %}

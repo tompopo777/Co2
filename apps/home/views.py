@@ -14,10 +14,16 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from decimal import *
 from datetime import datetime
+
+from tablib import Dataset
+
 from .forms import *
 from apps.home.models import *
 from .csv import *
 from django.db.models import Max
+
+from .resource import *
+from .csv import import_excel
 
 
 @login_required(login_url="/login/")
@@ -39,7 +45,7 @@ def index(request):
     if request.user.groups.filter(name='公司帳號').exists():
         pass
     else:
-        current_user = Profile.objects.filter(user_id=request.user.id).get()
+        current_user = Profile.objects.get(user_id=request.user.id)
         factory_id = current_user.factory_id
         request.session.update({'factory_id': factory_id})
     return HttpResponse(html_template.render(context, request))
@@ -95,7 +101,7 @@ def load_device(request):
 def current_user_group_id(request):
     try:
         user_id = request.user.id
-        current_user = Profile.objects.filter(user_id=user_id).get()
+        current_user = Profile.objects.get(user_id=user_id)
         factory_id = current_user.factory_id
         # factory_name = current_user.factory
         return factory_id
@@ -118,7 +124,6 @@ def load_table(request):
         # 從db撈每張表要顯示的值
         for a in t_name:
             if a["d_name"] == "柴油發電機":
-                print(a["did"])
                 t_data = []
                 # raw_data = emergency_generators.objects.filter(company_id__in=factory_id_list, years=year).values("id", "device_id", "device_capacity", "position",
                 raw_data = emergency_generators.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_capacity", "position",
@@ -195,14 +200,12 @@ def load_table(request):
             elif a["d_name"] == "公務車":
                 t_data = []
                 # 「合計」前後的資料分開抓
-                raw_data = official_car.objects.filter(company_id=factory_id, years=year).values("id", "vehicle_type", "device_id", "department", "fuel_type", "urea_content_median", "urea_water_median")
+                raw_data = official_car.objects.filter(company_id=factory_id, years=year).values("id", "vehicle_type", "device_id", "department", "fuel_type")
 
                 consumptions_data = official_car.objects.filter(company_id=factory_id, years=year).values("january", "february", "march", "april", "may", "june", "july", "august",
                                                                                                           "september", "october", "november", "december")
 
-                urea_data = official_car.objects.filter(company_id=factory_id, years=year).values("urea_january", "urea_february", "urea_march", "urea_april",
-                                                                                                  "urea_may", "urea_june", "urea_july", "urea_august",
-                                                                                                  "urea_september", "urea_october", "urea_november", "urea_december")
+                urea_data = official_car.objects.filter(company_id=factory_id, years=year).values("urea_total", "urea_content_median", "urea_water_median")
 
                 # 計算耗用量合計
                 for i in range(raw_data.count()):
@@ -219,28 +222,17 @@ def load_table(request):
                             consumption_total += consumptions_data[i].get(j)
                         # 將計算後的耗用量丟回字典
                         single_data["consumption_total"] = consumption_total
-                    urea_total = 0
-                    for k in urea_data[i]:
-                        urea_total += urea_data[i].get(k)  # 如果有(尿素)，加總資料(尿素)
-                    if urea_total == 0:
-                        for n in urea_data[i]:
-                            single_data[n] = None  # 「逐一」將資料(尿素)丟回字典
-                        single_data["urea_total"] = None  # 如果沒有(尿素)，設為空值
-                    else:
-                        for e in urea_data[i]:
-                            single_data[e] = urea_data[i].get(e)  # 「逐一」將資料(尿素)丟回字典
-                        single_data["urea_total"] = urea_total  # 如果沒有(尿素)，設為空值
-                        # 顯示有引用單據
+                    single_data.update(urea_data[i])
+                    # 顯示有引用單據
                     if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
                         single_data["image"] = "✔"
                     else:
                         single_data["image"] = None
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
-            elif a["d_name"] == "原物料使用":
+            elif a["d_name"] == "焊條":
                 t_data = list(
-                    material.objects.filter(company_id=factory_id, years=year).values("id", "material_id", "material_type", "material_name",
-                                                                                      "welding_rod_id", "welding_rod_name", "welding_rod_format", "carbon_content",
+                    material.objects.filter(company_id=factory_id, years=year).values("id", "welding_rod_id", "welding_rod_name", "welding_rod_format", "carbon_content",
                                                                                       "january", "february", "march", "april",
                                                                                       "may", "june", "july", "august",
                                                                                       "september", "october", "november", "december"))
@@ -283,15 +275,23 @@ def load_table(request):
                     t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "氣體":
-                t_data = list(
-                    process_gas.objects.filter(company_id=factory_id, years=year).values("id", "receipt_number", "department", "receipt_date",
-                                                                                         "gas_name", "amount", "unit", "per_amount", "per_unit"))
-                # 顯示有引用單據
-                for raw_data in t_data:
-                    if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
-                        raw_data["image"] = "✔"
+                t_data = []
+                raw_data = process_gas.objects.filter(company_id=factory_id, years=year).values("id", "receipt_number", "department", "receipt_date", "amount", "unit", "per_amount", "per_unit")
+                for i in range(raw_data.count()):
+                    single_data = raw_data[i]
+                    process_gas_id = raw_data[i].get('id')
+                    gas = ProcessGasAdd.objects.filter(process_gas_id=process_gas_id).values("gas_name", "gas_ratio")
+                    if len(gas) > 1:
+                        single_data["gas_name"] = gas.first().get('gas_name') + "*"
                     else:
-                        raw_data["image"] = None
+                        single_data["gas_name"] = gas.first().get('gas_name')
+                    single_data["gas_ratio"] = gas.first().get('gas_ratio')
+                    # 顯示有引用單據
+                    if image.objects.filter(table_id=a["did"], single_id=raw_data[i].get('id')).exists():
+                        single_data["image"] = "✔"
+                    else:
+                        single_data["image"] = None
+                    t_data.append(single_data)
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冰箱清單":
                 t_data = []
@@ -427,9 +427,9 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "冷媒":
                 t_data = []
-                raw_data = other_device.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position",
-                                                                                                 "years_purchased", "refrigerant_type", "filling_volume", "device_amount",
-                                                                                                 "device_type", "filling_fix_volume", "effusion_rate")
+                raw_data = other_device.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "device_name", "brand_name", "model_type", "position", 'device_amount',
+                                                                                                 "years_purchased", "filling_volume", "refrigerant_type", "filling_fix_volume",
+                                                                                                 "filling_fix_volume", "device_type", "effusion_rate")
                 # 取單筆逸散量計算
                 for i in range(raw_data.count()):
                     # 將要運算的值分別撈出(逸散率/填充量)
@@ -449,8 +449,8 @@ def load_table(request):
                 return JsonResponse(t_data, safe=False)
             elif a["d_name"] == "滅火器":
                 t_data = list(
-                    extinguisher.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "extinguisher_vendor", "extinguisher_type", "position", "inventory",
-                                                                                          "chemical_weight", "using_amount", "monthly", "replace_filling_amount", "replace_filling_date"))
+                    extinguisher.objects.filter(company_id=factory_id, years=year).values("id", "device_id", "position", "extinguisher_type", "inventory",
+                                                                                          "chemical_weight", "filling_amount", "filling_date"))
                 # 顯示有引用單據
                 for raw_data in t_data:
                     if image.objects.filter(table_id=a["did"], single_id=raw_data.get('id')).exists():
@@ -1958,34 +1958,42 @@ def product_indirect_emissions_add(request):
 # 製程-氣體
 @login_required(login_url="/login/")
 def process_gas_add(request):
-    context = {}
     PG_add = PGform(request)
+    process_gas_add_formset = ProcessGasAddFormSet
     if request.method == "POST":
         PG_add = PGform(request, request.POST, request.FILES)
         factory_id = request.session.get('factory_id')
         if PG_add.is_valid():
-            PG_add = PG_add.save(commit=False)
-            PG_add.company_id = factory_id
-            PG_add.years = request.session.get('years')
-            PG_add.save()
-            # stage = request.POST.get('stage')
-            # image_path = request.FILES.getlist('file_field')
-            # last_id = product_indirect_emissions.objects.values("id").last().get("id")
-            # table_id = product_indirect_emissions.objects.values("did").last().get("did")
-            # for img in image_path:
-            #     photo = image(image_path=img, single_id=last_id, table_id=table_id, stage=stage)
-            #     print(stage)
-            #     photo.save()
-            # 根據前端submit input的name判斷
-            if 'addAnother' in request.POST:
-                messages.success(request, '表單已成功提交！')
-                return redirect('/process_gas_add/')
+            add_process = PG_add.save(commit=False)
+            add_process.company_id = factory_id
+            add_process.years = request.session.get('years')
+            process_gas_add_formset = ProcessGasAddFormSet(request.POST, request.FILES, instance=add_process)
+            not_empty = False
+            for form in process_gas_add_formset:
+                if form.has_changed():
+                    not_empty = True
+                    break
+            if process_gas_add_formset.is_valid() and not_empty:
+                add_process.save()
+                process_gas_add_formset.save()
+                # 根據前端submit input的name判斷
+                if 'addAnother' in request.POST:
+                    messages.success(request, '表單已成功提交！')
+                    return redirect('/process_gas_add/')
+                else:
+                    return redirect('/carbon-system/')
             else:
-                return redirect('/carbon-system/')
+                if not not_empty:
+                    process_gas_add_formset.non_form_errors().append('請填寫添加氣體')
+                    print("process_gas_add_formset表單錯誤>>>>>>>>>>>>>>>>>>>>\n", process_gas_add_formset.non_form_errors())
+                print("process_gas_add_formset表單錯誤>>>>>>>>>>>>>>>>>>>>\n", process_gas_add_formset.errors)
         else:
             print("\n", PG_add.errors)
-    context['PG_add'] = PG_add
-    context['years'] = request.session.get('years')
+    context = {
+        'PG_add': PG_add,
+        'ProcessGasAddFormSet': process_gas_add_formset,
+        'years': request.session.get('years')
+    }
     return render(request, 'home/process-gas.html', context)
 
 
@@ -2002,13 +2010,12 @@ def system_setting(request):
             'coefficient_source': coefficient_source,
         }
         request.session.update(context)
-
-        request.method = 'GET'
-        return carbon_system(request)
+        return redirect('/carbon-system/')
 
 
 @login_required(login_url="/login/")
-def carbon_system(request, message=None):
+# def carbon_system(request, message=None):
+def carbon_system(request):
     if request.method == 'GET':
         years = request.session.get('years')
         # if request.user.is_authenticated:
@@ -2041,14 +2048,15 @@ def carbon_system(request, message=None):
             "message": "",
             "count_error": "",
             "export_error": "",
+            "import_excel": "",
             "gwp_list": gwp_list,
-            # "coefficient_list": coefficient_list,
             "epa_coefficient_list": epa_coefficient_list,
             "excluded_coefficient_list": excluded_coefficient_list,
-            # "coefficient_list": coefficient_version,
         }
+        message = request.session.get('message', None)
         if message:
             context.update(message)
+            del request.session['message']
         if request.session.get('dropdown_one') and request.session.get('dropdown_two') and request.session.get('dropdown_three'):
             context.update(request.session)
         return render(request, "home/carbon-system.html", context)
@@ -2062,8 +2070,6 @@ def carbon_system(request, message=None):
         if company_id is None:
             if factory_id is None:
                 factory_id = current_user_group_id(request)
-        # print('factory_id', factory_id)
-        # print('company_id', company_id)
         dropdown = {
             'dropdown_one': dropdown_one,
             'dropdown_two': dropdown_two,
@@ -2129,8 +2135,9 @@ def bar_action(request):
 
         if 'copy_last_year' in request.GET:
             message = copy_last_year_data(request)
-            print('message', message)
-            return carbon_system(request, message)
+            # print('message', message)
+            request.session['message'] = message
+            return redirect('/carbon-system/')
 
         if 'public_version' in request.GET:
             return public_version(request)
@@ -2139,12 +2146,28 @@ def bar_action(request):
             message = export_excel(request)
             # 匯出錯誤訊息return字典到carbon_system
             if isinstance(message, dict):
-                return carbon_system(request, message)
+                request.session['message'] = message
+                return redirect('/carbon-system/')
             else:
                 return message
 
-        # if 'import_excel' in request.GET:
-        #     pass
+    if request.method == "POST":
+        if 'import_excel' in request.POST:
+            # item_resource = EmergencyGeneratorsResource()
+            # dataset = Dataset()
+            new_items = request.FILES['import_file']
+            message = import_excel(request, new_items)
+            request.session['message'] = message
+
+            # imported_data = dataset.load(new_items.read(), format='xlsx')
+            # # print('imported_data', imported_data)
+            # result = item_resource.import_data(imported_data, dry_run=True)
+            #
+            # if not result.has_errors():
+            #     item_resource.import_data(imported_data, dry_run=False)
+
+            return redirect('/carbon-system/')
+            # return carbon_system(request, message)
 
 
 # 編輯轉跳
@@ -2195,7 +2218,7 @@ def edit_device(request, error_from=None, error_formset=None):
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform, "33": PGform, "34": WPform
     }
     formsetName = {
-        "18": GasAddFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
+        "18": GasAddFormSet, "24": CommuteFormSet, "25": TripSectionFormSet, "33": ProcessGasAddFormSet
     }
     if modelName.get(datasheet_id) and formlName.get(datasheet_id):
         dbName = modelName.get(datasheet_id)
@@ -2369,7 +2392,7 @@ def update_device(request, single_dataID):
         "23": DTform, "24": ECform, "25": EBTform, "26": WASTEform, "27": PWform, "28": PMform, "29": PIEform, "33": PGform, "34": WPform
     }
     formsetName = {
-        "18": GasAddFormSet, "24": CommuteFormSet, "25": TripSectionFormSet
+        "18": GasAddFormSet, "24": CommuteFormSet, "25": TripSectionFormSet, "33": ProcessGasAddFormSet,
 
     }
     datasheet_id = request.session.get('dropdown_three')
@@ -2476,16 +2499,16 @@ def add_title(request):
             # 公務車
             "3": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "類別", "編號", "所屬單位", "燃料種類", "尿素含量中間值(%)", "尿素水換算中間值(g/cm<sup>3</sup>)"],
+                "內容": ["序號", "類別", "編號", "所屬單位", "燃料種類"],
                 "耗用量(單位:𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
-                "尿素添加量(𝓁)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月", "合計"],
+                "尿素添加量(單位: 𝓁)": ["添加量", "尿素含量中間值(%)", "尿素水換算中間值(g/cm<sup>3</sup>)"],
                 "佐證資料": ["引用單據"],
             },
-            # 原物料
+            # 焊條
             "4": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "原物料號", "原/物料", "名稱"],
-                "是否為焊條": ["焊條料號", "焊條品名", "焊條規格", "含碳量(%)"],
+                # "內容": ["序號", "原物料號", "原/物料", "名稱"],
+                "內容": ["序號", "焊條料號", "焊條品名", "焊條規格", "含碳量(%)"],
                 "月用量(單位:公噸)": ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
                 "佐證資料": ["引用單據"],
             },
@@ -2535,13 +2558,13 @@ def add_title(request):
             # 冷媒
             "12": {
                 "編輯區": ["刪除", "修改"],
-                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "購買年份", "冷媒類型", "規格填充量", "設備數量", "設備種類", "維修填充量(kg)", "逸散率(%)", "逸散量"],
+                "設備清單": ["序號", "編號", "名稱", "品牌", "型號", "位置", "設備數量", "購買年份", "規格填充量", "冷媒類型", "維修填充量(kg)", "設備種類", "逸散率(%)", "逸散量"],
                 "佐證資料": ["引用單據"],
             },
             # 滅火器
             "13": {
                 "編輯區": ["刪除", "修改"],
-                "滅火器清單": ["序號", "設備編號", "廠商", "類型", "擺放位置(廠別)", "庫存量", "藥劑重量(單位:kg)", "使用量數量", "使用月份", "更換/填充量", "更換/填充日期"],
+                "滅火器清單": ["序號", "設備編號", "擺放位置(廠別)", "類型", "庫存量(支)", "藥劑重量(kg)", "新購或填充數(支)", "更換/填充日期"],
                 "佐證資料": ["引用單據"],
             },
             # 人天清冊
@@ -2680,7 +2703,7 @@ def add_title(request):
             # 製程-氣體
             "33": {
                 "編輯區": ["刪除", "修改"],
-                "內容": ["序號", "單號", "所屬部門", "領用日期", "氣體名稱", "數量", "數量單位", "每單位規格", "單位"],
+                "內容": ["序號", "單號", "所屬部門", "領用日期", "數量", "數量單位", "每單位規格", "單位", "氣體名稱", "氣體含量(%)"],
                 "佐證資料": ["引用單據"],
             }
         }

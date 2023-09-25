@@ -64,7 +64,7 @@
                                             <div class="col-12 text-center">
                                                 {% for error in form.errors %}
                                                     {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
-                                                        <li style="color: red">只能輸入正數</li>
+                                                        <li style="color: red">只能輸入正實數(小數點後四位)</li>
                                                     {% endif %}
                                                 {% endfor %}
                                                 {% for error in form.errors.數值必須大於零 %}

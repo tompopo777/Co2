@@ -7,6 +7,7 @@ from django.db.models import Sum, F, Value, CharField, When, Case
 from django.db.models.functions import Cast, Coalesce
 from decimal import *
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 from .models import *
 import json
@@ -65,8 +66,9 @@ def calculate_summary(request):
         message = {
             'count_error': '沒有任何資料!'
         }
-        request.method = "GET"
-        return carbon_system(request, message)
+
+        request.session['message'] = message
+        return redirect('/carbon-system/')
 
     output = output.rename(
         columns={'process_area': '過程或區域', 'device_name': '排放源設施', 'fuel_type': '原燃物料', 'sum_count': '活動數據總量', 'data_unit': '數據單位', 'emission': '排放當量公噸(公噸/數據期間)', 'gas_name': '可能產生溫室氣體種類', 'coefficient': '排放係數', 'coefficient_unit': '排放係數單位',

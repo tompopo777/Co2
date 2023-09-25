@@ -69,8 +69,8 @@ def inventory_summary(request):
         message = {
             'count_error': '沒有任何資料!'
         }
-        request.method = "GET"
-        return carbon_system(request, message)
+        request.session['message'] = message
+        return redirect('/carbon-system/')
 
     category_one['total_emission'] = category_one['emission'].sum()
     category_two['total_emission'] = category_two['emission'].sum()

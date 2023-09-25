@@ -67,11 +67,11 @@
                                     </select>
                                 </div>
                                 <div class="col-3">
-                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">過程區域</label>
+                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">子類別</label>
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
                                 </div>
                                 <div class="col-3">
-                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">設備</label>
+                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">排放源設施</label>
                                     <select class="" id="dropdown_three" name="dropdown_three" disabled></select>
                                 </div>
                             </div>
@@ -127,11 +127,11 @@
                                     </select>
                                 </div>
                                 <div class="col-3">
-                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">過程區域</label>
+                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">子類別</label>
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)" disabled></select>
                                 </div>
                                 <div class="col-3">
-                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">設備</label>
+                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">排放源設施</label>
                                     <select class="" id="dropdown_three" name="dropdown_three" disabled></select>
                                 </div>
                             </div>
@@ -173,11 +173,11 @@
                                     </select>
                                 </div>
                                 <div class="col-4 dropdown-area">
-                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">過程區域</label>
+                                    <label class="lead form-label" for="dropdown_two" style="color: whitesmoke">子類別</label>
                                     <select class="" id="dropdown_two" name="dropdown_two" onchange="DropdownTwo(this)"></select>
                                 </div>
                                 <div class="col-3 dropdown-area">
-                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">設備</label>
+                                    <label class="lead form-label" for="dropdown_three" style="color: whitesmoke">排放源設施</label>
                                     <select class="" id="dropdown_three" name="dropdown_three"></select>
                                 </div>
                                 <div class="d-flex justify-content-center">
@@ -205,6 +205,11 @@
                         </form>
                     </div>
                 </div>
+{#                <form method="post" action="{% url 'bar_action' %}" enctype="multipart/form-data">#}
+{#                    {% csrf_token %}#}
+{#                    <input type="file" name="import_file">#}
+{#                    <button type="submit" name="import_excel" class="btn btn-outline-light">Import</button>#}
+{#                </form>#}
             </div>
         </div>
     </header>
@@ -263,7 +268,7 @@
                         </div>
                         <div class="row d-flex align-items-center mb-3">
                             <div class="col-auto">
-                                <h6>GWP版本: </h6>
+                                <h6>IPCC版本: </h6>
                             </div>
                             <div class="form-check form-check-inline col-auto m-0">
                                 {% for version in gwp_list %}
@@ -785,17 +790,33 @@
             let copy_last_year = "{{ copy_data_message }}" // 顯示成功訊息
             if (copy_last_year !== "") {
                 alert(copy_last_year); // 顯示成功訊息
-                console.warn('copy_last_year', copy_last_year)
+                {#console.warn('copy_last_year', copy_last_year)#}
             }
             let count_error = "{{ count_error }}" // 顯示成功訊息
             if (count_error !== "") {
                 alert(count_error); // 顯示成功訊息
-                console.warn('count_error', count_error)
+                {#console.warn('count_error', count_error)#}
             }
             let export_error = "{{ export_error }}" // 顯示成功訊息
             if (export_error !== "") {
                 alert(export_error); // 顯示成功訊息
-                console.warn('export_error', export_error)
+                {#console.warn('export_error', export_error)#}
+            }
+            let import_excel = "{{ import_excel }}" // 顯示成功訊息
+            if (import_excel !== "") {
+                if (import_excel === "匯入成功!" || import_excel === "匯入失敗，excel資料為空!") {
+                    alert(import_excel)
+                } else {
+                    let error_message = "輸入格式有誤!\n\n"
+                    {% for key, value in import_excel.items %}
+                        error_message += '{{ key|escapejs }}\n'
+                        {% for i in value %}
+                            error_message += '{{ i }}\n'
+                        {% endfor %}
+                        error_message += '\n'
+                    {% endfor %}
+                    alert(error_message)
+                }
             }
         });
 
@@ -873,7 +894,7 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (delete_list) {
-                    console.warn('delete_list', delete_list)
+                    {#console.warn('delete_list', delete_list)#}
                     for (let i = 0; i < delete_list.length; i++) {
                         let single_data = document.getElementById(delete_list[i])
                         single_data.closest("tr").remove()
@@ -886,21 +907,6 @@
 
     <!-- Excel -->
     <script>
-        {#$(document).ready(function () {#}
-        {#    // 匯出 Excel 按鈕#}
-        {#    $('#export_excel').on('click', function () {#}
-        {#        $.ajax({#}
-        {#            url: "{% url 'export_excel' %}",#}
-        {#            type: "GET",#}
-        {#            success: function (response) {#}
-        {#                if (response.message) {#}
-        {#                    alert(response.message); // 顯示警示訊息#}
-        {#                }#}
-        {#            },#}
-        {#        });#}
-        {#    });#}
-
-
         $(document).ready(function () {
             // 匯入 Excel 按鈕
             $('#importExcel').on('change', function () {

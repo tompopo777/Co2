@@ -30,45 +30,57 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in PG_add.receipt_number.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>單號 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PG_add.receipt_number }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in PG_add.department.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>所屬部門 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PG_add.department }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in PG_add.receipt_date.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>領用日期 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PG_add.receipt_date }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>氣體名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ PG_add.gas_name }}
-                                                </div>
-                                            </div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in PG_add.amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>數量 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PG_add.amount }}
                                                 </div>
                                             </div>
-                                            <div class="col-3">
+                                            <div class="col-4">
+                                                {% for error in PG_add.unit.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>數量單位 <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PG_add.unit }}
                                                 </div>
                                             </div>
                                             <div class="col-4">
+                                                {% for error in PG_add.per_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>每單位規格( 單位: {{ PG_add.per_unit }} ) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ PG_add.per_amount }}
@@ -76,6 +88,49 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row mb-4">
+                                        添加氣體
+                                        {% for error in ProcessGasAddFormSet.non_form_errors %}
+                                            <li style="color: red">{{ error }}</li>
+                                        {% endfor %}
+                                    </div>
+                                    {{ ProcessGasAddFormSet.management_form }}
+                                    {% for error in ProcessGasAddFormSet.non_field_errors %}
+                                        <li style="color: red">{{ error }}</li>
+                                    {% endfor %}
+                                    {% for a in ProcessGasAddFormSet %}
+                                        <div id="gas_add">
+                                            <div class="row mb-4 gas" id="0">
+                                                {% for hidden in a.hidden_fields %}
+                                                    {{ hidden }}
+                                                {% endfor %}
+                                                <div class="col-4">
+                                                    {% for error in a.gas_name.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label>氣體名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                        {{ a.gas_name }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-3">
+                                                    {% for error in a.gas_ratio.errors %}
+                                                        <li style="color: red">{{ error }}</li>
+                                                    {% endfor %}
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <label>氣體含量(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                        {{ a.gas_ratio }}
+                                                    </div>
+                                                </div>
+                                                <div class="col-2 d-flex align-items-center">
+                                                    <div class="input-group input-group-static mb-4">
+                                                        <a class="col" onclick="DuplicateGas()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                        <a class="col" onclick="DeleteGas(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
                                     <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                     <br>
                                     <div class="d-flex">
@@ -204,52 +259,6 @@
             width: 300
         });
 
-
-        {# 自動帶入化學品名稱、化學式#}
-        var chemical_name = $(".chemical_name")
-        var chemical_formula = $(".chemical_formula")
-        $(".process_add_name").on('change', function () {
-            chemical_name.val("")
-            chemical_formula.val("")
-            var add_ch_name = $(this).val();
-            $.ajax({
-                url: "{% url 'loadchemical' %}",
-                data: {
-                    'add_ch_name': add_ch_name
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function (chemical_data) {
-                    {#console.warn(chemical_data);#}
-                    var list = [];
-                    chemical_data.forEach((item) => {
-                        for (const [key, value] of Object.entries((item))) {
-                            list.push(value)
-                        }
-                        chemical_name.val(list[0])
-                        chemical_formula.val(list[1])
-                    })
-                },
-            });
-        });
-
-
-        {# 當checkbox勾選，下方摺疊展開#}
-        var process_add_name = $(".process_add_name")
-        var checkbox = document.getElementById("chemical")
-        var collapse = document.getElementById("collapsePee")
-        if (checkbox.checked === true) {
-            collapse.classList.add("show")
-        }
-        $(document).on('click', ".chemical", function () {
-            if (checkbox.checked !== true) {
-                process_add_name.val("")
-                chemical_name.val("")
-                chemical_formula.val("")
-            }
-        });
-
-
         {#    照片顯示檔名+可刪除#}
         const dt = new DataTransfer(); // 允許操作輸入文件的文件
         $("#attachment").on('change', function (e) {
@@ -283,5 +292,42 @@
                 document.getElementById('attachment').files = dt.files;
             });
         });
+
+        {#    新增/刪除氣體段數#}
+        var gas_count = 0;
+
+        function DuplicateGas() {
+            gas_count += 1;
+            document.getElementById("id_processgasadd_set-TOTAL_FORMS").value = (gas_count + 1).toString()
+            var gas_add = document.getElementById("gas_add")
+            var first_trip = document.getElementsByClassName("gas")[0]
+            var clone = first_trip.cloneNode(true);
+            gas_add.appendChild(clone)
+            clone.id = (gas_count)
+            var input = document.querySelectorAll(".gas:last-child > div > div > input")
+            input[0].id = "id_processgasadd_set-" + gas_count + "-gas_name"
+            input[0].name = "processgasadd_set-" + gas_count + "-gas_name"
+            input[1].id = "id_processgasadd_set-" + gas_count + "gas_ratio"
+            input[1].name = "processgasadd_set-" + gas_count + "gas_ratio"
+            input[0].value = ""
+            input[1].value = ""
+        }
+
+        function DeleteGas(deletbutton) {
+            if (gas_count > 0) {
+                gas_count -= 1;
+                deletbutton.closest("div.gas").remove()
+                document.getElementById("id_processgasadd_set-TOTAL_FORMS").value = (gas_count + 1).toString()
+                var gas = document.getElementsByClassName("gas")
+                for (let i = 0; i <= gas_count; i++) {
+                    gas[i].id = i.toString()
+                    let input = document.querySelectorAll(".gas:nth-child(" + (i + 1) + ") > div > div > input")
+                    input[0].id = ("id_processgasadd_set-" + i + "-gas_name").toString()
+                    input[0].name = ("processgasadd_set-" + i + "-gas_name").toString()
+                    input[1].id = ("id_processgasadd_set-" + i + "gas_ratio").toString()
+                    input[1].name = ("processgasadd_set-" + i + "gas_ratio").toString()
+                }
+            }
+        }
     </script>
 {% endblock javascripts %}

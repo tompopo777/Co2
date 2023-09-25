@@ -56,7 +56,7 @@
                                             <div class="col-12 text-center">
                                                 {% for error in form.errors %}
                                                     {% if 'fuel_january' == error or 'fuel_february' == error or 'fuel_march' == error or 'fuel_april' == error or 'fuel_may' == error or 'fuel_june' == error or 'fuel_july' == error or 'fuel_august' == error or 'fuel_september' == error or 'fuel_october' == error or 'fuel_november' == error or 'fuel_december' == error or 'heat_january' == error or 'heat_february' == error or 'heat_march' == error or 'heat_april' == error or 'heat_may' == error or 'heat_june' == error or 'heat_july' == error or 'heat_august' == error or 'heat_september' == error or 'heat_october' == error or 'heat_november' == error or 'heat_december' == error%}
-                                                        <li style="color: red">只能輸入正數</li>
+                                                        <li style="color: red">只能輸入正實數(小數點後四位)</li>
                                                     {% endif %}
                                                 {% endfor %}
                                                 {% for error in form.errors.數值必須大於零 %}

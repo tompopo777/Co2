@@ -42,66 +42,52 @@
                                             </div>
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>廠商</label>
-                                                    {{ form.extinguisher_vendor }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
                                                     <label>滅火器擺放位置(廠別) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.position }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row my-3">
                                             <div class="col-4">
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>滅火器類型 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
                                                     {{ form.extinguisher_type }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                {% for error in form.chemical_weight.errors %}
-                                                    <li style="color: red">{{ error }}</li>
-                                                {% endfor %}
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>藥劑重量(單位:公斤) <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.chemical_weight }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
+                                        </div>
+                                        <div class="row my-3">
+                                            <div class="col-3">
                                                 {% for error in form.inventory.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>庫存量 <span style="color:red; font-size:16px;">* </span></label>
+                                                    <label>庫存量(支) <span style="color:red; font-size:16px;">* </span></label>
                                                     {{ form.inventory }}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row my-3">
                                             <div class="col-3">
+                                                {% for error in form.chemical_weight.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器使用數量 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ form.using_amount }}
+                                                    <label>藥劑重量(公斤) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.chemical_weight }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
+                                                {% for error in form.filling_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>使用月份 <span style="color:red; font-size:16px;">* </span>&nbsp;</label>
-                                                    {{ form.monthly }}
+                                                    <label>新購或填充數(支) </label>
+                                                    {{ form.filling_amount }}
                                                 </div>
                                             </div>
                                             <div class="col-3">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>滅火器更換/填充數量 </label>
-                                                    {{ form.replace_filling_amount }}
-                                                </div>
-                                            </div>
-                                            <div class="col-3">
+                                                {% for error in form.filling_date.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
                                                     <label>更換/填充日期 </label>
-                                                    {{ form.replace_filling_date }}
+                                                    {{ form.filling_date }}
                                                 </div>
                                             </div>
                                         </div>
@@ -112,10 +98,18 @@
                                                     {{ form.image_note }}
                                                 </div>
                                             </div>
-                                            <div class=" ps-md-2 align-self-center">
-                                                <div class="col-1 ">
-                                                    {{ form.image_path }}
+                                        </div>
+                                        <div class="d-flex">
+                                            <div class="ps-md-2 align-self-center">
+                                                <div class="col-2" multiple="multiple">
+                                                    <input type="hidden" name="stage" value="滅火器">
+                                                    <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
                                                 </div>
+                                            </div>
+                                            <div id="files-area">
+                                                <span id="filesList">
+                                                    <span id="files-names"></span>
+                                                </span>
                                             </div>
                                         </div>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
@@ -176,59 +170,7 @@
             }
         });
 
-
-        {#    月份篩選器#}
-        $("#monthly").datepicker({
-            format: "yyyy-mm",
-            viewMode: "months",
-            minViewMode: "months",
-            orientation: "bottom",
-            autoclose: "true",
-        });
-
-        {#    日期篩選器#}
-        $("#replace_filling_date").datepicker({
-            format: "yyyy-mm-dd",
-            viewMode: "days",
-            minViewMode: "days",
-            orientation: "bottom",
-            autoclose: "true",
-        })
-
         $('#extinguisher_type').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
-
-        {#    使用月份、更換/填充日期，disabled#}
-        using = function () {
-            let using_amount = $('#id_using_amount')
-            let monthly = $('#monthly')
-            let value = using_amount.val();
-            console.warn('value', value)
-            if (value) {
-                monthly.prop('disabled', false);
-            } else {
-                monthly.prop('disabled', true);
-                monthly.val("")
-            }
-        }
-        replace = function () {
-            let replace_filling_amount = $('#id_replace_filling_amount')
-            let replace_filling_date = $('#replace_filling_date')
-            let value = replace_filling_amount.val();
-            console.warn('value', value)
-            if (value) {
-                replace_filling_date.prop('disabled', false);
-            } else {
-                replace_filling_date.prop('disabled', true);
-                replace_filling_date.val("")
-            }
-        }
-
-        $(document).ready(function () { using(); replace(); });
-
-        let using_amount = $('#id_using_amount')
-        using_amount.on('input', using);
-        let replace_filling_amount = $('#id_replace_filling_amount')
-        replace_filling_amount.on('input', replace);
     </script>
 
 {% endblock javascripts %}

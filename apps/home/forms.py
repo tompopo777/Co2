@@ -407,7 +407,7 @@ class EGform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -475,7 +475,7 @@ class CEform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -488,9 +488,7 @@ class OFform(forms.ModelForm):
         fields = ('vehicle_type', 'device_id', 'fuel_type', 'department',
                   'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august',
                   'september', 'october', 'november', 'december',
-                  'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june', 'urea_july', 'urea_august',
-                  'urea_september', 'urea_october', 'urea_november', 'urea_december',
-                  'urea_content_median', 'urea_water_median', 'image_note', 'message_board')
+                  'urea_total', 'urea_content_median', 'urea_water_median', 'image_note', 'message_board')
         widgets = {
             'vehicle_type': forms.Select(attrs={'id': 'vehicle_type', 'style': 'width:150px'}, choices=VEHICLE_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
@@ -508,20 +506,9 @@ class OFform(forms.ModelForm):
             'october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_march': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_april': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_may': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_june': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_july': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_august': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_september': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_october': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_november': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_december': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
-            'urea_content_median': forms.TextInput(attrs={'class': 'form-control'}),
-            'urea_water_median': forms.TextInput(attrs={'class': 'form-control'}),
+            'urea_total': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "無添加尿素則無需填寫"}),
+            'urea_content_median': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '預設中油參考值(32.5)。'}),
+            'urea_water_median': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '預設中油參考值(1.09)。'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -529,6 +516,7 @@ class OFform(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         super(OFform, self).__init__(*args, **kwargs)
         self.fields['department'].required = False
+        self.fields['urea_total'].required = False
         self.fields['urea_content_median'].required = False
         self.fields['urea_water_median'].required = False
         self.fields['image_note'].required = False
@@ -539,22 +527,6 @@ class OFform(forms.ModelForm):
         if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
-
-    def clean_urea_content_median(self):
-        fuel_type = self.cleaned_data.get('fuel_type')
-        urea_content_median = self.cleaned_data.get('urea_content_median')
-        if fuel_type == '柴油':
-            if urea_content_median is None:
-                raise forms.ValidationError("柴油請輸入該欄位，中油參考值(32.5)", 'invalid')
-        return urea_content_median
-
-    def clean_urea_water_median(self):
-        fuel_type = self.cleaned_data.get('fuel_type')
-        urea_water_median = self.cleaned_data.get('urea_water_median')
-        if fuel_type == '柴油':
-            if urea_water_median is None:
-                raise forms.ValidationError("柴油請輸入該欄位，中油參考值(1.09)", 'invalid')
-        return urea_water_median
 
     def clean_vehicle_type(self):
         vehicle_type = self.cleaned_data['vehicle_type']
@@ -576,15 +548,42 @@ class OFform(forms.ModelForm):
         cleaned_data = self.cleaned_data
         months = ['january', 'february', 'march', 'april', 'may', 'june',
                   'july', 'august', 'september', 'october', 'november', 'december',
-                  'urea_january', 'urea_february', 'urea_march', 'urea_april', 'urea_may', 'urea_june',
-                  'urea_july', 'urea_august', 'urea_september', 'urea_october', 'urea_november', 'urea_december']
+                  ]
         for month in months:
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
+        # 尿素驗證
+        urea_total = cleaned_data.get('urea_total')
+        urea_content_median = cleaned_data.get('urea_content_median')
+        urea_water_median = cleaned_data.get('urea_water_median')
+        if urea_total or urea_content_median or urea_water_median is not None:
+            if urea_total is not None:
+                if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(urea_total)):
+                    self._errors["urea_total"] = ["只能輸入正實數(小數點後四位)"]
+                if urea_content_median is None:
+                    self._errors["urea_content_median"] = ["請輸入該欄位，中油參考值(32.5)"]
+                if urea_water_median is None:
+                    self._errors["urea_water_median"] = ["請輸入該欄位，中油參考值(1.09)"]
+
+            if urea_content_median is not None:
+                if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(urea_content_median)):
+                    self._errors["urea_content_median"] = ["只能輸入正實數(小數點後四位)"]
+                if urea_total is None:
+                    self._errors["urea_total"] = ["請輸入該欄位"]
+                if urea_water_median is None:
+                    self._errors["urea_water_median"] = ["請輸入該欄位，中油參考值(1.09)"]
+
+            if urea_water_median is not None:
+                if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(urea_water_median)):
+                    self._errors["urea_water_median"] = ["只能輸入正實數(小數點後四位)"]
+                if urea_total is None:
+                    self._errors["urea_total"] = ["請輸入該欄位"]
+                if urea_content_median is None:
+                    self._errors["urea_content_median"] = ["請輸入該欄位，中油參考值(32.5)"]
         return cleaned_data
 
 
@@ -592,16 +591,12 @@ class OFform(forms.ModelForm):
 class MTform(forms.ModelForm):
     class Meta:
         model = material
-        fields = ('material_name', 'material_id', 'material_type', 'welding_rod', 'welding_rod_id', 'welding_rod_name', 'welding_rod_format', 'carbon_content', 'january', 'february', 'march', 'april', 'may',
+        fields = ('welding_rod_id', 'welding_rod_name', 'welding_rod_format', 'carbon_content', 'january', 'february', 'march', 'april', 'may',
                   'june', 'july', 'august', 'september', 'october', 'november', 'december', 'image_note', 'message_board')
         widgets = {
-            'material_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'material_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'material_type': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ex. 原料/物料'}),
-            'welding_rod': forms.CheckboxInput(attrs={'class': 'form-check-input chemical', 'id': 'chemical', 'type': 'checkbox', 'data-bs-toggle': 'collapse', 'href': '#collapsePee', 'aria-expanded': 'false', 'aria-controls': 'collapsePee'}),
-            'welding_rod_id': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
-            'welding_rod_name': forms.TextInput(attrs={'class': 'form-control chemical_name', 'id': 'chemical_name'}),
-            'welding_rod_format': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
+            'welding_rod_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
+            'welding_rod_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'welding_rod_format': forms.TextInput(attrs={'class': 'form-control'}),
             'carbon_content': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後兩位)'}),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
             'february': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -629,11 +624,11 @@ class MTform(forms.ModelForm):
         self.fields['message_board'].required = False
         # self.fields['material_id'].validators[]
 
-    def clean_material_id(self):
-        material_id = self.cleaned_data.get('material_id')
-        if not re.match(r'^[a-zA-Z0-9_-]*$', str(material_id)):
+    def clean_welding_rod_id(self):
+        welding_rod_id = self.cleaned_data.get('welding_rod_id')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(welding_rod_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
-        return material_id
+        return welding_rod_id
 
     def clean_carbon_content(self):
         carbon_content = self.cleaned_data.get('carbon_content')
@@ -650,12 +645,12 @@ class MTform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
         return cleaned_data
 
 
-# 製成添加物
+# 製程添加化學品
 class PCform(forms.ModelForm):
     class Meta:
         model = process
@@ -665,11 +660,11 @@ class PCform(forms.ModelForm):
         widgets = {
             'process_stage': forms.TextInput(attrs={'class': 'form-control'}),
             'chemical_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
-            'chemical_coefficient': forms.TextInput(attrs={'class': 'form-control'}),
+            'chemical_coefficient': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後十位)"}),
             'burn': forms.CheckboxInput(attrs={'class': 'form-check-input', 'type': 'checkbox'}),
-            'process_add_name': forms.TextInput(attrs={'class': 'form-control process_add_name', 'id': 'process_add_name'}),
-            'chemical_name': forms.TextInput(attrs={'class': 'form-control chemical_name', 'id': 'chemical_name'}),
-            'chemical_formula': forms.TextInput(attrs={'class': 'form-control chemical_formula'}),
+            'process_add_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'chemical_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'chemical_formula': forms.TextInput(attrs={'class': 'form-control'}),
             'CAS_NO': forms.TextInput(attrs={'class': 'form-control'}),
             'unit': forms.Select(choices=PROCESS_UNIT_CHOICES),
             'january': forms.TextInput(attrs={'class': 'col-6', 'value': '0'}),
@@ -716,7 +711,7 @@ class PCform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
         return cleaned_data
 
@@ -1027,15 +1022,17 @@ class ODform(forms.ModelForm):
         model = other_device
         fields = ('device_id', 'device_name', 'brand_name', 'model_type', 'position', 'years_purchased',
                   'filling_volume', 'device_amount', 'effusion_rate', 'device_type', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
+        fields = ('device_id', 'device_name', 'device_amount', 'brand_name', 'model_type', 'position', 'years_purchased',
+                  'filling_volume', 'effusion_rate', 'device_type', 'refrigerant_type', 'filling_fix_volume', 'image_note', 'message_board')
         widgets = {
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'device_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'device_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正整數"}),
             'brand_name': forms.TextInput(attrs={'class': 'form-control'}),
             'model_type': forms.TextInput(attrs={'class': 'form-control'}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
             'years_purchased': forms.TextInput(attrs={'class': 'form-control', 'id': 'years_purchased'}),
             'filling_volume': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正實數(小數點後四位)"}),
-            'device_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入正整數)"}),
             'effusion_rate': forms.TextInput(attrs={'id': 'effusion_rate', 'class': 'form-control'}),
             'device_type': forms.Select(attrs={'id': 'device_type', 'style': 'width:250px'}, choices=DEVICE_TYPE_CHOICES),
             'refrigerant_type': forms.Select(attrs={'id': 'refrigerant_type', 'style': 'width:250px'}, choices=REFRIGERANT_TYPE_CHOICES),
@@ -1058,6 +1055,12 @@ class ODform(forms.ModelForm):
         if not re.match(r'^[a-zA-Z0-9_-]*$', str(device_id)):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
+
+    def clean_device_amount(self):
+        device_amount = self.cleaned_data.get('device_amount')
+        if device_amount < 1:
+            raise forms.ValidationError("只能輸入正整數(須大於0)", 'invalid')
+        return device_amount
 
     def clean_filling_volume(self):
         filling_volume = self.cleaned_data.get('filling_volume')
@@ -1082,20 +1085,17 @@ class ODform(forms.ModelForm):
 class EXform(forms.ModelForm):
     class Meta:
         model = extinguisher
-        fields = ('extinguisher_type', 'device_id', 'position', 'extinguisher_vendor', 'chemical_weight',
-                  'inventory', 'using_amount', 'monthly', 'replace_filling_amount',
-                  'replace_filling_date', 'image_note', 'message_board')
+        fields = ('device_id', 'position', 'extinguisher_type',
+                  'inventory', 'chemical_weight', 'filling_amount', 'filling_date',
+                  'image_note', 'message_board')
         widgets = {
-            'extinguisher_type': forms.Select(attrs={'id': 'extinguisher_type'}, choices=EXTINGUISHER_TYPE_CHOICES),
             'device_id': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'position': forms.TextInput(attrs={'class': 'form-control'}),
-            'extinguisher_vendor': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '選填'}),
-            'chemical_weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數字'}),
-            'inventory': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '只能輸入正整數字'}),
-            'using_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+', 'title': '只能輸入正整數字', 'placeholder': '請輸入數字，無更換/填充則無需填寫'}),
-            'monthly': forms.TextInput(attrs={'class': 'form-control', 'id': 'monthly', 'placeholder': '無使用則無需填寫'}),
-            'replace_filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入數字，無更換/填充則無需填寫'}),
-            'replace_filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'replace_filling_date', 'placeholder': '無更換/填充則無需填寫'}),
+            'extinguisher_type': forms.Select(attrs={'id': 'extinguisher_type'}, choices=EXTINGUISHER_TYPE_CHOICES),
+            'inventory': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正整數字'}),
+            'chemical_weight': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正實數(小數點後四位)'}),
+            'filling_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入數字，無更換/填充則無需填寫'}),
+            'filling_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'replace_filling_date', 'placeholder': '無更換/填充則無需填寫'}),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -1103,11 +1103,9 @@ class EXform(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         super(EXform, self).__init__(*args, **kwargs)
         self.fields['device_id'].required = False
-        self.fields['extinguisher_vendor'].required = False
-        self.fields['using_amount'].required = False
-        self.fields['monthly'].required = False
-        self.fields['replace_filling_amount'].required = False
-        self.fields['replace_filling_date'].required = False
+        self.fields['position'].required = False
+        self.fields['filling_amount'].required = False
+        self.fields['filling_date'].required = False
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
 
@@ -1117,17 +1115,32 @@ class EXform(forms.ModelForm):
             raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
         return device_id
 
-    def clean_chemical_weight(self):
-        chemical_weight = self.cleaned_data.get('chemical_weight')
-        if not chemical_weight >= 0:
-            raise forms.ValidationError("該欄位必須大於零", 'invalid')
-        return chemical_weight
+    def clean_classification(self):
+        extinguisher_type = self.cleaned_data['extinguisher_type']
+        for EXTINGUISHER_TYPE in EXTINGUISHER_TYPE_CHOICES:
+            if extinguisher_type == EXTINGUISHER_TYPE[0]:
+                return extinguisher_type
+        print('亂改表單內容:', extinguisher_type)
+        raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
 
     def clean_inventory(self):
         inventory = self.cleaned_data.get('inventory')
         if not inventory > 0:
             raise forms.ValidationError("該欄位必須大於零", 'invalid')
         return inventory
+
+    def clean_chemical_weight(self):
+        chemical_weight = self.cleaned_data.get('chemical_weight')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(chemical_weight)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return chemical_weight
+
+    def clean_filling_amount(self):
+        filling_amount = self.cleaned_data.get('filling_amount')
+        if filling_amount:
+            if not re.match(r'^[0-9]+', str(filling_amount)):
+                raise forms.ValidationError("只能輸入正整數", 'invalid')
+        return filling_amount
 
 
 # 人添清冊
@@ -1267,7 +1280,7 @@ class PIform(forms.ModelForm):
             if value:
                 if not value >= 0:
                     print('value', month)
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -1463,7 +1476,7 @@ class ELECform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -2026,7 +2039,7 @@ class PWform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -2102,7 +2115,7 @@ class PMform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
@@ -2152,25 +2165,25 @@ class PIEform(forms.ModelForm):
             value = cleaned_data.get(month)
             if value:
                 if not value >= 0:
-                    self._errors["數值必須大於零"] = ["數值必須大於零"]
+                    self._errors["數值必須大於等於零"] = ["數值必須大於等於零"]
                     self._errors[month] = [month]
                     # break
         return cleaned_data
 
 
+# 製程-氣體
 class PGform(forms.ModelForm):
     class Meta:
         model = process_gas
-        fields = ('receipt_number', 'department', 'receipt_date', 'gas_name', 'amount', 'unit', 'per_amount', 'per_unit', 'image_note', 'message_board')
+        fields = ('receipt_number', 'department', 'receipt_date', 'amount', 'unit', 'per_amount', 'per_unit', 'image_note', 'message_board')
         widgets = {
             'receipt_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "只能輸入'英文'、'數字'、'-'、'_'"}),
             'department': forms.TextInput(attrs={'class': 'form-control'}),
             'receipt_date': forms.TextInput(attrs={'class': 'form-control', 'id': 'receipt_date'}),
-            'gas_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+(.[0-9]{1,4})', 'title': '只能輸入正數到小數點第四位'}),
+            'amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正數到小數點第四位'}),
             'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': "ex.瓶、罐"}),
-            'per_amount': forms.TextInput(attrs={'class': 'form-control', 'autocomplete': 'off', 'pattern': '[0-9]+(.[0-9]{1,4})', 'title': '只能輸入正數到小數點第四位'}),
-            'per_unit': forms.Select(choices=PROCESS_GAS_UNIT_CHOICES),
+            'per_amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '只能輸入正數到小數點第四位'}),
+            'per_unit': forms.Select(choices=PROCESS_UNIT_CHOICES),
             'image_note': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '請輸入單據名稱'}),
             'message_board': forms.Textarea(attrs={'class': 'form-control textarea', 'style': 'height: 150px; padding: 10px 20px', 'placeholder': '備註欄，最多可輸入127個字。'})
         }
@@ -2179,6 +2192,64 @@ class PGform(forms.ModelForm):
         super(PGform, self).__init__(*args, **kwargs)
         self.fields['image_note'].required = False
         self.fields['message_board'].required = False
+
+    def clean_receipt_number(self):
+        receipt_number = self.cleaned_data.get('receipt_number')
+        if not re.match(r'^[a-zA-Z0-9_-]*$', str(receipt_number)):
+            raise forms.ValidationError("只能輸入'英文'、'數字'、'-'、'_'", 'invalid')
+        return receipt_number
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(amount)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return amount
+
+    def clean_unit(self):
+        unit = self.cleaned_data.get('unit')
+        if unit == '瓶' or unit == '罐':
+            return unit
+        else:
+            raise forms.ValidationError("只能輸入'瓶'或'罐'", 'invalid')
+
+    def clean_per_amount(self):
+        per_amount = self.cleaned_data.get('per_amount')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(per_amount)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return per_amount
+
+    def clean_per_unit(self):
+        per_unit = self.cleaned_data['per_unit']
+        if per_unit is None:
+            raise forms.ValidationError("請選擇下拉選單", 'invalid')
+        else:
+            for PROCESS_UNIT in PROCESS_UNIT_CHOICES:
+                if per_unit == PROCESS_UNIT[0]:
+                    return per_unit
+            print('亂改表單內容:', per_unit)
+            raise forms.ValidationError("請勿自行更改下拉選單", 'invalid')
+
+
+# 混合氣體(製程氣體表中表)
+class ProcessGasAddFormSet(forms.ModelForm):
+    class Meta:
+        model = ProcessGasAdd
+        fields = ('gas_name', 'gas_ratio',)
+        widgets = {
+            'gas_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'gas_ratio': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def clean_gas_ratio(self):
+        gas_ratio = self.cleaned_data.get('gas_ratio')
+        if not re.match(r'^[0-9]+(.[0-9]{0,4})?$', str(gas_ratio)):
+            raise forms.ValidationError("只能輸入正實數(小數點後四位)", 'invalid')
+        return gas_ratio
+
+
+ProcessGasAddFormSet = inlineformset_factory(process_gas, ProcessGasAdd, form=ProcessGasAddFormSet, extra=1)
+
+
 
 
 class ImageForm(forms.ModelForm):

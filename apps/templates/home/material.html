@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} 原物料使用 {% endblock %}
+{% block title %} 焊條 {% endblock %}
 
 {% block body_class %} material {% endblock %}
 
@@ -22,7 +22,7 @@
                         <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
                             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
                                 <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
-                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 原物料使用</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 焊條</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -30,68 +30,34 @@
                                     {% csrf_token %}
                                     <div class="card-body p-0 my-3">
                                         <div class="row mb-3">
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>原物料名稱 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ MT_add.material_name }}
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static">
+                                                    <label>焊條料號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ MT_add.welding_rod_id }}
                                                 </div>
                                             </div>
-                                            <div class="col-4">
-                                                {% for error in MT_add.material_id.errors %}
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>焊條品名 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ MT_add.welding_rod_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>焊條規格 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ MT_add.welding_rod_format }}
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                {% for error in MT_add.carbon_content.errors %}
                                                     <li style="color: red">{{ error }}</li>
                                                 {% endfor %}
                                                 <div class="input-group input-group-static mb-4">
-                                                    <label>原物料料號 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ MT_add.material_id }}
-                                                </div>
-                                            </div>
-                                            <div class="col-4">
-                                                <div class="input-group input-group-static mb-4">
-                                                    <label>原物料種類 <span style="color:red; font-size:16px;">* </span></label>
-                                                    {{ MT_add.material_type }}
+                                                    <label>含碳量(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ MT_add.carbon_content }}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="form-check ps-1">
-                                                <label>
-                                                    {{ MT_add.welding_rod }}
-                                                    是否為焊條
-                                                </label>
-                                            </div>
-                                            <div class="collapse" id="collapsePee">
-                                                <div class="row mt-3">
-                                                    <div class="col-3">
-                                                        <div class="input-group input-group-static">
-                                                            <label>焊條料號</label>
-                                                            {{ MT_add.welding_rod_id }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>焊條品名</label>
-                                                            {{ MT_add.welding_rod_name }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>焊條規格</label>
-                                                            {{ MT_add.welding_rod_format }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        {% for error in MT_add.carbon_content.errors %}
-                                                            <li style="color: red">{{ error }}</li>
-                                                        {% endfor %}
-                                                        <div class="input-group input-group-static mb-4">
-                                                            <label>含碳量(%)</label>
-                                                            {{ MT_add.carbon_content }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <br>
                                         <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
                                         <br>
                                         <div class="d-flex flex-nowrap">
@@ -103,7 +69,7 @@
                                             <div class="col-12 text-center">
                                                 {% for error in MT_add.errors %}
                                                     {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
-                                                        <li style="color: red">只能輸入正數</li>
+                                                        <li style="color: red">只能輸入正實數(小數點後四位)</li>
                                                     {% endif %}
                                                 {% endfor %}
                                                 {% for error in MT_add.errors.數值必須大於零 %}
@@ -314,52 +280,6 @@
             {#placeholder: $(this).data('placeholder'),#}
             width: 300
         });
-
-
-        {# 自動帶入化學品名稱、化學式#}
-        var chemical_name = $(".chemical_name")
-        var chemical_formula = $(".chemical_formula")
-        $(".process_add_name").on('change', function () {
-            chemical_name.val("")
-            chemical_formula.val("")
-            var add_ch_name = $(this).val();
-            $.ajax({
-                url: "{% url 'loadchemical' %}",
-                data: {
-                    'add_ch_name': add_ch_name
-                },
-                type: 'GET',
-                dataType: 'json',
-                success: function (chemical_data) {
-                    {#console.warn(chemical_data);#}
-                    var list = [];
-                    chemical_data.forEach((item) => {
-                        for (const [key, value] of Object.entries((item))) {
-                            list.push(value)
-                        }
-                        chemical_name.val(list[0])
-                        chemical_formula.val(list[1])
-                    })
-                },
-            });
-        });
-
-
-        {# 當checkbox勾選，下方摺疊展開#}
-        var process_add_name = $(".process_add_name")
-        var checkbox = document.getElementById("chemical")
-        var collapse = document.getElementById("collapsePee")
-        if (checkbox.checked === true) {
-            collapse.classList.add("show")
-        }
-        $(document).on('click', ".chemical", function () {
-            if (checkbox.checked !== true) {
-                process_add_name.val("")
-                chemical_name.val("")
-                chemical_formula.val("")
-            }
-        });
-
 
         {#    照片顯示檔名+可刪除#}
         const dt = new DataTransfer(); // 允許操作輸入文件的文件
