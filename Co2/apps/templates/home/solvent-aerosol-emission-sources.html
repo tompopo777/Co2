@@ -1,0 +1,295 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} 溶劑、噴霧劑 {% endblock %}
+
+{% block body_class %} solvent-aerosol-emission-sources {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link href="https://cdn.bootcss.com/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">新增 ᅳ 溶劑、噴霧劑</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="/solvent_aerosol_emission_sources_add/" method="POST" enctype="multipart/form-data">
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 my-3">
+                                        <div class="row mb-3">
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>領用日期 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ SAES_add.receipt_date }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>溶劑、噴霧劑名稱 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ SAES_add.solvent_name }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                {% for error in SAES_add.solvent_amount.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                <div class="input-group input-group-static mb-6">
+                                                    <label>溶劑、噴霧劑數量(單位: 瓶/罐)<span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ SAES_add.solvent_amount }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-4">
+                                            添加氣體
+                                            {% for error in GasAddFormSet.non_form_errors %}
+                                                <li style="color: red">{{ error }}</li>
+                                            {% endfor %}
+                                        </div>
+                                        {{ GasAddFormSet.management_form }}
+                                        {% for error in GasAddFormSet.non_field_errors %}
+                                            <li style="color: red">{{ error }}</li>
+                                        {% endfor %}
+                                        {% for a in GasAddFormSet %}
+                                            <div id="gas_add">
+                                                <div class="row mb-4 gas" id="0">
+                                                    {% for hidden in a.hidden_fields %}
+                                                        {{ hidden }}
+                                                    {% endfor %}
+                                                    <div class="col-4">
+                                                        {% for error in SAES_add.solvent_capacity.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-6">
+                                                            <label>溶劑、噴霧劑容量(單位: {{ a.solvent_capacity_unit }})<span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.solvent_capacity }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in a.gas_ratio.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>氣體含量(%) <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.gas_ratio }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-3">
+                                                        {% for error in a.density.errors %}
+                                                            <li style="color: red">{{ error }}</li>
+                                                        {% endfor %}
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <label>容量換算密度('oz' 預設為'1') <span style="color:red; font-size:16px;">* </span></label>
+                                                            {{ a.density }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-2 d-flex align-items-center">
+                                                        <div class="input-group input-group-static mb-4">
+                                                            <a class="col" onclick="DuplicateGas()"><i class="fa-solid fa-circle-plus fa-2xl"></i></a>
+                                                            <a class="col" onclick="DeleteGas(this)"><i class="fa-solid fa-circle-minus fa-2xl"></i></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                {{ SAES_add.image_note }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="ps-md-2 align-self-center">
+                                            <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="溶劑、噴霧劑">
+                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
+                                            </div>
+                                        </div>
+                                        <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-control">
+                                                <label>備註欄</label>
+                                                {% for error in SAES_add.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                {{ SAES_add.message_board }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" name="addAnother" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認，並新增另一筆
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
+                                        </div>
+                                        <div class="col-auto mx-3">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
+                                                取消
+                                            </a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    icon#}
+    <script src="https://kit.fontawesome.com/b0f00faca8.js" crossorigin="anonymous"></script>
+    {#    select2#}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+
+    <script>
+        {#    顯示新增成功訊息#}
+        $(document).ready(function () {
+            {% if messages %}
+                {% for message in messages %}
+                    let success_message = "{{ message }}"
+                    alert(success_message);
+                {% endfor %}
+            {% endif %}
+        });
+
+        {#    月份篩選器#}
+        $("#receipt_date").datepicker({
+            format: "yyyy-mm-dd",
+            orientation: "bottom",
+            autoclose: "true",
+        }).datepicker("setDate", 'now');
+
+        {#    禁止enter鍵#}
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        {#    照片顯示檔名+可刪除#}
+        const dt = new DataTransfer(); // 允許操作輸入文件的文件
+        $("#attachment").on('change', function (e) {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc = $('<span/>', {class: 'file-block'}),
+                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName);
+                $("#filesList > #files-names").append(fileBloc);
+            }
+            // 將文件添加到 DataTransfer 對象
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 添加後更新輸入文件中的文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的事件監聽器
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 抑製文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt.items.length; i++) {
+                    // 匹配文件名
+                    if (name === dt.items[i].getAsFile().name) {
+                        // 刪除DataTransfer對像中的文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件中的文件
+                document.getElementById('attachment').files = dt.files;
+            });
+        });
+
+        {#select2#}
+        {#$('#gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});#}
+        {#$('.gas_name').select2().next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});#}
+        $('#solvent_capacity_unit').select2({minimumResultsForSearch: -1}).next(".select2-container").find(".select2-selection--single").css({"font-size": "16px"});
+
+        {#    新增/刪除出差段數#}
+        var gas_count = 0;
+
+        function DuplicateGas() {
+            gas_count += 1;
+            document.getElementById("id_gas_add_set-TOTAL_FORMS").value = (gas_count + 1).toString()
+            var gas_add = document.getElementById("gas_add")
+            var first_trip = document.getElementsByClassName("gas")[0]
+            var clone = first_trip.cloneNode(true);
+            gas_add.appendChild(clone)
+            clone.id = (gas_count)
+            var input = document.querySelectorAll(".gas:last-child > div > div > input")
+            input[0].id = "id_gas_add_set-" + gas_count + "-gas_ratio"
+            input[0].name = "gas_add_set-" + gas_count + "-gas_ratio"
+            input[1].id = "id_gas_add_set-" + gas_count + "-density"
+            input[1].name = "gas_add_set-" + gas_count + "-density"
+            input[0].value = ""
+            input[1].value = ""
+            var select = document.querySelectorAll(".gas:last-child > div > div > select")
+            select[0].id = "id_gas_add_set-" + gas_count + "-gas_name"
+            select[0].name = "gas_add_set-" + gas_count + "-gas_name"
+            select[0].value = ""
+        }
+
+        function DeleteGas(deletbutton) {
+            if (gas_count > 0) {
+                gas_count -= 1;
+                deletbutton.closest("div.gas").remove()
+                document.getElementById("id_gas_add_set-TOTAL_FORMS").value = (gas_count + 1).toString()
+                var gas = document.getElementsByClassName("gas")
+                for (let i = 0; i <= gas_count; i++) {
+                    gas[i].id = i.toString()
+                    let input = document.querySelectorAll(".gas:nth-child(" + (i + 1) + ") > div > div > input")
+                    input[0].id = ("id_gas_add_set-" + i + "-gas_ratio").toString()
+                    input[0].name = ("gas_add_set-" + i + "-gas_ratio").toString()
+                    input[1].id = ("id_gas_add_set-" + i + "-density").toString()
+                    input[1].name = ("gas_add_set-" + i + "-density").toString()
+                    let select = document.querySelectorAll(".gas:nth-child(" + (i + 1) + ") > div > div > select")
+                    select[0].id = ("id_gas_add_set-" + i + "-gas_name").toString()
+                    select[0].name = ("gas_add_set-" + i + "-gas_name").toString()
+                }
+            }
+        }
+    </script>
+{% endblock javascripts %}

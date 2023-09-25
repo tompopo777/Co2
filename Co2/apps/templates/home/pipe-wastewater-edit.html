@@ -1,0 +1,298 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} 納管廢水排放量 - 修改 {% endblock %}
+
+{% block body_class %} pipe-wastewater {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" xmlns="http://www.w3.org/1999/html"/>
+    <link rel="stylesheet" type="text/css" href="static/assets/css/test.css"/>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+    {% include 'includes/navigation-light.html' %}
+    <section>
+        <div class="page-header min-vh-100">
+            <div class="container">
+                <div class="row">
+                    <div class="d-flex flex-column ms-auto me-auto">
+                        <div class="card d-flex blur justify-content-center my-sm-0 my-sm-6 mt-8 mb-5">
+                            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2 bg-transparent">
+                                <div class="bg-gradient-secondary shadow-secondary border-radius-lg p-3 d-flex align-items-end">
+                                    <h3 class="text-white text-primary mb-0">修改 ᅳ 納管廢水排放量</h3><h6 class="text-white mb-0">盤查年度: {{ years }}</h6>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form action="{% url 'update_device' single_dataID %}" method="POST" enctype=multipart/form-data>
+                                    {% csrf_token %}
+                                    <div class="card-body p-0 mx-3 my-3">
+                                        <div class="row my-3">
+                                            <div class="col-4">
+                                                {% for error in form.pipe_id.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>納管編號 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.pipe_id }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>廠別 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.factory }}
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="input-group input-group-static mb-4">
+                                                    <label>地址 <span style="color:red; font-size:16px;">* </span></label>
+                                                    {{ form.address }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                        <br>
+                                        <div class="d-flex flex-nowrap">
+                                            <h5 class="col-md-12 text-center" style="color: #7b809a !important;">
+                                                月排放量(單位:公噸) <span style="color:red; font-size:16px;">* </span>
+                                            </h5>
+                                        </div>
+                                        {% if form.errors %}
+                                            <div class="col-12 text-center">
+                                                {% for error in form.errors %}
+                                                    {% if 'january' == error or 'february' == error or 'march' == error or 'april' == error or 'may' == error or 'june' == error or 'july' == error or 'august' == error or 'september' == error or 'october' == error or 'november' == error or 'december' == error %}
+                                                        <li style="color: red">只能輸入正實數(小數點後四位)</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% for error in form.errors.數值必須大於零 %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>一月</th>
+                                                <th>二月</th>
+                                                <th>三月</th>
+                                                <th>四月</th>
+                                                <th>五月</th>
+                                                <th>六月</th>
+                                                <th>七月</th>
+                                                <th>八月</th>
+                                                <th>九月</th>
+                                                <th>十月</th>
+                                                <th>十一月</th>
+                                                <th>十二月</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.january }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.february }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.march }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.april }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.may }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.june }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.july }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.august }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.september }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.october }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.november }}
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        {{ form.december }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <br>
+                                    <div class="d-flex">
+                                        <div class="col-6">
+                                            <div class="input-group input-group-static mb-4">
+                                                <label>上傳引用單據</label>
+                                                {{ form.image_note }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="ps-md-2 align-self-center">
+                                            <div class="col-2" multiple="multiple">
+                                                <input type="hidden" name="stage" value="納管廢水">
+                                                <input class="form-control-file" type="file" id="attachment" name="file_field" multiple="multiple" accept="image/*, .pdf">
+                                            </div>
+                                        </div>
+                                        <div id="files-area">
+                                            <span id="filesList">
+                                                <span id="files-names"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <hr style="height:2px;border-width:0;color:#343a40;background-color:#343a40">
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-control">
+                                                <label>備註欄</label>
+                                                {% for error in form.message_board.errors %}
+                                                    <li style="color: red">{{ error }}</li>
+                                                {% endfor %}
+                                                {{ form.message_board }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="col-1">
+                                            <button type="submit" class="btn bg-gradient-secondary mt-3 mb-0">
+                                                確認
+                                            </button>
+                                        </div>
+                                        <div class="col-1">
+                                            <a class="btn bg-gradient-secondary mt-3 mb-0" href="{% url 'carbon-system' %}">
+                                                取消
+                                            </a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>
+    {#    datepicker#}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.css" rel="stylesheet"/>
+    {#    select2#}
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/>
+
+
+    <script>
+        $(document).ready(function () {
+            {% if form.errors %}
+                let error_name = "";
+                let error_input;
+                let parentDiv;
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        error_name = "{{ field.label }}"
+                        if (
+                            error_name === 'January' || error_name === 'February' || error_name === 'March' || error_name === 'April' ||
+                            error_name === 'May' || error_name === 'June' || error_name === 'July' || error_name === 'August' ||
+                            error_name === 'September' || error_name === 'October' || error_name === 'November' || error_name === 'December'
+                        ) {
+                            error_name = error_name.toLowerCase()
+                            error_input = document.querySelector("[name=" + error_name + "]");
+                            parentDiv = error_input.parentNode;
+                            parentDiv.classList.add("border", "border-danger", "border-3");
+                        }
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
+
+        });
+
+        {#    禁止enter鍵#}
+        $(document).on("keypress", "form", function (e) {
+            var code = e.keyCode || e.which;
+            if (code === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        {#    照片顯示檔名+可刪除#}
+        const dt = new DataTransfer(); // 允許操作輸入文件的文件
+        $("#attachment").on('change', function (e) {
+            for (var i = 0; i < this.files.length; i++) {
+                let fileBloc = $('<span/>', {class: 'file-block'}),
+                    fileName = $('<span/>', {class: 'name', text: this.files.item(i).name});
+                fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                    .append(fileName);
+                $("#filesList > #files-names").append(fileBloc);
+            }
+            // 將文件添加到 DataTransfer 對象
+            for (let file of this.files) {
+                dt.items.add(file);
+            }
+            // 添加後更新輸入文件中的文件
+            this.files = dt.files;
+
+            // 創建的刪除按鈕的事件監聽器
+            $('span.file-delete').click(function () {
+                let name = $(this).next('span.name').text();
+                // 抑製文件名的顯示
+                $(this).parent().remove();
+                for (let i = 0; i < dt.items.length; i++) {
+                    // 匹配文件名
+                    if (name === dt.items[i].getAsFile().name) {
+                        // 刪除DataTransfer對像中的文件
+                        dt.items.remove(i);
+                    }
+                }
+                // 刪除後更新輸入文件中的文件
+                document.getElementById('attachment').files = dt.files;
+            });
+        });
+    </script>
+{% endblock javascripts %}
