@@ -1,42 +1,71 @@
-# byte-compiled / optimized / DLL files
+# ================================
+# Python
+# ================================
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 
-# tests and coverage
-*.pytest_cache
-.coverage
-
-# database & logs
-*.db
-*.sqlite3
-*.log
-
-# venv
+# ================================
+# Virtual Environment
+# ================================
 env/
 venv/
+.venv/
 
-# other
-.DS_Store
-
-# javascript
-package-lock.json
-
-staticfiles/*
-!staticfiles/.gitkeep 
-.vscode/symbols.json
-
-apps/static/assets/node_modules
-apps/static/assets/yarn.lock
-apps/static/assets/.temp
-
-/apps/home/migrations/0001_initial.py
-
-# environment / secrets
+# ================================
+# Environment Variables / Secrets
+# ================================
 .env
 .env.*
 !.env.example
 !env.sample
 
-# IDE settings
+# ================================
+# Database & Logs
+# ================================
+*.db
+*.sqlite3
+*.log
+
+# ================================
+# Django
+# ================================
+staticfiles/*
+!staticfiles/.gitkeep
+
+media/
+
+# ================================
+# Tests & Coverage
+# ================================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ================================
+# IDE / Editor
+# ================================
 .idea/
 .vscode/
+*.swp
+.DS_Store
+
+# ================================
+# Node / Frontend (if used)
+# ================================
+node_modules/
+package-lock.json
+yarn.lock
+
+apps/static/assets/node_modules/
+apps/static/assets/yarn.lock
+apps/static/assets/.temp/
+
+# ================================
+# Misc
+# ================================
+*.csv
+*.xlsx
+*.bak
+*.tmp
