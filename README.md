@@ -13,9 +13,9 @@ A Django-based system designed to help organizations manage carbon emission inve
 
 ## 🛠 Tech Stack
 
-- Python
-- Django
-- MariaDB
+- Python 3.7
+- Django 3.2
+- MariaDB 
 - Pandas (data processing)
 - HTML / CSS / JavaScript / Bootstrap
 
@@ -26,10 +26,7 @@ carbon-emission-inventory-system/
 ├── apps/                 # Django apps, templates, static files, and business logic
 ├── core/                 # Django settings, URLs, and WSGI configuration
 ├── media/                # Project media/images
-├── nginx/                # Nginx configuration for deployment
-├── Dockerfile            # Docker image setup
 ├── env.sample            # Example environment variables
-├── gunicorn-cfg.py       # Gunicorn production server config
 ├── manage.py             # Django command-line utility
 ├── requirements.txt      # Python dependencies
 └── README.md
