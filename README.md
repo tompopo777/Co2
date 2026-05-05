@@ -5,21 +5,18 @@ A Django-based system designed to help organizations manage carbon emission inve
 ## Features
 
 - Record and manage carbon emission inventory data  
-- Online data entry with support for records, images, and text  
-- Emission calculation based on:
-  - GHG Protocol  
-  - ISO 14064-1  
-  - ISO 14067  
+- Online data entry (records, images, text)  
+- Emission calculation based on GHG Protocol, ISO 14064-1, and ISO 14067  
 - Import and export data via CSV  
-- Generate emission reports for auditing and compliance  
-- Centralized system for tracking and organizing emission-related information  
+- Generate reports for audit and compliance  
+- Centralized system for tracking emission-related information  
 
 ## Tech Stack
 
 - Python
 - Django
 - MariaDB
-- Pandas
+- Pandas (data processing)
 - HTML / CSS / JavaScript / Bootstrap
 
 ## Project Structure
