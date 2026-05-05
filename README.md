@@ -1,6 +1,6 @@
 # Carbon Emission Inventory System
 
-A Django-based web application designed to help organizations record, manage, and report carbon emission inventory data, supporting standardized carbon accounting and audit processes.
+A Django-based system designed to help organizations manage carbon emission inventory data, supporting standardized carbon accounting, compliance, and audit reporting.
 
 ## Features
 
