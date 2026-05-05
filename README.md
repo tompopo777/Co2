@@ -28,7 +28,6 @@ carbon-emission-inventory-system/
 ├── media/                # Project media/images
 ├── nginx/                # Nginx configuration for deployment
 ├── Dockerfile            # Docker image setup
-├── docker-compose.yml    # Container orchestration setup
 ├── env.sample            # Example environment variables
 ├── gunicorn-cfg.py       # Gunicorn production server config
 ├── manage.py             # Django command-line utility
