@@ -1,8 +1,8 @@
-# Carbon Emission Inventory System
+# 🌱🌎 Carbon Emission Inventory System
 
 A Django-based system designed to help organizations manage carbon emission inventory data, supporting standardized carbon accounting, compliance, and audit reporting.
 
-## Features
+## 🚀 Features
 
 - Record and manage carbon emission inventory data  
 - Online data entry (records, images, text)  
@@ -11,7 +11,7 @@ A Django-based system designed to help organizations manage carbon emission inve
 - Generate reports for audit and compliance  
 - Centralized system for tracking emission-related information  
 
-## Tech Stack
+## 🛠 Tech Stack
 
 - Python
 - Django
@@ -19,7 +19,7 @@ A Django-based system designed to help organizations manage carbon emission inve
 - Pandas (data processing)
 - HTML / CSS / JavaScript / Bootstrap
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 carbon-emission-inventory-system/
@@ -33,3 +33,33 @@ carbon-emission-inventory-system/
 ├── manage.py             # Django command-line utility
 ├── requirements.txt      # Python dependencies
 └── README.md
+```
+
+## 📸 Screenshots
+
+### 📊 Dashboard
+<p align="center">
+  <img src="media/Images/dashboard_1.png" width="800" alt="dashboard_1.png"/>
+</p>
+<p align="center">
+  <img src="media/Images/dashboard_2.png" width="800" alt="dashboard_2.png"/>
+</p>
+
+### 📝 Emission Entry Form
+<p align="center">
+  <img src="media/Images/emission_entry_form.png" width="800" alt="emission_entry_form.png"/>
+</p>
+
+### 📈 Summary Table
+<p align="center">
+  <img src="media/Images/emission_calculation.png" width="800" alt="emission_calculation.png"/>
+</p>
+
+### 📄 Report Generation and Export
+<p align="center">
+  <img src="media/Images/gen_report_1.png" width="800" alt="gen_report_1.png"/>
+</p>
+
+<p align="center">
+  <img src="media/Images/gen_report_2.png" width="800" alt="gen_report_2.png"/>
+</p>
